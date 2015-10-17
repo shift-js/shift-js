@@ -30,7 +30,7 @@ module.exports = function(code) {
   };
 
   while (code[i] !== undefined) {
-    debugger;
+
     chunk += code[i];
     currCol = code[i];
     prevCol = code[i - 1];
@@ -48,6 +48,7 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
+    
     if (!insideString.status) {
       if (insideString.end) {
         lexerFunctions.checkForLiteral(chunk, tokens);
@@ -62,18 +63,16 @@ module.exports = function(code) {
         nextCol === '"' || nextCol === ']' || nextCol === undefined) {
         if (insideCollection.status && insideCollection.type === undefined &&
           lexerFunctions.checkFor('PUNCTUATION', chunk, tokens)){
-          console.log('setting collection type....');
           lexerFunctions.determineCollectionType(insideCollection, tokens);
-          console.log('collection type: ',insideCollection.type);
         } else if (insideCollection.type === 'ARRAY' && 
           lexerFunctions.checkFor('ARRAY', chunk)) {
-          lexerFunctions.checkFor('ARRAY', chunk, tokens, function(){
+          lexerFunctions.checkFor('ARRAY', chunk, tokens, function() {
             insideCollection.status = false;
             insideCollection.type = undefined;
           })
         } else if (insideCollection.type === 'DICTIONARY' && 
           lexerFunctions.checkFor('DICTIONARY', chunk)) {
-          lexerFunctions.checkFor('DICTIONARY', chunk, tokens, function(){
+          lexerFunctions.checkFor('DICTIONARY', chunk, tokens, function() {
             insideCollection.status = false;
             insideCollection.type = undefined;
           })
@@ -95,6 +94,7 @@ module.exports = function(code) {
     advance(1);
     
   }
-  console.log(tokens);
+
   return tokens;
+  
 };

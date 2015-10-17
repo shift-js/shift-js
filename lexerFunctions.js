@@ -74,7 +74,7 @@ module.exports = {
   },
   
   determineCollectionType: function(collectionInformation, tokens) {
-    if (tokens[tokens.length - 1]['value'] === ':'){
+    if (tokens[tokens.length - 1]['value'] === ':') {
       var index = tokens.length - 2;
       while (index >= 0) {
         if (tokens[index].type === 'ARRAY_START') {
