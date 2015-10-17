@@ -2,40 +2,52 @@ var lexicalTypes = require("./lexicalTypes");
 
 module.exports = {
 
+  makeToken: function(lexicalType, snippet, tokens, type, value) {
+    if (tokens) {
+      var obj = {};
+      obj['type'] = type || lexicalTypes[lexicalType][snippet];
+      obj['value'] = value || snippet.trim();
+      tokens.push(obj);
+    }
+  },
+
   checkForLiteral: function(snippet, tokens, cb) {
     snippet = JSON.parse(snippet.trim());
-    var ts = typeof snippet;
+    var type = typeof snippet;
     var obj = {
     'boolean': function(snippet, tokens) {
-                  if (tokens) tokens.push({'type': 'BOOLEAN', 'value': JSON.stringify(snippet)});
-                  if (cb) {cb(snippet, tokens)};
-                  return true;
-                },
+                if (tokens) {
+                  module.exports.makeToken(undefined, snippet, tokens, 'BOOLEAN', JSON.stringify(snippet));
+                }
+                if (cb) {cb(snippet, tokens)};
+                return true;
+              },
     'string': function(snippet, tokens) {
-                if (tokens) tokens.push({'type': 'STRING', 'value': snippet});
+                if (tokens) {
+                  module.exports.makeToken(undefined, snippet, tokens, 'STRING', snippet);
+                }
                 if (cb) {cb(snippet, tokens)};
                 return true;
               },
     'number': function(snippet, tokens) {
-                if (tokens) tokens.push({'type': 'NUMBER', 'value': JSON.stringify(snippet)});
+                if (tokens) {
+                  module.exports.makeToken(undefined, snippet, tokens, 'NUMBER', JSON.stringify(snippet));
+                }
                 if (cb) {cb(snippet, tokens)};
                 return true;         
               }    
     };
-    if (obj[ts] === undefined) {
+    if (obj[type] === undefined) {
       return false;
     } else {
-      obj[ts](snippet, tokens);
+      obj[type](snippet, tokens);
     }
   },
   
   checkFor: function(lexicalType, snippet, tokens, cb) {
     if(lexicalTypes[lexicalType][snippet]){
       if (tokens) {
-        var obj = {};
-        obj.type = lexicalTypes[lexicalType][snippet];
-        obj.value = snippet.trim();
-        tokens.push(obj);
+        module.exports.makeToken(lexicalType, snippet, tokens);
         if (cb) {
           cb();
         }
@@ -49,24 +61,18 @@ module.exports = {
   checkForWhitespace: function(snippet) {
     return snippet === ' ';
   },
-  
-  makeIdentifier: function(snippet, tokens) {
-    if (tokens) {
-      var obj = {};
-      obj['type'] = 'IDENTIFIER';
-      obj['value'] = snippet.trim();
-      tokens.push(obj);
-    }
-  },
 
   // helper function to check for identifiers
   checkForIdentifier: function(snippet, tokens, variable_names) {
-    
     if (variable_names[snippet]) {
-      if (tokens) module.exports.makeIdentifier(snippet, tokens);
+      if (tokens) {
+        module.exports.makeToken(undefined, snippet, tokens, 'IDENTIFIER', snippet);
+      }
       return true;
     } else if (tokens[tokens.length - 1].type === 'DECLARATION_KEYWORD') {
-      if (tokens) module.exports.makeIdentifier(snippet, tokens);
+      if (tokens) {
+        module.exports.makeToken(undefined, snippet, tokens, 'IDENTIFIER', snippet);
+      }
       variable_names[snippet] = true;
       return true;
     }
