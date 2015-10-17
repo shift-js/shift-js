@@ -60,21 +60,11 @@ module.exports = function(code) {
         lexerFunctions.checkFor('OPERATOR', nextCol) || 
         lexerFunctions.checkFor('OPERATOR', currCol) || 
         nextCol === '"' || nextCol === ']' || nextCol === undefined) {
-        
-        if (insideCollection.status && insideCollection.type === undefined && lexerFunctions.checkFor('PUNCTUATION', chunk, tokens)){
-          if (tokens[tokens.length-1]['value'] === ':'){
-            var index = tokens.length - 2;
-            while (index >= 0) {
-              if (tokens[index].type === 'ARRAY_START') {
-                tokens[index].type = 'DICTIONARY_START';
-                break;
-              }
-              index--;
-            }
-            insideCollection.type = 'DICTIONARY';
-          } else {
-            insideCollection.type = 'ARRAY';
-          }
+        if (insideCollection.status && insideCollection.type === undefined &&
+          lexerFunctions.checkFor('PUNCTUATION', chunk, tokens)){
+          console.log('setting collection type....');
+          lexerFunctions.determineCollectionType(insideCollection, tokens);
+          console.log('collection type: ',insideCollection.type);
         } else if (insideCollection.type === 'ARRAY' && 
           lexerFunctions.checkFor('ARRAY', chunk)) {
           lexerFunctions.checkFor('ARRAY', chunk, tokens, function(){
@@ -90,10 +80,9 @@ module.exports = function(code) {
         } else {
           lexerFunctions.checkFor('KEYWORD', chunk, tokens) ||
           lexerFunctions.checkForIdentifier(chunk, tokens, VARIABLE_NAMES) ||
-          lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) || 
           lexerFunctions.checkFor('ARRAY', chunk, tokens, function(){
-            insideCollection.status = true;
-          }) ||
+            insideCollection.status = true;}) ||
+          lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) || 
           lexerFunctions.checkFor('OPERATOR', chunk, tokens) || 
           lexerFunctions.checkForLiteral(chunk, tokens);
         }
@@ -102,9 +91,10 @@ module.exports = function(code) {
         continue;
       }
     }
-    
+
     advance(1);
     
   }
+  console.log(tokens);
   return tokens;
 };

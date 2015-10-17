@@ -71,6 +71,22 @@ module.exports = {
       return true;
     }
     return false;
+  },
+  
+  determineCollectionType: function(collectionInformation, tokens) {
+    if (tokens[tokens.length - 1]['value'] === ':'){
+      var index = tokens.length - 2;
+      while (index >= 0) {
+        if (tokens[index].type === 'ARRAY_START') {
+          tokens[index].type = 'DICTIONARY_START';
+          break;
+        }
+        index--;
+      }
+      collectionInformation.type = 'DICTIONARY';
+    } else {
+      collectionInformation.type = 'ARRAY';
+    }
   }
   
 };
