@@ -1,0 +1,30 @@
+{
+  "name": "shift-js",
+  "version": "0.0.1",
+  "description": "Swift to JS Transpiler",
+  "engines": {
+    "node": "0.12.7"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shift-js/shift-js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shift-js/shift-js/issues"
+  },
+  "homepage": "https://github.com/shift-js/shift-js#readme",
+  "dependencies": {
+    "esprima-ast-utils": "0.0.6"
+  },
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "grunt": "^0.4.5",
+    "mocha": "^2.3.3"
+  }
+}

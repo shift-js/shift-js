@@ -314,3 +314,5 @@ console.log(util.inspect(parser(tokens), {colors:true, depth:null}));
 // console.log(util.inspect(esprima.parse(data), {colors: true, depth: null}));
 // console.log(data);
 //});
+
+module.exports = parser;
