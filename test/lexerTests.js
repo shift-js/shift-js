@@ -337,8 +337,17 @@ describe('Lexer', function() {
     });
 
     it('should handle multiple statements on a single line separated by semicolons', function () {
-      input = 'let t = 100; var u = arr[t - 99];';
+      input = 'let arr = [1, 2]; let t = 100; var u = arr[t - 99];';
       output = [
+        { type: "DECLARATION_KEYWORD",  value: "let" },
+        { type: "IDENTIFIER",           value: "arr" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "ARRAY_START",          value: "[" },
+        { type: "NUMBER",               value: "1" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "NUMBER",               value: "2" },
+        { type: "ARRAY_END",            value: "]" },
+        { type: "PUNCTUATION",          value: ";" },
         { type: "DECLARATION_KEYWORD",  value: "let" },
         { type: "IDENTIFIER",           value: "t" },
         { type: "OPERATOR",             value: "=" },
