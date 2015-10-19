@@ -719,7 +719,7 @@ Lexer output: [
 ]
 
 ***** TEST 20 *****
-Swift input: 'let arr = [1,2]; var u = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
+Swift input: 'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
 Lexer output: [
   { 
     type: "DECLARATION_KEYWORD",
@@ -753,7 +753,7 @@ Lexer output: [
     value: "var"
   },{ 
     type: "IDENTIFIER",
-    value: "s"
+    value: "v"
   },{ 
     type: "OPERATOR",
     value: "="
@@ -775,6 +775,9 @@ Lexer output: [
   },{
     type: "PUNCTUATION",
     value: ":"
+  },{ 
+    type: "ARRAY_START",
+    value: "["
   },{ 
     type: "ARRAY_START",
     value: "["
@@ -833,6 +836,9 @@ Lexer output: [
     type: "ARRAY_START",
     value: "["
   },{ 
+    type: "ARRAY_START",
+    value: "["
+  },{ 
     type: "STRING",
     value: "one"
   },{
@@ -861,6 +867,126 @@ Lexer output: [
     value: "four"
   },{
     type: "ARRAY_END",
+    value: "]"
+  },{
+    type: "ARRAY_END",
+    value: "]"
+  },{
+    type: "DICTIONARY_END",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ";"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
+  }
+]
+
+***** TEST 21 *****
+Swift input: 'var w = [1: [[1: "two"], [3: "four"]], 2: [["one": 2], ["three": 4]]];'
+Lexer output: [
+  { 
+    type: "DECLARATION_KEYWORD",
+    value: "var"
+  },{ 
+    type: "IDENTIFIER",
+    value: "w"
+  },{ 
+    type: "OPERATOR",
+    value: "="
+  },{ 
+    type: "DICTIONARY_START",
+    value: "["
+  },{ 
+    type: "NUMBER",
+    value: "1"
+  },{
+    type: "PUNCTUATION",
+    value: ":"
+  },{ 
+    type: "ARRAY_START",
+    value: "["
+  },{ 
+    type: "DICTIONARY_START",
+    value: "["
+  },{ 
+    type: "NUMBER",
+    value: "1"
+  },{
+    type: "PUNCTUATION",
+    value: ":"
+  },{
+    type: "STRING",
+    value: "two"
+  },{ 
+    type: "DICTIONARY_END",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{ 
+    type: "DICTIONARY_START",
+    value: "["
+  },{
+    type: "NUMBER",
+    value: "3"
+  },{
+    type: "PUNCTUATION",
+    value: ":"
+  },{
+    type: "STRING",
+    value: "four"
+  },{
+    type: "DICTIONARY_END",
+    value: "]"
+  },{
+    type: "ARRAY_END",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{ 
+    type: "NUMBER",
+    value: "2"
+  },{
+    type: "PUNCTUATION",
+    value: ":"
+  },{ 
+    type: "ARRAY_START",
+    value: "["
+  },{ 
+    type: "DICTIONARY_START",
+    value: "["
+  },{ 
+    type: "STRING",
+    value: "one"
+  },{
+    type: "PUNCTUATION",
+    value: ":"
+  },{
+    type: "NUMBER",
+    value: "2"
+  },{ 
+    type: "DICTIONARY_END",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{ 
+    type: "DICTIONARY_START",
+    value: "["
+  },{
+    type: "STRING",
+    value: "three"
+  },{
+    type: "PUNCTUATION",
+    value: ":"
+  },{
+    type: "NUMBER",
+    value: "4"
+  },{
+    type: "DICTIONARY_END",
     value: "]"
   },{
     type: "ARRAY_END",
