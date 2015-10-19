@@ -13,6 +13,9 @@ Lexer output: [
   },{ 
     type: "NUMBER",
     value: "3"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
@@ -31,6 +34,9 @@ Lexer output: [
   },{ 
     type: "STRING",
     value: "hello"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
@@ -49,6 +55,9 @@ Lexer output: [
   },{ 
     type: "BOOLEAN",
     value: "true"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
@@ -67,6 +76,9 @@ Lexer output: [
   },{ 
     type: "STRING",
     value: "Test this"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
@@ -103,6 +115,9 @@ Lexer output: [
   },{
     type: "ARRAY_END",
     value: "]"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
@@ -157,6 +172,9 @@ Lexer output: [
   },{
     type: "DICTIONARY_END",
     value: "]"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
@@ -211,6 +229,9 @@ Lexer output: [
   },{
     type: "DICTIONARY_END",
     value: "]"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
@@ -229,6 +250,9 @@ Lexer output: [
   },{ 
     type: "NUMBER",
     value: "3.14"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
@@ -253,12 +277,15 @@ Lexer output: [
   },{ 
     type: "NUMBER",
     value: "6"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
 ***** TEST 10 *****
 Swift input: 'var j = 5 + 6 / 4 - (-16 % 4.2) * 55'
-Lexer output: Lexer output: [
+Lexer output: [
   { 
     type: "DECLARATION_KEYWORD",
     value: "var"
@@ -310,12 +337,15 @@ Lexer output: Lexer output: [
   },{ 
     type: "NUMBER",
     value: "55"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
 ***** TEST 11 *****
 Swift input: 'var k = "Stephen" + " " + "Tabor" + "!"'
-Lexer output: Lexer output: [
+Lexer output: [
   { 
     type: "DECLARATION_KEYWORD",
     value: "var"
@@ -346,12 +376,15 @@ Lexer output: Lexer output: [
   },{ 
     type: "STRING",
     value: "!"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
 ***** TEST 12 *****
 Swift input: 'let l = 6 !== 9'
-Lexer output: Lexer output: [
+Lexer output: [
   { 
     type: "DECLARATION_KEYWORD",
     value: "let"
@@ -376,12 +409,15 @@ Lexer output: Lexer output: [
   },{ 
     type: "NUMBER",
     value: "9"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
 ***** TEST 13 *****
 Swift input: 'var m = ++a;'
-Lexer output: Lexer output: [
+Lexer output: [
   { 
     type: "DECLARATION_KEYWORD",
     value: "var"
@@ -403,12 +439,15 @@ Lexer output: Lexer output: [
   },{
     type: "PUNCTUATION",
     value: ";"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
 ***** TEST 14 *****
 Swift input: 'var n = a++;'
-Lexer output: Lexer output: [
+Lexer output: [
   { 
     type: "DECLARATION_KEYWORD",
     value: "var"
@@ -430,12 +469,15 @@ Lexer output: Lexer output: [
   },{
     type: "PUNCTUATION",
     value: ";"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
 ***** TEST 15 *****
 Swift input: 'let o = "Hello \(planet)!"'
-Lexer output: Lexer output: [
+Lexer output: [
   { 
     type: "DECLARATION_KEYWORD",
     value: "let"
@@ -460,12 +502,15 @@ Lexer output: Lexer output: [
   },{
     type: "STRING",
     value: "!"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
 ***** TEST 16 *****
 Swift input: 'var p = "\(100 - 99), 2, 3"'
-Lexer output: Lexer output: [
+Lexer output: [
   { 
     type: "DECLARATION_KEYWORD",
     value: "var"
@@ -496,12 +541,15 @@ Lexer output: Lexer output: [
   },{
     type: "STRING",
     value: ", 2, 3"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   }
 ]
 
 ***** TEST 17 *****
 Swift input: 'let q = ["array1": [1,2,3], "array2": [4,5,6]];'
-Lexer output: Lexer output: [
+Lexer output: [
   {
     type: "DECLARATION_KEYWORD",
     value: "let"
@@ -524,7 +572,7 @@ Lexer output: Lexer output: [
     type: "ARRAY_START",
     value: "["
   },{ 
-    type: "Number",
+    type: "NUMBER",
     value: "1"
   },{
     type: "PUNCTUATION",
@@ -554,7 +602,7 @@ Lexer output: Lexer output: [
     type: "ARRAY_START",
     value: "["
   },{ 
-    type: "Number",
+    type: "NUMBER",
     value: "4"
   },{
     type: "PUNCTUATION",
@@ -577,23 +625,254 @@ Lexer output: Lexer output: [
   },{
     type: "PUNCTUATION",
     value: ";"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
   } 
 ]
 
+***** TEST 18 *****
+Swift input: 'var s = arr[0];'
+Lexer output: [
+  { 
+    type: "DECLARATION_KEYWORD",
+    value: "var"
+  },{ 
+    type: "IDENTIFIER",
+    value: "s"
+  },{ 
+    type: "OPERATOR",
+    value: "="
+  },{ 
+    type: "IDENTIFIER",
+    value: "arr"
+  },{
+    type: "PUNCTUATION",
+    value: "["
+  },{ 
+    type: "NUMBER",
+    value: "0"
+  },{
+    type: "PUNCTUATION",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ";"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
+  }
+]
 
+***** TEST 19 *****
+Swift input: 'let t = 100; var u = arr[t - 99];'
+Lexer output: [
+  { 
+    type: "DECLARATION_KEYWORD",
+    value: "let"
+  },{ 
+    type: "IDENTIFIER",
+    value: "t"
+  },{ 
+    type: "OPERATOR",
+    value: "="
+  },{ 
+    type: "NUMBER",
+    value: "100"
+  },{
+    type: "PUNCTUATION",
+    value: ";"
+  },{ 
+    type: "DECLARATION_KEYWORD",
+    value: "var"
+  },{ 
+    type: "IDENTIFIER",
+    value: "u"
+  },{ 
+    type: "OPERATOR",
+    value: "="
+  },{ 
+    type: "IDENTIFIER",
+    value: "arr"
+  },{
+    type: "PUNCTUATION",
+    value: "["
+  },{ 
+    type: "IDENTIFIER",
+    value: "t"
+  },{ 
+    type: "OPERATOR",
+    value: "-"
+  },{ 
+    type: "NUMBER",
+    value: "99"
+  },{
+    type: "PUNCTUATION",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ";"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
+  }
+]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+***** TEST 20 *****
+Swift input: 'let arr = [1,2]; var u = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
+Lexer output: [
+  { 
+    type: "DECLARATION_KEYWORD",
+    value: "let"
+  },{ 
+    type: "IDENTIFIER",
+    value: "arr"
+  },{ 
+    type: "OPERATOR",
+    value: "="
+  },{ 
+    type: "ARRAY_START",
+    value: "["
+  },{ 
+    type: "NUMBER",
+    value: "1"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{
+    type: "NUMBER",
+    value: "2"
+  },{
+    type: "ARRAY_END",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ";"
+  },{ 
+    type: "DECLARATION_KEYWORD",
+    value: "var"
+  },{ 
+    type: "IDENTIFIER",
+    value: "s"
+  },{ 
+    type: "OPERATOR",
+    value: "="
+  },{ 
+    type: "DICTIONARY_START",
+    value: "["
+  },{ 
+    type: "IDENTIFIER",
+    value: "arr"
+  },{
+    type: "PUNCTUATION",
+    value: "["
+  },{ 
+    type: "NUMBER",
+    value: "0"
+  },{
+    type: "PUNCTUATION",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ":"
+  },{ 
+    type: "ARRAY_START",
+    value: "["
+  },{ 
+    type: "NUMBER",
+    value: "1"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{
+    type: "NUMBER",
+    value: "2"
+  },{ 
+    type: "ARRAY_END",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{ 
+    type: "ARRAY_START",
+    value: "["
+  },{
+    type: "NUMBER",
+    value: "3"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{
+    type: "NUMBER",
+    value: "4"
+  },{
+    type: "ARRAY_END",
+    value: "]"
+  },{
+    type: "ARRAY_END",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{ 
+    type: "IDENTIFIER",
+    value: "arr"
+  },{
+    type: "PUNCTUATION",
+    value: "["
+  },{ 
+    type: "NUMBER",
+    value: "1"
+  },{
+    type: "PUNCTUATION",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ":"
+  },{ 
+    type: "ARRAY_START",
+    value: "["
+  },{ 
+    type: "STRING",
+    value: "one"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{
+    type: "STRING",
+    value: "two"
+  },{ 
+    type: "ARRAY_END",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{ 
+    type: "ARRAY_START",
+    value: "["
+  },{
+    type: "STRING",
+    value: "three"
+  },{
+    type: "PUNCTUATION",
+    value: ","
+  },{
+    type: "STRING",
+    value: "four"
+  },{
+    type: "ARRAY_END",
+    value: "]"
+  },{
+    type: "ARRAY_END",
+    value: "]"
+  },{
+    type: "DICTIONARY_END",
+    value: "]"
+  },{
+    type: "PUNCTUATION",
+    value: ";"
+  },{
+    type: "TERMINATOR",
+    value: "EOF"
+  }
+]
