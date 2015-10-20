@@ -10,6 +10,7 @@ var tokenize = require('./tokens.js').tokenize;
 //TODO Test cases 19 & 20 Use type PUNCTUATION rather than ARRAY_START || ARRAYEND
 //TODO TEST 20 Doesn't define arr 20 (SAME WITH 19)
 var tests = require('./test_cases');
+//TODO Transform test 21 in CleanUp function call
 
 var make_parse = function () {
   /* scope interface === new_scope() */
@@ -162,8 +163,6 @@ var make_parse = function () {
     var left;
     var t = token;
     advance();
-    console.log('token to call nud on');
-    console.log(t);
     left = t.nud();
 
     // TODO refactor
@@ -498,8 +497,13 @@ var make_parse = function () {
     if (token.id !== "]") {
       while (true) {
         n = token;
-        if (n.arity !== "name" && n.arity !== "literal") {
+        if (n.arity !== "IDENTIFIER" && n.arity !== "name" && n.arity !== "literal") {
           token.error("Bad property name.");
+        }
+        if(n.arity !== "IDENTIFIER") {
+
+        } else {
+
         }
         advance();
         advance(":");
@@ -687,4 +691,10 @@ var make_parse = function () {
 //var t = "(-16);".tokenize('=<>!+-*&|/%^', '=<>&|');
 //console.log(util.inspect(tests[0], {colors:true,depth:null}));
 var parser = make_parse();
+console.log("############################");
+console.log("############################");
+console.log("##### BEGIN AST OUTPUT #####");
 console.log(util.inspect(parser(tests[20]), {colors:true,depth:null}));
+console.log("############################");
+console.log("############################");
+console.log("############################");
