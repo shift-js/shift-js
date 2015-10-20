@@ -18,6 +18,7 @@ get rid of redundant checkForWhiteSpace and checking if next is undefined
 think about escaped characters: maybe documentation can specify only JS escaped characters are supported
 make tests that insert random spaces and try to get them to pass
 refactor tests to include inserting ;
+create another diff function that doesn't take into account the position of the element
 */
 
 // var tokens = lexer(swiftCode).tokens;
@@ -31,7 +32,7 @@ var lexer = require("./lexer");
 var deepEqual = require("./helperFunctions").deepEqual;
 var diff = require("./helperFunctions").diff;
 
-// var k = 20;
+// var k = 21;
 // console.log(lexer(swiftCode[k]));
 // console.log(diff(lexer(swiftCode[k]),swiftCodeAnswers[k]));
 // // console.log(deepEqual(lexer(swiftCode[k]),swiftCodeAnswers[k]));
@@ -40,7 +41,7 @@ var arr = [];
 
 for (var i = 0; i < swiftCode.length; i++) {
   // debugger;
-  arr.push(deepEqual(lexer(swiftCode[i]),swiftCodeAnswers[i]));
+  arr.push([i+1,deepEqual(lexer(swiftCode[i]),swiftCodeAnswers[i])]);
 }
 
 console.log(arr);

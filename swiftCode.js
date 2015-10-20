@@ -21,7 +21,8 @@ module.exports = {
     'let q = ["array1": [1,2,3], "array2": [4,5,6]];', // 18
     'let arr = [1, 2]; var s = arr[0];', // 19
     'let arr = [1, 2]; let t = 100; var u = arr[t - 99];', // 20
-    'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];' // 21 
+    'let arr = [1,2]; var u = [arr[0]];', // 21
+    'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];' // 22 
   ]
 
 };

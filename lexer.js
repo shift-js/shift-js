@@ -15,6 +15,7 @@ module.exports = function(code) {
   var insideNumber = {status: false};
   var insideCollection = [];
   var stringInterpolation = {status: false, counter: 0};
+  var substringLookup = {status: false};
   // TODO - scope
 
   // advances the position of i by specified number of positions
@@ -76,7 +77,7 @@ module.exports = function(code) {
       continue;
     }
     
-    // console.log(chunk);
+    console.log(chunk);
     if (!insideString.status && !insideNumber.status && 
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
 
@@ -84,9 +85,9 @@ module.exports = function(code) {
         insideCollection[lastCollectionIndex]['type'] === undefined &&
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens)){
         lexerFunctions.determineCollectionType(insideCollection, tokens);
-      } else if (insideCollection.length && currCol === ']') {
+      } else if (insideCollection.length && currCol === ']' && !substringLookup.status) {
         lexerFunctions.checkFor('COLLECTION', chunk, tokens, function() {
-          tokens[tokens.length - 1].type = insideCollection[lastCollectionIndex]['type'];
+          tokens[tokens.length - 1].type = insideCollection[lastCollectionIndex]['type'] || 'ARRAY_END';
           insideCollection.pop();
         });
       } else if (tokens.length && tokens[tokens.length - 1].type !== 'IDENTIFIER' && currCol === '[') {
@@ -96,6 +97,9 @@ module.exports = function(code) {
         lexerFunctions.checkFor('KEYWORD', chunk, tokens) ||
         lexerFunctions.checkForIdentifier(chunk, tokens, VARIABLE_NAMES) ||
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) || 
+        lexerFunctions.checkFor('SUBSTRING_LOOKUP', chunk, tokens, function() {
+          substringLookup.status = !substringLookup.status;
+        }) ||
         lexerFunctions.checkFor('OPERATOR', chunk, tokens) || 
         lexerFunctions.checkForLiteral(chunk, tokens);
       }
