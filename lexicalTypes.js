@@ -136,8 +136,6 @@ module.exports = {
     ')': 'PUNCTUATION', 
     '{': 'PUNCTUATION', 
     '}': 'PUNCTUATION', 
-    '[': 'PUNCTUATION', 
-    ']': 'PUNCTUATION', 
     '.': 'PUNCTUATION', 
     ',': 'PUNCTUATION', 
     ':': 'PUNCTUATION', 
@@ -147,6 +145,11 @@ module.exports = {
     '`': 'PUNCTUATION',
     '?': 'PUNCTUATION' 
 
+  },
+
+  SUBSTRING_LOOKUP: {
+    '[': 'SUBSTRING_LOOKUP', 
+    ']': 'SUBSTRING_LOOKUP', 
   },
 
   SPECIAL_STRING: {

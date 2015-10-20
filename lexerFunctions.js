@@ -13,7 +13,8 @@ module.exports = {
         module.exports.checkFor('PUNCTUATION', currCol) || 
         module.exports.checkFor('OPERATOR', nextCol) || 
         module.exports.checkFor('OPERATOR', currCol) || 
-        nextCol === '"' || nextCol === ']' || nextCol === undefined) {
+        nextCol === '"' || nextCol === ']' || currCol === '[' ||
+        currCol === ']' || nextCol === '[' || nextCol === undefined) {
       
       return true;
     
