@@ -1,13 +1,18 @@
 module.exports = {
 
-  ARRAY: {
-    '[': 'ARRAY_START',
-    ']': 'ARRAY_END'
-  },
+  // ARRAY: {
+  //   '[': 'ARRAY_START',
+  //   ']': 'ARRAY_END'
+  // },
 
-  DICTIONARY: {
-    '[': 'DICTIONARY_START',
-    ']': 'DICTIONARY_END'
+  // DICTIONARY: {
+  //   '[': 'DICTIONARY_START',
+  //   ']': 'DICTIONARY_END'
+  // },
+  
+  COLLECTION: {
+    '[': 'ARRAY_START',
+    ']': 'COLLECTION_END'
   },
   
   KEYWORD: { 
@@ -122,6 +127,9 @@ module.exports = {
     
   },
 
+  // TODO Multicharacter operator such as ==, -=, 
+  // TODO end of file terminator at end of string, new line terminator, semicolon terminator
+
   PUNCTUATION: {
     
     '(': 'PUNCTUATION',
@@ -140,6 +148,11 @@ module.exports = {
     '?': 'PUNCTUATION' 
 
   },
+
+  SPECIAL_STRING: {
+    '\\(': "STRING_INTERPOLATION_START",
+    ')': "STRING_INTERPOLATION_END",
+  }
 
   
 };
