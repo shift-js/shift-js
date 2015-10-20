@@ -1,0 +1,15 @@
+{
+  "name": "treefication",
+  "version": "1.0.0",
+  "description": "",
+  "main": "first.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esprima-ast-utils": "0.0.6",
+    "ramda": "^0.18.0"
+  }
+}
