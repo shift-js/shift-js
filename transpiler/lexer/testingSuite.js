@@ -19,6 +19,7 @@ think about escaped characters: maybe documentation can specify only JS escaped 
 make tests that insert random spaces and try to get them to pass
 refactor tests to include inserting ;
 create another diff function that doesn't take into account the position of the element
+refactor the testingSuite to be more automated in lexerTests3.js
 */
 
 // var tokens = lexer(swiftCode).tokens;
@@ -32,16 +33,16 @@ var lexer = require("./lexer");
 var deepEqual = require("./helperFunctions").deepEqual;
 var diff = require("./helperFunctions").diff;
 
-// var k = 21;
-// console.log(lexer(swiftCode[k]));
-// console.log(diff(lexer(swiftCode[k]),swiftCodeAnswers[k]));
+var k = swiftCode.length-1;
+console.log(lexer(swiftCode[k]));
+console.log(diff(lexer(swiftCode[k]),swiftCodeAnswers[k]));
 // // console.log(deepEqual(lexer(swiftCode[k]),swiftCodeAnswers[k]));
 
-var arr = [];
+// var arr = [];
 
-for (var i = 0; i < swiftCode.length; i++) {
-  // debugger;
-  arr.push([i+1,deepEqual(lexer(swiftCode[i]),swiftCodeAnswers[i])]);
-}
+// for (var i = 0; i < swiftCode.length; i++) {
+//   // debugger;
+//   arr.push([i+1,deepEqual(lexer(swiftCode[i]),swiftCodeAnswers[i])]);
+// }
 
-console.log(arr);
+// console.log(arr);

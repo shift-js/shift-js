@@ -11,10 +11,12 @@ module.exports = {
     'let h = 3.14', // 8
     'let i = 5+6', // 9
     'var j = 5 + 6 / 4 - (-16 % 4.2) * 55', // 10
-    'var k = "Stephen" + " " + "Tabor" + "!"', // 11
     'let l = 6 !== 9', // 12
     'var a = 1; var m = ++a;', // 13
     'var a = 1; var n = a++;', // 14
+    'var a = true; var b = !a; var c = -a; var d = +b',
+    'var a = (6 == 7) ? 1 : -1',
+    'var k = "Stephen" + " " + "Tabor" + "!"',
     'var planet = "Earth"; let o = "Hello \\(planet)!"', // 15
     'var planet = "Earth"; let o = "\\(planet)"', // 16
     'var p = "\\(100 - 99), 2, 3"', // 17
@@ -22,7 +24,9 @@ module.exports = {
     'let arr = [1, 2]; var s = arr[0];', // 19
     'let arr = [1, 2]; let t = 100; var u = arr[t - 99];', // 20
     'let arr = [1,2]; var u = [arr[0]];', // 21
-    'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];' // 22 
+    'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];', // 22 
+    // '/* Comment 1 */ var a = 1 // Comment 2',
   ]
 
 };
+

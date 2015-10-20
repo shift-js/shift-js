@@ -126,20 +126,6 @@ module.exports = {
       { type: "NUMBER",               value: "55" },
       { type: "TERMINATOR",           value: "EOF" }
     ],
-    // 11
-    [
-      { type: "DECLARATION_KEYWORD",  value: "var" },
-      { type: "IDENTIFIER",           value: "k" },
-      { type: "OPERATOR",             value: "=" },
-      { type: "STRING",               value: "Stephen" },
-      { type: "OPERATOR",             value: "+" },
-      { type: "STRING",               value: " " },
-      { type: "OPERATOR",             value: "+" },
-      { type: "STRING",               value: "Tabor" },
-      { type: "OPERATOR",             value: "+" },
-      { type: "STRING",               value: "!" },
-      { type: "TERMINATOR",           value: "EOF" }
-    ],
     // 12
     [  
       { type: "DECLARATION_KEYWORD",  value: "let" },
@@ -167,7 +153,8 @@ module.exports = {
       { type: "IDENTIFIER",           value: "a" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
-    ],
+    ]
+    ,
     // 14
     [
       { type: "DECLARATION_KEYWORD",  value: "var" },
@@ -183,8 +170,66 @@ module.exports = {
       { type: "OPERATOR",             value: "+" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
-    ],
-    // 15
+    ]
+    ,
+    [
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "a" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "BOOLEAN",                    value: "true" },
+      { type: "PUNCTUATION",                value: ";" },
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "b" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "OPERATOR",                   value: "!" },
+      { type: "IDENTIFIER",                 value: "a" },
+      { type: "PUNCTUATION",                value: ";" },
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "c" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "OPERATOR",                   value: "-" },
+      { type: "IDENTIFIER",                 value: "a" },
+      { type: "PUNCTUATION",                value: ";" },
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "d" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "OPERATOR",                   value: "+" },
+      { type: "IDENTIFIER",                 value: "b" },
+      { type: "TERMINATOR",                 value: "EOF"}
+    ]
+    ,
+    [
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "a" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "PUNCTUATION",                value: "(" },
+      { type: "NUMBER",                     value: "6" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "NUMBER",                     value: "7" },
+      { type: "PUNCTUATION",                value: ")" },
+      { type: "OPERATOR",                   value: "?" },
+      { type: "NUMBER",                     value: "1" },
+      { type: "PUNCTUATION",                value: ":" },
+      { type: "OPERATOR",                   value: "-" },
+      { type: "NUMBER",                     value: "1" },
+      { type: "TERMINATOR",                 value: "EOF"}
+    ]
+    ,
+    [
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "k" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "STRING",                     value: "Stephen" },
+      { type: "OPERATOR",                   value: "+" },
+      { type: "STRING",                     value: " " },
+      { type: "OPERATOR",                   value: "+" },
+      { type: "STRING",                     value: "Tabor" },
+      { type: "OPERATOR",                   value: "+" },
+      { type: "STRING",                     value: "!" },
+      { type: "TERMINATOR",                 value: "EOF" }
+    ]
+    ,
     [
       { type: "DECLARATION_KEYWORD",        value: "var" },
       { type: "IDENTIFIER",                 value: "planet" },
@@ -200,7 +245,8 @@ module.exports = {
       { type: "STRING_INTERPOLATION_END",   value: ")" },
       { type: "STRING",                     value: "!" },
       { type: "TERMINATOR",                 value: "EOF" }
-    ],
+    ]
+    ,
     // 16
     [
       { type: "DECLARATION_KEYWORD",        value: "var" },

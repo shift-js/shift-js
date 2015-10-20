@@ -77,7 +77,7 @@ module.exports = function(code) {
       continue;
     }
     
-    console.log(chunk);
+    // console.log(chunk);
     if (!insideString.status && !insideNumber.status && 
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
 

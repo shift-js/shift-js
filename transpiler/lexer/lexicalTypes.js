@@ -143,7 +143,7 @@ module.exports = {
     '@': 'PUNCTUATION', 
     '#': 'PUNCTUATION', 
     '`': 'PUNCTUATION',
-    '?': 'PUNCTUATION' 
+    // '?': 'PUNCTUATION' 
 
   },
 
