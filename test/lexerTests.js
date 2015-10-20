@@ -4,7 +4,7 @@ var lexer           = require('../lexer');
 var expect          = require('chai').expect;
 
 describe('Lexer', function() {
-  describe('Basic tests', function () {
+  xdescribe('Basic tests', function () {
     it('should handle variable declarations with numbers', function () {
       input = 'var a = 3';
       output = [
@@ -54,7 +54,7 @@ describe('Lexer', function() {
     });
   });
 
-  describe('Basic collections', function () {
+  xdescribe('Basic collections', function () {
     it('should handle arrays', function () {
       input = 'var e = ["Eggs", "Milk", "Bacon"]';
       output = [
@@ -122,7 +122,7 @@ describe('Lexer', function() {
     });
   });
 
-  describe('Numbers and operations', function () {
+  xdescribe('Numbers and operations', function () {
     it('should handle floating point numbers', function () {
       input = 'let h = 3.14';
       output = [
@@ -169,24 +169,6 @@ describe('Lexer', function() {
         { type: "PUNCTUATION",          value: ")" },
         { type: "OPERATOR",             value: "*" },
         { type: "NUMBER",               value: "55" },
-        { type: "TERMINATOR",           value: "EOF" }
-      ];
-      expect(lexer(input)).to.equal(output);
-    });
-
-    it('should handle string concatenation', function () {
-      input = 'var k = "Stephen" + " " + "Tabor" + "!"';
-      output = [
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "k" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "STRING",               value: "Stephen" },
-        { type: "OPERATOR",             value: "+" },
-        { type: "STRING",               value: " " },
-        { type: "OPERATOR",             value: "+" },
-        { type: "STRING",               value: "Tabor" },
-        { type: "OPERATOR",             value: "+" },
-        { type: "STRING",               value: "!" },
         { type: "TERMINATOR",           value: "EOF" }
       ];
       expect(lexer(input)).to.equal(output);
@@ -249,35 +231,67 @@ describe('Lexer', function() {
     });
   });
 
-  describe('String interpolation', function () {
+  xdescribe('String interpolation', function () {
+
+    it('should handle string concatenation', function () {
+      input = 'var k = "Stephen" + " " + "Tabor" + "!"';
+      output = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "k" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "STRING",               value: "Stephen" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "STRING",               value: " " },
+        { type: "OPERATOR",             value: "+" },
+        { type: "STRING",               value: "Tabor" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "STRING",               value: "!" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      expect(lexer(input)).to.equal(output);
+    });
 
     it('should handle string interpolation', function () {
-      input = 'let o = "Hello \(planet)!"';
+      input = 'var planet = "Earth"; let o = "Hello \\(planet)!"; let oo = "\\(planet)"';
       output = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "planet" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "STRING",                     value: "Earth" },
+        { type: "PUNCTUATION",                value: ";" },
         { type: "DECLARATION_KEYWORD",        value: "let" },
         { type: "IDENTIFIER",                 value: "o" },
         { type: "OPERATOR",                   value: "=" },
         { type: "STRING",                     value: "Hello " },
-        { type: "STRING_INTEEPOLATION_START", value: "\(" },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
         { type: "IDENTIFIER",                 value: "planet" },
-        { type: "STRING_INTEEPOLATION_END",   value: ")" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
         { type: "STRING",                     value: "!" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "DECLARATION_KEYWORD",        value: "let" },
+        { type: "IDENTIFIER",                 value: "o" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "STRING",                     value: "" },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "planet" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: "" },
         { type: "TERMINATOR",                 value: "EOF" }
       ];
       expect(lexer(input)).to.equal(output);
     });
 
     it('should handle interpolation of operations', function () {
-      input = 'var p = "\(100 - 99), 2, 3"';
+      input = 'var p = "\\(100 - 99), 2, 3"';
       output = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "p" },
         { type: "OPERATOR",                   value: "=" },
-        { type: "STRING_INTEEPOLATION_START", value: "\(" },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
         { type: "NUMBER",                     value: "100" },
         { type: "OPERATOR",                   value: "-" },
         { type: "NUMBER",                     value: "99" },
-        { type: "STRING_INTEEPOLATION_END",   value: ")" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
         { type: "STRING",                     value: ", 2, 3" },
         { type: "TERMINATOR",                 value: "EOF" }
       ];
@@ -285,7 +299,7 @@ describe('Lexer', function() {
     });
   });
 
-  describe('Nested collections and semicolons', function () {
+  xdescribe('Nested collections', function () {
 
     it('should handle dictionaries of arrays', function () {
       input = 'let q = ["array1": [1,2,3], "array2": [4,5,6]];';
@@ -321,8 +335,17 @@ describe('Lexer', function() {
     });
 
     it('should handle array access', function () {
-      input = 'var s = arr[0];';
+      input = 'let arr = [1, 2]; var s = arr[0];';
       output = [
+        { type: "DECLARATION_KEYWORD",  value: "let" },
+        { type: "IDENTIFIER",           value: "arr" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "ARRAY_START",          value: "[" },
+        { type: "NUMBER",               value: "1" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "NUMBER",               value: "2" },
+        { type: "ARRAY_END",            value: "]" },
+        { type: "PUNCTUATION",          value: ";" },
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "s" },
         { type: "OPERATOR",             value: "=" },
@@ -336,7 +359,8 @@ describe('Lexer', function() {
       expect(lexer(input)).to.equal(output);
     });
 
-    it('should handle multiple statements on a single line separated by semicolons', function () {
+
+    it('should handle array access with numeric operations', function () {
       input = 'let arr = [1, 2]; let t = 100; var u = arr[t - 99];';
       output = [
         { type: "DECLARATION_KEYWORD",  value: "let" },

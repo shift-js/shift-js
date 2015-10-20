@@ -19,10 +19,14 @@
     "url": "https://github.com/shift-js/shift-js/issues"
   },
   "homepage": "https://github.com/shift-js/shift-js#readme",
-  "dependencies": {},
+  "dependencies": {
+    "esprima-ast-utils": "0.0.6"
+  },
   "devDependencies": {
     "chai": "^3.3.0",
     "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-mocha-test": "^0.12.7",
     "mocha": "^2.3.3"
   }
 }
