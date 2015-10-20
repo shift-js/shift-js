@@ -1,7 +1,26 @@
 var lexicalTypes = require("./lexicalTypes");
 
+
+
 module.exports = {
 
+  checkForEvaluationPoint: function(currCol, nextCol) {
+    if (
+      
+        module.exports.checkForWhitespace(currCol) ||
+        module.exports.checkForWhitespace(nextCol) || 
+        module.exports.checkFor('PUNCTUATION', nextCol) || 
+        module.exports.checkFor('PUNCTUATION', currCol) || 
+        module.exports.checkFor('OPERATOR', nextCol) || 
+        module.exports.checkFor('OPERATOR', currCol) || 
+        nextCol === '"' || nextCol === ']' || nextCol === undefined) {
+      
+      return true;
+    
+    }
+    return false;
+  },
+  
   makeToken: function(lexicalType, snippet, tokens, type, value) {
     if (tokens) {
       var obj = {};
@@ -64,35 +83,35 @@ module.exports = {
 
   // helper function to check for identifiers
   checkForIdentifier: function(snippet, tokens, variable_names) {
-    if (variable_names[snippet]) {
-      if (tokens) {
-        module.exports.makeToken(undefined, snippet, tokens, 'IDENTIFIER', snippet);
+      if (variable_names[snippet]) {
+        if (tokens) {
+          module.exports.makeToken(undefined, snippet, tokens, 'IDENTIFIER', snippet);
+        }
+        return true;
+      } else if (tokens[tokens.length - 1].type === 'DECLARATION_KEYWORD') {
+        if (tokens) {
+          module.exports.makeToken(undefined, snippet, tokens, 'IDENTIFIER', snippet);
+        }
+        variable_names[snippet] = true;
+        return true;
       }
-      return true;
-    } else if (tokens[tokens.length - 1].type === 'DECLARATION_KEYWORD') {
-      if (tokens) {
-        module.exports.makeToken(undefined, snippet, tokens, 'IDENTIFIER', snippet);
-      }
-      variable_names[snippet] = true;
-      return true;
-    }
     return false;
   },
   
-  determineCollectionType: function(collectionInformation, tokens) {
+  determineCollectionType: function(collectionInformation, tokens, cb) {
     if (tokens[tokens.length - 1]['value'] === ':') {
-      var index = tokens.length - 2;
-      while (index >= 0) {
-        if (tokens[index].type === 'ARRAY_START') {
-          tokens[index].type = 'DICTIONARY_START';
-          break;
-        }
-        index--;
-      }
-      collectionInformation.type = 'DICTIONARY';
+      tokens[collectionInformation[collectionInformation.length - 1]['location']]['type'] = 'DICTIONARY_START';
+      collectionInformation[collectionInformation.length - 1]['type'] = 'DICTIONARY_END';
     } else {
-      collectionInformation.type = 'ARRAY';
+      collectionInformation[collectionInformation.length - 1]['type']  = 'ARRAY_END';
     }
-  }
+    if (cb) {
+      cb();
+    }
+  },
+  
+  handleEndOfFile: function(nextCol, tokens) {
+      if (nextCol === undefined) module.exports.makeToken(undefined, undefined, tokens, 'TERMINATOR', 'EOF');
+    }
   
 };

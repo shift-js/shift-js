@@ -1,6 +1,7 @@
 var lexerFunctions = require("./lexerFunctions");
 
 module.exports = function(code) {
+  var NUMBER = /^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i;
   
   code = code.trim();
   var i = 0;
@@ -10,8 +11,10 @@ module.exports = function(code) {
   var VARIABLE_NAMES = {};
   
   // track state
-  var insideString = {status: false, end: false};
-  var insideCollection = {status: false, type: undefined};
+  var insideString = {status: false};
+  var insideNumber = {status: false};
+  var insideCollection = [];
+  var stringInterpolation = {status: false, counter: 0};
   // TODO - scope
 
   // advances the position of i by specified number of positions
@@ -30,71 +33,84 @@ module.exports = function(code) {
   };
 
   while (code[i] !== undefined) {
-
+    debugger;
     chunk += code[i];
     currCol = code[i];
     prevCol = code[i - 1];
     nextCol = code[i + 1];
+    var lastCollectionIndex = insideCollection.length - 1;
     
     if (currCol === '"' && insideString.status) {
       insideString.status = false;
-      insideString.end = true;
     } else if (currCol === '"') {
       insideString.status = true;
     }
     
-    // handles white space outside of string
-    if (lexerFunctions.checkForWhitespace(currCol) && !insideString.status) {
+    if (NUMBER.test(chunk) && !insideString.status && !insideNumber.status) {
+      insideNumber.status = true;
+    }
+    if (insideNumber.status && isNaN(nextCol) && nextCol !== '.') {
+      insideNumber.status = false;
+      lexerFunctions.checkForLiteral(chunk, tokens);
       advanceAndClear(1);
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
+      continue;
+    }
+
+    if (!stringInterpolation.status && nextCol === '\\' && code[i + 2] === '(') {
+      stringInterpolation.status = true;
+      if (chunk !== "") {
+        lexerFunctions.checkForLiteral(chunk + '"', tokens);
+      }
+      lexerFunctions.makeToken("SPECIAL_STRING", "\\(", tokens);
+      advanceAndClear(3);
+      insideString.status = false;
+      continue;
+    }
+    if (stringInterpolation.status && currCol === ")" && stringInterpolation.counter === 0) {
+      stringInterpolation.status = false;
+      lexerFunctions.makeToken("SPECIAL_STRING", ")", tokens);
+      advanceAndClear(1);
+      chunk = '"';
+      insideString.status = true;
       continue;
     }
     
-    if (!insideString.status) {
-      if (insideString.end) {
+    // console.log(chunk);
+    if (!insideString.status && !insideNumber.status && 
+      lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
+
+      if (insideCollection.length && 
+        insideCollection[lastCollectionIndex]['type'] === undefined &&
+        lexerFunctions.checkFor('PUNCTUATION', chunk, tokens)){
+        lexerFunctions.determineCollectionType(insideCollection, tokens);
+      } else if (insideCollection.length && currCol === ']') {
+        lexerFunctions.checkFor('COLLECTION', chunk, tokens, function() {
+          tokens[tokens.length - 1].type = insideCollection[lastCollectionIndex]['type'];
+          insideCollection.pop();
+        });
+      } else if (tokens.length && tokens[tokens.length - 1].type !== 'IDENTIFIER' && currCol === '[') {
+        lexerFunctions.checkFor('COLLECTION', chunk, tokens, function(){
+          insideCollection.push({type: undefined, location: tokens.length-1});})
+      } else {
+        lexerFunctions.checkFor('KEYWORD', chunk, tokens) ||
+        lexerFunctions.checkForIdentifier(chunk, tokens, VARIABLE_NAMES) ||
+        lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) || 
+        lexerFunctions.checkFor('OPERATOR', chunk, tokens) || 
         lexerFunctions.checkForLiteral(chunk, tokens);
-        insideString.end = false;
-        advanceAndClear(1);
-        continue;
-      } else if (lexerFunctions.checkForWhitespace(nextCol) || 
-        lexerFunctions.checkFor('PUNCTUATION', nextCol) || 
-        lexerFunctions.checkFor('PUNCTUATION', currCol) || 
-        lexerFunctions.checkFor('OPERATOR', nextCol) || 
-        lexerFunctions.checkFor('OPERATOR', currCol) || 
-        nextCol === '"' || nextCol === ']' || nextCol === undefined) {
-        if (insideCollection.status && insideCollection.type === undefined &&
-          lexerFunctions.checkFor('PUNCTUATION', chunk, tokens)){
-          lexerFunctions.determineCollectionType(insideCollection, tokens);
-        } else if (insideCollection.type === 'ARRAY' && 
-          lexerFunctions.checkFor('ARRAY', chunk)) {
-          lexerFunctions.checkFor('ARRAY', chunk, tokens, function() {
-            insideCollection.status = false;
-            insideCollection.type = undefined;
-          })
-        } else if (insideCollection.type === 'DICTIONARY' && 
-          lexerFunctions.checkFor('DICTIONARY', chunk)) {
-          lexerFunctions.checkFor('DICTIONARY', chunk, tokens, function() {
-            insideCollection.status = false;
-            insideCollection.type = undefined;
-          })
-        } else {
-          lexerFunctions.checkFor('KEYWORD', chunk, tokens) ||
-          lexerFunctions.checkForIdentifier(chunk, tokens, VARIABLE_NAMES) ||
-          lexerFunctions.checkFor('ARRAY', chunk, tokens, function(){
-            insideCollection.status = true;}) ||
-          lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) || 
-          lexerFunctions.checkFor('OPERATOR', chunk, tokens) || 
-          lexerFunctions.checkForLiteral(chunk, tokens);
-        }
-        advanceAndClear(1);
-        if (lexerFunctions.checkForWhitespace(nextCol)) advance(1);
-        continue;
       }
+      
+      clearChunk();
+      
+      // handles special evaluation point scenarios
+      if (lexerFunctions.checkForWhitespace(nextCol)) advance(1);
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
+      
     }
-
     advance(1);
-    
+    // console.log(tokens);
   }
-
+  // console.log(tokens);
   return tokens;
   
 };

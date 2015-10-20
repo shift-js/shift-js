@@ -17,5 +17,14 @@ module.exports = {
       }
     }
     return propsInA === propsInB;
-  } 
+  }, 
+  diff: function(a,b) {
+    var results = [];
+    for (var i = 0; i < Math.max(a.length,b.length); i++) {
+      if (!module.exports.deepEqual(a[i],b[i])) {
+        results.push({'index': i, 'actual output': a[i], 'expected answer': b[i]});
+      }
+    }
+    return results;
+  }
 };
