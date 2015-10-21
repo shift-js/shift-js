@@ -133,7 +133,6 @@ module.exports = {
     
   },
 
-  // TODO Multicharacter operator such as ==, -=, 
   // TODO end of file terminator at end of string, new line terminator, semicolon terminator
 
   PUNCTUATION: {
