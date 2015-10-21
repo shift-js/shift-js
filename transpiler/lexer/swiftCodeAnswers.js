@@ -126,20 +126,6 @@ module.exports = {
       { type: "NUMBER",               value: "55" },
       { type: "TERMINATOR",           value: "EOF" }
     ],
-    // 11
-    [
-      { type: "DECLARATION_KEYWORD",  value: "var" },
-      { type: "IDENTIFIER",           value: "k" },
-      { type: "OPERATOR",             value: "=" },
-      { type: "STRING",               value: "Stephen" },
-      { type: "OPERATOR",             value: "+" },
-      { type: "STRING",               value: " " },
-      { type: "OPERATOR",             value: "+" },
-      { type: "STRING",               value: "Tabor" },
-      { type: "OPERATOR",             value: "+" },
-      { type: "STRING",               value: "!" },
-      { type: "TERMINATOR",           value: "EOF" }
-    ],
     // 12
     [  
       { type: "DECLARATION_KEYWORD",  value: "let" },
@@ -167,7 +153,8 @@ module.exports = {
       { type: "IDENTIFIER",           value: "a" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
-    ],
+    ]
+    ,
     // 14
     [
       { type: "DECLARATION_KEYWORD",  value: "var" },
@@ -183,8 +170,66 @@ module.exports = {
       { type: "OPERATOR",             value: "+" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
-    ],
-    // 15
+    ]
+    ,
+    [
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "a" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "BOOLEAN",                    value: "true" },
+      { type: "PUNCTUATION",                value: ";" },
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "b" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "OPERATOR",                   value: "!" },
+      { type: "IDENTIFIER",                 value: "a" },
+      { type: "PUNCTUATION",                value: ";" },
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "c" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "OPERATOR",                   value: "-" },
+      { type: "IDENTIFIER",                 value: "a" },
+      { type: "PUNCTUATION",                value: ";" },
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "d" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "OPERATOR",                   value: "+" },
+      { type: "IDENTIFIER",                 value: "b" },
+      { type: "TERMINATOR",                 value: "EOF"}
+    ]
+    ,
+    [
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "a" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "PUNCTUATION",                value: "(" },
+      { type: "NUMBER",                     value: "6" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "NUMBER",                     value: "7" },
+      { type: "PUNCTUATION",                value: ")" },
+      { type: "OPERATOR",                   value: "?" },
+      { type: "NUMBER",                     value: "1" },
+      { type: "PUNCTUATION",                value: ":" },
+      { type: "OPERATOR",                   value: "-" },
+      { type: "NUMBER",                     value: "1" },
+      { type: "TERMINATOR",                 value: "EOF"}
+    ]
+    ,
+    [
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "k" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "STRING",                     value: "Stephen" },
+      { type: "OPERATOR",                   value: "+" },
+      { type: "STRING",                     value: " " },
+      { type: "OPERATOR",                   value: "+" },
+      { type: "STRING",                     value: "Tabor" },
+      { type: "OPERATOR",                   value: "+" },
+      { type: "STRING",                     value: "!" },
+      { type: "TERMINATOR",                 value: "EOF" }
+    ]
+    ,
     [
       { type: "DECLARATION_KEYWORD",        value: "var" },
       { type: "IDENTIFIER",                 value: "planet" },
@@ -200,7 +245,8 @@ module.exports = {
       { type: "STRING_INTERPOLATION_END",   value: ")" },
       { type: "STRING",                     value: "!" },
       { type: "TERMINATOR",                 value: "EOF" }
-    ],
+    ]
+    ,
     // 16
     [
       { type: "DECLARATION_KEYWORD",        value: "var" },
@@ -388,6 +434,53 @@ module.exports = {
       { type: "DICTIONARY_END",       value: "]" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
+    ],
+    [
+      { type: "MULTI_LINE_COMMENT_START",  value: "/*"},
+      { type: "COMMENT",                   value: " Comment 1 "},
+      { type: "MULTI_LINE_COMMENT_END",    value: "*/"},
+      { type: "DECLARATION_KEYWORD",       value: "var" },
+      { type: "IDENTIFIER",                value: "a" },
+      { type: "OPERATOR",                  value: "=" },
+      { type: "NUMBER",                    value: "1" },
+      { type: "COMMENT_START",             value: "//"},
+      { type: "COMMENT",                   value: " Comment 2"},
+      { type: "TERMINATOR",                value: "EOF"}
+    ],
+    [
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "error" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "TUPLE_START",                value: "("},
+      { type: "NUMBER",                     value: "404"},
+      { type: "PUNCTUATION",                value: "," },
+      { type: "STRING",                     value: "not found"},
+      { type: "TUPLE_END",                  value: ")"},
+      { type: "TERMINATOR",                 value: "EOF" }
+    ],
+    [
+      { type: "DECLARATION_KEYWORD",        value: "let" },
+      { type: "IDENTIFIER",                 value: "http200Status" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "TUPLE_START",                value: "("},
+      { type: "TUPLE_ELEMENT_NAME",         value: "statusCode"},
+      { type: "PUNCTUATION",                value: ":" },
+      { type: "NUMBER",                     value: "200"},
+      { type: "PUNCTUATION",                value: "," },
+      { type: "TUPLE_ELEMENT_NAME",         value: "description"},
+      { type: "PUNCTUATION",                value: ":" },
+      { type: "STRING",                     value: "OK"},
+      { type: "TUPLE_END",                  value: ")"},
+      { type: "PUNCTUATION",                value: ";" },
+      { type: "TERMINATOR",                 value: "EOF" }
+    ],
+    [
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "empty" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "TUPLE_START",                value: "("},
+      { type: "TUPLE_END",                  value: ")"},
+      { type: "TERMINATOR",                 value: "EOF" }
     ]
   ]
 };
