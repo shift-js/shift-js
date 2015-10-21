@@ -29,7 +29,11 @@ module.exports = {
     'var error = (404, "not found")', // 26
     'let http200Status = (statusCode: 200, description: "OK");', // 27
     'var empty = ()', // 28
-    'var w = [1: [[1: "two"], [3: "four"]], 2: [["one": 2], ["three": 4]]];' // 29
+    'var w = [1: [[1: "two"], [3: "four"]], 2: [["one": 2], ["three": 4]]];', // 29
+    'var i = 10; while i >= 0 {i--}', // 30
+    'var i = 10; repeat {i--} while (i >= 0)', // 31
+    'var i = 10; while (i >= 0) {i--}', // 32
+    'var i = 10; repeat {i--} while i >= 0' // 33
   ]
 
 };

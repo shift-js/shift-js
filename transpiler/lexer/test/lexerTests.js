@@ -949,17 +949,103 @@ describe('Lexer', function() {
 
     });
 
-    xdescribe('While/Repeat-While loops', function() {
+    describe('While/Repeat-While loops', function() {
 
-      xit('should handle single-line while loops', function() {
-        input = 'FILL_ME_IN';
-        output = 'FILL_ME_IN';
+      it('should handle single-line while loops with a parenthetical', function() {
+        input = 'var i = 10; while (i >= 0) {i--}';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "while" },
+          { type: "PUNCTUATION",          value: "(" }, 
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },  
+          { type: "PUNCTUATION",          value: ")" }, 
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      xit('should handle single-line repeat-while loops', function() {
-        input = 'FILL_ME_IN';
-        output = 'FILL_ME_IN';
+      it('should handle single-line while loops without a parenthetical', function() {
+        input = 'var i = 10; while i >= 0 {i--}';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "while" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },    
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle single-line repeat-while loops with a parenthetical', function() {
+        input = 'var i = 10; repeat {i--} while (i >= 0)';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "repeat" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "STATEMENT_KEYWORD",    value: "while" },
+          { type: "PUNCTUATION",          value: "(" }, 
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },    
+          { type: "PUNCTUATION",          value: ")" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle single-line repeat-while loops without a parenthetical', function() {
+        input = 'var i = 10; repeat {i--} while i >= 0';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "repeat" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "STATEMENT_KEYWORD",    value: "while" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },    
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 

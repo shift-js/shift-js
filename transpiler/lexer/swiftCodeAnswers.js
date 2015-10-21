@@ -523,5 +523,87 @@ module.exports = {
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
     ]
+    ,
+    [
+      { type: "DECLARATION_KEYWORD",  value: "var" },
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: "=" },
+      { type: "NUMBER",               value: "10" },
+      { type: "PUNCTUATION",          value: ";" },
+      { type: "STATEMENT_KEYWORD",    value: "while" },
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: ">" },
+      { type: "OPERATOR",             value: "=" },
+      { type: "NUMBER",               value: "0" },    
+      { type: "PUNCTUATION",          value: "{" },
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: "-" },
+      { type: "OPERATOR",             value: "-" },
+      { type: "PUNCTUATION",          value: "}" }, 
+      { type: "TERMINATOR",           value: "EOF"}
+    ]
+    ,
+    [
+      { type: "DECLARATION_KEYWORD",  value: "var" },
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: "=" },
+      { type: "NUMBER",               value: "10" },
+      { type: "PUNCTUATION",          value: ";" },
+      { type: "STATEMENT_KEYWORD",    value: "repeat" },
+      { type: "PUNCTUATION",          value: "{" },
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: "-" },
+      { type: "OPERATOR",             value: "-" },
+      { type: "PUNCTUATION",          value: "}" }, 
+      { type: "STATEMENT_KEYWORD",    value: "while" },
+      { type: "PUNCTUATION",          value: "(" }, 
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: ">" },
+      { type: "OPERATOR",             value: "=" },
+      { type: "NUMBER",               value: "0" },    
+      { type: "PUNCTUATION",          value: ")" }, 
+      { type: "TERMINATOR",           value: "EOF"}
+    ]
+    ,
+    [
+      { type: "DECLARATION_KEYWORD",  value: "var" },
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: "=" },
+      { type: "NUMBER",               value: "10" },
+      { type: "PUNCTUATION",          value: ";" },
+      { type: "STATEMENT_KEYWORD",    value: "while" },
+      { type: "PUNCTUATION",          value: "(" }, 
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: ">" },
+      { type: "OPERATOR",             value: "=" },
+      { type: "NUMBER",               value: "0" }, 
+      { type: "PUNCTUATION",          value: ")" },    
+      { type: "PUNCTUATION",          value: "{" },
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: "-" },
+      { type: "OPERATOR",             value: "-" },
+      { type: "PUNCTUATION",          value: "}" }, 
+      { type: "TERMINATOR",           value: "EOF"}
+    ]
+    ,
+    [
+      { type: "DECLARATION_KEYWORD",  value: "var" },
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: "=" },
+      { type: "NUMBER",               value: "10" },
+      { type: "PUNCTUATION",          value: ";" },
+      { type: "STATEMENT_KEYWORD",    value: "repeat" },
+      { type: "PUNCTUATION",          value: "{" },
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: "-" },
+      { type: "OPERATOR",             value: "-" },
+      { type: "PUNCTUATION",          value: "}" }, 
+      { type: "STATEMENT_KEYWORD",    value: "while" },
+      { type: "IDENTIFIER",           value: "i" },
+      { type: "OPERATOR",             value: ">" },
+      { type: "OPERATOR",             value: "=" },
+      { type: "NUMBER",               value: "0" },    
+      { type: "TERMINATOR",           value: "EOF"}
+    ]
   ]
 };

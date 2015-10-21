@@ -49,10 +49,9 @@ module.exports = function(code) {
     // console.log(tokens);
 
     if (lexerFunctions.checkForComment(insideComment, chunk, tokens, 
-      currCol, nextCol, code[i+2], advanceAndClear)) {
+      currCol, nextCol, nextNextCol, advanceAndClear)) {
       continue;
     }
-
     if (lexerFunctions.checkInsideComment(insideComment)) {
       advance(1);
       continue;

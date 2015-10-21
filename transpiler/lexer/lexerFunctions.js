@@ -66,7 +66,7 @@ module.exports = {
     }
   },
 
-  checkForComment: function(insideComment, snippet, tokens, currCol, nextCol, codeAt2, cb) {
+  checkForComment: function(insideComment, snippet, tokens, currCol, nextCol, nextNextCol, cb) {
     // TODO, make O(1) and make such that it handles all error cases
     if (currCol === '/' && nextCol === '*' && !(insideComment.multi && insideComment.single)) {
       insideComment.multi = true;
@@ -82,10 +82,10 @@ module.exports = {
       cb(2);
       return true;
     }
-    else if (insideComment.multi && nextCol === '*' && codeAt2 === '/') {
+    else if (insideComment.multi && nextCol === '*' && nextNextCol === '/') {
       insideComment.multi = false;
       module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);
-      snippet = nextCol + codeAt2;
+      snippet = nextCol + nextNextCol;
       module.exports.checkFor('COMMENT', snippet, tokens);
       cb(4);
       return true;
