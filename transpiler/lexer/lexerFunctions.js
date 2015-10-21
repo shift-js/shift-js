@@ -68,23 +68,21 @@ module.exports = {
 
   checkForComment: function(insideComment, snippet, tokens, currCol, nextCol, codeAt2, cb) {
     // TODO, make O(1) and make such that it handles all error cases
-    if (currCol === '/' && nextCol === '*' && 
-      (!insideComment.multi || !insideComment.single)) {
+    if (currCol === '/' && nextCol === '*' && !(insideComment.multi && insideComment.single)) {
       insideComment.multi = true;
       snippet += nextCol;
       module.exports.checkFor('COMMENT', snippet, tokens);
       cb(2);
       return true;
     }
-    else if (currCol === '/' && nextCol === '/' &&
-      (!insideComment.multi || !insideComment.single)) {
+    else if (currCol === '/' && nextCol === '/' && !(insideComment.multi && insideComment.single)) {
       insideComment.single = true;
       snippet += nextCol;
       module.exports.checkFor('COMMENT', snippet, tokens);
       cb(2);
       return true;
     }
-    else if (insideComment.multi && (nextCol === '*' && codeAt2 === '/')) {
+    else if (insideComment.multi && nextCol === '*' && codeAt2 === '/') {
       insideComment.multi = false;
       module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);
       snippet = nextCol + codeAt2;
@@ -92,7 +90,7 @@ module.exports = {
       cb(4);
       return true;
     }
-    else if (insideComment.single && (nextCol === undefined)) {
+    else if (insideComment.single && nextCol === undefined) {
       // TO DO -- handle single line comment once we start handling multi line blocks
       insideComment.multi = false;
       module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);

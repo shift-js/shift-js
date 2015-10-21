@@ -74,63 +74,6 @@ describe('Lexer', function() {
       });
     });
 
-
-    // describe('Basic tests', function () {
-    //   it('should handle variable declarations with numbers', function () {
-    //     input = 'var a = 3';
-    //     output = [
-    //       { type: "DECLARATION_KEYWORD",  value: "var" },
-    //       { type: "IDENTIFIER",           value: "a" },
-    //       { type: "OPERATOR",             value: "=" },
-    //       { type: "NUMBER",               value: "3" },
-    //       { type: "TERMINATOR",           value: "EOF"}
-    //     ];
-    //     expect(lexer(input)).to.deep.equal(output);
-    //   });
-
-    //   it('should handle strings', function () {
-    //     input = 'var b = "hello"';
-    //     output = [
-    //       { type: "DECLARATION_KEYWORD",  value: "var" },
-    //       { type: "IDENTIFIER",           value: "b" },
-    //       { type: "OPERATOR",             value: "=" },
-    //       { type: "STRING",               value: "hello" },
-    //       { type: "TERMINATOR",           value: "EOF"}
-    //     ];
-    //     expect(lexer(input)).to.deep.equal(output);
-    //   });
-
-    //   it('should handle booleans', function () {
-    //     input = 'var c = true';
-    //     output = [
-    //       { type: "DECLARATION_KEYWORD",  value: "var" },
-    //       { type: "IDENTIFIER",           value: "c" },
-    //       { type: "OPERATOR",             value: "=" },
-    //       { type: "BOOLEAN",              value: "true" },
-    //       { type: "TERMINATOR",           value: "EOF"}
-    //     ];
-    //     expect(lexer(input)).to.deep.equal(output);
-    //   });
-
-    //   it('should handle strings with whitespace', function () {
-    //     input = 'var d = "Test this"';
-    //     output = [
-    //       { type: "DECLARATION_KEYWORD",  value: "var" },
-    //       { type: "IDENTIFIER",           value: "d" },
-    //       { type: "OPERATOR",             value: "=" },
-    //       { type: "STRING",               value: "Test this" },
-    //       { type: "TERMINATOR",           value: "EOF"}
-    //     ];
-    //     expect(lexer(input)).to.deep.equal(output);
-    //   });
-
-    //   it('should handle comments', function () {
-    //     input = '/* Comment 1 */ var a = 1 // Comment 2';
-    //     output = "FILL_ME_IN";
-    //     expect(lexer(input)).to.deep.equal(output);
-    //   });
-    // });
-
     describe('Basic collections', function () {
       it('should handle arrays', function () {
         input = 'var e = ["Eggs", "Milk", "Bacon"]';
@@ -405,6 +348,48 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "-" },
           { type: "NUMBER",                     value: "1" },
           { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle ternary operators without a parenthetical', function () {
+        input = 'var g = 6 == 7 ? true : false;';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "g" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "6" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "7" },  
+          { type: "OPERATOR",             value: "?" },
+          { type: "BOOLEAN",              value: "true" }, 
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "BOOLEAN",              value: "false" },   
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+      it('should handle ternary operators that include identifiers', function () {
+        input = 'let h = false; let i = h ? 1 : 2;';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "let" },
+          { type: "IDENTIFIER",           value: "h" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "false" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "DECLARATION_KEYWORD",  value: "let" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "h" },
+          { type: "OPERATOR",             value: "?" },
+          { type: "NUMBER",               value: "1" },  
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "NUMBER",               value: "2" },  
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -723,38 +708,256 @@ describe('Lexer', function() {
     });
   });
 
-  xdescribe('Second milestone', function() {
+  describe('Second milestone', function() {
     describe('If statements', function() {
 
       it('should handle single-line if statements', function() {
-        input = 'var a = 5; if (true) {--a}; if a != 3 {a++}';
-        output = 'FILL_ME_IN';
+        input = 'var a = 5; if (true) {--a};';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "5" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle single-line if/else statements', function() {
+      it('should handle single-line if statements with multi-character logical operators', function() {
+        input = 'var b = 6; if (5 <= 6) {b++};';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "6" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "NUMBER",               value: "5" },
+          { type: "OPERATOR",             value: "<" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "6" },  
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle single-line if statements with multi-character logical operators and multi-character mathematical operators', function() {
+        input = 'var c = 1; if (c == 1) {c *= 5};';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },  
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "*" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "5" },
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle single-line if statements without a parenthetical', function() {
+        input = 'var d = 1; if d != 2 {d++};';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "d" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "IDENTIFIER",           value: "d" },
+          { type: "OPERATOR",             value: "!" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "2" },  
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "d" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle complex conditionals without an outer parenthetical', function() {
+        input = 'var e = 1; if (e + 1) == 2 {e = 5};';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "e" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "IDENTIFIER",           value: "e" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "NUMBER",               value: "1" },  
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "2" },  
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "e" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "5" },
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle single line if/else statements', function() {
         input = 'var f = true; if !f {f = true} else {f = false};';
-        output = 'FILL_ME_IN';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "f" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "OPERATOR",             value: "!" },
+          { type: "IDENTIFIER",           value: "f" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "f" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "true" },  
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "STATEMENT_KEYWORD",    value: "else" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "f" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "false" },  
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+   
+      it('should handle single-line if/else-if/else statements with parentheticals', function() {
+        input = 'var a = 1; if (1 > 2) {++a} else if (1 < 2) {--a} else {a = 42}';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "NUMBER",               value: "1" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "STATEMENT_KEYWORD",    value: "else" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "NUMBER",               value: "1" },
+          { type: "OPERATOR",             value: "<" },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "STATEMENT_KEYWORD",    value: "else" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "42" },
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle single-line if/else-if/else statements', function() {
-        input = 'var a = 1; if 1 > 2 {a++} else if 1 < 2 {a--} else {a = 42}';
-        output = 'FILL_ME_IN';
+      it('should handle single-line if/else-if/else statements with parentheticals', function() {
+        input = 'var a = 1; if 1 > 2 {++a} else if 1 < 2 {--a} else {a = 42}';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "NUMBER",               value: "1" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "STATEMENT_KEYWORD",    value: "else" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "NUMBER",               value: "1" },
+          { type: "OPERATOR",             value: "<" },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "STATEMENT_KEYWORD",    value: "else" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "42" },
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
     });
 
-    describe('While/Repeat-While loops', function() {
+    xdescribe('While/Repeat-While loops', function() {
 
-      it('should handle single-line while loops', function() {
+      xit('should handle single-line while loops', function() {
         input = 'FILL_ME_IN';
         output = 'FILL_ME_IN';
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle single-line repeat-while loops', function() {
+      xit('should handle single-line repeat-while loops', function() {
         input = 'FILL_ME_IN';
         output = 'FILL_ME_IN';
         expect(lexer(input)).to.deep.equal(output);
