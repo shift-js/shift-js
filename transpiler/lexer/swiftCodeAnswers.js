@@ -434,6 +434,18 @@ module.exports = {
       { type: "DICTIONARY_END",       value: "]" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
+    ],
+    [
+      { type: "MULTI_LINE_COMMENT_START",  value: "/*"},
+      { type: "COMMENT",                   value: " Comment 1 "},
+      { type: "MULTI_LINE_COMMENT_END",    value: "*/"},
+      { type: "DECLARATION_KEYWORD",       value: "var" },
+      { type: "IDENTIFIER",                value: "a" },
+      { type: "OPERATOR",                  value: "=" },
+      { type: "NUMBER",                    value: "1" },
+      { type: "COMMENT_START",             value: "//"},
+      { type: "COMMENT",                   value: " Comment 2"},
+      { type: "TERMINATOR",                value: "EOF"}
     ]
   ]
 };

@@ -56,9 +56,20 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      xit('should handle comments', function () {
+      it('should handle comments', function () {
         input = '/* Comment 1 */ var a = 1 // Comment 2';
-        output = "FILL_ME_IN";
+        output = [
+          { type: "MULTI_LINE_COMMENT_START",  value: "/*"},
+          { type: "COMMENT",                   value: " Comment 1 "},
+          { type: "MULTI_LINE_COMMENT_END",    value: "*/"},
+          { type: "DECLARATION_KEYWORD",       value: "var" },
+          { type: "IDENTIFIER",                value: "a" },
+          { type: "OPERATOR",                  value: "=" },
+          { type: "NUMBER",                    value: "1" },
+          { type: "COMMENT_START",             value: "//"},
+          { type: "COMMENT",                   value: " Comment 2"},
+          { type: "TERMINATOR",                value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
     });

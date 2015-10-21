@@ -16,6 +16,7 @@ module.exports = function(code) {
   var insideCollection = [];
   var stringInterpolation = {status: false, counter: 0};
   var substringLookup = {status: false};
+  var insideComment = {multi: false, single: false};
   // TODO - scope
 
   // advances the position of i by specified number of positions
@@ -40,6 +41,45 @@ module.exports = function(code) {
     prevCol = code[i - 1];
     nextCol = code[i + 1];
     var lastCollectionIndex = insideCollection.length - 1;
+    
+    if (currCol === '/' && nextCol === '*' && 
+      (!insideComment.multi || !insideComment.single)) {
+      insideComment.multi = true;
+      chunk += nextCol;
+      lexerFunctions.checkFor('COMMENT', chunk, tokens);
+      advanceAndClear(2);
+      chunk = '';
+      continue;
+    }
+    if (currCol === '/' && nextCol === '/' &&
+      (!insideComment.multi || !insideComment.single)) {
+      insideComment.single = true;
+      chunk += nextCol;
+      lexerFunctions.checkFor('COMMENT', chunk, tokens);
+      advanceAndClear(2);
+      chunk = '';
+      continue;
+    }
+    if (insideComment.multi && (nextCol === '*' && code[i + 2] === '/')) {
+      insideComment.multi = false;
+      lexerFunctions.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
+      chunk = nextCol + code[i + 2];
+      lexerFunctions.checkFor('COMMENT', chunk, tokens);
+      advanceAndClear(4);
+      continue;
+    }
+    if (insideComment.single && (nextCol === undefined)) {
+      // TO DO -- handle single line comment once we start handling multi line blocks
+      lexerFunctions.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
+      insideComment.multi = false;
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
+      advanceAndClear(1);
+      continue;
+    }
+    if (insideComment.multi || insideComment.single) {
+      advance(1);
+      continue;
+    }
     
     if (currCol === '"' && insideString.status) {
       insideString.status = false;
