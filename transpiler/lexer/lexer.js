@@ -17,6 +17,7 @@ module.exports = function(code) {
   var stringInterpolation = {status: false, counter: 0};
   var substringLookup = {status: false};
   var insideComment = {multi: false, single: false};
+  var insideTuple = {status: false, startIndex: undefined, verified: false};
   // TODO - scope
 
   // advances the position of i by specified number of positions
@@ -40,7 +41,11 @@ module.exports = function(code) {
     currCol = code[i];
     prevCol = code[i - 1];
     nextCol = code[i + 1];
+    var lastToken = tokens[tokens.length - 1];
+    var lastCollection = insideCollection[insideCollection.length - 1];
     var lastCollectionIndex = insideCollection.length - 1;
+    
+    // console.log(chunk);
     
     if (currCol === '/' && nextCol === '*' && 
       (!insideComment.multi || !insideComment.single)) {
@@ -115,20 +120,47 @@ module.exports = function(code) {
       continue;
     }
     
-    console.log(chunk);
+    if (currCol === '(' && (lastToken.value === '=' || lastToken.value === 'return' ||
+      lastToken.value === '->') ) {
+      lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_START', chunk);
+      insideTuple.status = true;
+      insideTuple.startIndex = tokens.length - 1;
+      advanceAndClear(1);
+      continue;
+    }
+    if (insideTuple.status === true && currCol === ',') {
+      insideTuple.verified = true;
+    }
+    if (insideTuple.status && currCol === ')') {
+      if (insideTuple.verified === true) {
+        lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_END', chunk);
+        insideTuple.status = false;
+        insideTuple.startIndex = undefined;
+        insideTuple.verified = false;
+        advanceAndClear(1);
+        lexerFunctions.handleEndOfFile(nextCol, tokens);
+        continue;
+      } else {
+        tokens[insideTuple.startIndex].type = 'PUNCTUATION';
+        insideTuple.status = false;
+        insideTuple.startIndex = undefined;
+        insideTuple.verified = false;
+      }
+    }
+    
+    // console.log(chunk);
     if (!insideString.status && !insideNumber.status && 
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
 
-      if (insideCollection.length && 
-        insideCollection[lastCollectionIndex]['type'] === undefined &&
+      if (insideCollection.length && lastCollection.type === undefined &&
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens)){
         lexerFunctions.determineCollectionType(insideCollection, tokens);
       } else if (insideCollection.length && currCol === ']' && !substringLookup.status) {
         lexerFunctions.checkFor('COLLECTION', chunk, tokens, function() {
-          tokens[tokens.length - 1].type = insideCollection[lastCollectionIndex]['type'] || 'ARRAY_END';
+          tokens[tokens.length - 1].type = lastCollection.type || 'ARRAY_END';
           insideCollection.pop();
         });
-      } else if (tokens.length && tokens[tokens.length - 1].type !== 'IDENTIFIER' && currCol === '[') {
+      } else if (tokens.length && lastToken.type !== 'IDENTIFIER' && currCol === '[') {
         lexerFunctions.checkFor('COLLECTION', chunk, tokens, function(){
           insideCollection.push({type: undefined, location: tokens.length-1});})
       } else {
@@ -150,7 +182,7 @@ module.exports = function(code) {
       
     }
     advance(1);
-    console.log(tokens);
+    // console.log(tokens);
   }
   // console.log(tokens);
   return tokens;
