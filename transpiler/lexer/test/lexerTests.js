@@ -190,11 +190,11 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
       
-      xit('should handle tuples with element names', function () {
+      it('should handle tuples with element names', function () {
         input = 'let http200Status = (statusCode: 200, description: "OK");';
         output = [
           { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "http200status" },
+          { type: "IDENTIFIER",                 value: "http200Status" },
           { type: "OPERATOR",                   value: "=" },
           { type: "TUPLE_START",                value: "("},
           { type: "TUPLE_ELEMENT_NAME",         value: "statusCode"},
@@ -206,6 +206,19 @@ describe('Lexer', function() {
           { type: "STRING",                     value: "OK"},
           { type: "TUPLE_END",                  value: ")"},
           { type: "PUNCTUATION",                value: ";" },
+          { type: "TERMINATOR",                 value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle empty tuples', function () {
+        input = 'var empty = ()';
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "empty" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "TUPLE_START",                value: "("},
+          { type: "TUPLE_END",                  value: ")"},
           { type: "TERMINATOR",                 value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);

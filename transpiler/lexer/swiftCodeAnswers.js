@@ -457,6 +457,30 @@ module.exports = {
       { type: "STRING",                     value: "not found"},
       { type: "TUPLE_END",                  value: ")"},
       { type: "TERMINATOR",                 value: "EOF" }
+    ],
+    [
+      { type: "DECLARATION_KEYWORD",        value: "let" },
+      { type: "IDENTIFIER",                 value: "http200Status" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "TUPLE_START",                value: "("},
+      { type: "TUPLE_ELEMENT_NAME",         value: "statusCode"},
+      { type: "PUNCTUATION",                value: ":" },
+      { type: "NUMBER",                     value: "200"},
+      { type: "PUNCTUATION",                value: "," },
+      { type: "TUPLE_ELEMENT_NAME",         value: "description"},
+      { type: "PUNCTUATION",                value: ":" },
+      { type: "STRING",                     value: "OK"},
+      { type: "TUPLE_END",                  value: ")"},
+      { type: "PUNCTUATION",                value: ";" },
+      { type: "TERMINATOR",                 value: "EOF" }
+    ],
+    [
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "empty" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "TUPLE_START",                value: "("},
+      { type: "TUPLE_END",                  value: ")"},
+      { type: "TERMINATOR",                 value: "EOF" }
     ]
   ]
 };

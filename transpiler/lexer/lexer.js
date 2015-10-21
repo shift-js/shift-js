@@ -123,16 +123,28 @@ module.exports = function(code) {
     if (currCol === '(' && (lastToken.value === '=' || lastToken.value === 'return' ||
       lastToken.value === '->') ) {
       lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_START', chunk);
-      insideTuple.status = true;
-      insideTuple.startIndex = tokens.length - 1;
+      if (nextCol === ')') {
+        lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_END', nextCol);
+        advanceAndClear(2);
+        lexerFunctions.handleEndOfFile(code[i + 2], tokens);
+      } else {
+        insideTuple.status = true;
+        insideTuple.startIndex = tokens.length - 1;
+        advanceAndClear(1);
+      }
+      continue;
+    }
+    if (insideTuple.status && nextCol === ':') {
+      chunk = chunk.trim();
+      lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_ELEMENT_NAME', chunk);
       advanceAndClear(1);
       continue;
     }
-    if (insideTuple.status === true && currCol === ',') {
+    if (insideTuple.status && currCol === ',') {
       insideTuple.verified = true;
     }
     if (insideTuple.status && currCol === ')') {
-      if (insideTuple.verified === true) {
+      if (insideTuple.verified) {
         lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_END', chunk);
         insideTuple.status = false;
         insideTuple.startIndex = undefined;
