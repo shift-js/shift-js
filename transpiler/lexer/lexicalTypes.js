@@ -15,6 +15,12 @@ module.exports = {
     ']': 'COLLECTION_END'
   },
   
+  COMMENT: {
+    '//': 'COMMENT_START',
+    '/*': 'MULTI_LINE_COMMENT_START',
+    '*/': 'MULTI_LINE_COMMENT_END'  
+  },
+  
   KEYWORD: { 
     
     // keywords used in declarations
@@ -143,7 +149,7 @@ module.exports = {
     '@': 'PUNCTUATION', 
     '#': 'PUNCTUATION', 
     '`': 'PUNCTUATION',
-    '?': 'PUNCTUATION' 
+    // '?': 'PUNCTUATION' 
 
   },
 

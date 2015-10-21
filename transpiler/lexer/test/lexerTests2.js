@@ -1,7 +1,11 @@
-var lexicalTypes    = require('./../lexicalTypes');
-var lexerFunctions  = require('./../lexerFunctions');
 var lexer           = require('./../lexer');
+var code = require('./../swiftCode').swiftCode;
+var answers = require('./../swiftCodeAnswers').swiftCodeAnswers;
+var descriptions = require('./../swiftCodeDescription');
+var title = descriptions['title'];
+var description = descriptions['description'];
 var expect          = require('chai').expect;
+var i = 0;
 
 
 describe('Lexer', function() {
@@ -58,78 +62,67 @@ describe('Lexer', function() {
 
       it('should handle comments', function () {
         input = '/* Comment 1 */ var a = 1 // Comment 2';
-        output = [
-          { type: "MULTI_LINE_COMMENT_START",  value: "/*"},
-          { type: "COMMENT",                   value: " Comment 1 "},
-          { type: "MULTI_LINE_COMMENT_END",    value: "*/"},
-          { type: "DECLARATION_KEYWORD",       value: "var" },
-          { type: "IDENTIFIER",                value: "a" },
-          { type: "OPERATOR",                  value: "=" },
-          { type: "NUMBER",                    value: "1" },
-          { type: "COMMENT_START",             value: "//"},
-          { type: "COMMENT",                   value: " Comment 2"},
-          { type: "TERMINATOR",                value: "EOF"}
-        ];
+        output = "FILL_ME_IN";
         expect(lexer(input)).to.deep.equal(output);
       });
     });
 
 
-    // describe('Basic tests', function () {
-    //   it('should handle variable declarations with numbers', function () {
-    //     input = 'var a = 3';
-    //     output = [
-    //       { type: "DECLARATION_KEYWORD",  value: "var" },
-    //       { type: "IDENTIFIER",           value: "a" },
-    //       { type: "OPERATOR",             value: "=" },
-    //       { type: "NUMBER",               value: "3" },
-    //       { type: "TERMINATOR",           value: "EOF"}
-    //     ];
-    //     expect(lexer(input)).to.deep.equal(output);
-    //   });
+    describe('Basic tests', function () {
+      it('should handle variable declarations with numbers', function () {
+        input = 'var a = 3';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "3" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
-    //   it('should handle strings', function () {
-    //     input = 'var b = "hello"';
-    //     output = [
-    //       { type: "DECLARATION_KEYWORD",  value: "var" },
-    //       { type: "IDENTIFIER",           value: "b" },
-    //       { type: "OPERATOR",             value: "=" },
-    //       { type: "STRING",               value: "hello" },
-    //       { type: "TERMINATOR",           value: "EOF"}
-    //     ];
-    //     expect(lexer(input)).to.deep.equal(output);
-    //   });
+      it('should handle strings', function () {
+        input = 'var b = "hello"';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "hello" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
-    //   it('should handle booleans', function () {
-    //     input = 'var c = true';
-    //     output = [
-    //       { type: "DECLARATION_KEYWORD",  value: "var" },
-    //       { type: "IDENTIFIER",           value: "c" },
-    //       { type: "OPERATOR",             value: "=" },
-    //       { type: "BOOLEAN",              value: "true" },
-    //       { type: "TERMINATOR",           value: "EOF"}
-    //     ];
-    //     expect(lexer(input)).to.deep.equal(output);
-    //   });
+      it('should handle booleans', function () {
+        input = 'var c = true';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
-    //   it('should handle strings with whitespace', function () {
-    //     input = 'var d = "Test this"';
-    //     output = [
-    //       { type: "DECLARATION_KEYWORD",  value: "var" },
-    //       { type: "IDENTIFIER",           value: "d" },
-    //       { type: "OPERATOR",             value: "=" },
-    //       { type: "STRING",               value: "Test this" },
-    //       { type: "TERMINATOR",           value: "EOF"}
-    //     ];
-    //     expect(lexer(input)).to.deep.equal(output);
-    //   });
+      it('should handle strings with whitespace', function () {
+        input = 'var d = "Test this"';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "d" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "Test this" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
-    //   it('should handle comments', function () {
-    //     input = '/* Comment 1 */ var a = 1 // Comment 2';
-    //     output = "FILL_ME_IN";
-    //     expect(lexer(input)).to.deep.equal(output);
-    //   });
-    // });
+      it('should handle comments', function () {
+        input = '/* Comment 1 */ var a = 1 // Comment 2';
+        output = "FILL_ME_IN";
+        expect(lexer(input)).to.deep.equal(output);
+      });
+    });
 
     describe('Basic collections', function () {
       it('should handle arrays', function () {
@@ -174,57 +167,13 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle tuples', function () {
-        input = 'var error = (404, "not found")';
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "error" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "TUPLE_START",                value: "("},
-          { type: "NUMBER",                     value: "404"},
-          { type: "PUNCTUATION",                value: "," },
-          { type: "STRING",                     value: "not found"},
-          { type: "TUPLE_END",                  value: ")"},
-          { type: "TERMINATOR",                 value: "EOF" }
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-      
-      it('should handle tuples with element names', function () {
-        input = 'let http200Status = (statusCode: 200, description: "OK");';
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "http200Status" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "TUPLE_START",                value: "("},
-          { type: "TUPLE_ELEMENT_NAME",         value: "statusCode"},
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "NUMBER",                     value: "200"},
-          { type: "PUNCTUATION",                value: "," },
-          { type: "TUPLE_ELEMENT_NAME",         value: "description"},
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "STRING",                     value: "OK"},
-          { type: "TUPLE_END",                  value: ")"},
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "TERMINATOR",                 value: "EOF" }
-        ];
+      xit('should handle tuples', function () {
+        input = 'var error = (404, “not found”)';
+        output = "FILL_ME_IN";
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle empty tuples', function () {
-        input = 'var empty = ()';
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "empty" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "TUPLE_START",                value: "("},
-          { type: "TUPLE_END",                  value: ")"},
-          { type: "TERMINATOR",                 value: "EOF" }
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      it('should handle let and erratic spacing', function () {
+      it('should handle let', function () {
         input = 'let g = [1 : "one",2   :"two", 3: "three"]';
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
@@ -357,55 +306,15 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle unary operators', function () {
+      xit('should handle unary operators', function () {
         input = 'var a = true; var b = !a; var c = -a; var d = +b';
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "a" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "BOOLEAN",                    value: "true" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "b" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "OPERATOR",                   value: "!" },
-          { type: "IDENTIFIER",                 value: "a" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "c" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "OPERATOR",                   value: "-" },
-          { type: "IDENTIFIER",                 value: "a" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "d" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "b" },
-          { type: "TERMINATOR",                 value: "EOF"}
-        ];
+        output = "FILL_ME_IN";
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle ternary operators', function () {
+      xit('should handle ternary operators', function () {
         input = 'var a = (6 == 7) ? 1 : -1';
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "a" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "PUNCTUATION",                value: "(" },
-          { type: "NUMBER",                     value: "6" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "NUMBER",                     value: "7" },
-          { type: "PUNCTUATION",                value: ")" },
-          { type: "OPERATOR",                   value: "?" },
-          { type: "NUMBER",                     value: "1" },
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "OPERATOR",                   value: "-" },
-          { type: "NUMBER",                     value: "1" },
-          { type: "TERMINATOR",                 value: "EOF"}
-        ];
+        output = "FILL_ME_IN";
         expect(lexer(input)).to.deep.equal(output);
       });
 
@@ -457,34 +366,12 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle string interpolation in the middle of a string', function () {
-        input = 'var planet = "Earth"; let o = "Hello \\(planet)!"';
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "planet" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "Earth" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "o" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "Hello " },
-          { type: "STRING_INTERPOLATION_START", value: "\\(" },
-          { type: "IDENTIFIER",                 value: "planet" },
-          { type: "STRING_INTERPOLATION_END",   value: ")" },
-          { type: "STRING",                     value: "!" },
-          { type: "TERMINATOR",                 value: "EOF" }
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      it('should handle interpolation containing operations', function () {
+      it('should handle interpolation of operations', function () {
         input = 'var p = "\\(100 - 99), 2, 3"';
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "p" },
           { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "" },
           { type: "STRING_INTERPOLATION_START", value: "\\(" },
           { type: "NUMBER",                     value: "100" },
           { type: "OPERATOR",                   value: "-" },
@@ -544,18 +431,26 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "2" },
           { type: "ARRAY_END",            value: "]" },
           { type: "PUNCTUATION",          value: ";" },
+          { type: "DECLARATION_KEYWORD",  value: "let" },
+          { type: "IDENTIFIER",           value: "t" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "100" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "s" },
+          { type: "IDENTIFIER",           value: "u" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "arr" },
           { type: "SUBSTRING_LOOKUP",     value: "[" },
-          { type: "NUMBER",               value: "0" },
+          { type: "IDENTIFIER",           value: "t" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "NUMBER",               value: "99" },
           { type: "SUBSTRING_LOOKUP",     value: "]" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+
 
       it('should handle array access with numeric operations', function () {
         input = 'let arr = [1, 2]; let t = 100; var u = arr[t - 99];';
@@ -588,6 +483,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+
 
       it('should handle arrays of that contain a substring lookup', function () {
         input = 'let arr = [1,2]; var u = [arr[0]];';
