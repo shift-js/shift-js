@@ -1,7 +1,6 @@
 var lexerFunctions = require("./lexerFunctions");
 
 module.exports = function(code) {
-  var NUMBER = /^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i;
   
   code = code.trim();
   var i = 0;
@@ -41,6 +40,7 @@ module.exports = function(code) {
     currCol = code[i];
     prevCol = code[i - 1];
     nextCol = code[i + 1];
+    nextNextCol = code[i + 2];
     var lastToken = tokens[tokens.length - 1];
     var lastCollection = insideCollection[insideCollection.length - 1];
     var lastCollectionIndex = insideCollection.length - 1;
@@ -48,7 +48,8 @@ module.exports = function(code) {
     // console.log(chunk);
     // console.log(tokens);
 
-    if (lexerFunctions.checkForComment(insideComment, chunk, tokens, currCol, nextCol, code[i+2], advanceAndClear)) {
+    if (lexerFunctions.checkForComment(insideComment, chunk, tokens, 
+      currCol, nextCol, code[i+2], advanceAndClear)) {
       continue;
     }
 
@@ -63,18 +64,12 @@ module.exports = function(code) {
       insideString.status = true;
     }
     
-    if (NUMBER.test(chunk) && !insideString.status && !insideNumber.status) {
-      insideNumber.status = true;
-    }
-    if (insideNumber.status && isNaN(nextCol) && nextCol !== '.') {
-      insideNumber.status = false;
-      lexerFunctions.checkForLiteral(chunk, tokens);
+    if (lexerFunctions.handleNumber(insideString, insideNumber, tokens, chunk, nextCol)) {
       advanceAndClear(1);
-      lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
 
-    if (!stringInterpolation.status && nextCol === '\\' && code[i + 2] === '(') {
+    if (!stringInterpolation.status && nextCol === '\\' && nextNextCol === '(') {
       stringInterpolation.status = true;
       if (chunk !== "") {
         lexerFunctions.checkForLiteral(chunk + '"', tokens);
@@ -84,7 +79,8 @@ module.exports = function(code) {
       insideString.status = false;
       continue;
     }
-    if (stringInterpolation.status && currCol === ")" && stringInterpolation.counter === 0) {
+    if (stringInterpolation.status && currCol === ")" && 
+      stringInterpolation.counter === 0) {
       stringInterpolation.status = false;
       lexerFunctions.makeToken("SPECIAL_STRING", ")", tokens);
       advanceAndClear(1);
@@ -99,7 +95,7 @@ module.exports = function(code) {
       if (nextCol === ')') {
         lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_END', nextCol);
         advanceAndClear(2);
-        lexerFunctions.handleEndOfFile(code[i + 2], tokens);
+        lexerFunctions.handleEndOfFile(nextNextCol, tokens);
       } else {
         insideTuple.status = true;
         insideTuple.startIndex = tokens.length - 1;

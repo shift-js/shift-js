@@ -1,6 +1,6 @@
 var lexicalTypes = require("./lexicalTypes");
 
-
+var NUMBER = /^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i;
 
 module.exports = {
 
@@ -122,6 +122,18 @@ module.exports = {
       return true;
     }
     return false;
+  },
+  
+  handleNumber: function(insideString, insideNumber, tokens, chunk, nextCol) {
+    if (NUMBER.test(chunk) && !insideString.status && !insideNumber.status) {
+      insideNumber.status = true;
+    }
+    if (insideNumber.status && isNaN(nextCol) && nextCol !== '.') {
+      insideNumber.status = false;
+      module.exports.checkForLiteral(chunk, tokens);
+      module.exports.handleEndOfFile(nextCol, tokens);
+      return true;
+    }
   },
   
   // helper function to check for whitespace
