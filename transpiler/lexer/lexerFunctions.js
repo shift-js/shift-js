@@ -1,6 +1,6 @@
 var lexicalTypes = require("./lexicalTypes");
 
-
+var NUMBER = /^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i;
 
 module.exports = {
 
@@ -68,23 +68,21 @@ module.exports = {
 
   checkForComment: function(insideComment, snippet, tokens, currCol, nextCol, codeAt2, cb) {
     // TODO, make O(1) and make such that it handles all error cases
-    if (currCol === '/' && nextCol === '*' && 
-      (!insideComment.multi || !insideComment.single)) {
+    if (currCol === '/' && nextCol === '*' && !(insideComment.multi && insideComment.single)) {
       insideComment.multi = true;
       snippet += nextCol;
       module.exports.checkFor('COMMENT', snippet, tokens);
       cb(2);
       return true;
     }
-    else if (currCol === '/' && nextCol === '/' &&
-      (!insideComment.multi || !insideComment.single)) {
+    else if (currCol === '/' && nextCol === '/' && !(insideComment.multi && insideComment.single)) {
       insideComment.single = true;
       snippet += nextCol;
       module.exports.checkFor('COMMENT', snippet, tokens);
       cb(2);
       return true;
     }
-    else if (insideComment.multi && (nextCol === '*' && codeAt2 === '/')) {
+    else if (insideComment.multi && nextCol === '*' && codeAt2 === '/') {
       insideComment.multi = false;
       module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);
       snippet = nextCol + codeAt2;
@@ -92,7 +90,7 @@ module.exports = {
       cb(4);
       return true;
     }
-    else if (insideComment.single && (nextCol === undefined)) {
+    else if (insideComment.single && nextCol === undefined) {
       // TO DO -- handle single line comment once we start handling multi line blocks
       insideComment.multi = false;
       module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);
@@ -124,6 +122,41 @@ module.exports = {
       return true;
     }
     return false;
+  },
+  
+  handleNumber: function(insideString, insideNumber, snippet, tokens, nextCol) {
+    if (NUMBER.test(snippet) && !insideString.status && !insideNumber.status) {
+      insideNumber.status = true;
+    }
+    if (insideNumber.status && isNaN(nextCol) && nextCol !== '.') {
+      insideNumber.status = false;
+      module.exports.checkForLiteral(snippet, tokens);
+      module.exports.handleEndOfFile(nextCol, tokens);
+      return true;
+    }
+  },
+  
+  checkForStringInterpolationStart: function(stringInterpolation, insideString,
+    snippet, tokens, nextCol, nextNextCol) {
+    if (!stringInterpolation.status && nextCol === '\\' && nextNextCol === '(') {
+      stringInterpolation.status = true;
+      if (snippet !== "") {
+        module.exports.checkForLiteral(snippet + '"', tokens);
+      }
+     module.exports.makeToken("SPECIAL_STRING", "\\(", tokens);
+     insideString.status = false;
+     return true; 
+    }
+  },
+  
+  checkForStringInterpolationEnd: function(stringInterpolation, insideString,
+    tokens, currCol) {
+    if (stringInterpolation.status && currCol === ")") {
+      stringInterpolation.status = false;
+      module.exports.makeToken("SPECIAL_STRING", ")", tokens);
+      insideString.status = true;
+      return true;
+    }
   },
   
   // helper function to check for whitespace

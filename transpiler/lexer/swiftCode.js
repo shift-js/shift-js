@@ -25,7 +25,7 @@ module.exports = {
     'let arr = [1, 2]; let t = 100; var u = arr[t - 99];', // 22
     'let arr = [1,2]; var u = [arr[0]];', // 23
     'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];', // 24
-    '/* Comment 1 */  var a = 1 // Comment 2', // 25
+    '/* Comment 1 */ var a = 1 // Comment 2', // 25
     'var error = (404, "not found")', // 26
     'let http200Status = (statusCode: 200, description: "OK");', // 27
     'var empty = ()', // 28
