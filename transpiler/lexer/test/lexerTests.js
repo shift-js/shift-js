@@ -174,8 +174,8 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      xit('should handle tuples', function () {
-        input = 'var error = (404, “not found”)';
+      it('should handle tuples', function () {
+        input = 'var error = (404, "not found")';
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "error" },
@@ -191,7 +191,7 @@ describe('Lexer', function() {
       });
       
       xit('should handle tuples with element names', function () {
-        input = 'var error = (404, “not found”)';
+        input = 'let http200Status = (statusCode: 200, description: "OK");';
         output = [
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "http200status" },

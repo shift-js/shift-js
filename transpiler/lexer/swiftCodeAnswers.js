@@ -446,6 +446,17 @@ module.exports = {
       { type: "COMMENT_START",             value: "//"},
       { type: "COMMENT",                   value: " Comment 2"},
       { type: "TERMINATOR",                value: "EOF"}
+    ],
+    [
+      { type: "DECLARATION_KEYWORD",        value: "var" },
+      { type: "IDENTIFIER",                 value: "error" },
+      { type: "OPERATOR",                   value: "=" },
+      { type: "TUPLE_START",                value: "("},
+      { type: "NUMBER",                     value: "404"},
+      { type: "PUNCTUATION",                value: "," },
+      { type: "STRING",                     value: "not found"},
+      { type: "TUPLE_END",                  value: ")"},
+      { type: "TERMINATOR",                 value: "EOF" }
     ]
   ]
 };

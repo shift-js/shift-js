@@ -115,7 +115,7 @@ module.exports = function(code) {
       continue;
     }
     
-    // console.log(chunk);
+    console.log(chunk);
     if (!insideString.status && !insideNumber.status && 
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
 
@@ -150,7 +150,7 @@ module.exports = function(code) {
       
     }
     advance(1);
-    // console.log(tokens);
+    console.log(tokens);
   }
   // console.log(tokens);
   return tokens;
