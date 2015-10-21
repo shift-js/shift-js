@@ -124,14 +124,37 @@ module.exports = {
     return false;
   },
   
-  handleNumber: function(insideString, insideNumber, tokens, chunk, nextCol) {
-    if (NUMBER.test(chunk) && !insideString.status && !insideNumber.status) {
+  handleNumber: function(insideString, insideNumber, snippet, tokens, nextCol) {
+    if (NUMBER.test(snippet) && !insideString.status && !insideNumber.status) {
       insideNumber.status = true;
     }
     if (insideNumber.status && isNaN(nextCol) && nextCol !== '.') {
       insideNumber.status = false;
-      module.exports.checkForLiteral(chunk, tokens);
+      module.exports.checkForLiteral(snippet, tokens);
       module.exports.handleEndOfFile(nextCol, tokens);
+      return true;
+    }
+  },
+  
+  checkForStringInterpolationStart: function(stringInterpolation, insideString,
+    snippet, tokens, nextCol, nextNextCol) {
+    if (!stringInterpolation.status && nextCol === '\\' && nextNextCol === '(') {
+      stringInterpolation.status = true;
+      if (snippet !== "") {
+        module.exports.checkForLiteral(snippet + '"', tokens);
+      }
+     module.exports.makeToken("SPECIAL_STRING", "\\(", tokens);
+     insideString.status = false;
+     return true; 
+    }
+  },
+  
+  checkForStringInterpolationEnd: function(stringInterpolation, insideString,
+    tokens, currCol) {
+    if (stringInterpolation.status && currCol === ")") {
+      stringInterpolation.status = false;
+      module.exports.makeToken("SPECIAL_STRING", ")", tokens);
+      insideString.status = true;
       return true;
     }
   },

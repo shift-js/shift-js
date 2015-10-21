@@ -64,29 +64,22 @@ module.exports = function(code) {
       insideString.status = true;
     }
     
-    if (lexerFunctions.handleNumber(insideString, insideNumber, tokens, chunk, nextCol)) {
+    if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, 
+      tokens, nextCol)) {
       advanceAndClear(1);
       continue;
     }
-
-    if (!stringInterpolation.status && nextCol === '\\' && nextNextCol === '(') {
-      stringInterpolation.status = true;
-      if (chunk !== "") {
-        lexerFunctions.checkForLiteral(chunk + '"', tokens);
-      }
-      lexerFunctions.makeToken("SPECIAL_STRING", "\\(", tokens);
+    
+    if (lexerFunctions.checkForStringInterpolationStart(stringInterpolation,
+      insideString, chunk, tokens, nextCol, nextNextCol)) {
       advanceAndClear(3);
-      insideString.status = false;
-      continue;
+      continue;      
     }
-    if (stringInterpolation.status && currCol === ")" && 
-      stringInterpolation.counter === 0) {
-      stringInterpolation.status = false;
-      lexerFunctions.makeToken("SPECIAL_STRING", ")", tokens);
+    if(lexerFunctions.checkForStringInterpolationEnd(stringInterpolation,
+      insideString, tokens, currCol, nextNextCol)) {
       advanceAndClear(1);
       chunk = '"';
-      insideString.status = true;
-      continue;
+      continue;      
     }
     
     if (currCol === '(' && (lastToken.value === '=' || lastToken.value === 'return' ||
