@@ -46,40 +46,13 @@ module.exports = function(code) {
     var lastCollectionIndex = insideCollection.length - 1;
     
     // console.log(chunk);
-    
-    if (currCol === '/' && nextCol === '*' && 
-      (!insideComment.multi || !insideComment.single)) {
-      insideComment.multi = true;
-      chunk += nextCol;
-      lexerFunctions.checkFor('COMMENT', chunk, tokens);
-      advanceAndClear(2);
+    // console.log(tokens);
+
+    if (lexerFunctions.checkForComment(insideComment, chunk, tokens, currCol, nextCol, code[i+2], advanceAndClear)) {
       continue;
     }
-    if (currCol === '/' && nextCol === '/' &&
-      (!insideComment.multi || !insideComment.single)) {
-      insideComment.single = true;
-      chunk += nextCol;
-      lexerFunctions.checkFor('COMMENT', chunk, tokens);
-      advanceAndClear(2);
-      continue;
-    }
-    if (insideComment.multi && (nextCol === '*' && code[i + 2] === '/')) {
-      insideComment.multi = false;
-      lexerFunctions.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
-      chunk = nextCol + code[i + 2];
-      lexerFunctions.checkFor('COMMENT', chunk, tokens);
-      advanceAndClear(4);
-      continue;
-    }
-    if (insideComment.single && (nextCol === undefined)) {
-      // TO DO -- handle single line comment once we start handling multi line blocks
-      insideComment.multi = false;
-      lexerFunctions.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
-      lexerFunctions.handleEndOfFile(nextCol, tokens);
-      advanceAndClear(1);
-      continue;
-    }
-    if (insideComment.multi || insideComment.single) {
+
+    if (lexerFunctions.checkInsideComment(insideComment)) {
       advance(1);
       continue;
     }
@@ -160,7 +133,6 @@ module.exports = function(code) {
       }
     }
     
-    // console.log(chunk);
     if (!insideString.status && !insideNumber.status && 
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
 
