@@ -176,11 +176,42 @@ describe('Lexer', function() {
 
       xit('should handle tuples', function () {
         input = 'var error = (404, “not found”)';
-        output = "FILL_ME_IN";
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "error" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "TUPLE_START",                value: "("},
+          { type: "NUMBER",                     value: "404"},
+          { type: "PUNCTUATION",                value: "," },
+          { type: "STRING",                     value: "not found"},
+          { type: "TUPLE_END",                  value: ")"},
+          { type: "TERMINATOR",                 value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+      xit('should handle tuples with element names', function () {
+        input = 'var error = (404, “not found”)';
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "http200status" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "TUPLE_START",                value: "("},
+          { type: "TUPLE_ELEMENT_NAME",         value: "statusCode"},
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "NUMBER",                     value: "200"},
+          { type: "PUNCTUATION",                value: "," },
+          { type: "TUPLE_ELEMENT_NAME",         value: "description"},
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "STRING",                     value: "OK"},
+          { type: "TUPLE_END",                  value: ")"},
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "TERMINATOR",                 value: "EOF" }
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle let', function () {
+      it('should handle let and erratic spacing', function () {
         input = 'let g = [1 : "one",2   :"two", 3: "three"]';
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },

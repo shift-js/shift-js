@@ -48,7 +48,6 @@ module.exports = function(code) {
       chunk += nextCol;
       lexerFunctions.checkFor('COMMENT', chunk, tokens);
       advanceAndClear(2);
-      chunk = '';
       continue;
     }
     if (currCol === '/' && nextCol === '/' &&
@@ -57,7 +56,6 @@ module.exports = function(code) {
       chunk += nextCol;
       lexerFunctions.checkFor('COMMENT', chunk, tokens);
       advanceAndClear(2);
-      chunk = '';
       continue;
     }
     if (insideComment.multi && (nextCol === '*' && code[i + 2] === '/')) {
@@ -70,8 +68,8 @@ module.exports = function(code) {
     }
     if (insideComment.single && (nextCol === undefined)) {
       // TO DO -- handle single line comment once we start handling multi line blocks
-      lexerFunctions.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
       insideComment.multi = false;
+      lexerFunctions.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       advanceAndClear(1);
       continue;
