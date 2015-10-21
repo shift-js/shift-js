@@ -143,6 +143,7 @@ module.exports = function(code) {
           substringLookup.status = !substringLookup.status;
         }) ||
         lexerFunctions.checkFor('OPERATOR', chunk, tokens) || 
+        lexerFunctions.checkFor('TERMINATOR', chunk, tokens) || 
         lexerFunctions.checkForLiteral(chunk, tokens);
       }
       
