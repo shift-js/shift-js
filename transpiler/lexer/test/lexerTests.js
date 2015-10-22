@@ -1050,5 +1050,76 @@ describe('Lexer', function() {
       });
 
     });
+
+    describe('For loops', function() {
+
+      it('should handle single-line for loops with a parenthetical', function() {
+        input = 'var a = 0; for (var i = 10; i > 0; i--) {a++};';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "for" },
+          { type: "PUNCTUATION",          value: "(" }, 
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "PUNCTUATION",          value: ")" }, 
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle single-line for loops without a parenthetical', function() {
+        input = 'var b = 0; for var j = 0; j < 10; j++ {b++};';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "for" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "j" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "j" },
+          { type: "OPERATOR",             value: "<" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "j" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+    });
+
   });
 });
