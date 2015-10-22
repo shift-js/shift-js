@@ -245,14 +245,13 @@ describe('Lexer', function() {
       });
 
       it('should handle comparisons', function () {
-        input = 'let l = 6 !== 9';
+        input = 'let l = 6 != 9';
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "l" },
           { type: "OPERATOR",             value: "=" },
           { type: "NUMBER",               value: "6" },
           { type: "OPERATOR",             value: "!" },
-          { type: "OPERATOR",             value: "=" },
           { type: "OPERATOR",             value: "=" },
           { type: "NUMBER",               value: "9" },
           { type: "TERMINATOR",           value: "EOF" }
@@ -1227,6 +1226,91 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "b" },
           { type: "OPERATOR",             value: "+" },
           { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+    });
+
+    describe('For-In loops', function() {
+
+      it('should handle simple, single-line for-in loops without a parenthetical', function() {
+        input = 'var c = 0; var numbers = [1,2,3,4,5]; for n in numbers {c += n};';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "numbers" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "4" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "5" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "for" },
+          { type: "IDENTIFIER",           value: "n" },
+          { type: "STATEMENT_KEYWORD",    value: "in" },
+          { type: "IDENTIFIER",           value: "numbers" }, 
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "n" },
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle simple, single-line for-in loops with a parenthetical and the item declared as a variable', function() {
+        input = 'var c = 0; var numbers = [1,2,3,4,5]; for (var n) in numbers {c += n};';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "numbers" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "4" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "5" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "for" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "n" },
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "STATEMENT_KEYWORD",    value: "in" },
+          { type: "IDENTIFIER",           value: "numbers" }, 
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "n" },
           { type: "PUNCTUATION",          value: "}" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}

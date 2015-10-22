@@ -48,6 +48,21 @@ module.exports = function(code) {
     // console.log(chunk);
     // console.log(tokens);
 
+    // track state: whether inside a string
+    if (currCol === '"' && insideString.status) {
+      insideString.status = false;
+    } else if (currCol === '"') {
+      insideString.status = true;
+    }
+   
+    // tracks state: whether inside a number
+    if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, 
+      tokens, nextCol)) {
+      advanceAndClear(1);
+      continue;
+    }
+    
+    // comment handling
     if (lexerFunctions.checkForComment(insideComment, chunk, tokens, 
       currCol, nextCol, nextNextCol, advanceAndClear)) {
       continue;
@@ -57,18 +72,7 @@ module.exports = function(code) {
       continue;
     }
     
-    if (currCol === '"' && insideString.status) {
-      insideString.status = false;
-    } else if (currCol === '"') {
-      insideString.status = true;
-    }
-    
-    if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, 
-      tokens, nextCol)) {
-      advanceAndClear(1);
-      continue;
-    }
-    
+    // string interpolation handling
     if (lexerFunctions.checkForStringInterpolationStart(stringInterpolation,
       insideString, chunk, tokens, nextCol, nextNextCol)) {
       advanceAndClear(3);
@@ -81,46 +85,24 @@ module.exports = function(code) {
       continue;      
     }
     
-    if (currCol === '(' && (lastToken.value === '=' || lastToken.value === 'return' ||
-      lastToken.value === '->') ) {
-      lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_START', chunk);
-      if (nextCol === ')') {
-        lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_END', nextCol);
-        advanceAndClear(2);
-        lexerFunctions.handleEndOfFile(nextNextCol, tokens);
-      } else {
-        insideTuple.status = true;
-        insideTuple.startIndex = tokens.length - 1;
-        advanceAndClear(1);
-      }
-      continue;
-    }
-    if (insideTuple.status && nextCol === ':') {
-      chunk = chunk.trim();
-      lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_ELEMENT_NAME', chunk);
+    // tuple handling
+    if (lexerFunctions.checkForTupleStart(insideTuple, chunk, tokens, lastToken,
+    currCol, nextCol, nextNextCol, advanceAndClear)) {
       advanceAndClear(1);
       continue;
     }
-    if (insideTuple.status && currCol === ',') {
-      insideTuple.verified = true;
+    if (insideTuple.status && lexerFunctions.handleTuple(insideTuple, chunk, 
+      tokens, currCol, nextCol)) {
+      advanceAndClear(1);
+      continue;
     }
-    if (insideTuple.status && currCol === ')') {
-      if (insideTuple.verified) {
-        lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_END', chunk);
-        insideTuple.status = false;
-        insideTuple.startIndex = undefined;
-        insideTuple.verified = false;
-        advanceAndClear(1);
-        lexerFunctions.handleEndOfFile(nextCol, tokens);
-        continue;
-      } else {
-        tokens[insideTuple.startIndex].type = 'PUNCTUATION';
-        insideTuple.status = false;
-        insideTuple.startIndex = undefined;
-        insideTuple.verified = false;
-      }
+    if (lexerFunctions.checkForTupleEnd(insideTuple, chunk, tokens, currCol)) {
+      advanceAndClear(1);
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
+      continue;
     }
     
+    // main evaluation block
     if (!insideString.status && !insideNumber.status && 
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
 
@@ -143,13 +125,13 @@ module.exports = function(code) {
         }) ||
         lexerFunctions.checkFor('OPERATOR', chunk, tokens) || 
         lexerFunctions.checkFor('TERMINATOR', chunk, tokens) || 
-        lexerFunctions.checkForIdentifier(chunk, tokens, VARIABLE_NAMES) ||
+        lexerFunctions.checkForIdentifier(chunk, tokens, lastToken, VARIABLE_NAMES) ||
         lexerFunctions.checkForLiteral(chunk, tokens);
       }
       
       clearChunk();
       
-      // handles special evaluation point scenarios
+      // special evaluation point handling
       if (lexerFunctions.checkForWhitespace(nextCol)) advance(1);
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       
