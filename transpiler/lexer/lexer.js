@@ -6,7 +6,7 @@ module.exports = function(code) {
   var i = 0;
   var tokens = [];
   var chunk = '';
-  var currCol, prevCol, nextCol;
+  var currCol, prevCol, nextCol, nextNextCol;
   var VARIABLE_NAMES = {};
   
   // track state
@@ -137,13 +137,13 @@ module.exports = function(code) {
           insideCollection.push({type: undefined, location: tokens.length-1});})
       } else {
         lexerFunctions.checkFor('KEYWORD', chunk, tokens) ||
-        lexerFunctions.checkForIdentifier(chunk, tokens, VARIABLE_NAMES) ||
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) || 
         lexerFunctions.checkFor('SUBSTRING_LOOKUP', chunk, tokens, function() {
           substringLookup.status = !substringLookup.status;
         }) ||
         lexerFunctions.checkFor('OPERATOR', chunk, tokens) || 
         lexerFunctions.checkFor('TERMINATOR', chunk, tokens) || 
+        lexerFunctions.checkForIdentifier(chunk, tokens, VARIABLE_NAMES) ||
         lexerFunctions.checkForLiteral(chunk, tokens);
       }
       

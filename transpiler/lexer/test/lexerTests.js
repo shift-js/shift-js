@@ -259,9 +259,53 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+      
+      it('should handle complex comparisons', function () {
+        input = 'var l = 6 != 7 || 6 == 7 || 6 > 7 || 6 < 7 || 6 >= 7 || 6 <= 7;';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "l" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "6" },
+          { type: "OPERATOR",             value: "!" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "7" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "NUMBER",               value: "6" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "7" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "NUMBER",               value: "6" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "NUMBER",               value: "7" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "NUMBER",               value: "6" },
+          { type: "OPERATOR",             value: "<" },
+          { type: "NUMBER",               value: "7" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "NUMBER",               value: "6" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "7" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "NUMBER",               value: "6" },
+          { type: "OPERATOR",             value: "<" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "7" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
-      it('should handle preincrement', function () {
-        input = 'var a = 1; var m = ++a;';
+      it('should handle prefix operators', function () {
+        input = 'var a = 1; var m = ++a; var n = --m;';
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -275,13 +319,20 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "+" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ";" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "n" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "IDENTIFIER",           value: "m" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle postincrement', function () {
-        input = 'var a = 1; var n = a++;';
+      it('should handle postfix operators', function () {
+        input = 'var a = 1; var m = a++; var n = m--;';
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -289,11 +340,18 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "n" },
+          { type: "IDENTIFIER",           value: "m" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "n" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "m" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF" }
         ];
@@ -326,6 +384,63 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "+" },
           { type: "IDENTIFIER",                 value: "b" },
           { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle compound assignment operators', function() {
+        input = 'var x = 5; x += 4; x -= 3; x *= 2; x /= 1; x %= 2;';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "x" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "5" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "x" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "4" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "x" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "x" },
+          { type: "OPERATOR",             value: "*" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "x" },
+          { type: "OPERATOR",             value: "/" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "x" },
+          { type: "OPERATOR",             value: "%" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle logical operators', function() {
+        input = 'var a = !true && true || true';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "OPERATOR",             value: "!" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "OPERATOR",             value: "&" },
+          { type: "OPERATOR",             value: "&" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "OPERATOR",             value: "|" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "TERMINATOR",           value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
