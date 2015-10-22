@@ -129,7 +129,6 @@ var make_parse = function() {
     var verbTokenTypes = ["PUNCTUATION", "OPERATOR"];
     var nounTokenValues = ["DECLARATION_KEYWORD", "IDENTIFIER"];
 
-    console.log(t);
     if (nounTokenValues.hasItem(a)) {
       if (a === "DECLARATION_KEYWORD") v = "var";
       o = scope.find(v);
@@ -958,7 +957,129 @@ function traverse(node, func) {
     }
   }
 }
-var outputthing = {};
+var outputthing = {
+  "type": "Program",
+  "body": [
+    {
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "l"
+          },
+          "init": {
+            "type": "LogicalExpression",
+            "operator": "||",
+            "left": {
+              "type": "LogicalExpression",
+              "operator": "||",
+              "left": {
+                "type": "LogicalExpression",
+                "operator": "||",
+                "left": {
+                  "type": "LogicalExpression",
+                  "operator": "||",
+                  "left": {
+                    "type": "LogicalExpression",
+                    "operator": "||",
+                    "left": {
+                      "type": "BinaryExpression",
+                      "operator": "!=",
+                      "left": {
+                        "type": "Literal",
+                        "value": 6,
+                        "raw": "6"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": 7,
+                        "raw": "7"
+                      }
+                    },
+                    "right": {
+                      "type": "BinaryExpression",
+                      "operator": "==",
+                      "left": {
+                        "type": "Literal",
+                        "value": 6,
+                        "raw": "6"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": 7,
+                        "raw": "7"
+                      }
+                    }
+                  },
+                  "right": {
+                    "type": "BinaryExpression",
+                    "operator": ">",
+                    "left": {
+                      "type": "Literal",
+                      "value": 6,
+                      "raw": "6"
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": 7,
+                      "raw": "7"
+                    }
+                  }
+                },
+                "right": {
+                  "type": "BinaryExpression",
+                  "operator": "<",
+                  "left": {
+                    "type": "Literal",
+                    "value": 6,
+                    "raw": "6"
+                  },
+                  "right": {
+                    "type": "Literal",
+                    "value": 7,
+                    "raw": "7"
+                  }
+                }
+              },
+              "right": {
+                "type": "BinaryExpression",
+                "operator": ">=",
+                "left": {
+                  "type": "Literal",
+                  "value": 6,
+                  "raw": "6"
+                },
+                "right": {
+                  "type": "Literal",
+                  "value": 7,
+                  "raw": "7"
+                }
+              }
+            },
+            "right": {
+              "type": "BinaryExpression",
+              "operator": "<=",
+              "left": {
+                "type": "Literal",
+                "value": 6,
+                "raw": "6"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 7,
+                "raw": "7"
+              }
+            }
+          }
+        }
+      ],
+      "kind": "var"
+    }
+  ],
+  "sourceType": "module"
+};
 var parser = make_parse();
 console.log("############################");
 console.log("############################");
@@ -968,11 +1089,40 @@ console.log(util.inspect(parser([
   { type: "IDENTIFIER",           value: "l" },
   { type: "OPERATOR",             value: "=" },
   { type: "NUMBER",               value: "6" },
+  { type: "OPERATOR",             value: "!" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "7" },
   { type: "OPERATOR",             value: "|" },
   { type: "OPERATOR",             value: "|" },
+  { type: "NUMBER",               value: "6" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "7" },
+  { type: "OPERATOR",             value: "|" },
+  { type: "OPERATOR",             value: "|" },
+  { type: "NUMBER",               value: "6" },
+  { type: "OPERATOR",             value: ">" },
+  { type: "NUMBER",               value: "7" },
+  { type: "OPERATOR",             value: "|" },
+  { type: "OPERATOR",             value: "|" },
+  { type: "NUMBER",               value: "6" },
+  { type: "OPERATOR",             value: "<" },
+  { type: "NUMBER",               value: "7" },
+  { type: "OPERATOR",             value: "|" },
+  { type: "OPERATOR",             value: "|" },
+  { type: "NUMBER",               value: "6" },
+  { type: "OPERATOR",             value: ">" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "7" },
+  { type: "OPERATOR",             value: "|" },
+  { type: "OPERATOR",             value: "|" },
+  { type: "NUMBER",               value: "6" },
+  { type: "OPERATOR",             value: "<" },
+  { type: "OPERATOR",             value: "=" },
   { type: "NUMBER",               value: "7" },
   { type: "PUNCTUATION",          value: ";" },
-  { type: "TERMINATOR",           value: "EOF" }]), {
+  { type: "TERMINATOR",           value: "EOF" }
+]), {
   colors: true,
   depth: null
 }));
