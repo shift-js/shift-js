@@ -165,13 +165,14 @@ module.exports = {
   },
 
   // helper function to check for identifiers
-  checkForIdentifier: function(snippet, tokens, variable_names) {
+  checkForIdentifier: function(snippet, tokens, lastToken, variable_names) {
       if (variable_names[snippet]) {
         if (tokens) {
           module.exports.makeToken(undefined, snippet, tokens, 'IDENTIFIER', snippet);
         }
         return true;
-      } else if (tokens[tokens.length - 1].type === 'DECLARATION_KEYWORD') {
+      } else if (lastToken.type === 'DECLARATION_KEYWORD' || 
+        lastToken.value === 'for') {
         if (tokens) {
           module.exports.makeToken(undefined, snippet, tokens, 'IDENTIFIER', snippet);
         }
