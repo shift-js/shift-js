@@ -10,14 +10,14 @@ module.exports = {
     for (var prop in a) {
       propsInA += 1;
     }
-    for (var prop in b) {
+    for (prop in b) {
       propsInB += 1;
       if (!(prop in a) || !(module.exports.deepEqual(a[prop],b[prop]))) {
         return false;
       }
     }
     return propsInA === propsInB;
-  }, 
+  },
   diff: function(a,b) {
     var results = [];
     for (var i = 0; i < Math.max(a.length,b.length); i++) {
