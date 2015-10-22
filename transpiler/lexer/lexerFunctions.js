@@ -163,6 +163,24 @@ module.exports = {
   checkForWhitespace: function(snippet) {
     return snippet === ' ';
   },
+  
+  checkForTupleEnd: function(insideTuple, snippet, tokens, currCol) {
+    if (insideTuple.status && currCol === ')') {
+      if (insideTuple.verified) {
+        module.exports.makeToken(undefined, undefined, tokens, 'TUPLE_END', snippet);
+        insideTuple.status = false;
+        insideTuple.startIndex = undefined;
+        insideTuple.verified = false;
+        return true;
+      } else {
+        tokens[insideTuple.startIndex].type = 'PUNCTUATION';
+        insideTuple.status = false;
+        insideTuple.startIndex = undefined;
+        insideTuple.verified = false;
+        return false;
+      }
+    }
+  },
 
   // helper function to check for identifiers
   checkForIdentifier: function(snippet, tokens, lastToken, variable_names) {

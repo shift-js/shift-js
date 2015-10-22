@@ -104,21 +104,10 @@ module.exports = function(code) {
     if (insideTuple.status && currCol === ',') {
       insideTuple.verified = true;
     }
-    if (insideTuple.status && currCol === ')') {
-      if (insideTuple.verified) {
-        lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_END', chunk);
-        insideTuple.status = false;
-        insideTuple.startIndex = undefined;
-        insideTuple.verified = false;
-        advanceAndClear(1);
-        lexerFunctions.handleEndOfFile(nextCol, tokens);
-        continue;
-      } else {
-        tokens[insideTuple.startIndex].type = 'PUNCTUATION';
-        insideTuple.status = false;
-        insideTuple.startIndex = undefined;
-        insideTuple.verified = false;
-      }
+    if (lexerFunctions.checkForTupleEnd(insideTuple, chunk, tokens, currCol)) {
+      advanceAndClear(1);
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
+      continue;
     }
     
     if (!insideString.status && !insideNumber.status && 
