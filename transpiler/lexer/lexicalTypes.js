@@ -15,6 +15,12 @@ module.exports = {
     ']': 'COLLECTION_END'
   },
   
+  COMMENT: {
+    '//': 'COMMENT_START',
+    '/*': 'MULTI_LINE_COMMENT_START',
+    '*/': 'MULTI_LINE_COMMENT_END'  
+  },
+  
   KEYWORD: { 
     
     // keywords used in declarations
@@ -127,7 +133,6 @@ module.exports = {
     
   },
 
-  // TODO Multicharacter operator such as ==, -=, 
   // TODO end of file terminator at end of string, new line terminator, semicolon terminator
 
   PUNCTUATION: {
@@ -143,7 +148,7 @@ module.exports = {
     '@': 'PUNCTUATION', 
     '#': 'PUNCTUATION', 
     '`': 'PUNCTUATION',
-    '?': 'PUNCTUATION' 
+    // '?': 'PUNCTUATION' 
 
   },
 
@@ -155,6 +160,12 @@ module.exports = {
   SPECIAL_STRING: {
     '\\(': "STRING_INTERPOLATION_START",
     ')': "STRING_INTERPOLATION_END",
+  },
+
+  TERMINATOR: {
+    'EOF': 'TERMINATOR',
+    '\n': 'TERMINATOR',
+    '\r': 'TERMINATOR'
   }
 
   

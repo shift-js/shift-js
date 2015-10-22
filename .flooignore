@@ -5,4 +5,7 @@
 extern/
 node_modules/
 tmp
+
 vendor/
+Gruntfile.js
+
