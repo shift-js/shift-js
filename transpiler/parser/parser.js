@@ -3,6 +3,7 @@ var esprima = require('esprima-ast-utils');
 var fs = require('fs');
 var R = require('ramda');
 var tokenize = require('./tokens.js').tokenize;
+// var helpers = require('lexer/helperfunctions.js');
 //TODO: Tokenization Examples 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15 have no terminator punctuation. Inconsistent
 //TODO: Test Case 13 IDENTIFIER "a" not a
 //TODO: Test Case 14 IDENTIFIER "a" not a
