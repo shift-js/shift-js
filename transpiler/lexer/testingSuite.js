@@ -33,10 +33,10 @@ var lexer = require("./lexer");
 var deepEqual = require("./helperFunctions").deepEqual;
 var diff = require("./helperFunctions").diff;
 
-var k = 24;
+var k = 33;
 console.log(lexer(swiftCode[k]));
 console.log(diff(lexer(swiftCode[k]),swiftCodeAnswers[k]));
-console.log(deepEqual(lexer(swiftCode[k]),swiftCodeAnswers[k]));
+// console.log(deepEqual(lexer(swiftCode[k]),swiftCodeAnswers[k]));
 
 // var arr = [];
 

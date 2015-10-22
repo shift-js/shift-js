@@ -160,6 +160,12 @@ module.exports = {
   SPECIAL_STRING: {
     '\\(': "STRING_INTERPOLATION_START",
     ')': "STRING_INTERPOLATION_END",
+  },
+
+  TERMINATOR: {
+    'EOF': 'TERMINATOR',
+    '\n': 'TERMINATOR',
+    '\r': 'TERMINATOR'
   }
 
   
