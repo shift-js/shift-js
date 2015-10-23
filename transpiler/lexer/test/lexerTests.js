@@ -1576,6 +1576,70 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+    });
+    
+    describe(' Multi-Line While/Repeat-While loops', function() {
+      
+      it('should handle multi-line repeat-while loops with a parenthetical', function() {
+        input = `var i = 10;
+                 repeat {
+                   i--
+                 } while (i > 0);`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "repeat" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "STATEMENT_KEYWORD",    value: "while" },
+          { type: "PUNCTUATION",          value: "(" }, 
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "NUMBER",               value: "0" },    
+          { type: "PUNCTUATION",          value: ")" }, 
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle multi-line repeat-while loops without a parenthetical', function() {
+        input = `var i = 10
+                 repeat {
+                   i--
+                 } while i > 0`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "repeat" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "STATEMENT_KEYWORD",    value: "while" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "NUMBER",               value: "0" },    
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
     });  
 
   });
