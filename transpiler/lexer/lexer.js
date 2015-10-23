@@ -3,7 +3,8 @@ var lexerFunctions = require("./lexerFunctions");
 
 module.exports = function(code) {
 
-  code = code.trim();
+
+  code = String.raw({raw: code});
   var i = 0;
   var tokens = [];
   var chunk = '';
@@ -47,6 +48,17 @@ module.exports = function(code) {
 
     // console.log(chunk);
     // console.log(tokens);
+
+    if (currCol === '\n') {
+      lexerFunctions.makeToken(undefined, undefined, tokens, 'TERMINATOR', '\\n');
+      advanceAndClear(1);
+      continue
+    }
+
+    if (currCol === ' ' && lastToken.value === '\\n') {
+      advanceAndClear(1);
+      continue;
+    }
 
     // track state: whether inside a string
     if (currCol === '"' && insideString.status) {

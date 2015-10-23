@@ -164,8 +164,9 @@ module.exports = {
 
   TERMINATOR: {
     'EOF': 'TERMINATOR',
-    '\n': 'TERMINATOR',
-    '\r': 'TERMINATOR'
+    '\\n': 'TERMINATOR',
+    '\\r': 'TERMINATOR',
+    '\\t': 'TAB'
   }
 
   
