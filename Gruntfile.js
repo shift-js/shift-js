@@ -8,22 +8,21 @@ module.exports = function(grunt) {
         options: {
           reporter: 'spec'
         },
+
         src: ['test/*.js']
+
       }
     },
 
     jshint: {
       files: [
-        'index.js',
-        'client/**/*.js',
-        'server/**/*.js'
+        'transpiler/**/*'
       ],
       options: {
         force: false,
         jshintrc: '.jshintrc',
         ignores: [
-          'client/lib/**/*.js',
-          'client/dist/**/*.js'
+          'transpiler/parser/test_cases_generator_output.js'
         ]
       }
     },
@@ -34,7 +33,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
 
   grunt.registerTask('test', [
-    'jshint',
+    // 'jshint',
     'mochaTest'
   ]);
 

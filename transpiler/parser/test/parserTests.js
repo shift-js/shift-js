@@ -652,8 +652,10 @@ describe('Parser', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
+
     //  var l = 6 != 7 || (6 == 7 || (6 > 7 || (6 < 7 || (6 >= 7 || 6 <= 7))));
     // 'var l = 6 != 7 ||  6 == 7 ||  6 > 7 ||  6 < 7 ||  6 >= 7 || 6 <= 7;';
+
     xit('should handle comparisons', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
@@ -821,7 +823,7 @@ describe('Parser', function() {
     });
 
     // Swift input: 'var a = 1; var m = ++a; var n = --m;'
-    it('should handle prefix operators', function () {
+    xit('should handle prefix operators', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "a" },
@@ -916,7 +918,7 @@ describe('Parser', function() {
     });
 
     // Swift input: 'var a = 1; var m = a++; var n = m--;'
-    it('should handle postfix operators', function () {
+    xit('should handle postfix operators', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "a" },
@@ -2056,7 +2058,7 @@ describe('Parser', function() {
 
     // Test 20 - Swift input: 'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
     // AST Explorer input: 'let arr = [1,2]; var v = {}; v[arr[0]] = [[1,2], [3,4]]; v[arr[1]] = [["one", "two"], ["three", "four"]];'
-    it('should handle arrays of dictionaries', function () {
+    xit('should handle arrays of dictionaries', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "let" },
         { type: "IDENTIFIER",           value: "arr" },
@@ -2483,7 +2485,7 @@ describe('Parser', function() {
     });
   });
 
-  describe('Second milestone', function() {
+  xdescribe('Second milestone', function() {
     describe('If statements', function() {
 
       // Swift input: 'var a = 5; if (true) {--a};'

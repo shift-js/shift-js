@@ -1,9 +1,9 @@
 module.exports = {
-  
+
   title: ['First milestone', 'Second milestone'],
   description:  [
                   [
-                    {'Basic tests': 
+                    {'Basic tests':
                       [
                         'should handle variable declarations with numbers',
                         'should handle strings',
@@ -11,17 +11,15 @@ module.exports = {
                         'should handle strings with whitespace'
                         // should handle comments
                       ]
-                    }
-                    ,
-                    {'Basic collections': 
+                    },
+                    {'Basic collections':
                       [
                         'should handle arrays',
                         'should handle dictionaries',
                         // 'should handle tuples',
                         'should handle let with dictionaries'
                       ]
-                    }
-                    ,
+                    },
                     {'Numbers and operations':
                       [
                         'should handle floating point numbers',
@@ -34,8 +32,7 @@ module.exports = {
                         'should handle ternary operators',
                         // 'should handle ranges'
                       ]
-                    }
-                    ,
+                    },
                     {'String interpolation':
                       [
                         // 'should handle string concatenation',
@@ -43,8 +40,7 @@ module.exports = {
                         'should handle string interpolation with interpolation in beginning of string',
                         'should handle interpolation of operations'
                       ]
-                    }
-                    ,
+                    },
                     {'Nested collections':
                       [
                         'should handle dictionaries of arrays',
@@ -55,17 +51,15 @@ module.exports = {
                         // 'should handle multi-nested lists',
                       ]
                     }
-                  ]
-                  ,
+                  ],
                   [
-                   {'If statements': 
+                   {'If statements':
                       [
                         // 'should handle single-line if statements',
                         // 'should handle single-line if/else statements',
                         // 'should handle single-line if/else-if/else statements'
                       ]
-                    }
-                    ,
+                    },
                     {'While/Repeat-While loops':
                       [
                         // 'should handle single-line while loops',
@@ -75,7 +69,7 @@ module.exports = {
                   ]
                   // ,
                   // [
-                  //   {'Basic tests': 
+                  //   {'Basic tests':
                   //     [
                   //     'should handle variable declarations with numbers'
                   //     ,'should handle strings'
@@ -84,7 +78,7 @@ module.exports = {
                   //     ,'should handle comments'
                   //     ]
                   //   },
-                  //   {'SOMEDESCRIPTIONOFATEST': ['should1','should2','should3']}  
+                  //   {'SOMEDESCRIPTIONOFATEST': ['should1','should2','should3']}
                   // ]
                 ]
 
@@ -111,7 +105,7 @@ module.exports = {
     // });
 
 
-   
+
 
 
 

@@ -515,10 +515,10 @@ describe('Lexer', function() {
       });
     });
 
-    describe('String interpolation', function () {
+    describe('String concatenation and interpolation', function () {
 
       it('should handle string concatenation', function () {
-        input = 'var k = "Stephen" + " " + "Tabor" + "!"';
+        input = String.raw`var k = "Stephen" + " " + "Tabor" + "!"`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "k" },
@@ -536,7 +536,7 @@ describe('Lexer', function() {
       });
 
       it('should handle string interpolation', function () {
-        input = 'var planet = "Earth"; let o = "\\(planet)"';
+        input = String.raw`var planet = "Earth"; let o = "\(planet)"`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "planet" },
@@ -557,7 +557,7 @@ describe('Lexer', function() {
       });
 
       it('should handle string interpolation in the middle of a string', function () {
-        input = 'var planet = "Earth"; let o = "Hello \\(planet)!"';
+        input = String.raw`var planet = "Earth"; let o = "Hello \(planet)!"`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "planet" },
@@ -578,7 +578,7 @@ describe('Lexer', function() {
       });
 
       it('should handle interpolation containing operations', function () {
-        input = 'var p = "\\(100 - 99), 2, 3"';
+        input = String.raw`var p = "\(100 - 99), 2, 3"`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "p" },
@@ -647,9 +647,9 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "s" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "arr" },
-          { type: "SUBSTRING_LOOKUP",     value: "[" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
           { type: "NUMBER",               value: "0" },
-          { type: "SUBSTRING_LOOKUP",     value: "]" },
+          { type: "SUBSTRING_LOOKUP_END",     value: "]" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF" }
         ];
@@ -677,11 +677,11 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "u" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "arr" },
-          { type: "SUBSTRING_LOOKUP",     value: "[" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
           { type: "IDENTIFIER",           value: "t" },
           { type: "OPERATOR",             value: "-" },
           { type: "NUMBER",               value: "99" },
-          { type: "SUBSTRING_LOOKUP",     value: "]" },
+          { type: "SUBSTRING_LOOKUP_END",     value: "]" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF" }
         ];
@@ -705,9 +705,9 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "=" },
           { type: "ARRAY_START",          value: "[" },
           { type: "IDENTIFIER",           value: "arr" },
-          { type: "SUBSTRING_LOOKUP",     value: "[" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
           { type: "NUMBER",               value: "0" },
-          { type: "SUBSTRING_LOOKUP",     value: "]" },
+          { type: "SUBSTRING_LOOKUP_END",     value: "]" },
           { type: "ARRAY_END",            value: "]" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF" }
@@ -732,9 +732,9 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "=" },
           { type: "DICTIONARY_START",     value: "[" },
           { type: "IDENTIFIER",           value: "arr" },
-          { type: "SUBSTRING_LOOKUP",     value: "[" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
           { type: "NUMBER",               value: "0" },
-          { type: "SUBSTRING_LOOKUP",     value: "]" },
+          { type: "SUBSTRING_LOOKUP_END",     value: "]" },
           { type: "PUNCTUATION",          value: ":" },
           { type: "ARRAY_START",          value: "[" },
           { type: "ARRAY_START",          value: "[" },
@@ -751,9 +751,9 @@ describe('Lexer', function() {
           { type: "ARRAY_END",            value: "]" },
           { type: "PUNCTUATION",          value: "," },
           { type: "IDENTIFIER",           value: "arr" },
-          { type: "SUBSTRING_LOOKUP",     value: "[" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
           { type: "NUMBER",               value: "1" },
-          { type: "SUBSTRING_LOOKUP",     value: "]" },
+          { type: "SUBSTRING_LOOKUP_END",     value: "]" },
           { type: "PUNCTUATION",          value: ":" },
           { type: "ARRAY_START",          value: "[" },
           { type: "ARRAY_START",          value: "[" },
@@ -818,12 +818,13 @@ describe('Lexer', function() {
           { type: "TERMINATOR",           value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
-      });
+      }) ;
     });
   });
 
   describe('Second milestone', function() {
-    describe('If statements', function() {
+    
+    describe('Single-Line If statements', function() {
 
       it('should handle single-line if statements', function() {
         input = 'var a = 5; if (true) {--a};';
@@ -1063,7 +1064,7 @@ describe('Lexer', function() {
 
     });
 
-    describe('While/Repeat-While loops', function() {
+    describe(' Single-Line While/Repeat-While loops', function() {
 
       it('should handle single-line while loops with a parenthetical', function() {
         input = 'var i = 10; while (i >= 0) {i--}';
@@ -1165,7 +1166,7 @@ describe('Lexer', function() {
 
     });
 
-    describe('For loops', function() {
+    describe('Single-Line For loops', function() {
 
       it('should handle single-line for loops with a parenthetical', function() {
         input = 'var a = 0; for (var i = 10; i > 0; i--) {a++};';
@@ -1235,7 +1236,7 @@ describe('Lexer', function() {
 
     });
 
-    describe('For-In loops', function() {
+    describe('Single-Line For-In loops', function() {
 
       it('should handle simple, single-line for-in loops without a parenthetical', function() {
         input = 'var c = 0; var numbers = [1,2,3,4,5]; for n in numbers {c += n};';
@@ -1319,6 +1320,327 @@ describe('Lexer', function() {
       });
 
     });
+
+    describe('Multi-line statements', function() {
+      it('should handle simple multi-line variable assignment', function() {
+        input = String.raw`var b = true;
+                 var c = 0;`
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+      it('should handle complex multi-line variable assignment without semi-colons', function() {
+        input = String.raw`var e = ["Eggs", "Milk", "Bacon"]
+                 var f = ["one": 1, "two": 2, "three": 3]
+                 let g = [1 : "one",2   :"two", 3: "three"]`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "e" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "STRING",               value: "Eggs" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "Milk" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "Bacon" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "f" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "DICTIONARY_START",     value: "[" },
+          { type: "STRING",               value: "one" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "two" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "three" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "NUMBER",               value: "3" },
+          { type: "DICTIONARY_END",       value: "]" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let" },
+          { type: "IDENTIFIER",           value: "g" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "DICTIONARY_START",     value: "[" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "STRING",               value: "one" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "STRING",               value: "two" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "STRING",               value: "three" },
+          { type: "DICTIONARY_END",       value: "]" },
+          { type: "TERMINATOR",           value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      })    
+      
+    });
+
+    describe('Multi-line for loops', function() {
+      it('should handle simple multi-line for loops', function() {
+        input = String.raw`var b = 0;
+                for var i = 0; i < 10; i++ {
+                  b++
+                }`
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "for" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "<" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+      it('should handle multi-line nested for loops', function() {
+        input = String.raw`var arrays = [[1,2,3], [4,5,6], [7,8,9]]
+                 var total = 0
+                 for (var i = 0; i < 3; i++) {
+                   for var j = 0; j < 3; j++ {
+                     total += arrays[i][j]
+                   }
+                 }`
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "arrays" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "3" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "NUMBER",               value: "4" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "5" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "6" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "NUMBER",               value: "7" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "8" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "9" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "total" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "for" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "<" },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "for" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "j" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "j" },
+          { type: "OPERATOR",             value: "<" },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "j" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "total" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "arrays" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "IDENTIFIER",           value: "j" },
+          { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+    });
+    describe('Multi-line for-in loops', function() {
+      it('should handle simple multi-line for-in loops', function() {
+        input = String.raw`var c = 0
+                 var numbers = [1,2,3,4,5]
+                 for n in numbers {
+                   c += n
+                 }`
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "numbers" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "4" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "5" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "for" },
+          { type: "IDENTIFIER",           value: "n" },
+          { type: "STATEMENT_KEYWORD",    value: "in" },
+          { type: "IDENTIFIER",           value: "numbers" }, 
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "n" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+    });
+    
+    describe(' Multi-Line While/Repeat-While loops', function() {
+      
+      it('should handle multi-line repeat-while loops with a parenthetical', function() {
+        input = String.raw`var i = 10;
+                 repeat {
+                   i--
+                 } while (i > 0);`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "repeat" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "STATEMENT_KEYWORD",    value: "while" },
+          { type: "PUNCTUATION",          value: "(" }, 
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "NUMBER",               value: "0" },    
+          { type: "PUNCTUATION",          value: ")" }, 
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle multi-line repeat-while loops without a parenthetical', function() {
+        input = String.raw`var i = 10
+                 repeat {
+                   i--
+                 } while i > 0`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "repeat" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "STATEMENT_KEYWORD",    value: "while" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "NUMBER",               value: "0" },    
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+    });  
 
   });
 });

@@ -1,5 +1,5 @@
 module.exports = {
-  
+
   swiftCodeAnswers: [
     // 1
     [
@@ -127,7 +127,7 @@ module.exports = {
       { type: "TERMINATOR",           value: "EOF" }
     ],
     // 12
-    [  
+    [
       { type: "DECLARATION_KEYWORD",  value: "let" },
       { type: "IDENTIFIER",           value: "l" },
       { type: "OPERATOR",             value: "=" },
@@ -153,8 +153,7 @@ module.exports = {
       { type: "IDENTIFIER",           value: "a" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
-    ]
-    ,
+    ],
     // 14
     [
       { type: "DECLARATION_KEYWORD",  value: "var" },
@@ -170,8 +169,7 @@ module.exports = {
       { type: "OPERATOR",             value: "+" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
-    ]
-    ,
+    ],
     [
       { type: "DECLARATION_KEYWORD",        value: "var" },
       { type: "IDENTIFIER",                 value: "a" },
@@ -196,8 +194,7 @@ module.exports = {
       { type: "OPERATOR",                   value: "+" },
       { type: "IDENTIFIER",                 value: "b" },
       { type: "TERMINATOR",                 value: "EOF"}
-    ]
-    ,
+    ],
     [
       { type: "DECLARATION_KEYWORD",        value: "var" },
       { type: "IDENTIFIER",                 value: "a" },
@@ -214,8 +211,7 @@ module.exports = {
       { type: "OPERATOR",                   value: "-" },
       { type: "NUMBER",                     value: "1" },
       { type: "TERMINATOR",                 value: "EOF"}
-    ]
-    ,
+    ],
     [
       { type: "DECLARATION_KEYWORD",        value: "var" },
       { type: "IDENTIFIER",                 value: "k" },
@@ -228,8 +224,7 @@ module.exports = {
       { type: "OPERATOR",                   value: "+" },
       { type: "STRING",                     value: "!" },
       { type: "TERMINATOR",                 value: "EOF" }
-    ]
-    ,
+    ],
     [
       { type: "DECLARATION_KEYWORD",        value: "var" },
       { type: "IDENTIFIER",                 value: "planet" },
@@ -245,8 +240,7 @@ module.exports = {
       { type: "STRING_INTERPOLATION_END",   value: ")" },
       { type: "STRING",                     value: "!" },
       { type: "TERMINATOR",                 value: "EOF" }
-    ]
-    ,
+    ],
     // 16
     [
       { type: "DECLARATION_KEYWORD",        value: "var" },
@@ -356,7 +350,7 @@ module.exports = {
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
     ],
-    // 21 
+    // 21
     [
       { type: "DECLARATION_KEYWORD",  value: "let" },
       { type: "IDENTIFIER",           value: "arr" },
@@ -481,8 +475,7 @@ module.exports = {
       { type: "TUPLE_START",                value: "("},
       { type: "TUPLE_END",                  value: ")"},
       { type: "TERMINATOR",                 value: "EOF" }
-    ]
-    ,
+    ],
     [
       { type: "DECLARATION_KEYWORD",  value: "var" },
       { type: "IDENTIFIER",           value: "w" },
@@ -522,8 +515,7 @@ module.exports = {
       { type: "DICTIONARY_END",       value: "]" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "TERMINATOR",           value: "EOF" }
-    ]
-    ,
+    ],
     [
       { type: "DECLARATION_KEYWORD",  value: "var" },
       { type: "IDENTIFIER",           value: "i" },
@@ -534,15 +526,14 @@ module.exports = {
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: ">" },
       { type: "OPERATOR",             value: "=" },
-      { type: "NUMBER",               value: "0" },    
+      { type: "NUMBER",               value: "0" },
       { type: "PUNCTUATION",          value: "{" },
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: "-" },
       { type: "OPERATOR",             value: "-" },
-      { type: "PUNCTUATION",          value: "}" }, 
+      { type: "PUNCTUATION",          value: "}" },
       { type: "TERMINATOR",           value: "EOF"}
-    ]
-    ,
+    ],
     [
       { type: "DECLARATION_KEYWORD",  value: "var" },
       { type: "IDENTIFIER",           value: "i" },
@@ -554,17 +545,16 @@ module.exports = {
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: "-" },
       { type: "OPERATOR",             value: "-" },
-      { type: "PUNCTUATION",          value: "}" }, 
+      { type: "PUNCTUATION",          value: "}" },
       { type: "STATEMENT_KEYWORD",    value: "while" },
-      { type: "PUNCTUATION",          value: "(" }, 
+      { type: "PUNCTUATION",          value: "(" },
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: ">" },
       { type: "OPERATOR",             value: "=" },
-      { type: "NUMBER",               value: "0" },    
-      { type: "PUNCTUATION",          value: ")" }, 
+      { type: "NUMBER",               value: "0" },
+      { type: "PUNCTUATION",          value: ")" },
       { type: "TERMINATOR",           value: "EOF"}
-    ]
-    ,
+    ],
     [
       { type: "DECLARATION_KEYWORD",  value: "var" },
       { type: "IDENTIFIER",           value: "i" },
@@ -572,20 +562,19 @@ module.exports = {
       { type: "NUMBER",               value: "10" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "STATEMENT_KEYWORD",    value: "while" },
-      { type: "PUNCTUATION",          value: "(" }, 
+      { type: "PUNCTUATION",          value: "(" },
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: ">" },
       { type: "OPERATOR",             value: "=" },
-      { type: "NUMBER",               value: "0" }, 
-      { type: "PUNCTUATION",          value: ")" },    
+      { type: "NUMBER",               value: "0" },
+      { type: "PUNCTUATION",          value: ")" },
       { type: "PUNCTUATION",          value: "{" },
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: "-" },
       { type: "OPERATOR",             value: "-" },
-      { type: "PUNCTUATION",          value: "}" }, 
+      { type: "PUNCTUATION",          value: "}" },
       { type: "TERMINATOR",           value: "EOF"}
-    ]
-    ,
+    ],
     [
       { type: "DECLARATION_KEYWORD",  value: "var" },
       { type: "IDENTIFIER",           value: "i" },
@@ -597,13 +586,27 @@ module.exports = {
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: "-" },
       { type: "OPERATOR",             value: "-" },
-      { type: "PUNCTUATION",          value: "}" }, 
+      { type: "PUNCTUATION",          value: "}" },
       { type: "STATEMENT_KEYWORD",    value: "while" },
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: ">" },
       { type: "OPERATOR",             value: "=" },
-      { type: "NUMBER",               value: "0" },    
+      { type: "NUMBER",               value: "0" },
       { type: "TERMINATOR",           value: "EOF"}
+    ],
+    [
+      { type: "DECLARATION_KEYWORD",  value: "var" },
+      { type: "IDENTIFIER",           value: "b" },
+      { type: "OPERATOR",             value: "=" },
+      { type: "BOOLEAN",              value: "true" },
+      { type: "PUNCTUATION",          value: ";" },
+      { type: "TERMINATOR",           value: "\\n"},
+      { type: "DECLARATION_KEYWORD",  value: "var" },
+      { type: "IDENTIFIER",           value: "c" },
+      { type: "OPERATOR",             value: "=" },
+      { type: "NUMBER",               value: "0" },
+      { type: "PUNCTUATION",          value: ";" },
+      { type: "TERMINATOR",           value: "EOF"},
     ]
     ,
     [
@@ -613,41 +616,40 @@ module.exports = {
       { type: "NUMBER",               value: "0" },
       { type: "PUNCTUATION",          value: ";" },
       { type: "STATEMENT_KEYWORD",    value: "while" },
-      { type: "PUNCTUATION",          value: "(" }, 
+      { type: "PUNCTUATION",          value: "(" },
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: ">" },
       { type: "OPERATOR",             value: "=" },
       { type: "NUMBER",               value: "0" },
-      { type: "PUNCTUATION",          value: "(" },     
+      { type: "PUNCTUATION",          value: "(" },
       { type: "PUNCTUATION",          value: "{" },
-      { type: "TERMINATOR",           value: "\n"},
+      { type: "TERMINATOR",           value: "\\n"},
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: "+" },
       { type: "OPERATOR",             value: "+" },
-      { type: "TERMINATOR",           value: "\n"},
+      { type: "TERMINATOR",           value: "\\n"},
       { type: "PUNCTUATION",          value: "}" }, 
       { type: "TERMINATOR",           value: "EOF"}
-    ]
-    ,
+    ],
     [
       { type: "DECLARATION_KEYWORD",  value: "var" },
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: "=" },
       { type: "NUMBER",               value: "0" },
       { type: "PUNCTUATION",          value: ";" },
-      { type: "TERMINATOR",           value: "\n"},
+      { type: "TERMINATOR",           value: "\\n"},
       { type: "STATEMENT_KEYWORD",    value: "repeat" },
       { type: "PUNCTUATION",          value: "{" },
-      { type: "TERMINATOR",           value: "\n"},
+      { type: "TERMINATOR",           value: "\\n"},
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: "+" },
       { type: "OPERATOR",             value: "+" },
-      { type: "TERMINATOR",           value: "\n"},
+      { type: "TERMINATOR",           value: "\\n"},
       { type: "PUNCTUATION",          value: "}" }, 
       { type: "STATEMENT_KEYWORD",    value: "while" },
       { type: "IDENTIFIER",           value: "i" },
       { type: "OPERATOR",             value: "<" },
-      { type: "NUMBER",               value: "10" },  
+      { type: "NUMBER",               value: "10" },
       { type: "TERMINATOR",           value: "EOF"}
     ]
   ]

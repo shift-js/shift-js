@@ -34,12 +34,19 @@ module.exports = {
     'var i = 10; repeat {i--} while (i >= 0)', // 31
     'var i = 10; while (i >= 0) {i--}', // 32
     'var i = 10; repeat {i--} while i >= 0', // 33
-    'var i = 0; while (i >= 0) { \\n i++ \\n }', // 34
-    'var i = 0; \
-    repeat { \
-      i++ \
-    } while i < 10', // 35
+    // 'var i = 0; while (i >= 0) { 
+    //     i++
+    // }', // 34
+    // 'var i = 0; \
+    // repeat { \
+    //   i++ \
+    // } while i < 10', // 35
+    `var b = true;
+    var c = 0;`
   ]
 
 };
+
+// Max: Switch, multiline: if and while, basic functions
+// Don: multiline repeat-while, for-in, for loops
 

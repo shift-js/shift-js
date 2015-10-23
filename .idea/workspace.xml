@@ -3,9 +3,25 @@
   <component name="ChangeListManager">
     <list default="true" id="1f40a89a-775a-44df-bb8b-a6f75c26ba76" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.floo" afterPath="$PROJECT_DIR$/.floo" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.flooignore" afterPath="$PROJECT_DIR$/.flooignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.jshintrc" afterPath="$PROJECT_DIR$/.jshintrc" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/helperFunctions.js" afterPath="$PROJECT_DIR$/transpiler/lexer/helperFunctions.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/lexer.js" afterPath="$PROJECT_DIR$/transpiler/lexer/lexer.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/lexerFunctions.js" afterPath="$PROJECT_DIR$/transpiler/lexer/lexerFunctions.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/test/lexerTests.js" afterPath="$PROJECT_DIR$/transpiler/lexer/test/lexerTests.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/test/lexerTests3.js" afterPath="$PROJECT_DIR$/transpiler/lexer/test/lexerTests3.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/lexicalTypes.js" afterPath="$PROJECT_DIR$/transpiler/lexer/lexicalTypes.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/parser/parser.js" afterPath="$PROJECT_DIR$/transpiler/parser/parser.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/parser/test/parserTests.js" afterPath="$PROJECT_DIR$/transpiler/parser/test/parserTests.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/swiftCode.js" afterPath="$PROJECT_DIR$/transpiler/lexer/swiftCode.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/swiftCodeAnswers.js" afterPath="$PROJECT_DIR$/transpiler/lexer/swiftCodeAnswers.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/swiftCodeDescription.js" afterPath="$PROJECT_DIR$/transpiler/lexer/swiftCodeDescription.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/temporaryTests.js" afterPath="$PROJECT_DIR$/transpiler/lexer/temporaryTests.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transpiler/lexer/testingSuite.js" afterPath="$PROJECT_DIR$/transpiler/lexer/testingSuite.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="shift-js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,11 +42,41 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="parser.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="parser.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/transpiler/parser/parser.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-29.935728">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="1045" column="0" selection-start-line="1045" selection-start-column="0" selection-end-line="1045" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".floo" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.floo">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Gruntfile.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.28355387">
+              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="parserTests.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/transpiler/parser/test/parserTests.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="3931" column="0" selection-start-line="3931" selection-start-column="0" selection-end-line="3931" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -40,6 +86,16 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/transpiler/parser/test/parserTests.js" />
+        <option value="$PROJECT_DIR$/transpiler/parser/parser.js" />
+        <option value="$PROJECT_DIR$/.floo" />
+        <option value="$PROJECT_DIR$/Gruntfile.js" />
+      </list>
+    </option>
   </component>
   <component name="JsBuildToolGruntFileManager" detection-done="true">
     <gruntfile path="$PROJECT_DIR$/Gruntfile.js" />
@@ -128,6 +184,28 @@
               <option name="myItemId" value="transpiler" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="parser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shift-js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shift-js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="transpiler" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
@@ -188,10 +266,34 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/transpiler/parser/test/parserTests.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3931" column="0" selection-start-line="3931" selection-start-column="0" selection-end-line="3931" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/transpiler/parser/parser.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-29.935728">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="1045" column="0" selection-start-line="1045" selection-start-column="0" selection-end-line="1045" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.floo">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.28355387">
+          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding />
         </state>
       </provider>

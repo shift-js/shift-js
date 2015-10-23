@@ -1043,6 +1043,7 @@ var outputthing = {
   "sourceType": "module"
 };
 var parser = make_parse();
+
 console.log("############################");
 console.log("############################");
 console.log("##### BEGIN AST OUTPUT #####");
