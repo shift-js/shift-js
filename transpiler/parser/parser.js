@@ -3,6 +3,7 @@ var esprima = require('esprima-ast-utils');
 var fs = require('fs');
 var R = require('ramda');
 var tokenize = require('./tokens.js').tokenize;
+var helper = require('../lexer/helperfunctions.js');
 // var helpers = require('lexer/helperfunctions.js');
 //TODO: Tokenization Examples 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15 have no terminator punctuation. Inconsistent
 //TODO: Test Case 13 IDENTIFIER "a" not a
@@ -158,13 +159,14 @@ var make_parse = function() {
     var left;
     var t = token;
     advance();
+    console.log(token);
     left = t.nud();
 
-    if (t.value === "++") {
+    if (t.value === "++" || t.value === "--") {
       //Pre-fix operator
       left = t;
       advance();
-    } else if (token.value === "++") {
+    } else if (token.value === "++" || token.value === "--") {
       //Post-fix incrementor
 
       left.type = "Identifier";
@@ -175,7 +177,8 @@ var make_parse = function() {
       advance();
       return {
         "type": "UpdateExpression",
-        "operator": "++",
+        // "operator": "++",
+        "operator": token.value,
         "prefix": false,
         "argument": left
       }
@@ -312,9 +315,14 @@ var make_parse = function() {
       delete this.value;
       delete this.arity;
 
-
       this.type = "BinaryExpression";
       this.operator = this.value;
+
+      if(this.operator === "||") {
+        this.type = "LogicalExpression";
+        
+      }
+
 
       if(left.arity === "IDENTIFIER") {
         left.type = "Identifier";
@@ -355,11 +363,17 @@ var make_parse = function() {
       //this.first = left;
       //this.second = expression(bp - 1);
       //this.arity = "binary";
-
       delete this.value;
       delete this.arity;
       this.type = "BinaryExpression";
       this.operator = this.value;
+
+      if(this.operator === "||") {
+        this.type = "LogicalExpression";
+      //   // this.left = expression(bp -1);
+      //   // this.right = left;
+      //   // this.left = "LogicalExpression";
+      }
 
       if (left.arity === "literal" && isNum(left.value)) {
         // This is for type number
@@ -380,7 +394,8 @@ var make_parse = function() {
         delete left.arity;
         left.raw = '"' + left.value + '"';
       }
-
+      // this.left = expression(bp- 1);
+      // this.right = left;
       this.left = left;
       this.right = expression(bp - 1);
 
@@ -409,9 +424,10 @@ var make_parse = function() {
       //this.first = expression(70);
       //this.arity = "unary";
 
-      if (this.value === "++") {
+      if (this.value === "++" || this.value === "--") {
         this.type = "UpdateExpression";
-        this.operator = "++";
+        // this.operator = "++";
+        this.operator = this.value;
         this.prefix = true;
         this.argument = expression(70);
         delete this.arity;
@@ -578,6 +594,7 @@ var make_parse = function() {
   prefix("+");
   prefix("!");
   prefix("++");
+  prefix("--");
   prefix("-");
   prefix("typeof");
   //postfix("++");
@@ -836,7 +853,7 @@ var make_parse = function() {
           if (input[i + 2].value === "=") {
             input.splice(i + 1, 2);
             input[i].value = "!==";
-            return input;
+            //return input;
           } else {
             input.splice(i + 1, 1);
             input[i].value = "!=";
@@ -849,7 +866,7 @@ var make_parse = function() {
           if (input[i + 2].value === "=") {
             input.splice(i + 1, 2);
             input[i].value = "===";
-            return input;
+            //return input;
           } else {
             input.splice(i + 1, 1);
             input[i].value = "==";
@@ -860,35 +877,35 @@ var make_parse = function() {
         if (input[i + 1].value === "+") {
           input.splice(i + 1, 1);
           input[i].value = "++";
-          return input;
+          //return input;
         }
       }
       if (input[i].value === "-") {
         if (input[i + 1].value === "-") {
           input.splice(i + 1, 1);
           input[i].value = "--";
-          return input;
+          //return input;
         }
       }
       if (input[i].value === "|") {
         if (input[i + 1].value === "|") {
           input.splice(i + 1, 1);
           input[i].value = "||";
-          return input;
+          //return input;
         }
       }
       if (input[i].value === ">") {
         if (input[i + 1].value === "=") {
           input.splice(i + 1, 1);
           input[i].value = ">=";
-          return input;
+          //return input;
         }
       }
       if (input[i].value === "<") {
         if (input[i + 1].value === "=") {
           input.splice(i + 1, 1);
           input[i].value = "<=";
-          return input;
+          //return input;
         }
       }
 
@@ -967,111 +984,56 @@ var outputthing = {
           "type": "VariableDeclarator",
           "id": {
             "type": "Identifier",
-            "name": "l"
+            "name": "a"
           },
           "init": {
-            "type": "LogicalExpression",
-            "operator": "||",
-            "left": {
-              "type": "LogicalExpression",
-              "operator": "||",
-              "left": {
-                "type": "LogicalExpression",
-                "operator": "||",
-                "left": {
-                  "type": "LogicalExpression",
-                  "operator": "||",
-                  "left": {
-                    "type": "LogicalExpression",
-                    "operator": "||",
-                    "left": {
-                      "type": "BinaryExpression",
-                      "operator": "!=",
-                      "left": {
-                        "type": "Literal",
-                        "value": 6,
-                        "raw": "6"
-                      },
-                      "right": {
-                        "type": "Literal",
-                        "value": 7,
-                        "raw": "7"
-                      }
-                    },
-                    "right": {
-                      "type": "BinaryExpression",
-                      "operator": "==",
-                      "left": {
-                        "type": "Literal",
-                        "value": 6,
-                        "raw": "6"
-                      },
-                      "right": {
-                        "type": "Literal",
-                        "value": 7,
-                        "raw": "7"
-                      }
-                    }
-                  },
-                  "right": {
-                    "type": "BinaryExpression",
-                    "operator": ">",
-                    "left": {
-                      "type": "Literal",
-                      "value": 6,
-                      "raw": "6"
-                    },
-                    "right": {
-                      "type": "Literal",
-                      "value": 7,
-                      "raw": "7"
-                    }
-                  }
-                },
-                "right": {
-                  "type": "BinaryExpression",
-                  "operator": "<",
-                  "left": {
-                    "type": "Literal",
-                    "value": 6,
-                    "raw": "6"
-                  },
-                  "right": {
-                    "type": "Literal",
-                    "value": 7,
-                    "raw": "7"
-                  }
-                }
-              },
-              "right": {
-                "type": "BinaryExpression",
-                "operator": ">=",
-                "left": {
-                  "type": "Literal",
-                  "value": 6,
-                  "raw": "6"
-                },
-                "right": {
-                  "type": "Literal",
-                  "value": 7,
-                  "raw": "7"
-                }
-              }
+            "type": "Literal",
+            "value": 1,
+            "raw": "1"
+          }
+        }
+      ],
+      "kind": "var"
+    },
+    {
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "m"
+          },
+          "init": {
+            "type": "UpdateExpression",
+            "operator": "++",
+            "argument": {
+              "type": "Identifier",
+              "name": "a"
             },
-            "right": {
-              "type": "BinaryExpression",
-              "operator": "<=",
-              "left": {
-                "type": "Literal",
-                "value": 6,
-                "raw": "6"
-              },
-              "right": {
-                "type": "Literal",
-                "value": 7,
-                "raw": "7"
-              }
-            }
+            "prefix": true
+          }
+        }
+      ],
+      "kind": "var"
+    },
+    {
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "n"
+          },
+          "init": {
+            "type": "UpdateExpression",
+            "operator": "--",
+            "argument": {
+              "type": "Identifier",
+              "name": "m"
+            },
+            "prefix": true
           }
         }
       ],
@@ -1086,40 +1048,23 @@ console.log("############################");
 console.log("##### BEGIN AST OUTPUT #####");
 console.log(util.inspect(parser([
   { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "l" },
+  { type: "IDENTIFIER",           value: "a" },
   { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "6" },
-  { type: "OPERATOR",             value: "!" },
+  { type: "NUMBER",               value: "1" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "DECLARATION_KEYWORD",  value: "var" },
+  { type: "IDENTIFIER",           value: "m" },
   { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "7" },
-  { type: "OPERATOR",             value: "|" },
-  { type: "OPERATOR",             value: "|" },
-  { type: "NUMBER",               value: "6" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "IDENTIFIER",           value: "a" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "DECLARATION_KEYWORD",  value: "var" },
+  { type: "IDENTIFIER",           value: "n" },
   { type: "OPERATOR",             value: "=" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "7" },
-  { type: "OPERATOR",             value: "|" },
-  { type: "OPERATOR",             value: "|" },
-  { type: "NUMBER",               value: "6" },
-  { type: "OPERATOR",             value: ">" },
-  { type: "NUMBER",               value: "7" },
-  { type: "OPERATOR",             value: "|" },
-  { type: "OPERATOR",             value: "|" },
-  { type: "NUMBER",               value: "6" },
-  { type: "OPERATOR",             value: "<" },
-  { type: "NUMBER",               value: "7" },
-  { type: "OPERATOR",             value: "|" },
-  { type: "OPERATOR",             value: "|" },
-  { type: "NUMBER",               value: "6" },
-  { type: "OPERATOR",             value: ">" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "7" },
-  { type: "OPERATOR",             value: "|" },
-  { type: "OPERATOR",             value: "|" },
-  { type: "NUMBER",               value: "6" },
-  { type: "OPERATOR",             value: "<" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "7" },
+  { type: "OPERATOR",             value: "-" },
+  { type: "OPERATOR",             value: "-" },
+  { type: "IDENTIFIER",           value: "m" },
   { type: "PUNCTUATION",          value: ";" },
   { type: "TERMINATOR",           value: "EOF" }
 ]), {
