@@ -8,10 +8,9 @@ module.exports = function(grunt) {
         options: {
           reporter: 'spec'
         },
-        src: [
-          'transpiler/lexer/test/lexerTests.js',
-          'transpiler/parser/test/parserTests.js'
-        ]
+
+        src: ['test/*.js']
+
       }
     },
 
