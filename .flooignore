@@ -5,8 +5,8 @@
 extern/
 node_modules/
 tmp
+transpiler/lexer/singleTest.js
 
 vendor/
 Gruntfile.js
-transpiler/lexer/singleTest.js
 

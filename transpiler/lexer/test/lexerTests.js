@@ -1398,12 +1398,184 @@ describe('Lexer', function() {
       
     });
 
+    describe('Multi-line if statements', function() {
+      it('should handle simple multi-line if statements', function() {
+        input = String.raw`var a = false
+                var b = 0;
+                if (a) {
+                  b++;
+                }`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "false" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "TERMINATOR",           value: "EOF"},
+        ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+    
+
+      it('should handle simple multi-line if statements with complex conditions', function() {
+        input = String.raw`var diceRoll = 6;
+                if ++diceRoll == 7 {
+                  diceRoll = 1
+                }`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "diceRoll" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "6" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },  
+          { type: "IDENTIFIER",           value: "diceRoll" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "7" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "diceRoll" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "TERMINATOR",           value: "EOF"},
+        ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+
+      it('should handle simple multi-line nested if statements', function() {
+        input = String.raw`var x = true
+                var y = false;
+                var a = ""
+                var z;
+                if (x) {
+                  if y {
+                    z = true;
+                  } else if (true) {
+                      a = "<3 JS";
+                  } else {
+                      a = "never get here";
+                  }
+                } else {
+                  a = "x is false";
+                }`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "x" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "y" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "false" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "z" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "IDENTIFIER",           value: "x" },
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "IDENTIFIER",           value: "y" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "IDENTIFIER",           value: "z" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "STATEMENT_KEYWORD",    value: "else" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "<3 JS" },
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "STATEMENT_KEYWORD",    value: "else" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "never get here" },
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "STATEMENT_KEYWORD",    value: "else" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "x is false" },
+          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "TERMINATOR",           value: "EOF"},
+        ]
+      }); 
+
+    });
+
     describe('Multi-line for loops', function() {
       it('should handle simple multi-line for loops', function() {
         input = String.raw`var b = 0;
                 for var i = 0; i < 10; i++ {
                   b++
-                }`
+                }`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
@@ -1443,7 +1615,7 @@ describe('Lexer', function() {
                    for var j = 0; j < 3; j++ {
                      total += arrays[i][j]
                    }
-                 }`
+                 }`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "arrays" },
@@ -1537,7 +1709,7 @@ describe('Lexer', function() {
                  var numbers = [1,2,3,4,5]
                  for n in numbers {
                    c += n
-                 }`
+                 }`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
@@ -1578,8 +1750,68 @@ describe('Lexer', function() {
 
     });
     
-    describe(' Multi-Line While/Repeat-While loops', function() {
+    describe('Multi-Line While/Repeat-While loops', function() {
       
+      it('should handle multi-line while loops without a parenthetical', function() {
+        input = String.raw`var i = 10; 
+                while i >= 0 {
+                  i--
+                }`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "while" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle multi-line while loops with a parenthetical', function() {
+        input = String.raw`var i = 10; 
+                while (i >= 0) {
+                  i--
+                }`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "10" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "while" },
+          { type: "PUNCTUATION",          value: "(" },
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ")" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "i" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });  
+
       it('should handle multi-line repeat-while loops with a parenthetical', function() {
         input = String.raw`var i = 10;
                  repeat {
@@ -1640,6 +1872,94 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
       
+    });
+    
+    describe('Switch Statements', function() {
+      
+      it('should handle multi-line switch statements', function() {
+        input = String.raw`var x = 2
+                var y = "";
+                switch x {
+                  case 1,2,3:
+                    y += "positive";
+                  case -1,-2,-3:
+                    y += "negative";
+                  case 0: 
+                    y += "zero";
+                  default: 
+                    y += "dunno";
+                }`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "x" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "2" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "y" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "switch" },
+          { type: "IDENTIFIER",           value: "x" }, 
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "case" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: "," },  
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "," }, 
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "y" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "positive" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "case" },
+          { type: "OPERATOR",             value: "-" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: "," }, 
+          { type: "OPERATOR",             value: "-" }, 
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "," }, 
+          { type: "OPERATOR",             value: "-" },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "y" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "negative" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "case" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "y" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "zero" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "default" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "y" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "dunno" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "TERMINATOR",           value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
     });  
 
   });
