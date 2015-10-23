@@ -1531,7 +1531,52 @@ describe('Lexer', function() {
       });
       
     });
-      
+    describe('Multi-line for-in loops', function() {
+      it('should handle simple multi-line for-in loops', function() {
+        input = `var c = 0
+                 var numbers = [1,2,3,4,5]
+                 for n in numbers {
+                   c += n
+                 }`
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "numbers" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "4" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "5" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "for" },
+          { type: "IDENTIFIER",           value: "n" },
+          { type: "STATEMENT_KEYWORD",    value: "in" },
+          { type: "IDENTIFIER",           value: "numbers" }, 
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "n" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+    });  
 
   });
 });
