@@ -41,8 +41,12 @@ module.exports = {
     // repeat { \
     //   i++ \
     // } while i < 10', // 35
-    `var b = true;
-    var c = 0;`
+    String.raw`var b = true;
+    var c = 0;`,
+    String.raw`var i = 10; 
+while i >= 0 {
+  i--
+}`,
   ]
 
 };
