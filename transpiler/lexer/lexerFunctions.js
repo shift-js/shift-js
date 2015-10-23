@@ -135,7 +135,8 @@ module.exports = {
     if (NUMBER.test(snippet) && !insideString.status && !insideNumber.status) {
       insideNumber.status = true;
     }
-    if (insideNumber.status && isNaN(nextCol) && nextCol !== '.') {
+    if (insideNumber.status && (nextCol === '\n' ||
+      (isNaN(nextCol) && (nextCol !== '.')))) {
       insideNumber.status = false;
       module.exports.checkForLiteral(snippet, tokens);
       module.exports.handleEndOfFile(nextCol, tokens);
