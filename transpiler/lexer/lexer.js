@@ -38,6 +38,7 @@ module.exports = function(code) {
   };
 
   while (code[i] !== undefined) {
+    debugger;
     chunk += code[i];
     currCol = code[i];
     prevCol = code[i - 1];
@@ -52,10 +53,18 @@ module.exports = function(code) {
     // console.log(tokens);
 
     // newline handling
+
+    if (lexerFunctions.checkInsideComment(insideComment) && nextCol === '\n') {
+      lexerFunctions.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
+      lexerFunctions.makeToken(undefined, undefined, tokens, 'TERMINATOR', '\\n'); 
+      advanceAndClear(2); 
+      continue;   
+    }
+
     if (currCol === '\n') {
       lexerFunctions.makeToken(undefined, undefined, tokens, 'TERMINATOR', '\\n');
       advanceAndClear(1);
-      continue
+      continue;
     }
     if (currCol === ' ' && lastToken.value === '\\n') {
       advanceAndClear(1);
@@ -134,6 +143,7 @@ module.exports = function(code) {
           insideCollection.push({type: undefined, location: tokens.length-1});})
       } else {
         lexerFunctions.checkFor('KEYWORD', chunk, tokens) ||
+        lexerFunctions.checkFor('TYPE', chunk, tokens) ||
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) ||
         lexerFunctions.checkFor('SUBSTRING_LOOKUP', chunk, tokens, function() {
           substringLookup.status = !substringLookup.status;
