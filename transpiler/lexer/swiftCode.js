@@ -47,3 +47,6 @@ module.exports = {
 
 };
 
+// Max: Switch, multiline: if and while, basic functions
+// Don: multiline repeat-while, for-in, for loops
+

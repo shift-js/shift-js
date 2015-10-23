@@ -10,7 +10,7 @@ module.exports = function(grunt) {
         },
         src: [
           'transpiler/lexer/test/lexerTests.js',
-          'transpiler/parser/test/parserTests.js'
+          // 'transpiler/parser/test/parserTests.js'
         ]
       }
     },
@@ -34,7 +34,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
 
   grunt.registerTask('test', [
-    'jshint',
+    // 'jshint',
     'mochaTest'
   ]);
 
