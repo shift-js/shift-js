@@ -51,6 +51,6 @@ while i >= 0 {
 
 };
 
-// Max: Switch, multiline: if and while, basic functions
-// Don: multiline repeat-while, for-in, for loops
+// Max: multiline: basic functions
+// Don: 
 
