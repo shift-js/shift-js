@@ -7,7 +7,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "grunt test",
+    "postinstall": "grunt test"
   },
   "repository": {
     "type": "git",

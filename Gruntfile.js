@@ -8,22 +8,22 @@ module.exports = function(grunt) {
         options: {
           reporter: 'spec'
         },
-        src: ['transpiler/lexer/test/lexerTests.js']
+        src: [
+          'transpiler/lexer/test/lexerTests.js',
+          'transpiler/parser/test/parserTests.js'
+        ]
       }
     },
 
     jshint: {
       files: [
-        'index.js',
-        'client/**/*.js',
-        'server/**/*.js'
+        'transpiler/**/*'
       ],
       options: {
         force: false,
         jshintrc: '.jshintrc',
         ignores: [
-          'client/lib/**/*.js',
-          'client/dist/**/*.js'
+          'transpiler/parser/test_cases_generator_output.js'
         ]
       }
     },

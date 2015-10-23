@@ -1,7 +1,6 @@
 {
   "bitwise": false,
   "camelcase": false,
-  "eqeqeq": true,
   "es3": false,
   "forin": false,
   "freeze": false,
@@ -20,5 +19,6 @@
   "noarg": false,
   "trailing": false,
   "loopfunc": true,
-  "smarttabs": true
+  "smarttabs": true,
+  "sub": true
 }

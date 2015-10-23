@@ -9,7 +9,6 @@ var i = 0;
 
 
 describe('Lexer', function() {
-  debugger;
   for (var a = 0; a < title.length; a++) {
     describe(title[a], function() {
       console.log(title[a]);
