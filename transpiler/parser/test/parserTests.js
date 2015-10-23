@@ -653,8 +653,10 @@ describe('Parser', function() {
     });
 
 
+
     //  var l = 6 != 7 || (6 == 7 || (6 > 7 || (6 < 7 || (6 >= 7 || 6 <= 7))));
     // 'var l = 6 != 7 ||  6 == 7 ||  6 > 7 ||  6 < 7 ||  6 >= 7 || 6 <= 7;';
+
 
     xit('should handle comparisons', function () {
       input = [
