@@ -4,7 +4,8 @@ var lexerFunctions = require("./lexerFunctions");
 module.exports = function(code) {
 
 
-  code = String.raw({raw: code});
+  // code = String.raw({raw: code});
+  // console.log(code);
   var i = 0;
   var tokens = [];
   var chunk = '';
@@ -46,6 +47,7 @@ module.exports = function(code) {
     var lastCollection = insideCollection[insideCollection.length - 1];
     var lastCollectionIndex = insideCollection.length - 1;
 
+    // console.log(currCol)
     // console.log(chunk);
     // console.log(tokens);
 
