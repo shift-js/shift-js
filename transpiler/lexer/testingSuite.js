@@ -1,9 +1,7 @@
 /* EDGE CASES
 Reassignment of already declared variable
 Checking to see if variable is already declared
-"var vara = 1"
 identifier full character set
-'var e = ["Eggs","Milk","Bacon"]'
 address nonstandard spacing in swift code (not having pretty spaces between collection items)
 Don't consider unicode characters
 */
@@ -46,3 +44,16 @@ console.log(diff(lexer(swiftCode[k]),swiftCodeAnswers[k]));
 // }
 
 // console.log(arr);
+
+// var multi = String.raw`
+// var i = 0;
+//  while (i >= 0) {
+//   i++
+//  }`
+
+// console.log(lexer(multi));
+
+// for (var i = 0; i < multi.length; i++) {
+//   if (multi[i] === '\n') console.log('break');
+//   console.log(multi[i]);
+// }

@@ -515,7 +515,7 @@ describe('Lexer', function() {
       });
     });
 
-    describe('String interpolation', function () {
+    describe('String concatenation and interpolation', function () {
 
       it('should handle string concatenation', function () {
         input = 'var k = "Stephen" + " " + "Tabor" + "!"';
@@ -818,11 +818,89 @@ describe('Lexer', function() {
           { type: "TERMINATOR",           value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
-      });
+      }) ;
     });
   });
 
   describe('Second milestone', function() {
+    
+    describe('Multi-line statements', function() {
+      it('should handle simple multi-line variable assignment', function() {
+        input = `var b = true;
+                 var c = 0;`
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "true" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "c" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+      it('should handle complex multi-line variable assignment without semi-colons', function() {
+        input = `var e = ["Eggs", "Milk", "Bacon"]
+                 var f = ["one": 1, "two": 2, "three": 3]
+                 let g = [1 : "one",2   :"two", 3: "three"]`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "e" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "STRING",               value: "Eggs" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "Milk" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "Bacon" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "f" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "DICTIONARY_START",     value: "[" },
+          { type: "STRING",               value: "one" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "two" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "three" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "NUMBER",               value: "3" },
+          { type: "DICTIONARY_END",       value: "]" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let" },
+          { type: "IDENTIFIER",           value: "g" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "DICTIONARY_START",     value: "[" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "STRING",               value: "one" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "STRING",               value: "two" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "STRING",               value: "three" },
+          { type: "DICTIONARY_END",       value: "]" },
+          { type: "TERMINATOR",           value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      })    
+      
+    });
+    
     describe('If statements', function() {
 
       it('should handle single-line if statements', function() {
