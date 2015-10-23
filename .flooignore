@@ -8,5 +8,4 @@ tmp
 
 vendor/
 Gruntfile.js
-transpiler/lexer/singleTest.js
 

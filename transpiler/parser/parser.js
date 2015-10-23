@@ -11,6 +11,8 @@ var helpers = require('./helperFunctions.js');
 //TODO Transform test 21 in CleanUp function call
 //TODO After parsing, post-parse CleanUp function needs to remove unnecessary keywords from nodes
 //TODO    Examples would be:reserved, nud, led, std, lbp, scope
+//TODO Friday October 23rd
+//TODO Initializing empty collection tests: only empty tuples are tested. Add more.
 
 var make_parse = function() {
 
@@ -113,23 +115,28 @@ var make_parse = function() {
 
     t = tokens[token_nr];
     token_nr += 1;
-
     v = t.value;
     a = t.type;
 
-    var terminatorTokenTypes = ["ARRAY_END", "DICTIONARY_END", "TERMINATOR"];
+    var terminatorTokenTypes = ["ARRAY_END", "DICTIONARY_END", "TUPLE_END", "TERMINATOR"];
     var primitiveTokenTypes = ["NUMBER", "BOOLEAN", "STRING"];
-    var collectionStartTokenTypes = ["ARRAY_START", "DICTIONARY_START"];
-    var verbTokenTypes = ["PUNCTUATION", "OPERATOR"];
-    var nounTokenValues = ["DECLARATION_KEYWORD", "IDENTIFIER"];
+    var collectionStartTokenTypes = ["ARRAY_START", "DICTIONARY_START", "TUPLE_START"];
+    var verbTokenTypes = ["PUNCTUATION", "OPERATOR", "SUBSTRING_LOOKUP_END", "SUBSTRING_LOOKUP_START"];
+    var nounTokenValues = ["DECLARATION_KEYWORD", "IDENTIFIER", "TUPLE_ELEMENT_NAME"];
 
     if (nounTokenValues.hasItem(a)) {
       if (a === "DECLARATION_KEYWORD") v = "var";
       o = scope.find(v);
     } else if (collectionStartTokenTypes.hasItem(a)) {
-      var isObj = (a === "DICTIONARY_START");
-      v = isObj ? '{' : '[';
-      o = isObj ? symbol_table['{'] : symbol_table['['];
+
+      if(a === "ARRAY_START") {
+        v = '[';
+        o = symbol_table['['];
+      } else {
+        v = '{';
+        o = symbol_table['{'];
+      }
+
       if (!o) t.error("Unknown operator.");
     } else if (terminatorTokenTypes.hasItem(a) || verbTokenTypes.hasItem(a)) {
       o = symbol_table[v];
@@ -156,7 +163,7 @@ var make_parse = function() {
     var left;
     var t = token;
     advance();
-    console.log(token);
+    //console.log(token);
     left = t.nud();
 
 
@@ -684,12 +691,55 @@ var make_parse = function() {
   // added some comment to commit
 
   prefix("{", function() {
-    var a = [],
-      n, v;
-    if (token.id !== "]") {
+    var a = [], n, v;
+
+    var tmpLookAhead = tokens[token_nr];
+    if(tmpLookAhead.value === ",") {
+      // Handle Tuples w/out keys
+
+      var a = [];
+      if (token.id !== "]") {
+        while (true) {
+          a.push(expression(0));//TODO These are the properties
+          if (token.id !== ",") {
+            break;
+          }
+          advance(",");
+        }
+      }
+      advance(")");
+      this.type = "ObjectExpression";
+      delete this.value;
+      delete this.raw;
+      this.properties = [];
+
+      for(var m=0; m<a.length; m++) {
+        var currentValue = a[m];
+        var kvMap = {};
+        kvMap.type = "Property";
+        kvMap.computed = false;
+        kvMap.kind = 'init';
+        kvMap.method = false;
+        kvMap.shorthand = false;
+        kvMap.key = {};
+        kvMap.key.type = "Literal";
+        var keyIndex = this.properties.length;
+        kvMap.key.value = keyIndex;
+        kvMap.key.raw = keyIndex.toString();
+        kvMap.value = currentValue;
+        this.properties.push(kvMap);
+      }
+
+      this.arity = "unary";
+      delete this.arity;
+      return this;
+
+    }
+
+    if ((token.id !== "]" &&  token.id !== ")") && tmpLookAhead.value !== ",") {
       while (true) {
         n = token;
-        if (n.arity !== "IDENTIFIER" && n.arity !== "name" && n.arity !== "literal") {
+        if (n.arity !== "IDENTIFIER" && n.arity !== "name" && n.arity !== "literal" && n.arity !== "TUPLE_ELEMENT_NAME") {
           token.error("Bad property name.");
         }
         if (n.arity !== "IDENTIFIER") {
@@ -728,6 +778,11 @@ var make_parse = function() {
           delete n.arity;
           n.type = "Literal";
           n.raw = '"' + n.value + '"';
+        } else if(n.arity === "TUPLE_ELEMENT_NAME") {
+          n.type = "Identifier";
+          n.name = n.value;
+          delete n.value;
+          delete n.arity;
         }
         kvMap.key = n;
         kvMap.value = v;
@@ -741,7 +796,13 @@ var make_parse = function() {
         advance(",");
       }
     }
-    advance("]");
+
+    try {
+      advance("]");
+    } catch(e) {
+      advance(")");
+    }
+
     this.arity = "unary";
     delete this.arity;
     delete this.value;
@@ -901,29 +962,36 @@ var make_parse = function() {
 
 
 
-var expected = {};
+var expected = {
+  "type": "Program",
+  "body": [
+    {
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "empty"
+          },
+          "init": {
+            "type": "ObjectExpression",
+            "properties": []
+          }
+        }
+      ],
+      "kind": "var"
+    }
+  ],
+  "sourceType": "module"
+};
 var tokenStream = [
-  { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "a" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "1" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "m" },
-  { type: "OPERATOR",             value: "=" },
-
-  { type: "OPERATOR",             value: "+" },
-  { type: "OPERATOR",             value: "+" },
-  { type: "IDENTIFIER",           value: "a" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "n" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "OPERATOR",             value: "-" },
-  { type: "OPERATOR",             value: "-" },
-  { type: "IDENTIFIER",           value: "m" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "TERMINATOR",           value: "EOF" }
+  { type: "DECLARATION_KEYWORD",        value: "var" },
+  { type: "IDENTIFIER",                 value: "empty" },
+  { type: "OPERATOR",                   value: "=" },
+  { type: "TUPLE_START",                value: "("},
+  { type: "TUPLE_END",                  value: ")"},
+  { type: "TERMINATOR",                 value: "EOF" }
 ];
 var parser = make_parse();
 var actual = parser(tokenStream);

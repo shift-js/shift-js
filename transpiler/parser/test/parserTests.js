@@ -314,7 +314,8 @@ describe('Parser', function() {
     });
 
     // Swift input: 'var error = (404, "not found")'
-    xit('should handle tuples', function () {
+    // AST Explorer input: 'var error = { 0: 404, 1: 'not found' };'
+    it('should handle tuples', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "error" },
@@ -326,14 +327,72 @@ describe('Parser', function() {
         { type: "TUPLE_END",                  value: ")"},
         { type: "TERMINATOR",                 value: "EOF" }
       ];
-      output = "FILL_ME_IN"
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "error"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": 0,
+                        "raw": "0"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": 404,
+                        "raw": "404"
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": "not found",
+                        "raw": '"not found"'
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
 
 
     // Swift input: 'let http200Status = (statusCode: 200, description: "OK");'
-    xit('should handle tuples with element names', function () {
+    // AST Explorer input: 'var http200Status = { statusCode: 200, description: "OK"};'
+    it('should handle tuples with element names', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "let" },
         { type: "IDENTIFIER",                 value: "http200Status" },
@@ -350,12 +409,68 @@ describe('Parser', function() {
         { type: "PUNCTUATION",                value: ";" },
         { type: "TERMINATOR",                 value: "EOF" }
       ];
-      output = "FILL_ME_IN";
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "http200Status"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "name": "statusCode"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": 200,
+                        "raw": "200"
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "name": "description"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": "OK",
+                        "raw": "\"OK\""
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var empty = ()';
-    xit('should handle empty tuples', function () {
+    // AST Explorer input: 'var empty = {};'
+    it('should handle empty tuples', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "empty" },
@@ -364,7 +479,29 @@ describe('Parser', function() {
         { type: "TUPLE_END",                  value: ")"},
         { type: "TERMINATOR",                 value: "EOF" }
       ];
-      output = "FILL_ME_IN";
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "empty"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": []
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
@@ -658,7 +795,7 @@ describe('Parser', function() {
     // 'var l = 6 != 7 ||  6 == 7 ||  6 > 7 ||  6 < 7 ||  6 >= 7 || 6 <= 7;';
 
 
-    xit('should handle comparisons', function () {
+    it('should handle comparisons', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "l" },
@@ -699,133 +836,71 @@ describe('Parser', function() {
           { type: "TERMINATOR",           value: "EOF" }
       ];
       output = {
-        "type": "Program",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "l"
-                },
-                "init": {
-                  "type": "LogicalExpression",
-                  "operator": "||",
-                  "left": {
-                    "type": "LogicalExpression",
-                    "operator": "||",
-                    "left": {
-                      "type": "LogicalExpression",
-                      "operator": "||",
-                      "left": {
-                        "type": "LogicalExpression",
-                        "operator": "||",
-                        "left": {
-                          "type": "LogicalExpression",
-                          "operator": "||",
-                          "left": {
-                            "type": "BinaryExpression",
-                            "operator": "!=",
-                            "left": {
-                              "type": "Literal",
-                              "value": 6,
-                              "raw": "6"
-                            },
-                            "right": {
-                              "type": "Literal",
-                              "value": 7,
-                              "raw": "7"
-                            }
-                          },
-                          "right": {
-                            "type": "BinaryExpression",
-                            "operator": "==",
-                            "left": {
-                              "type": "Literal",
-                              "value": 6,
-                              "raw": "6"
-                            },
-                            "right": {
-                              "type": "Literal",
-                              "value": 7,
-                              "raw": "7"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "BinaryExpression",
-                          "operator": ">",
-                          "left": {
-                            "type": "Literal",
-                            "value": 6,
-                            "raw": "6"
-                          },
-                          "right": {
-                            "type": "Literal",
-                            "value": 7,
-                            "raw": "7"
-                          }
-                        }
-                      },
-                      "right": {
-                        "type": "BinaryExpression",
-                        "operator": "<",
-                        "left": {
-                          "type": "Literal",
-                          "value": 6,
-                          "raw": "6"
-                        },
-                        "right": {
-                          "type": "Literal",
-                          "value": 7,
-                          "raw": "7"
-                        }
-                      }
-                    },
-                    "right": {
-                      "type": "BinaryExpression",
-                      "operator": ">=",
-                      "left": {
-                        "type": "Literal",
-                        "value": 6,
-                        "raw": "6"
-                      },
-                      "right": {
-                        "type": "Literal",
-                        "value": 7,
-                        "raw": "7"
-                      }
-                    }
-                  },
-                  "right": {
-                    "type": "BinaryExpression",
-                    "operator": "<=",
-                    "left": {
-                      "type": "Literal",
-                      "value": 6,
-                      "raw": "6"
-                    },
-                    "right": {
-                      "type": "Literal",
-                      "value": 7,
-                      "raw": "7"
-                    }
-                  }
-                }
-              }
-            ],
-            "kind": "var"
-          }
-        ],
-        "sourceType": "module"
-      };
+        type: 'Program',
+        sourceType: 'module',
+        body:
+          [
+            {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations:
+              [
+                {
+                  type: 'VariableDeclarator',
+                  id: { type: 'Identifier', name: 'l' },
+                  init: {
+                    type: 'LogicalExpression',
+                    operator: '||',
+                  left: {
+                    type: 'BinaryExpression',
+                    operator: '!=',
+                    left: {
+                      value: 6,
+                      type: 'Literal',
+                      raw: '6' },
+                    right: { value: 7, type: 'Literal', raw: '7' } },
+                  right:
+                  { type: 'LogicalExpression',
+                    operator: '||',
+                    left:
+                    { type: 'BinaryExpression',
+                      operator: '==',
+                      left: { value: 6, type: 'Literal', raw: '6' },
+                      right: { value: 7, type: 'Literal', raw: '7' } },
+                    right:
+                    { type: 'LogicalExpression',
+                      operator: '||',
+                      left:
+                      { type: 'BinaryExpression',
+                        operator: '>',
+                        left: { value: 6, type: 'Literal', raw: '6' },
+                        right: { value: 7, type: 'Literal', raw: '7' } },
+                      right:
+                      { type: 'LogicalExpression',
+                        operator: '||',
+                        left:
+                        { type: 'BinaryExpression',
+                          operator: '<',
+                          left: { value: 6, type: 'Literal', raw: '6' },
+                          right: { value: 7, type: 'Literal', raw: '7' } },
+                        right:
+                        { type: 'LogicalExpression',
+                          operator: '||',
+                          left:
+                          { type: 'BinaryExpression',
+                            operator: '>=',
+                            left: { value: 6, type: 'Literal', raw: '6' },
+                            right: { value: 7, type: 'Literal', raw: '7' } },
+                          right:
+                          { type: 'BinaryExpression',
+                            operator: '<=',
+                            left: { value: 6, type: 'Literal', raw: '6' },
+                            right: { value: 7, type: 'Literal', raw: '7' } } } } } } } } ] } ] };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var a = 1; var m = ++a; var n = --m;'
-    xit('should handle prefix operators', function () {
+    it('should handle prefix operators', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "a" },
@@ -920,7 +995,7 @@ describe('Parser', function() {
     });
 
     // Swift input: 'var a = 1; var m = a++; var n = m--;'
-    xit('should handle postfix operators', function () {
+    it('should handle postfix operators', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "a" },
@@ -1787,25 +1862,27 @@ describe('Parser', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // Test 18 - Swift input: 'var s = arr[0];'
-    xit('should handle array access', function () {
+    // Test 18 - Swift input: 'var arr = [1, 2]; var s = arr[0];'
+    it('should handle array access', function () {
       //TODO Commented out tokens were added by Verlon and Rex
       //TODO arr access w/out initialization throws exception
       input = [
-        //{ type: "DECLARATION_KEYWORD",  value: "var" },
-        //{ type: "IDENTIFIER",           value: "arr" },
-        //{ type: "OPERATOR",             value: "=" },
-        //{ type: "ARRAY_START",          value: "[" },
-        //{ type: "ARRAY_END",            value: "]" },
-        //{ type: "PUNCTUATION",          value: ";" },
-
+        { type: "DECLARATION_KEYWORD",  value: "let" },
+        { type: "IDENTIFIER",           value: "arr" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "ARRAY_START",          value: "[" },
+        { type: "NUMBER",               value: "1" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "NUMBER",               value: "2" },
+        { type: "ARRAY_END",            value: "]" },
+        { type: "PUNCTUATION",          value: ";" },
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "s" },
         { type: "OPERATOR",             value: "=" },
         { type: "IDENTIFIER",           value: "arr" },
-        { type: "PUNCTUATION",          value: "[" },
+        { type: "SUBSTRING_LOOKUP_START",     value: "[" },
         { type: "NUMBER",               value: "0" },
-        { type: "PUNCTUATION",          value: "]" },
+        { type: "SUBSTRING_LOOKUP_END",     value: "]" },
         { type: "PUNCTUATION",          value: ";" },
         { type: "TERMINATOR",           value: "EOF" }
       ];
@@ -1819,10 +1896,39 @@ describe('Parser', function() {
                 "type": "VariableDeclarator",
                 "id": {
                   "type": "Identifier",
+                  "name": "arr"
+                },
+                "init": {
+                  "type": "ArrayExpression",
+                  "elements": [
+                    {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 2,
+                      "raw": "2"
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
                   "name": "s"
                 },
                 "init": {
                   "type": "MemberExpression",
+                  "computed": true,
                   "object": {
                     "type": "Identifier",
                     "name": "arr"
@@ -1831,8 +1937,7 @@ describe('Parser', function() {
                     "type": "Literal",
                     "value": 0,
                     "raw": "0"
-                  },
-                  "computed": true
+                  }
                 }
               }
             ],
@@ -1963,7 +2068,7 @@ describe('Parser', function() {
     });
 
     // Swift input: 'let arr = [1,2]; var u = [arr[0]];'
-    xit('should handle arrays of that contain a substring lookup', function () {
+    it('should handle arrays of that contain a substring lookup', function () {
       //TODO Works when token.type of SUBSTRING_LOOKUP is replaced with token.type PUNCTUATION
       //TODO Why no longer just
       input = [
@@ -1981,9 +2086,9 @@ describe('Parser', function() {
         { type: "OPERATOR",             value: "=" },
         { type: "ARRAY_START",          value: "[" },
         { type: "IDENTIFIER",           value: "arr" },
-        { type: "SUBSTRING_LOOKUP",     value: "[" },
+        { type: "SUBSTRING_LOOKUP_START",     value: "[" },
         { type: "NUMBER",               value: "0" },
-        { type: "SUBSTRING_LOOKUP",     value: "]" },
+        { type: "SUBSTRING_LOOKUP_END",     value: "]" },
         { type: "ARRAY_END",            value: "]" },
         { type: "PUNCTUATION",          value: ";" },
         { type: "TERMINATOR",           value: "EOF" }
