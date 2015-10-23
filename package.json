@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/shift-js/shift-js#readme",
   "dependencies": {
+    "deep-diff": "^0.3.3",
     "escodegen": "^1.7.0",
     "esprima-ast-utils": "0.0.6",
     "ramda": "^0.18.0"
