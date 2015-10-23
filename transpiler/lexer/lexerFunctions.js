@@ -15,7 +15,8 @@ module.exports = {
         module.exports.checkFor('OPERATOR', nextCol) ||
         module.exports.checkFor('OPERATOR', currCol) ||
         nextCol === '"' || nextCol === ']' || currCol === '[' ||
-        currCol === ']' || nextCol === '[' || nextCol === undefined
+        currCol === ']' || nextCol === '[' || nextCol === '\n' ||
+        nextCol === undefined
 
       ) {
 

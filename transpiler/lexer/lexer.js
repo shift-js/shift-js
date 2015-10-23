@@ -60,7 +60,7 @@ module.exports = function(code) {
       continue;
     }
 
-    // track state: whether inside a string
+    // tracks state: whether inside a string
     if (currCol === '"' && insideString.status) {
       insideString.status = false;
     } else if (currCol === '"') {
