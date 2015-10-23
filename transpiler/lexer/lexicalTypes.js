@@ -153,8 +153,8 @@ module.exports = {
   },
 
   SUBSTRING_LOOKUP: {
-    '[': 'SUBSTRING_LOOKUP', 
-    ']': 'SUBSTRING_LOOKUP', 
+    '[': 'SUBSTRING_LOOKUP_START', 
+    ']': 'SUBSTRING_LOOKUP_END', 
   },
 
   SPECIAL_STRING: {

@@ -49,12 +49,12 @@ module.exports = function(code) {
     // console.log(chunk);
     // console.log(tokens);
 
+    // newline handling
     if (currCol === '\n') {
       lexerFunctions.makeToken(undefined, undefined, tokens, 'TERMINATOR', '\\n');
       advanceAndClear(1);
       continue
     }
-
     if (currCol === ' ' && lastToken.value === '\\n') {
       advanceAndClear(1);
       continue;
@@ -126,7 +126,8 @@ module.exports = function(code) {
           tokens[tokens.length - 1].type = lastCollection.type || 'ARRAY_END';
           insideCollection.pop();
         });
-      } else if (tokens.length && lastToken.type !== 'IDENTIFIER' && currCol === '[') {
+      } else if (tokens.length && lastToken.type !== 'IDENTIFIER' && 
+        lastToken.type !== 'SUBSTRING_LOOKUP_END' && currCol === '[') {
         lexerFunctions.checkFor('COLLECTION', chunk, tokens, function(){
           insideCollection.push({type: undefined, location: tokens.length-1});})
       } else {
