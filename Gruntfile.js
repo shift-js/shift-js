@@ -10,7 +10,7 @@ module.exports = function(grunt) {
         },
         src: [
           'transpiler/lexer/test/lexerTests.js',
-          // 'transpiler/parser/test/parserTests.js'
+          'transpiler/parser/test/parserTests.js'
         ]
       }
     },

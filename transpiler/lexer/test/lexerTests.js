@@ -518,7 +518,7 @@ describe('Lexer', function() {
     describe('String concatenation and interpolation', function () {
 
       it('should handle string concatenation', function () {
-        input = 'var k = "Stephen" + " " + "Tabor" + "!"';
+        input = String.raw`var k = "Stephen" + " " + "Tabor" + "!"`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "k" },
@@ -536,7 +536,7 @@ describe('Lexer', function() {
       });
 
       it('should handle string interpolation', function () {
-        input = 'var planet = "Earth"; let o = "\\(planet)"';
+        input = String.raw`var planet = "Earth"; let o = "\(planet)"`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "planet" },
@@ -557,7 +557,7 @@ describe('Lexer', function() {
       });
 
       it('should handle string interpolation in the middle of a string', function () {
-        input = 'var planet = "Earth"; let o = "Hello \\(planet)!"';
+        input = String.raw`var planet = "Earth"; let o = "Hello \(planet)!"`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "planet" },
@@ -578,7 +578,7 @@ describe('Lexer', function() {
       });
 
       it('should handle interpolation containing operations', function () {
-        input = 'var p = "\\(100 - 99), 2, 3"';
+        input = String.raw`var p = "\(100 - 99), 2, 3"`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "p" },
@@ -1323,7 +1323,7 @@ describe('Lexer', function() {
 
     describe('Multi-line statements', function() {
       it('should handle simple multi-line variable assignment', function() {
-        input = `var b = true;
+        input = String.raw`var b = true;
                  var c = 0;`
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
@@ -1343,7 +1343,7 @@ describe('Lexer', function() {
       });
       
       it('should handle complex multi-line variable assignment without semi-colons', function() {
-        input = `var e = ["Eggs", "Milk", "Bacon"]
+        input = String.raw`var e = ["Eggs", "Milk", "Bacon"]
                  var f = ["one": 1, "two": 2, "three": 3]
                  let g = [1 : "one",2   :"two", 3: "three"]`;
         output = [
@@ -1400,7 +1400,7 @@ describe('Lexer', function() {
 
     describe('Multi-line for loops', function() {
       it('should handle simple multi-line for loops', function() {
-        input = `var b = 0;
+        input = String.raw`var b = 0;
                 for var i = 0; i < 10; i++ {
                   b++
                 }`
@@ -1437,7 +1437,7 @@ describe('Lexer', function() {
       });
       
       it('should handle multi-line nested for loops', function() {
-        input = `var arrays = [[1,2,3], [4,5,6], [7,8,9]]
+        input = String.raw`var arrays = [[1,2,3], [4,5,6], [7,8,9]]
                  var total = 0
                  for (var i = 0; i < 3; i++) {
                    for var j = 0; j < 3; j++ {
@@ -1533,7 +1533,7 @@ describe('Lexer', function() {
     });
     describe('Multi-line for-in loops', function() {
       it('should handle simple multi-line for-in loops', function() {
-        input = `var c = 0
+        input = String.raw`var c = 0
                  var numbers = [1,2,3,4,5]
                  for n in numbers {
                    c += n
@@ -1581,7 +1581,7 @@ describe('Lexer', function() {
     describe(' Multi-Line While/Repeat-While loops', function() {
       
       it('should handle multi-line repeat-while loops with a parenthetical', function() {
-        input = `var i = 10;
+        input = String.raw`var i = 10;
                  repeat {
                    i--
                  } while (i > 0);`;
@@ -1613,7 +1613,7 @@ describe('Lexer', function() {
       });
 
       it('should handle multi-line repeat-while loops without a parenthetical', function() {
-        input = `var i = 10
+        input = String.raw`var i = 10
                  repeat {
                    i--
                  } while i > 0`;
