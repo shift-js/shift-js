@@ -167,6 +167,23 @@ module.exports = {
     '\\n': 'TERMINATOR',
     '\\r': 'TERMINATOR',
     '\\t': 'TAB'
+  },
+  
+  TYPE: {
+    'Double': 'TYPE_NUMBER',
+    'Float': 'TYPE_NUMBER',
+    'Bool': 'TYPE_BOOLEAN',
+    'Int': 'TYPE_NUMBER',
+    'Int8': 'TYPE_NUMBER',
+    'Int16': 'TYPE_NUMBER',
+    'Int32': 'TYPE_NUMBER',
+    'Int64': 'TYPE_NUMBER',
+    'String': 'TYPE_STRING',
+    'UInt': 'TYPE_NUMBER',
+    'UInt8': 'TYPE_NUMBER',
+    'UInt16': 'TYPE_NUMBER',
+    'UInt32': 'TYPE_NUMBER',
+    'UInt64': 'TYPE_NUMBER'
   }
 
   

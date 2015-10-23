@@ -595,3 +595,34 @@ if (x) {
   { type: "PUNCTUATION",          value: "}" }, 
   { type: "TERMINATOR",           value: "EOF"},
 ]
+
+String.raw`// function body goes here
+// firstParameterName and secondParameterName refer to
+// the argument values for the first and second parameters
+`
+
+[
+  { type: "COMMENT_START",             value: "//"},
+  { type: "COMMENT",                   value: " function body goes here"},
+  { type: "TERMINATOR",                value: "\\n"},
+  { type: "COMMENT_START",             value: "//"},
+  { type: "COMMENT",                   value: " firstParameterName and secondParameterName refer to"},
+  { type: "TERMINATOR",                value: "\\n"},
+  { type: "COMMENT_START",             value: "//"},
+  { type: "COMMENT",                   value: " the argument values for the first and second parameters"},
+  { type: "TERMINATOR",                value: "\\n"},
+  { type: "TERMINATOR",                value: "EOF"}
+]
+
+String.raw`/*
+Comment 1
+*/`
+
+[
+  { type: "MULTI_LINE_COMMENT_START",  value: "/*"},
+  { type: "TERMINATOR",                value: "\\n"},
+  { type: "COMMENT",                   value: "Comment 1"},
+  { type: "TERMINATOR",                value: "\\n"},
+  { type: "MULTI_LINE_COMMENT_END",    value: "*/"},
+  { type: "TERMINATOR",                value: "EOF"}
+]

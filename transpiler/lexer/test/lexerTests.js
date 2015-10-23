@@ -1324,7 +1324,7 @@ describe('Lexer', function() {
     describe('Multi-line statements', function() {
       it('should handle simple multi-line variable assignment', function() {
         input = String.raw`var b = true;
-                 var c = 0;`
+                 var c = 0;`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
@@ -1394,7 +1394,56 @@ describe('Lexer', function() {
           { type: "TERMINATOR",           value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
-      })    
+      })
+      
+      it('should handle simple multi-line variable assignment with type annotations', function() {
+        input = String.raw`var name: String = "Joe"
+                let num: Int = 5;
+                let anotherNum: UInt16 = 6
+                var yetAnotherNum: Float = 4.2;
+                let truth: Bool = false
+                `;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "name" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TYPE_STRING",          value: "String"},
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "Joe" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let" },
+          { type: "IDENTIFIER",           value: "num" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TYPE_NUMBER",          value: "Int"},
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "5" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let" },
+          { type: "IDENTIFIER",           value: "anotherNum" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TYPE_NUMBER",          value: "UInt16"},
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "6" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "yetAnotherNum" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TYPE_NUMBER",          value: "Float"},
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "4.2" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let" },
+          { type: "IDENTIFIER",           value: "truth" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TYPE_BOOLEAN",         value: "Bool"},
+          { type: "OPERATOR",             value: "=" },
+          { type: "BOOLEAN",              value: "false" },
+          { type: "TERMINATOR",           value: "\\n"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });   
       
     });
 
