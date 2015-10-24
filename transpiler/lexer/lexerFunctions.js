@@ -89,7 +89,7 @@ module.exports = {
   },
 
   // handles start and end of multi-line and single-line comments
-  checkForComment: function(insideComment, snippet, tokens, currCol, nextCol, nextNextCol, cb) {
+  handleComment: function(insideComment, snippet, tokens, currCol, nextCol, nextNextCol, cb) {
     // TODO, make O(1) and make such that it handles all error cases
     if (currCol === '/' && nextCol === '*' && !(insideComment.multi && insideComment.single)) {
       insideComment.multi = true;
@@ -131,7 +131,7 @@ module.exports = {
     return false;
   },
 
-  checkInsideComment: function(insideComment) {
+  checkIfInsideComment: function(insideComment) {
     if (insideComment.multi || insideComment.single) {
       return true;
     }
