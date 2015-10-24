@@ -1,6 +1,7 @@
 var util = require('util');
 var fs = require('fs');
 var R = require('ramda');
+var diff = require('deep-diff').diff;
 
 var helpers = require('./helperFunctions.js');
 
@@ -917,9 +918,13 @@ var make_parse = function() {
   });
 
   stmt("if", function() {
-    advance("(");
-    this.test = expression(0);
-    advance(")");
+    if(tokens[token_nr].value === "(") {
+      advance("(");
+      this.test = expression(0);
+      advance(")");
+    } else {
+      this.test = expression(0);
+    }
     this.consequent = block();
     if (token.id === "else") {
       scope.reserve(token);
@@ -957,11 +962,19 @@ var make_parse = function() {
   });
 
   stmt("while", function() {
-    advance("(");
-    this.first = expression(0);
-    advance(")");
-    this.second = block();
+    this.type = "WhileStatement";
+    if(tokens[token_nr-1].value === "(") {
+      advance("(");
+      this.test = expression(0);
+      advance(")");
+    } else {
+      this.test = expression(0);
+    }
+    this.body = block();
     this.arity = "statement";
+    delete this.arity;
+    delete this.value;
+
     return this;
   });
 
@@ -1005,115 +1018,108 @@ var make_parse = function() {
 
 
 
-var expected = {
-  "type": "Program",
-  "body": [
-    {
-      "type": "VariableDeclaration",
-      "declarations": [
-        {
-          "type": "VariableDeclarator",
-          "id": {
-            "type": "Identifier",
-            "name": "c"
-          },
-          "init": {
-            "type": "Literal",
-            "value": 1,
-            "raw": "1"
-          }
-        }
-      ],
-      "kind": "var"
-    },
-    {
-      "type": "IfStatement",
-      "test": {
-        "type": "BinaryExpression",
-        "operator": "==",
-        "left": {
-          "type": "Identifier",
-          "name": "c"
-        },
-        "right": {
-          "type": "Literal",
-          "value": 1,
-          "raw": "1"
-        }
-      },
-      "consequent": {
-        "type": "BlockStatement",
-        "body": [
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "AssignmentExpression",
-              "operator": "*=",
-              "left": {
-                "type": "Identifier",
-                "name": "c"
-              },
-              "right": {
-                "type": "Literal",
-                "value": 5,
-                "raw": "5"
-              }
-            }
-          }
-        ]
-      },
-      "alternate": null
-    },
-    {
-      "type": "EmptyStatement"
-    }
-  ],
-  "sourceType": "module"
-};
-var tokenStream = [
-  { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "c" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "1" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "STATEMENT_KEYWORD",    value: "if" },
-  { type: "PUNCTUATION",          value: "(" },
-  { type: "IDENTIFIER",           value: "c" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "1" },
-  { type: "PUNCTUATION",          value: ")" },
-  { type: "PUNCTUATION",          value: "{" },
-  { type: "IDENTIFIER",           value: "c" },
-  { type: "OPERATOR",             value: "*" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "5" },
-  { type: "PUNCTUATION",          value: "}" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "TERMINATOR",           value: "EOF"}
-];
-var parser = make_parse();
-var actual = parser(tokenStream);
+//var expected = {
+//  "type": "Program",
+//  "body": [
+//    {
+//      "type": "VariableDeclaration",
+//      "declarations": [
+//        {
+//          "type": "VariableDeclarator",
+//          "id": {
+//            "type": "Identifier",
+//            "name": "i"
+//          },
+//          "init": {
+//            "type": "Literal",
+//            "value": 10,
+//            "raw": "10"
+//          }
+//        }
+//      ],
+//      "kind": "var"
+//    },
+//    {
+//      "type": "DoWhileStatement",
+//      "body": {
+//        "type": "BlockStatement",
+//        "body": [
+//          {
+//            "type": "ExpressionStatement",
+//            "expression": {
+//              "type": "UpdateExpression",
+//              "operator": "--",
+//              "argument": {
+//                "type": "Identifier",
+//                "name": "i"
+//              },
+//              "prefix": false
+//            }
+//          }
+//        ]
+//      },
+//      "test": {
+//        "type": "BinaryExpression",
+//        "operator": ">=",
+//        "left": {
+//          "type": "Identifier",
+//          "name": "i"
+//        },
+//        "right": {
+//          "type": "Literal",
+//          "value": 0,
+//          "raw": "0"
+//        }
+//      }
+//    }
+//  ],
+//  "sourceType": "module"
+//};
+//var tokenStream = [
+//  { type: "DECLARATION_KEYWORD",  value: "var" },
+//  { type: "IDENTIFIER",           value: "i" },
+//  { type: "OPERATOR",             value: "=" },
+//  { type: "NUMBER",               value: "10" },
+//  { type: "PUNCTUATION",          value: ";" },
+//  { type: "STATEMENT_KEYWORD",    value: "repeat" },
+//  { type: "PUNCTUATION",          value: "{" },
+//  { type: "IDENTIFIER",           value: "i" },
+//  { type: "OPERATOR",             value: "-" },
+//  { type: "OPERATOR",             value: "-" },
+//  { type: "PUNCTUATION",          value: "}" },
+//  { type: "STATEMENT_KEYWORD",    value: "while" },
+//  { type: "PUNCTUATION",          value: "(" },
+//  { type: "IDENTIFIER",           value: "i" },
+//  { type: "OPERATOR",             value: ">" },
+//  { type: "OPERATOR",             value: "=" },
+//  { type: "NUMBER",               value: "0" },
+//  { type: "PUNCTUATION",          value: ")" },
+//  { type: "TERMINATOR",           value: "EOF"}
+//];
+//var parser = make_parse();
+//var actual = parser(tokenStream);
 
 
 
 
-console.log("############################");
-console.log("############################");
-console.log("##### BEGIN AST OUTPUT #####");
-console.log(util.inspect(actual, {
-  colors: true,
-  depth: null
-}));
-console.log("############################");
-console.log("############################");
-console.log("############################");
-console.log(util.inspect(expected, {
-  colors: true,
-  depth: null
-}));
-console.log("############################");
-console.log("############################");
-console.log("############################");
+//console.log("############################");
+//console.log("############################");
+//console.log("##### BEGIN AST OUTPUT #####");
+//console.log(util.inspect(actual, {
+//  colors: true,
+//  depth: null
+//}));
+//console.log("############################");
+//console.log("############################");
+//console.log("############################");
+//console.log(util.inspect(expected, {
+//  colors: true,
+//  depth: null
+//}));
+//console.log("############################");
+//console.log("############################");
+//console.log("############################");
+//var dfrnc = diff(actual,expected);
+//console.log(dfrnc);
 
 module.exports = make_parse;
