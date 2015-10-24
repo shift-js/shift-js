@@ -19,7 +19,8 @@ module.exports = function(code) {
   var stringInterpolation = {status: false, counter: 0};
   var substringLookup = {status: false};
   var insideComment = {multi: false, single: false};
-  var insideTuple = {status: false, startIndex: undefined, verified: false};
+  var insideTuple = [];
+  var insideInvocation = [];
   // TODO - scope
 
   // advances the position of i by specified number of positions
@@ -47,6 +48,7 @@ module.exports = function(code) {
     var lastToken = tokens[tokens.length - 1];
     var lastCollection = insideCollection[insideCollection.length - 1];
     var lastCollectionIndex = insideCollection.length - 1;
+
 
     // console.log(chunk);
     // console.log(currCol);
@@ -107,6 +109,24 @@ module.exports = function(code) {
       continue;
     }
 
+    if (chunk === '(' && FUNCTION_NAMES[lastToken.value]) {
+      lexerFunctions.checkFor('FUNCTION_INVOCATION', chunk, tokens);
+      var tmp = {};
+      tmp.name = lastToken.value;
+      tmp.status = true;
+      insideInvocation.push(tmp);
+      advanceAndClear(1);
+      continue;
+    }
+    if (insideInvocation.length && (insideInvocation[insideInvocation.length - 1]).status && chunk === ')') {
+      lexerFunctions.checkFor('FUNCTION_INVOCATION', chunk, tokens);
+      var last = insideInvocation[insideInvocation.length - 1];
+      last.status = false;
+      insideInvocation.pop();
+      advanceAndClear(1);
+      continue;
+    }
+
     // tuple handling
     if (lexerFunctions.checkForTupleStart(insideTuple, chunk, tokens, lastToken,
     currCol, nextCol, nextNextCol, advanceAndClear)) {
@@ -138,7 +158,7 @@ module.exports = function(code) {
     }
     if (insideFunction.length && chunk === '(' &&
       insideFunction[insideFunction.length - 1].insideParams === false) {
-      FUNCTION_NAMES.(lastToken.value) = true;
+      FUNCTION_NAMES[lastToken.value] = true;
       lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
       insideFunction[insideFunction.length - 1].insideParams = true;
       advanceAndClear(1);
