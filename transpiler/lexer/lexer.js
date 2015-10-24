@@ -58,11 +58,11 @@ module.exports = function(code) {
     }
     
     // comment handling
-    if (lexerFunctions.checkForComment(insideComment, chunk, tokens,
+    if (lexerFunctions.handleComment(insideComment, chunk, tokens,
       currCol, nextCol, nextNextCol, advanceAndClear)) {
       continue;
     }
-    if (lexerFunctions.checkInsideComment(insideComment)) {
+    if (lexerFunctions.checkIfInsideComment(insideComment)) {
       advance(1);
       continue;
     }
@@ -74,7 +74,7 @@ module.exports = function(code) {
       insideString.status = true;
     }
 
-    // tracks state: whether inside a number
+    // number handling
     if (lexerFunctions.handleNumber(insideString, insideNumber, chunk,
       tokens, nextCol)) {
       advanceAndClear(1);
