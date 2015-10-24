@@ -13,6 +13,7 @@ module.exports = function(code) {
   var VARIABLE_NAMES = {};
 
   // track state
+  var emptyLine = true;
   var insideString = {status: false};
   var insideNumber = {status: false};
   var insideCollection = [];
@@ -38,7 +39,6 @@ module.exports = function(code) {
   };
 
   while (code[i] !== undefined) {
-    debugger;
     chunk += code[i];
     currCol = code[i];
     prevCol = code[i - 1];
@@ -48,26 +48,34 @@ module.exports = function(code) {
     var lastCollection = insideCollection[insideCollection.length - 1];
     var lastCollectionIndex = insideCollection.length - 1;
 
-    // console.log(currCol)
     // console.log(chunk);
+    // console.log(currCol);
+    // console.log(nextCol);
     // console.log(tokens);
+    // console.log(emptyLine);
 
     // newline handling
-
-    if (lexerFunctions.checkInsideComment(insideComment) && nextCol === '\n') {
-      lexerFunctions.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
-      lexerFunctions.makeToken(undefined, undefined, tokens, 'TERMINATOR', '\\n'); 
-      advanceAndClear(2); 
-      continue;   
-    }
-
     if (currCol === '\n') {
       lexerFunctions.makeToken(undefined, undefined, tokens, 'TERMINATOR', '\\n');
+      emptyLine = true;
+      advanceAndClear(1);
+      continue
+    }
+    if (emptyLine && !lexerFunctions.checkForWhitespace(currCol)) {
+      emptyLine = false;
+    }
+    if (emptyLine && lastToken.value === '\\n') {
       advanceAndClear(1);
       continue;
     }
-    if (currCol === ' ' && lastToken.value === '\\n') {
-      advanceAndClear(1);
+    
+    // comment handling
+    if (lexerFunctions.checkForComment(insideComment, chunk, tokens,
+      currCol, nextCol, nextNextCol, advanceAndClear)) {
+      continue;
+    }
+    if (lexerFunctions.checkInsideComment(insideComment)) {
+      advance(1);
       continue;
     }
 
@@ -82,16 +90,6 @@ module.exports = function(code) {
     if (lexerFunctions.handleNumber(insideString, insideNumber, chunk,
       tokens, nextCol)) {
       advanceAndClear(1);
-      continue;
-    }
-
-    // comment handling
-    if (lexerFunctions.checkForComment(insideComment, chunk, tokens,
-      currCol, nextCol, nextNextCol, advanceAndClear)) {
-      continue;
-    }
-    if (lexerFunctions.checkInsideComment(insideComment)) {
-      advance(1);
       continue;
     }
 
@@ -164,8 +162,11 @@ module.exports = function(code) {
     advance(1);
     // console.log(tokens);
   }
+  
+  if (tokens[tokens.length - 1].value === '\\n') {
+    lexerFunctions.makeToken(undefined, undefined, tokens, 'TERMINATOR', 'EOF');
+  }
   // console.log(tokens);
   return tokens;
 
 };
-
