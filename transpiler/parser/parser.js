@@ -1,22 +1,18 @@
 var util = require('util');
-var esprima = require('esprima-ast-utils');
 var fs = require('fs');
 var R = require('ramda');
-var tokenize = require('./tokens.js').tokenize;
-// var helpers = require('lexer/helperfunctions.js');
-//TODO: Tokenization Examples 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15 have no terminator punctuation. Inconsistent
-//TODO: Test Case 13 IDENTIFIER "a" not a
-//TODO: Test Case 14 IDENTIFIER "a" not a
+
+var helpers = require('./helperFunctions.js');
+
+
 //TODO Monday October 19th
 //TODO Test cases 19 & 20 Use type PUNCTUATION rather than ARRAY_START || ARRAYEND
 //TODO TEST 20 Doesn't define arr 20 (SAME WITH 19)
-var test_inputs = require('./test_cases_parser_input');
-var test_outputs = require('./test_cases_parser_output');
 //TODO Transform test 21 in CleanUp function call
 //TODO After parsing, post-parse CleanUp function needs to remove unnecessary keywords from nodes
 //TODO    Examples would be:reserved, nud, led, std, lbp, scope
-
-
+//TODO Friday October 23rd
+//TODO Initializing empty collection tests: only empty tuples are tested. Add more.
 
 var make_parse = function() {
 
@@ -36,7 +32,7 @@ var make_parse = function() {
 
   var isNum = function(val) {
     return /^\d+.*$/.test(val);
-  }
+  };
 
   var isBool = function(val) {
     return val === 'true' || val === 'false';
@@ -119,23 +115,28 @@ var make_parse = function() {
 
     t = tokens[token_nr];
     token_nr += 1;
-
     v = t.value;
     a = t.type;
 
-    var terminatorTokenTypes = ["ARRAY_END", "DICTIONARY_END", "TERMINATOR"];
+    var terminatorTokenTypes = ["ARRAY_END", "DICTIONARY_END", "TUPLE_END", "TERMINATOR"];
     var primitiveTokenTypes = ["NUMBER", "BOOLEAN", "STRING"];
-    var collectionStartTokenTypes = ["ARRAY_START", "DICTIONARY_START"];
-    var verbTokenTypes = ["PUNCTUATION", "OPERATOR"];
-    var nounTokenValues = ["DECLARATION_KEYWORD", "IDENTIFIER"];
+    var collectionStartTokenTypes = ["ARRAY_START", "DICTIONARY_START", "TUPLE_START"];
+    var verbTokenTypes = ["PUNCTUATION", "OPERATOR", "SUBSTRING_LOOKUP_END", "SUBSTRING_LOOKUP_START"];
+    var nounTokenValues = ["DECLARATION_KEYWORD", "IDENTIFIER", "TUPLE_ELEMENT_NAME", "STATEMENT_KEYWORD"];
 
     if (nounTokenValues.hasItem(a)) {
       if (a === "DECLARATION_KEYWORD") v = "var";
       o = scope.find(v);
     } else if (collectionStartTokenTypes.hasItem(a)) {
-      var isObj = (a === "DICTIONARY_START");
-      v = isObj ? '{' : '[';
-      o = isObj ? symbol_table['{'] : symbol_table['['];
+
+      if(a === "ARRAY_START") {
+        v = '[';
+        o = symbol_table['['];
+      } else {
+        v = '{';
+        o = symbol_table['{'];
+      }
+
       if (!o) t.error("Unknown operator.");
     } else if (terminatorTokenTypes.hasItem(a) || verbTokenTypes.hasItem(a)) {
       o = symbol_table[v];
@@ -154,30 +155,51 @@ var make_parse = function() {
 
   };
 
+  /**
+   * Begin parsing an expression phrase from the current token
+   * Calls itself recursively depending on the context.
+   **/
   var expression = function(rbp) {
     var left;
     var t = token;
     advance();
     left = t.nud();
 
-    if (t.value === "++") {
+
+
+    if (t.value === "++" || t.value === "--") {
       //Pre-fix operator
       left = t;
-      advance();
-    } else if (token.value === "++") {
-      //Post-fix incrementor
 
-      left.type = "Identifier";
-      left.name = left.value;
-      delete left.value;
-      delete left.arity;
+      if(token.value !== "}") advance();
+    } else if (token.value === "++" || token.value === "--") {
+      //Post-fix operators
+      if(token.value === "++") {
+        left.type = "Identifier";
+        left.name = left.value;
+        delete left.value;
+        delete left.arity;
 
-      advance();
-      return {
-        "type": "UpdateExpression",
-        "operator": "++",
-        "prefix": false,
-        "argument": left
+        advance();
+        return {
+          "type": "UpdateExpression",
+          "operator": "++",
+          "prefix": false,
+          "argument": left
+        }
+      } else {
+        left.type = "Identifier";
+        left.name = left.value;
+        delete left.value;
+        delete left.arity;
+        advance();
+        return {
+          "type": "UpdateExpression",
+          "operator": "--",
+          "prefix": false,
+          "argument": left
+        }
+
       }
     } else if (t.operator === "+") {
       delete t.arity;
@@ -186,24 +208,26 @@ var make_parse = function() {
       token.type = "Identifier";
       delete token.value;
       delete token.arity;
-      t.argument = token; //{ value: 'b', arity: 'IDENTIFIER' } bad
-      // good { type: 'Identifier', name: 'b' }
+      t.argument = token;
     }
 
-
+    /**
+     * Logic to handle the recursive case
+     */
     while (rbp < token.lbp) {
       t = token;
       advance();
       left = t.led(left);
     }
 
+
     if (left.arity === "IDENTIFIER") {
       left.name = left.value;
       left.type = "Identifier";
       delete left.arity;
       delete left.value;
-    } else if (left.arity === "literal" && isNum(left.value)) {
-      // This is for type number
+    }
+    else if (left.arity === "literal" && isNum(left.value)) {
       left.type = "Literal";
       left.raw = left.value;
       if (left.value.indexOf('.')) {
@@ -212,14 +236,14 @@ var make_parse = function() {
         left.value = parseInt(left.value);
       }
       delete t.arity;
-    } else if (left.arity === "literal" && isBool(left.value)) {
-      // This is for type boolean
+    }
+    else if (left.arity === "literal" && isBool(left.value)) {
       left.type = "Literal";
       left.raw = t.value;
       left.value = t.value === "true";
       delete t.arity;
-    } else if (left.arity === "literal") {
-      // This is for type string
+    }
+    else if (left.arity === "literal") {
       left.type = "Literal";
       left.raw = '"' + t.value + '"';
       delete t.arity;
@@ -229,8 +253,7 @@ var make_parse = function() {
   };
 
   var statement = function() {
-    var n = token,
-      v;
+    var n = token, v;
 
     if (n.std) {
       advance();
@@ -238,6 +261,11 @@ var make_parse = function() {
       return n.std();
     }
     v = expression(0);
+
+    if(token.value === "}") {
+      return v;
+    }
+
     if (!v.assignment && v.id !== "(") {
       v.error("Bad expression statement.");
     }
@@ -249,9 +277,15 @@ var make_parse = function() {
     var a = [],
       s;
     while (true) {
-      if (token.id === "}" || token.id === "(end)" || token.id === "EOF") {
+      if (token.id === ";" || token.id === "}" || token.id === "(end)" || token.id === "EOF") {
+        if(token.id === ";") {
+          a.push({
+            "type": "EmptyStatement"
+          });
+        }
         break;
       }
+
       s = statement();
       if (s) {
         a.push(s);
@@ -263,7 +297,16 @@ var make_parse = function() {
   var block = function() {
     var t = token;
     advance("{");
-    return t.std();
+    var stdReturnVal = t.std();
+
+    return {
+      type: 'BlockStatement',
+      body: [{
+          type: 'ExpressionStatement',
+          expression: stdReturnVal
+      }]
+    };
+
   };
 
   var original_symbol = {
@@ -312,9 +355,14 @@ var make_parse = function() {
       delete this.value;
       delete this.arity;
 
-
       this.type = "BinaryExpression";
       this.operator = this.value;
+
+      if(this.operator === "||") {
+        this.type = "LogicalExpression";
+        
+      }
+
 
       if(left.arity === "IDENTIFIER") {
         left.type = "Identifier";
@@ -355,13 +403,24 @@ var make_parse = function() {
       //this.first = left;
       //this.second = expression(bp - 1);
       //this.arity = "binary";
-
       delete this.value;
       delete this.arity;
       this.type = "BinaryExpression";
       this.operator = this.value;
 
-      if (left.arity === "literal" && isNum(left.value)) {
+      if(this.operator === "||") {
+        this.type = "LogicalExpression";
+      //   // this.left = expression(bp -1);
+      //   // this.right = left;
+      //   // this.left = "LogicalExpression";
+      }
+
+      if(left.arity === "IDENTIFIER") {
+        left.type = "Identifier";
+        left.name = left.value;
+        delete left.arity;
+        delete left.value;
+      } else if(left.arity === "literal" && isNum(left.value)) {
         // This is for type number
         left.type = "Literal";
         delete left.arity;
@@ -380,7 +439,8 @@ var make_parse = function() {
         delete left.arity;
         left.raw = '"' + left.value + '"';
       }
-
+      // this.left = expression(bp- 1);
+      // this.right = left;
       this.left = left;
       this.right = expression(bp - 1);
 
@@ -391,13 +451,26 @@ var make_parse = function() {
 
   var assignment = function(id) {
     return infixr(id, 10, function(left) {
-      if (left.id !== "." && left.id !== "[" && left.arity !== "name") {
+      if (left.id !== "." && left.id !== "[" && left.arity !== "name" && left.id !== "(name)") {
         left.error("Bad lvalue.");
       }
-      this.first = left;
-      this.second = expression(9);
+
+      left.type = "Identifier";
+      left.name = left.value;;
+      delete left.arity;
+      delete left.value;
+
+      this.left = left;
+      this.right = expression(9);
       this.assignment = true;
+      delete this.assignment;
+      this.operator = this.value;
+      this.type = "AssignmentExpression";
       this.arity = "binary";
+      delete this.value;
+      delete this.arity;
+
+
       return this;
     });
   };
@@ -409,9 +482,18 @@ var make_parse = function() {
       //this.first = expression(70);
       //this.arity = "unary";
 
-      if (this.value === "++") {
+      if (this.value === "++" || this.value === "--") {
         this.type = "UpdateExpression";
-        this.operator = "++";
+        // this.operator = "++";
+        this.operator = this.value;
+        this.prefix = true;
+        this.argument = expression(70);
+        delete this.arity;
+        delete this.value;
+        //TODO Why don't we: 'return this;'
+      } else if(this.value === "--") {
+        this.type = "UpdateExpression";
+        this.operator = "--";
         this.prefix = true;
         this.argument = expression(70);
         delete this.arity;
@@ -471,6 +553,8 @@ var make_parse = function() {
   assignment("=");
   assignment("+=");
   assignment("-=");
+  assignment("*=");
+  assignment("/=");
 
   infix("?", 20, function(left) {
     this.type = "ConditionalExpression";
@@ -574,13 +658,12 @@ var make_parse = function() {
     return this;
   });
 
-
   prefix("+");
   prefix("!");
   prefix("++");
+  prefix("--");
   prefix("-");
   prefix("typeof");
-  //postfix("++");
 
   prefix("(", function() {
     var e = expression(0);
@@ -646,12 +729,55 @@ var make_parse = function() {
   // added some comment to commit
 
   prefix("{", function() {
-    var a = [],
-      n, v;
-    if (token.id !== "]") {
+    var a = [], n, v;
+
+    var tmpLookAhead = tokens[token_nr];
+    if(tmpLookAhead.value === ",") {
+      // Handle Tuples w/out keys
+
+      var a = [];
+      if (token.id !== "]") {
+        while (true) {
+          a.push(expression(0));//TODO These are the properties
+          if (token.id !== ",") {
+            break;
+          }
+          advance(",");
+        }
+      }
+      advance(")");
+      this.type = "ObjectExpression";
+      delete this.value;
+      delete this.raw;
+      this.properties = [];
+
+      for(var m=0; m<a.length; m++) {
+        var currentValue = a[m];
+        var kvMap = {};
+        kvMap.type = "Property";
+        kvMap.computed = false;
+        kvMap.kind = 'init';
+        kvMap.method = false;
+        kvMap.shorthand = false;
+        kvMap.key = {};
+        kvMap.key.type = "Literal";
+        var keyIndex = this.properties.length;
+        kvMap.key.value = keyIndex;
+        kvMap.key.raw = keyIndex.toString();
+        kvMap.value = currentValue;
+        this.properties.push(kvMap);
+      }
+
+      this.arity = "unary";
+      delete this.arity;
+      return this;
+
+    }
+
+    if ((token.id !== "]" &&  token.id !== ")") && tmpLookAhead.value !== ",") {
       while (true) {
         n = token;
-        if (n.arity !== "IDENTIFIER" && n.arity !== "name" && n.arity !== "literal") {
+        if (n.arity !== "IDENTIFIER" && n.arity !== "name" && n.arity !== "literal" && n.arity !== "TUPLE_ELEMENT_NAME") {
           token.error("Bad property name.");
         }
         if (n.arity !== "IDENTIFIER") {
@@ -690,6 +816,11 @@ var make_parse = function() {
           delete n.arity;
           n.type = "Literal";
           n.raw = '"' + n.value + '"';
+        } else if(n.arity === "TUPLE_ELEMENT_NAME") {
+          n.type = "Identifier";
+          n.name = n.value;
+          delete n.value;
+          delete n.arity;
         }
         kvMap.key = n;
         kvMap.value = v;
@@ -703,7 +834,13 @@ var make_parse = function() {
         advance(",");
       }
     }
-    advance("]");
+
+    try {
+      advance("]");
+    } catch(e) {
+      advance(")");
+    }
+
     this.arity = "unary";
     delete this.arity;
     delete this.value;
@@ -757,34 +894,44 @@ var make_parse = function() {
 
         a.push(t);
       }
+      if (token.id === ";") {
+        break;
+        //return a.length === 0 ? null : a.length === 1 ? a[0] : a;
+      }
       if (token.id !== ",") {
         break;
       }
       advance(",");
+    }
+    if(token.value === "var") {
+      return a.length === 0 ? null : a.length === 1 ? a[0] : a;
     }
     try {
       advance();
       //advance(";");//when actually was ("++")
     } catch (e) {
       advance("EOF");
-    } // TODO Swift possible ways to terminate a var declaration: [semi-colon, newline, EOF]
+    }
 
     return a.length === 0 ? null : a.length === 1 ? a[0] : a;
   });
 
   stmt("if", function() {
     advance("(");
-    this.first = expression(0);
+    this.test = expression(0);
     advance(")");
-    this.second = block();
+    this.consequent = block();
     if (token.id === "else") {
       scope.reserve(token);
       advance("else");
-      this.third = token.id === "if" ? statement() : block();
+      this.alternate = token.id === "if" ? statement() : block();
     } else {
-      this.third = null;
+      this.alternate = null;
     }
     this.arity = "statement";
+    this.type = "IfStatement";
+    delete this.arity;
+    delete this.value;
     return this;
   });
 
@@ -818,95 +965,21 @@ var make_parse = function() {
     return this;
   });
 
-  /**
-   * Make initial pass through input token stream removing ambiguity of certain token permutations to the parser.
-   * Example 1: Characters of pre- and post-fix increment & decrement
-   *        operators are lexed independently as separate operators.
-   * Example 2: Swift, but not Javascript, allows for dynamic property
-   *        look-ups within literal declarations of collections.
-   **/
-  function cleanUp(input) {
-    for (var i = 0; i < input.length; i++) {
-      if (input[i].type === "STRING_INTERPOLATION_START" || input[i].type === "STRING_INTERPOLATION_END") {
-        input[i].type = "OPERATOR";
-        input[i].value = "+";
-      }
-      if (input[i].value === "!") {
-        if (input[i + 1].value === "=") {
-          if (input[i + 2].value === "=") {
-            input.splice(i + 1, 2);
-            input[i].value = "!==";
-            return input;
-          } else {
-            input.splice(i + 1, 1);
-            input[i].value = "!=";
-          }
-        }
-      }
 
-      if (input[i].value === "=") {
-        if (input[i + 1].value === "=") {
-          if (input[i + 2].value === "=") {
-            input.splice(i + 1, 2);
-            input[i].value = "===";
-            return input;
-          } else {
-            input.splice(i + 1, 1);
-            input[i].value = "==";
-          }
-        }
-      }
-      if (input[i].value === "+") {
-        if (input[i + 1].value === "+") {
-          input.splice(i + 1, 1);
-          input[i].value = "++";
-          return input;
-        }
-      }
-      if (input[i].value === "-") {
-        if (input[i + 1].value === "-") {
-          input.splice(i + 1, 1);
-          input[i].value = "--";
-          return input;
-        }
-      }
-      if (input[i].value === "|") {
-        if (input[i + 1].value === "|") {
-          input.splice(i + 1, 1);
-          input[i].value = "||";
-          return input;
-        }
-      }
-      if (input[i].value === ">") {
-        if (input[i + 1].value === "=") {
-          input.splice(i + 1, 1);
-          input[i].value = ">=";
-          return input;
-        }
-      }
-      if (input[i].value === "<") {
-        if (input[i + 1].value === "=") {
-          input.splice(i + 1, 1);
-          input[i].value = "<=";
-          return input;
-        }
-      }
+  var parseTokenStream = function(input_tokens) {
+    tokens = helpers.cleanUpTokenStream(input_tokens);
 
-    }
-    return input;
-  }
-
-  return function(input_tokens) {
-    tokens = cleanUp(input_tokens);
     token_nr = 0;
     new_scope();
     advance();
     var s = statements();
-    try {
-      advance("(end)");
-    } catch (e) {
-      advance("EOF");
-    }
+
+    advance();
+    //try {
+    //  advance("(end)");
+    //} catch (e) {
+    //  advance("EOF");
+    //}
 
     scope.pop();
 
@@ -919,45 +992,20 @@ var make_parse = function() {
     /**
      * Walk result tree and remove properties that don't conform to Esprima standard.
      * */
-    traverse(result, function(currentNode) {
-      deletePropertyIfExists(currentNode, ['reserved', 'nud', 'led', 'std', 'lbp', 'scope']);
+    helpers.traverse(result, function(currentNode) {
+      helpers.deletePropertyIfExists(currentNode, ['reserved', 'nud', 'led', 'std', 'lbp', 'scope']);
     });
 
     return result;
   };
+
+  return parseTokenStream;
 };
 
-function deletePropertyIfExists(node, propertyArray) {
-  for (var i = 0; i < propertyArray.length; i++) {
-    var prop = propertyArray[i];
-    var hasProp = node.hasOwnProperty(prop);
-    if (hasProp) {
-      delete node[prop];
-    }
-  }
-}
 
-function traverse(node, func) {
-  func(node);
-  if (node.scope) {
-    delete node.scope;
-  }
-  for (var key in node) {
-    if (node.hasOwnProperty(key)) {
-      var child = node[key];
-      if (typeof child === 'object' && child !== null) {
-        if (Array.isArray(child)) {
-          child.forEach(function(node) {
-            traverse(node, func);
-          });
-        } else {
-          traverse(child, func);
-        }
-      }
-    }
-  }
-}
-var outputthing = {
+
+
+var expected = {
   "type": "Program",
   "body": [
     {
@@ -967,119 +1015,105 @@ var outputthing = {
           "type": "VariableDeclarator",
           "id": {
             "type": "Identifier",
-            "name": "l"
+            "name": "c"
           },
           "init": {
-            "type": "LogicalExpression",
-            "operator": "||",
-            "left": {
-              "type": "LogicalExpression",
-              "operator": "||",
-              "left": {
-                "type": "LogicalExpression",
-                "operator": "||",
-                "left": {
-                  "type": "LogicalExpression",
-                  "operator": "||",
-                  "left": {
-                    "type": "LogicalExpression",
-                    "operator": "||",
-                    "left": {
-                      "type": "BinaryExpression",
-                      "operator": "!=",
-                      "left": {
-                        "type": "Literal",
-                        "value": 6,
-                        "raw": "6"
-                      },
-                      "right": {
-                        "type": "Literal",
-                        "value": 7,
-                        "raw": "7"
-                      }
-                    },
-                    "right": {
-                      "type": "BinaryExpression",
-                      "operator": "==",
-                      "left": {
-                        "type": "Literal",
-                        "value": 6,
-                        "raw": "6"
-                      },
-                      "right": {
-                        "type": "Literal",
-                        "value": 7,
-                        "raw": "7"
-                      }
-                    }
-                  },
-                  "right": {
-                    "type": "BinaryExpression",
-                    "operator": ">",
-                    "left": {
-                      "type": "Literal",
-                      "value": 6,
-                      "raw": "6"
-                    },
-                    "right": {
-                      "type": "Literal",
-                      "value": 7,
-                      "raw": "7"
-                    }
-                  }
-                },
-                "right": {
-                  "type": "BinaryExpression",
-                  "operator": "<",
-                  "left": {
-                    "type": "Literal",
-                    "value": 6,
-                    "raw": "6"
-                  },
-                  "right": {
-                    "type": "Literal",
-                    "value": 7,
-                    "raw": "7"
-                  }
-                }
-              },
-              "right": {
-                "type": "BinaryExpression",
-                "operator": ">=",
-                "left": {
-                  "type": "Literal",
-                  "value": 6,
-                  "raw": "6"
-                },
-                "right": {
-                  "type": "Literal",
-                  "value": 7,
-                  "raw": "7"
-                }
-              }
-            },
-            "right": {
-              "type": "BinaryExpression",
-              "operator": "<=",
-              "left": {
-                "type": "Literal",
-                "value": 6,
-                "raw": "6"
-              },
-              "right": {
-                "type": "Literal",
-                "value": 7,
-                "raw": "7"
-              }
-            }
+            "type": "Literal",
+            "value": 1,
+            "raw": "1"
           }
         }
       ],
       "kind": "var"
+    },
+    {
+      "type": "IfStatement",
+      "test": {
+        "type": "BinaryExpression",
+        "operator": "==",
+        "left": {
+          "type": "Identifier",
+          "name": "c"
+        },
+        "right": {
+          "type": "Literal",
+          "value": 1,
+          "raw": "1"
+        }
+      },
+      "consequent": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "*=",
+              "left": {
+                "type": "Identifier",
+                "name": "c"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 5,
+                "raw": "5"
+              }
+            }
+          }
+        ]
+      },
+      "alternate": null
+    },
+    {
+      "type": "EmptyStatement"
     }
   ],
   "sourceType": "module"
 };
+var tokenStream = [
+  { type: "DECLARATION_KEYWORD",  value: "var" },
+  { type: "IDENTIFIER",           value: "c" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "1" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "STATEMENT_KEYWORD",    value: "if" },
+  { type: "PUNCTUATION",          value: "(" },
+  { type: "IDENTIFIER",           value: "c" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "1" },
+  { type: "PUNCTUATION",          value: ")" },
+  { type: "PUNCTUATION",          value: "{" },
+  { type: "IDENTIFIER",           value: "c" },
+  { type: "OPERATOR",             value: "*" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "5" },
+  { type: "PUNCTUATION",          value: "}" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "TERMINATOR",           value: "EOF"}
+];
 var parser = make_parse();
+var actual = parser(tokenStream);
+
+
+
+
+console.log("############################");
+console.log("############################");
+console.log("##### BEGIN AST OUTPUT #####");
+console.log(util.inspect(actual, {
+  colors: true,
+  depth: null
+}));
+console.log("############################");
+console.log("############################");
+console.log("############################");
+console.log(util.inspect(expected, {
+  colors: true,
+  depth: null
+}));
+console.log("############################");
+console.log("############################");
+console.log("############################");
 
 module.exports = make_parse;
