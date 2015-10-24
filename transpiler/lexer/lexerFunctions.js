@@ -36,6 +36,22 @@ module.exports = {
     }
   },
 
+  // helper function to handle new lines
+  handleNewLine: function(emptyLine, tokens, lastToken, currCol) {
+    if (currCol === '\n') {
+      module.exports.makeToken(undefined, undefined, tokens, 'TERMINATOR', '\\n');
+      emptyLine.status = true;
+      return true;
+    }
+    if (emptyLine.status && !module.exports.checkForWhitespace(currCol)) {
+      emptyLine.status = false;
+    }
+    if (emptyLine.status && lastToken.value === '\\n') {
+      return true;
+    }
+    return false;
+  },
+
   // checks for string, number, boolean values
   checkForLiteral: function(snippet, tokens, cb) {
     if (snippet) {
@@ -101,11 +117,7 @@ module.exports = {
         return true;
       } else if ((nextCol === '*' && nextNextCol === '/') || nextCol === '\n') {
         module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);
-        if (nextCol === '\n') {
-          cb(1);
-        } else {
-          cb(1);
-        }
+        cb(1);
         return true;
       } 
     }
