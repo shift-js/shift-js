@@ -89,16 +89,27 @@ module.exports = {
       cb(2);
       return true;
     }
-    else if (insideComment.multi && nextCol === '*' && nextNextCol === '/') {
-      insideComment.multi = false;
-      module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);
-      snippet = nextCol + nextNextCol;
-      module.exports.checkFor('COMMENT', snippet, tokens);
-      cb(4);
-      return true;
+    else if (insideComment.multi) {
+      if (snippet === '*/') {
+        module.exports.checkFor('COMMENT', snippet, tokens);
+        insideComment.multi = false;
+        if (nextCol === '\n') {
+          cb(1);
+        } else {
+          cb(2);
+        }
+        return true;
+      } else if ((nextCol === '*' && nextNextCol === '/') || nextCol === '\n') {
+        module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);
+        if (nextCol === '\n') {
+          cb(1);
+        } else {
+          cb(1);
+        }
+        return true;
+      } 
     }
-    else if (insideComment.single && nextCol === undefined) {
-      // TO DO -- handle single line comment once we start handling multi line blocks
+    else if (insideComment.single && (nextCol === undefined || nextCol === '\n')) {
       insideComment.multi = false;
       module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);
       module.exports.handleEndOfFile(nextCol, tokens);
