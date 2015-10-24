@@ -1,6 +1,7 @@
 var util = require('util');
 var fs = require('fs');
 var R = require('ramda');
+var diff = require('deep-diff').diff;
 
 var helpers = require('./helperFunctions.js');
 
@@ -302,8 +303,8 @@ var make_parse = function() {
     return {
       type: 'BlockStatement',
       body: [{
-          type: 'ExpressionStatement',
-          expression: stdReturnVal
+        type: 'ExpressionStatement',
+        expression: stdReturnVal
       }]
     };
 
@@ -349,103 +350,103 @@ var make_parse = function() {
   var infix = function(id, bp, led) {
     var s = symbol(id, bp);
     s.led = led || function(left) {
-      //this.first = left;
-      //this.second = expression(bp);
+        //this.first = left;
+        //this.second = expression(bp);
 
-      delete this.value;
-      delete this.arity;
+        delete this.value;
+        delete this.arity;
 
-      this.type = "BinaryExpression";
-      this.operator = this.value;
+        this.type = "BinaryExpression";
+        this.operator = this.value;
 
-      if(this.operator === "||") {
-        this.type = "LogicalExpression";
-        
-      }
+        if(this.operator === "||") {
+          this.type = "LogicalExpression";
 
-
-      if(left.arity === "IDENTIFIER") {
-        left.type = "Identifier";
-        left.name = left.value;
-        delete left.arity;
-        delete left.value;
-      } else if(left.arity === "literal" && isNum(left.value)) {
-        // This is for type number
-        left.type = "Literal";
-        delete left.arity;
-        left.raw = left.value;
-        if (left.value.indexOf('.') === -1) {
-          left.value = parseFloat(left.value);
-        } else {
-          left.value = parseInt(left.value);
         }
-      } else if (left.arity === "literal" && isBool(left.value)) {
-        // This is for type boolean
 
-      } else if (left.arity === "literal") {
-        // This is for type string
-        left.type = "Literal";
-        delete left.arity;
-        left.raw = '"' + left.value + '"';
-      }
 
-      this.left = left;
-      this.right = expression(bp);
+        if(left.arity === "IDENTIFIER") {
+          left.type = "Identifier";
+          left.name = left.value;
+          delete left.arity;
+          delete left.value;
+        } else if(left.arity === "literal" && isNum(left.value)) {
+          // This is for type number
+          left.type = "Literal";
+          delete left.arity;
+          left.raw = left.value;
+          if (left.value.indexOf('.') === -1) {
+            left.value = parseFloat(left.value);
+          } else {
+            left.value = parseInt(left.value);
+          }
+        } else if (left.arity === "literal" && isBool(left.value)) {
+          // This is for type boolean
 
-      return this;
-    };
+        } else if (left.arity === "literal") {
+          // This is for type string
+          left.type = "Literal";
+          delete left.arity;
+          left.raw = '"' + left.value + '"';
+        }
+
+        this.left = left;
+        this.right = expression(bp);
+
+        return this;
+      };
     return s;
   };
 
   var infixr = function(id, bp, led) {
     var s = symbol(id, bp);
     s.led = led || function(left) {
-      //this.first = left;
-      //this.second = expression(bp - 1);
-      //this.arity = "binary";
-      delete this.value;
-      delete this.arity;
-      this.type = "BinaryExpression";
-      this.operator = this.value;
+        //this.first = left;
+        //this.second = expression(bp - 1);
+        //this.arity = "binary";
+        delete this.value;
+        delete this.arity;
+        this.type = "BinaryExpression";
+        this.operator = this.value;
 
-      if(this.operator === "||") {
-        this.type = "LogicalExpression";
-      //   // this.left = expression(bp -1);
-      //   // this.right = left;
-      //   // this.left = "LogicalExpression";
-      }
-
-      if(left.arity === "IDENTIFIER") {
-        left.type = "Identifier";
-        left.name = left.value;
-        delete left.arity;
-        delete left.value;
-      } else if(left.arity === "literal" && isNum(left.value)) {
-        // This is for type number
-        left.type = "Literal";
-        delete left.arity;
-        left.raw = left.value;
-        if (left.value.indexOf('.') === -1) {
-          left.value = parseFloat(left.value);
-        } else {
-          left.value = parseInt(left.value);
+        if(this.operator === "||") {
+          this.type = "LogicalExpression";
+          //   // this.left = expression(bp -1);
+          //   // this.right = left;
+          //   // this.left = "LogicalExpression";
         }
-      } else if (left.arity === "literal" && isBool(left.value)) {
-        // This is for type boolean
 
-      } else if (left.arity === "literal") {
-        // This is for type string
-        left.type = "Literal";
-        delete left.arity;
-        left.raw = '"' + left.value + '"';
-      }
-      // this.left = expression(bp- 1);
-      // this.right = left;
-      this.left = left;
-      this.right = expression(bp - 1);
+        if(left.arity === "IDENTIFIER") {
+          left.type = "Identifier";
+          left.name = left.value;
+          delete left.arity;
+          delete left.value;
+        } else if(left.arity === "literal" && isNum(left.value)) {
+          // This is for type number
+          left.type = "Literal";
+          delete left.arity;
+          left.raw = left.value;
+          if (left.value.indexOf('.') === -1) {
+            left.value = parseFloat(left.value);
+          } else {
+            left.value = parseInt(left.value);
+          }
+        } else if (left.arity === "literal" && isBool(left.value)) {
+          // This is for type boolean
 
-      return this;
-    };
+        } else if (left.arity === "literal") {
+          // This is for type string
+          left.type = "Literal";
+          delete left.arity;
+          left.raw = '"' + left.value + '"';
+        }
+        // this.left = expression(bp- 1);
+        // this.right = left;
+        this.left = left;
+        this.right = expression(bp - 1);
+
+        return this;
+      };
     return s;
   };
 
@@ -478,43 +479,43 @@ var make_parse = function() {
   var prefix = function(id, nud) {
     var s = symbol(id);
     s.nud = nud || function() {
-      scope.reserve(this);
-      //this.first = expression(70);
-      //this.arity = "unary";
+        scope.reserve(this);
+        //this.first = expression(70);
+        //this.arity = "unary";
 
-      if (this.value === "++" || this.value === "--") {
-        this.type = "UpdateExpression";
-        // this.operator = "++";
-        this.operator = this.value;
-        this.prefix = true;
-        this.argument = expression(70);
-        delete this.arity;
-        delete this.value;
-        //TODO Why don't we: 'return this;'
-      } else if(this.value === "--") {
-        this.type = "UpdateExpression";
-        this.operator = "--";
-        this.prefix = true;
-        this.argument = expression(70);
-        delete this.arity;
-        delete this.value;
-        //TODO Why don't we: 'return this;'
-      } else if (this.value === "+") {
-        this.type = "UnaryExpression";
-        this.prefix = true;
-        this.operator = "+";
-        return this;
-      } else {
-        this.type = "UnaryExpression";
-        delete this.arity;
-        this.operator = this.value;
-        delete this.value;
-        this.argument = expression(70);
-        this.prefix = true;
-        return this;
-      }
+        if (this.value === "++" || this.value === "--") {
+          this.type = "UpdateExpression";
+          // this.operator = "++";
+          this.operator = this.value;
+          this.prefix = true;
+          this.argument = expression(70);
+          delete this.arity;
+          delete this.value;
+          //TODO Why don't we: 'return this;'
+        } else if(this.value === "--") {
+          this.type = "UpdateExpression";
+          this.operator = "--";
+          this.prefix = true;
+          this.argument = expression(70);
+          delete this.arity;
+          delete this.value;
+          //TODO Why don't we: 'return this;'
+        } else if (this.value === "+") {
+          this.type = "UnaryExpression";
+          this.prefix = true;
+          this.operator = "+";
+          return this;
+        } else {
+          this.type = "UnaryExpression";
+          delete this.arity;
+          this.operator = this.value;
+          delete this.value;
+          this.argument = expression(70);
+          this.prefix = true;
+          return this;
+        }
 
-    };
+      };
     return s;
   };
 
@@ -917,9 +918,13 @@ var make_parse = function() {
   });
 
   stmt("if", function() {
-    advance("(");
-    this.test = expression(0);
-    advance(")");
+    if(tokens[token_nr].value === "(") {
+      advance("(");
+      this.test = expression(0);
+      advance(")");
+    } else {
+      this.test = expression(0);
+    }
     this.consequent = block();
     if (token.id === "else") {
       scope.reserve(token);
@@ -957,11 +962,19 @@ var make_parse = function() {
   });
 
   stmt("while", function() {
-    advance("(");
-    this.first = expression(0);
-    advance(")");
-    this.second = block();
+    this.type = "WhileStatement";
+    if(tokens[token_nr-1].value === "(") {
+      advance("(");
+      this.test = expression(0);
+      advance(")");
+    } else {
+      this.test = expression(0);
+    }
+    this.body = block();
     this.arity = "statement";
+    delete this.arity;
+    delete this.value;
+
     return this;
   });
 
@@ -1005,115 +1018,108 @@ var make_parse = function() {
 
 
 
-var expected = {
-  "type": "Program",
-  "body": [
-    {
-      "type": "VariableDeclaration",
-      "declarations": [
-        {
-          "type": "VariableDeclarator",
-          "id": {
-            "type": "Identifier",
-            "name": "c"
-          },
-          "init": {
-            "type": "Literal",
-            "value": 1,
-            "raw": "1"
-          }
-        }
-      ],
-      "kind": "var"
-    },
-    {
-      "type": "IfStatement",
-      "test": {
-        "type": "BinaryExpression",
-        "operator": "==",
-        "left": {
-          "type": "Identifier",
-          "name": "c"
-        },
-        "right": {
-          "type": "Literal",
-          "value": 1,
-          "raw": "1"
-        }
-      },
-      "consequent": {
-        "type": "BlockStatement",
-        "body": [
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "AssignmentExpression",
-              "operator": "*=",
-              "left": {
-                "type": "Identifier",
-                "name": "c"
-              },
-              "right": {
-                "type": "Literal",
-                "value": 5,
-                "raw": "5"
-              }
-            }
-          }
-        ]
-      },
-      "alternate": null
-    },
-    {
-      "type": "EmptyStatement"
-    }
-  ],
-  "sourceType": "module"
-};
-var tokenStream = [
-  { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "c" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "1" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "STATEMENT_KEYWORD",    value: "if" },
-  { type: "PUNCTUATION",          value: "(" },
-  { type: "IDENTIFIER",           value: "c" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "1" },
-  { type: "PUNCTUATION",          value: ")" },
-  { type: "PUNCTUATION",          value: "{" },
-  { type: "IDENTIFIER",           value: "c" },
-  { type: "OPERATOR",             value: "*" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "5" },
-  { type: "PUNCTUATION",          value: "}" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "TERMINATOR",           value: "EOF"}
-];
-var parser = make_parse();
-var actual = parser(tokenStream);
+//var expected = {
+//  "type": "Program",
+//  "body": [
+//    {
+//      "type": "VariableDeclaration",
+//      "declarations": [
+//        {
+//          "type": "VariableDeclarator",
+//          "id": {
+//            "type": "Identifier",
+//            "name": "i"
+//          },
+//          "init": {
+//            "type": "Literal",
+//            "value": 10,
+//            "raw": "10"
+//          }
+//        }
+//      ],
+//      "kind": "var"
+//    },
+//    {
+//      "type": "DoWhileStatement",
+//      "body": {
+//        "type": "BlockStatement",
+//        "body": [
+//          {
+//            "type": "ExpressionStatement",
+//            "expression": {
+//              "type": "UpdateExpression",
+//              "operator": "--",
+//              "argument": {
+//                "type": "Identifier",
+//                "name": "i"
+//              },
+//              "prefix": false
+//            }
+//          }
+//        ]
+//      },
+//      "test": {
+//        "type": "BinaryExpression",
+//        "operator": ">=",
+//        "left": {
+//          "type": "Identifier",
+//          "name": "i"
+//        },
+//        "right": {
+//          "type": "Literal",
+//          "value": 0,
+//          "raw": "0"
+//        }
+//      }
+//    }
+//  ],
+//  "sourceType": "module"
+//};
+//var tokenStream = [
+//  { type: "DECLARATION_KEYWORD",  value: "var" },
+//  { type: "IDENTIFIER",           value: "i" },
+//  { type: "OPERATOR",             value: "=" },
+//  { type: "NUMBER",               value: "10" },
+//  { type: "PUNCTUATION",          value: ";" },
+//  { type: "STATEMENT_KEYWORD",    value: "repeat" },
+//  { type: "PUNCTUATION",          value: "{" },
+//  { type: "IDENTIFIER",           value: "i" },
+//  { type: "OPERATOR",             value: "-" },
+//  { type: "OPERATOR",             value: "-" },
+//  { type: "PUNCTUATION",          value: "}" },
+//  { type: "STATEMENT_KEYWORD",    value: "while" },
+//  { type: "PUNCTUATION",          value: "(" },
+//  { type: "IDENTIFIER",           value: "i" },
+//  { type: "OPERATOR",             value: ">" },
+//  { type: "OPERATOR",             value: "=" },
+//  { type: "NUMBER",               value: "0" },
+//  { type: "PUNCTUATION",          value: ")" },
+//  { type: "TERMINATOR",           value: "EOF"}
+//];
+//var parser = make_parse();
+//var actual = parser(tokenStream);
 
 
 
 
-console.log("############################");
-console.log("############################");
-console.log("##### BEGIN AST OUTPUT #####");
-console.log(util.inspect(actual, {
-  colors: true,
-  depth: null
-}));
-console.log("############################");
-console.log("############################");
-console.log("############################");
-console.log(util.inspect(expected, {
-  colors: true,
-  depth: null
-}));
-console.log("############################");
-console.log("############################");
-console.log("############################");
+//console.log("############################");
+//console.log("############################");
+//console.log("##### BEGIN AST OUTPUT #####");
+//console.log(util.inspect(actual, {
+//  colors: true,
+//  depth: null
+//}));
+//console.log("############################");
+//console.log("############################");
+//console.log("############################");
+//console.log(util.inspect(expected, {
+//  colors: true,
+//  depth: null
+//}));
+//console.log("############################");
+//console.log("############################");
+//console.log("############################");
+//var dfrnc = diff(actual,expected);
+//console.log(dfrnc);
 
 module.exports = make_parse;
