@@ -1,6 +1,5 @@
 node_modules
 transpiler/parser/test/newTests.js
-transpiler/lexer/singleTest.js
 
 
 .floo
