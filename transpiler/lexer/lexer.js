@@ -8,12 +8,14 @@ module.exports = function(code) {
   var chunk = '';
   var currCol, prevCol, nextCol, nextNextCol;
   var VARIABLE_NAMES = {};
+  var FUNCTION_NAMES = {};
 
   // track state
   var emptyLine = {status: true};
   var insideString = {status: false};
   var insideNumber = {status: false};
   var insideCollection = [];
+  var insideFunction = [];
   var stringInterpolation = {status: false, counter: 0};
   var substringLookup = {status: false};
   var insideComment = {multi: false, single: false};
@@ -36,6 +38,7 @@ module.exports = function(code) {
   };
 
   while (code[i] !== undefined) {
+    debugger;
     chunk += code[i];
     currCol = code[i];
     prevCol = code[i - 1];
@@ -69,6 +72,11 @@ module.exports = function(code) {
     }
     if (lexerFunctions.checkIfInsideComment(insideComment)) {
       advance(1);
+      continue;
+    }
+
+    if (chunk === ' ') {
+      advanceAndClear(1);
       continue;
     }
 
@@ -115,7 +123,53 @@ module.exports = function(code) {
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
+    
+    if (chunk === 'func') {
+      lexerFunctions.checkFor('KEYWORD', chunk, tokens);
+      var temp = {};
+      temp.status = true;
+      temp.insideParams = false;
+      temp.statements = 0;
+      temp.curly = 0;
+      // temp.index = tokens.length - 1;
+      insideFunction.push(temp);
+      advanceAndClear(2);
+      continue;
+    }
+    if (insideFunction.length && chunk === '(' &&
+      insideFunction[insideFunction.length - 1].insideParams === false) {
+      FUNCTION_NAMES.(lastToken.value) = true;
+      lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
+      insideFunction[insideFunction.length - 1].insideParams = true;
+      advanceAndClear(1);
+      continue;
+    }
+    if (insideFunction.length && chunk === ')' && insideFunction[insideFunction.length - 1].insideParams === true) {
+      lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
+      insideFunction[insideFunction.length - 1].insideParams = "ended";
+      advanceAndClear(1);
+      continue;
+    }
+    if (insideFunction.length && chunk === '{' && insideFunction[insideFunction.length - 1].statements === 0) {
+      lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
+      insideFunction[insideFunction.length - 1].statements++;
+      advanceAndClear(1);
+      continue;
+    }
+    //TODO, need to have all {} punctuations add and substract to insideFunction[insideFunction.length - 1].statements
+    if (insideFunction.length && chunk === '}' && insideFunction[insideFunction.length - 1].statements === 1) {
+      lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
+      insideFunction[insideFunction.length - 1].statements--;
+      insideFunction.pop();
+      advanceAndClear(1);
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
+      continue;
+    }
 
+
+    //TODO function declaration
+    
+    
     // main evaluation block
     if (!insideString.status && !insideNumber.status &&
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
