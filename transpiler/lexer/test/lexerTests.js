@@ -2094,7 +2094,187 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-    });  
+    }); 
+    
+    describe('Functions', function() {
+      
+      it('should handle function declaration and invocation with no spacing', function() {
+        input = String.raw`func someFunction(var a: Int){
+                    a = a + 1;
+                }
+                someFunction(5);`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_NUMBER",          value: "Int" }, 
+          { type: "PARAMS_END",           value: ")" },  
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENTS_END",       value: "}"},
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "INVOCATION_START",     value: "(" }, 
+          { type: "NUMBER",               value: "5" },   
+          { type: "INVOCATION_END",       value: ")" }, 
+          { type: "PUNCTUATION",          value: ";" },    
+          { type: "TERMINATOR",           value: "EOF"}
+        ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+    
+
+    it('should handle function declaration and invocation with normal spacing', function() {
+        input = String.raw`func someFunction (var a: Int) {
+                    a = a + 1;
+                }
+                someFunction(5);`
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_NUMBER",          value: "Int" }, 
+          { type: "PARAMS_END",           value: ")" },  
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENTS_END",       value: "}"},
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "INVOCATION_START",     value: "(" }, 
+          { type: "NUMBER",               value: "5" },   
+          { type: "INVOCATION_END",       value: ")" }, 
+          { type: "PUNCTUATION",          value: ";" },    
+          { type: "TERMINATOR",           value: "EOF"}
+        ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+    
+      it('should handle function declaration and invocation with no space after the function name', function() {
+        input = String.raw`func someFunction(var a: Int) {
+                    a = a + 1;
+                }
+                someFunction(5);`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_NUMBER",          value: "Int" }, 
+          { type: "PARAMS_END",           value: ")" },  
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENTS_END",       value: "}"},
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "INVOCATION_START",     value: "(" }, 
+          { type: "NUMBER",               value: "5" },   
+          { type: "INVOCATION_END",       value: ")" }, 
+          { type: "PUNCTUATION",          value: ";" },    
+          { type: "TERMINATOR",           value: "EOF"}
+        ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle function declaration and invocation with no space after the parameter declaration', function() {
+        input = String.raw`func someFunction (var a: Int){
+                    a = a + 1;
+                }
+                someFunction(5);`
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_NUMBER",          value: "Int" }, 
+          { type: "PARAMS_END",           value: ")" },  
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENTS_END",       value: "}"},
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "INVOCATION_START",     value: "(" }, 
+          { type: "NUMBER",               value: "5" },   
+          { type: "INVOCATION_END",       value: ")" }, 
+          { type: "PUNCTUATION",          value: ";" },    
+          { type: "TERMINATOR",           value: "EOF"}
+        ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle function declaration and invocation with erratic spacing', function() {
+        input = String.raw`func someFunction        (var a: Int)     {
+                              a = a + 1;
+                          }
+                          someFunction      (5);`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_NUMBER",          value: "Int" }, 
+          { type: "PARAMS_END",           value: ")" },  
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENTS_END",       value: "}"},
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "INVOCATION_START",     value: "(" }, 
+          { type: "NUMBER",               value: "5" },   
+          { type: "INVOCATION_END",       value: ")" }, 
+          { type: "PUNCTUATION",          value: ";" },    
+          { type: "TERMINATOR",           value: "EOF"}
+        ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+    }); 
 
   });
 });
