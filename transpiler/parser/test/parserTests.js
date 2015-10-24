@@ -2852,7 +2852,7 @@ describe('Parser', function() {
         expect(R.equals(parser(input), output)).to.equal(true);
       });
 
-      // Swift input: 'var d = 1; if d != 2 {d++};'
+      // Swift input:        'var d = 1; if d != 2 {d++};'
       // AST Explorer input: 'var d = 1; if (d != 2) {d++};'
       it('should handle single-line if statements without a parenthetical', function() {
         input = [
@@ -3626,7 +3626,7 @@ describe('Parser', function() {
 
       // Swift input: 'var i = 10; repeat {i--} while (i >= 0)'
       // AST Explorer input: 'var i = 10; do {i--} while (i >= 0)'
-      it('should handle single-line repeat-while loops with a parenthetical', function() {
+      xit('should handle single-line repeat-while loops with a parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -3710,7 +3710,7 @@ describe('Parser', function() {
 
       // Swift input: 'var i = 10; repeat {i--} while i >= 0'
       // AST Explorer input: 'var i = 10; do {i--} while (i >= 0)'
-      it('should handle single-line repeat-while loops without a parenthetical', function() {
+      xit('should handle single-line repeat-while loops without a parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -3794,7 +3794,7 @@ describe('Parser', function() {
     describe('For loops', function() {
 
       // Swift input: 'var a = 0; for (var i = 10; i > 0; i--) {a++};'
-      it('should handle single-line for loops with a parenthetical', function() {
+      xit('should handle single-line for loops with a parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -3916,7 +3916,7 @@ describe('Parser', function() {
 
       // Swift input: 'var b = 0; for var j = 0; j < 10; j++ {b++};'
       // AST Explorer input: 'var b = 0; for (var j = 0; j < 10; j++) {b++};'
-      it('should handle single-line for loops without a parenthetical', function() {
+      xit('should handle single-line for loops without a parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
