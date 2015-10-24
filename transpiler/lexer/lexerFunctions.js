@@ -27,11 +27,11 @@ module.exports = {
   },
 
   // helper function to make token and add to tokens array
-  makeToken: function(lexicalType, snippet, tokens, type, value) {
+  makeToken: function(lexicalType, chunk, tokens, type, value) {
     if (tokens) {
       var obj = {};
-      obj['type'] = type || lexicalTypes[lexicalType][snippet];
-      obj['value'] = value || snippet.trim();
+      obj['type'] = type || lexicalTypes[lexicalType][chunk];
+      obj['value'] = value || chunk.trim();
       tokens.push(obj);
     }
   },
@@ -53,61 +53,64 @@ module.exports = {
   },
 
   // checks for string, number, boolean values
-  checkForLiteral: function(snippet, tokens, cb) {
-    if (snippet) {
-      snippet = JSON.parse(snippet.trim());
+  checkForLiteral: function(chunk, tokens, cb) {
+    if (chunk) {
+      chunk = JSON.parse(chunk.trim());
     }
-    var type = typeof snippet;
+    var type = typeof chunk;
     var obj = {
-    'boolean': function(snippet, tokens) {
+    'boolean': function(chunk, tokens) {
                 if (tokens) {
-                  module.exports.makeToken(undefined, snippet, tokens, 'BOOLEAN', JSON.stringify(snippet));
+                  module.exports.makeToken(undefined, chunk, tokens, 'BOOLEAN', JSON.stringify(chunk));
                 }
-                if (cb) {cb(snippet, tokens)}
+                if (cb) {cb(chunk, tokens)}
                 return true;
               },
-    'string': function(snippet, tokens) {
+    'string': function(chunk, tokens) {
                 if (tokens) {
-                  module.exports.makeToken(undefined, snippet, tokens, 'STRING', snippet);
+                  module.exports.makeToken(undefined, chunk, tokens, 'STRING', chunk);
                 }
-                if (cb) {cb(snippet, tokens)}
+                if (cb) {cb(chunk, tokens)}
                 return true;
               },
-    'number': function(snippet, tokens) {
+    'number': function(chunk, tokens) {
                 if (tokens) {
-                  module.exports.makeToken(undefined, snippet, tokens, 'NUMBER', JSON.stringify(snippet));
+                  module.exports.makeToken(undefined, chunk, tokens, 'NUMBER', JSON.stringify(chunk));
                 }
-                if (cb) {cb(snippet, tokens)}
+                if (cb) {cb(chunk, tokens)}
                 return true;
               }
     };
     if (obj[type] === undefined) {
       return false;
     } else {
-      obj[type](snippet, tokens);
+      obj[type](chunk, tokens);
     }
   },
 
-  // handles start and end of multi-line and single-line comments
-  handleComment: function(insideComment, snippet, tokens, currCol, nextCol, nextNextCol, cb) {
-    // TODO, make O(1) and make such that it handles all error cases
+  // handles start of multi-line and single-line comments
+  checkForCommentStart: function(insideComment, chunk, tokens, currCol, 
+    nextCol) {
     if (currCol === '/' && nextCol === '*' && !(insideComment.multi && insideComment.single)) {
       insideComment.multi = true;
-      snippet += nextCol;
-      module.exports.checkFor('COMMENT', snippet, tokens);
-      cb(2);
+      chunk += nextCol;
+      module.exports.checkFor('COMMENT', chunk, tokens);
       return true;
     }
     else if (currCol === '/' && nextCol === '/' && !(insideComment.multi && insideComment.single)) {
       insideComment.single = true;
-      snippet += nextCol;
-      module.exports.checkFor('COMMENT', snippet, tokens);
-      cb(2);
+      chunk += nextCol;
+      module.exports.checkFor('COMMENT', chunk, tokens);
       return true;
     }
-    else if (insideComment.multi) {
-      if (snippet === '*/') {
-        module.exports.checkFor('COMMENT', snippet, tokens);
+    return false;
+  },
+  
+  // tokenizes comment contents and handles end of single and multi-line comments
+  handleComment: function(insideComment, chunk, tokens, currCol, nextCol, nextNextCol, cb) {
+    if (insideComment.multi) {
+      if (chunk === '*/') {
+        module.exports.checkFor('COMMENT', chunk, tokens);
         insideComment.multi = false;
         if (nextCol === '\n') {
           cb(1);
@@ -116,14 +119,14 @@ module.exports = {
         }
         return true;
       } else if ((nextCol === '*' && nextNextCol === '/') || nextCol === '\n') {
-        module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);
+        module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
         cb(1);
         return true;
       } 
     }
     else if (insideComment.single && (nextCol === undefined || nextCol === '\n')) {
       insideComment.multi = false;
-      module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', snippet);
+      module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
       module.exports.handleEndOfFile(nextCol, tokens);
       cb(1);
       return true;
@@ -139,13 +142,13 @@ module.exports = {
   },
 
   // main helper function to check whether chunk is a Swift lexical type
-  checkFor: function(lexicalType, snippet, tokens, cb) {
-    if (snippet) {
-      snippet = snippet.trim();
+  checkFor: function(lexicalType, chunk, tokens, cb) {
+    if (chunk) {
+      chunk = chunk.trim();
     }
-    if(lexicalTypes[lexicalType][snippet]){
+    if(lexicalTypes[lexicalType][chunk]){
       if (tokens) {
-        module.exports.makeToken(lexicalType, snippet, tokens);
+        module.exports.makeToken(lexicalType, chunk, tokens);
         if (cb) {
           cb();
         }
@@ -155,25 +158,25 @@ module.exports = {
     return false;
   },
 
-  handleNumber: function(insideString, insideNumber, snippet, tokens, nextCol) {
-    if (NUMBER.test(snippet) && !insideString.status && !insideNumber.status) {
+  handleNumber: function(insideString, insideNumber, chunk, tokens, nextCol) {
+    if (NUMBER.test(chunk) && !insideString.status && !insideNumber.status) {
       insideNumber.status = true;
     }
     if (insideNumber.status && (nextCol === '\n' ||
       (isNaN(nextCol) && (nextCol !== '.')))) {
       insideNumber.status = false;
-      module.exports.checkForLiteral(snippet, tokens);
+      module.exports.checkForLiteral(chunk, tokens);
       module.exports.handleEndOfFile(nextCol, tokens);
       return true;
     }
   },
 
   checkForStringInterpolationStart: function(stringInterpolation, insideString,
-    snippet, tokens, nextCol, nextNextCol) {
+    chunk, tokens, nextCol, nextNextCol) {
     if (!stringInterpolation.status && nextCol === '\\' && nextNextCol === '(') {
       stringInterpolation.status = true;
-      if (snippet !== "") {
-        module.exports.checkForLiteral(snippet + '"', tokens);
+      if (chunk !== "") {
+        module.exports.checkForLiteral(chunk + '"', tokens);
       }
      module.exports.makeToken("SPECIAL_STRING", "\\(", tokens);
      insideString.status = false;
@@ -192,16 +195,16 @@ module.exports = {
   },
 
   // helper function to check for whitespace
-  checkForWhitespace: function(snippet) {
-    return snippet === ' ';
+  checkForWhitespace: function(chunk) {
+    return chunk === ' ';
   },
 
-  checkForTupleStart: function(insideTuple, snippet, tokens, lastToken,
+  checkForTupleStart: function(insideTuple, chunk, tokens, lastToken,
     currCol, nextCol, nextNextCol, cb) {
     if (!insideTuple.status && currCol === '(' && (lastToken.value === '=' ||
       lastToken.value === 'return' || lastToken.value === '->') ) {
       module.exports.makeToken(undefined, undefined, tokens,
-        'TUPLE_START', snippet);
+        'TUPLE_START', chunk);
       // special handling of empty tuples
       if (nextCol === ')') {
         module.exports.makeToken(undefined, undefined, tokens, 'TUPLE_END', nextCol);
@@ -216,9 +219,9 @@ module.exports = {
     return false;
   },
 
-  handleTuple: function(insideTuple, snippet, tokens, currCol, nextCol) {
+  handleTuple: function(insideTuple, chunk, tokens, currCol, nextCol) {
     if (nextCol === ':') {
-      module.exports.makeToken(undefined, undefined, tokens, 'TUPLE_ELEMENT_NAME', snippet);
+      module.exports.makeToken(undefined, undefined, tokens, 'TUPLE_ELEMENT_NAME', chunk);
       return true;
     } else if (currCol === ',') {
       insideTuple.verified = true;
@@ -226,10 +229,10 @@ module.exports = {
     }
   },
 
-  checkForTupleEnd: function(insideTuple, snippet, tokens, currCol) {
+  checkForTupleEnd: function(insideTuple, chunk, tokens, currCol) {
     if (insideTuple.status && currCol === ')') {
       if (insideTuple.verified) {
-        module.exports.makeToken(undefined, undefined, tokens, 'TUPLE_END', snippet);
+        module.exports.makeToken(undefined, undefined, tokens, 'TUPLE_END', chunk);
         insideTuple.status = false;
         insideTuple.startIndex = undefined;
         insideTuple.verified = false;
@@ -245,18 +248,18 @@ module.exports = {
   },
 
   // helper function to check for identifiers
-  checkForIdentifier: function(snippet, tokens, lastToken, variable_names) {
-      if (variable_names[snippet]) {
+  checkForIdentifier: function(chunk, tokens, lastToken, variable_names) {
+      if (variable_names[chunk]) {
         if (tokens) {
-          module.exports.makeToken(undefined, snippet, tokens, 'IDENTIFIER', snippet);
+          module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
         }
         return true;
       } else if (lastToken.type === 'DECLARATION_KEYWORD' ||
         lastToken.value === 'for') {
         if (tokens) {
-          module.exports.makeToken(undefined, snippet, tokens, 'IDENTIFIER', snippet);
+          module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
         }
-        variable_names[snippet] = true;
+        variable_names[chunk] = true;
         return true;
       }
     return false;

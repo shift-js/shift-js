@@ -58,6 +58,11 @@ module.exports = function(code) {
     }
     
     // comment handling
+    if (lexerFunctions.checkForCommentStart(insideComment, chunk, tokens, 
+      currCol, nextCol)) {
+      advanceAndClear(2);
+      continue;
+    }
     if (lexerFunctions.handleComment(insideComment, chunk, tokens,
       currCol, nextCol, nextNextCol, advanceAndClear)) {
       continue;
