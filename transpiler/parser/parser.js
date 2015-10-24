@@ -122,7 +122,7 @@ var make_parse = function() {
     var primitiveTokenTypes = ["NUMBER", "BOOLEAN", "STRING"];
     var collectionStartTokenTypes = ["ARRAY_START", "DICTIONARY_START", "TUPLE_START"];
     var verbTokenTypes = ["PUNCTUATION", "OPERATOR", "SUBSTRING_LOOKUP_END", "SUBSTRING_LOOKUP_START"];
-    var nounTokenValues = ["DECLARATION_KEYWORD", "IDENTIFIER", "TUPLE_ELEMENT_NAME"];
+    var nounTokenValues = ["DECLARATION_KEYWORD", "IDENTIFIER", "TUPLE_ELEMENT_NAME", "STATEMENT_KEYWORD"];
 
     if (nounTokenValues.hasItem(a)) {
       if (a === "DECLARATION_KEYWORD") v = "var";
@@ -163,17 +163,17 @@ var make_parse = function() {
     var left;
     var t = token;
     advance();
-    //console.log(token);
     left = t.nud();
 
 
-    //Pre-fix operator
+
     if (t.value === "++" || t.value === "--") {
+      //Pre-fix operator
       left = t;
-      advance();
-    }
-    //Post-fix operators
-    else if (token.value === "++" || token.value === "--") {
+
+      if(token.value !== "}") advance();
+    } else if (token.value === "++" || token.value === "--") {
+      //Post-fix operators
       if(token.value === "++") {
         left.type = "Identifier";
         left.name = left.value;
@@ -201,7 +201,6 @@ var make_parse = function() {
         }
 
       }
-
     } else if (t.operator === "+") {
       delete t.arity;
       delete t.value;
@@ -254,8 +253,7 @@ var make_parse = function() {
   };
 
   var statement = function() {
-    var n = token,
-      v;
+    var n = token, v;
 
     if (n.std) {
       advance();
@@ -263,6 +261,11 @@ var make_parse = function() {
       return n.std();
     }
     v = expression(0);
+
+    if(token.value === "}") {
+      return v;
+    }
+
     if (!v.assignment && v.id !== "(") {
       v.error("Bad expression statement.");
     }
@@ -274,9 +277,15 @@ var make_parse = function() {
     var a = [],
       s;
     while (true) {
-      if (token.id === "}" || token.id === "(end)" || token.id === "EOF") {
+      if (token.id === ";" || token.id === "}" || token.id === "(end)" || token.id === "EOF") {
+        if(token.id === ";") {
+          a.push({
+            "type": "EmptyStatement"
+          });
+        }
         break;
       }
+
       s = statement();
       if (s) {
         a.push(s);
@@ -288,7 +297,16 @@ var make_parse = function() {
   var block = function() {
     var t = token;
     advance("{");
-    return t.std();
+    var stdReturnVal = t.std();
+
+    return {
+      type: 'BlockStatement',
+      body: [{
+          type: 'ExpressionStatement',
+          expression: stdReturnVal
+      }]
+    };
+
   };
 
   var original_symbol = {
@@ -397,7 +415,12 @@ var make_parse = function() {
       //   // this.left = "LogicalExpression";
       }
 
-      if (left.arity === "literal" && isNum(left.value)) {
+      if(left.arity === "IDENTIFIER") {
+        left.type = "Identifier";
+        left.name = left.value;
+        delete left.arity;
+        delete left.value;
+      } else if(left.arity === "literal" && isNum(left.value)) {
         // This is for type number
         left.type = "Literal";
         delete left.arity;
@@ -428,13 +451,26 @@ var make_parse = function() {
 
   var assignment = function(id) {
     return infixr(id, 10, function(left) {
-      if (left.id !== "." && left.id !== "[" && left.arity !== "name") {
+      if (left.id !== "." && left.id !== "[" && left.arity !== "name" && left.id !== "(name)") {
         left.error("Bad lvalue.");
       }
-      this.first = left;
-      this.second = expression(9);
+
+      left.type = "Identifier";
+      left.name = left.value;;
+      delete left.arity;
+      delete left.value;
+
+      this.left = left;
+      this.right = expression(9);
       this.assignment = true;
+      delete this.assignment;
+      this.operator = this.value;
+      this.type = "AssignmentExpression";
       this.arity = "binary";
+      delete this.value;
+      delete this.arity;
+
+
       return this;
     });
   };
@@ -517,6 +553,8 @@ var make_parse = function() {
   assignment("=");
   assignment("+=");
   assignment("-=");
+  assignment("*=");
+  assignment("/=");
 
   infix("?", 20, function(left) {
     this.type = "ConditionalExpression";
@@ -880,17 +918,20 @@ var make_parse = function() {
 
   stmt("if", function() {
     advance("(");
-    this.first = expression(0);
+    this.test = expression(0);
     advance(")");
-    this.second = block();
+    this.consequent = block();
     if (token.id === "else") {
       scope.reserve(token);
       advance("else");
-      this.third = token.id === "if" ? statement() : block();
+      this.alternate = token.id === "if" ? statement() : block();
     } else {
-      this.third = null;
+      this.alternate = null;
     }
     this.arity = "statement";
+    this.type = "IfStatement";
+    delete this.arity;
+    delete this.value;
     return this;
   });
 
@@ -932,11 +973,13 @@ var make_parse = function() {
     new_scope();
     advance();
     var s = statements();
-    try {
-      advance("(end)");
-    } catch (e) {
-      advance("EOF");
-    }
+
+    advance();
+    //try {
+    //  advance("(end)");
+    //} catch (e) {
+    //  advance("EOF");
+    //}
 
     scope.pop();
 
@@ -972,26 +1015,82 @@ var expected = {
           "type": "VariableDeclarator",
           "id": {
             "type": "Identifier",
-            "name": "empty"
+            "name": "c"
           },
           "init": {
-            "type": "ObjectExpression",
-            "properties": []
+            "type": "Literal",
+            "value": 1,
+            "raw": "1"
           }
         }
       ],
       "kind": "var"
+    },
+    {
+      "type": "IfStatement",
+      "test": {
+        "type": "BinaryExpression",
+        "operator": "==",
+        "left": {
+          "type": "Identifier",
+          "name": "c"
+        },
+        "right": {
+          "type": "Literal",
+          "value": 1,
+          "raw": "1"
+        }
+      },
+      "consequent": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "*=",
+              "left": {
+                "type": "Identifier",
+                "name": "c"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 5,
+                "raw": "5"
+              }
+            }
+          }
+        ]
+      },
+      "alternate": null
+    },
+    {
+      "type": "EmptyStatement"
     }
   ],
   "sourceType": "module"
 };
 var tokenStream = [
-  { type: "DECLARATION_KEYWORD",        value: "var" },
-  { type: "IDENTIFIER",                 value: "empty" },
-  { type: "OPERATOR",                   value: "=" },
-  { type: "TUPLE_START",                value: "("},
-  { type: "TUPLE_END",                  value: ")"},
-  { type: "TERMINATOR",                 value: "EOF" }
+  { type: "DECLARATION_KEYWORD",  value: "var" },
+  { type: "IDENTIFIER",           value: "c" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "1" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "STATEMENT_KEYWORD",    value: "if" },
+  { type: "PUNCTUATION",          value: "(" },
+  { type: "IDENTIFIER",           value: "c" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "1" },
+  { type: "PUNCTUATION",          value: ")" },
+  { type: "PUNCTUATION",          value: "{" },
+  { type: "IDENTIFIER",           value: "c" },
+  { type: "OPERATOR",             value: "*" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "5" },
+  { type: "PUNCTUATION",          value: "}" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "TERMINATOR",           value: "EOF"}
 ];
 var parser = make_parse();
 var actual = parser(tokenStream);

@@ -103,6 +103,18 @@ module.exports.cleanUpTokenStream = function(input) {
         input[i].value = "<=";
       }
     }
+    if (input[i].value === "*") {
+      if (input[i + 1].value === "=") {
+        input.splice(i + 1, 1);
+        input[i].value = "*=";
+      }
+    }
+    if (input[i].value === "/") {
+      if (input[i + 1].value === "=") {
+        input.splice(i + 1, 1);
+        input[i].value = "/=";
+      }
+    }
 
   }
   return input;

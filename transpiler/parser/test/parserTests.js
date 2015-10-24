@@ -2592,7 +2592,7 @@ describe('Parser', function() {
     });
   });
 
-  xdescribe('Second milestone', function() {
+  describe('Second milestone', function() {
     describe('If statements', function() {
 
       // Swift input: 'var a = 5; if (true) {--a};'
@@ -2611,6 +2611,7 @@ describe('Parser', function() {
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
           { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",           value: ";" },
           { type: "PUNCTUATION",          value: "}" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}
@@ -2855,12 +2856,12 @@ describe('Parser', function() {
       // AST Explorer input: 'var d = 1; if (d != 2) {d++};'
       it('should handle single-line if statements without a parenthetical', function() {
         input = [
-          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "d" },
           { type: "OPERATOR",             value: "=" },
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ";" },
-          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "STATEMENT_KEYWORD",    value: "if"},
           { type: "IDENTIFIER",           value: "d" },
           { type: "OPERATOR",             value: "!" },
           { type: "OPERATOR",             value: "=" },
