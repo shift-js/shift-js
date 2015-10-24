@@ -3,9 +3,6 @@ var lexerFunctions = require("./lexerFunctions");
 
 module.exports = function(code) {
 
-
-  // code = String.raw({raw: code});
-  // console.log(code);
   var i = 0;
   var tokens = [];
   var chunk = '';
@@ -13,7 +10,7 @@ module.exports = function(code) {
   var VARIABLE_NAMES = {};
 
   // track state
-  var emptyLine = true;
+  var emptyLine = {status: true};
   var insideString = {status: false};
   var insideNumber = {status: false};
   var insideCollection = [];
@@ -55,18 +52,9 @@ module.exports = function(code) {
     // console.log(emptyLine);
 
     // newline handling
-    if (currCol === '\n') {
-      lexerFunctions.makeToken(undefined, undefined, tokens, 'TERMINATOR', '\\n');
-      emptyLine = true;
+    if (lexerFunctions.handleNewLine(emptyLine, tokens, lastToken, currCol)) {
       advanceAndClear(1);
       continue
-    }
-    if (emptyLine && !lexerFunctions.checkForWhitespace(currCol)) {
-      emptyLine = false;
-    }
-    if (emptyLine && lastToken.value === '\\n') {
-      advanceAndClear(1);
-      continue;
     }
     
     // comment handling
