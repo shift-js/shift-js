@@ -166,8 +166,6 @@ var make_parse = function() {
     advance();
     left = t.nud();
 
-
-
     if (t.value === "++" || t.value === "--") {
       //Pre-fix operator
       left = t;
@@ -256,6 +254,7 @@ var make_parse = function() {
   var statement = function() {
     var n = token, v;
 
+
     if (n.std) {
       advance();
       scope.reserve(n);
@@ -274,10 +273,10 @@ var make_parse = function() {
     return v;
   };
 
-  var statements = function() {
-    var a = [],
-      s;
+  var statements = function(optionalNumLoops) {
+    var a = [], s, count = 0;
     while (true) {
+      if(count >= optionalNumLoops) break;
       if (token.id === ";" || token.id === "}" || token.id === "(end)" || token.id === "EOF") {
         if(token.id === ";") {
           a.push({
@@ -286,10 +285,10 @@ var make_parse = function() {
         }
         break;
       }
-
       s = statement();
       if (s) {
         a.push(s);
+        count++;
       }
     }
     return a.length === 0 ? null : a.length === 1 ? a[0] : a;
@@ -978,6 +977,58 @@ var make_parse = function() {
     return this;
   });
 
+  stmt("for", function() {
+    this.type = "ForStatement";
+    if(tokens[token_nr-1].value === "(") {
+      advance("(");
+      //this.init = expression(0);
+      this.init = statements(1);
+      this.test = expression(0);
+      if(token.value === ";") {
+        advance(";");
+      }
+      this.update = expression(0);
+      advance(")");
+    } else {
+      this.init = statements(1);
+      //this.init = expression(0);
+      this.test = expression(0);
+      if(token.value === ";") {
+        advance(";");
+      }
+      this.update = expression(0);
+      //this.test = expression(0);
+      //this.test = statements();
+    }
+    this.body = block();
+    this.arity = "statement";
+    delete this.arity;
+    delete this.value;
+
+    return this;
+  });
+
+  stmt("repeat", function() {
+    this.type = "DoWhileStatement";
+    this.body = block();
+    if(token.value === 'while') {
+      advance();
+    }
+    if(tokens[token_nr-1].value === "(") {
+      advance("(");
+      this.test = expression(0);
+      advance(")");
+    } else {
+      this.test = expression(0);
+    }
+    this.arity = "statement";
+    delete this.arity;
+    delete this.value;
+
+    return this;
+  });
+
+
 
   var parseTokenStream = function(input_tokens) {
     tokens = helpers.cleanUpTokenStream(input_tokens);
@@ -1018,108 +1069,146 @@ var make_parse = function() {
 
 
 
-//var expected = {
-//  "type": "Program",
-//  "body": [
-//    {
-//      "type": "VariableDeclaration",
-//      "declarations": [
-//        {
-//          "type": "VariableDeclarator",
-//          "id": {
-//            "type": "Identifier",
-//            "name": "i"
-//          },
-//          "init": {
-//            "type": "Literal",
-//            "value": 10,
-//            "raw": "10"
-//          }
-//        }
-//      ],
-//      "kind": "var"
-//    },
-//    {
-//      "type": "DoWhileStatement",
-//      "body": {
-//        "type": "BlockStatement",
-//        "body": [
-//          {
-//            "type": "ExpressionStatement",
-//            "expression": {
-//              "type": "UpdateExpression",
-//              "operator": "--",
-//              "argument": {
-//                "type": "Identifier",
-//                "name": "i"
-//              },
-//              "prefix": false
-//            }
-//          }
-//        ]
-//      },
-//      "test": {
-//        "type": "BinaryExpression",
-//        "operator": ">=",
-//        "left": {
-//          "type": "Identifier",
-//          "name": "i"
-//        },
-//        "right": {
-//          "type": "Literal",
-//          "value": 0,
-//          "raw": "0"
-//        }
-//      }
-//    }
-//  ],
-//  "sourceType": "module"
-//};
-//var tokenStream = [
-//  { type: "DECLARATION_KEYWORD",  value: "var" },
-//  { type: "IDENTIFIER",           value: "i" },
-//  { type: "OPERATOR",             value: "=" },
-//  { type: "NUMBER",               value: "10" },
-//  { type: "PUNCTUATION",          value: ";" },
-//  { type: "STATEMENT_KEYWORD",    value: "repeat" },
-//  { type: "PUNCTUATION",          value: "{" },
-//  { type: "IDENTIFIER",           value: "i" },
-//  { type: "OPERATOR",             value: "-" },
-//  { type: "OPERATOR",             value: "-" },
-//  { type: "PUNCTUATION",          value: "}" },
-//  { type: "STATEMENT_KEYWORD",    value: "while" },
-//  { type: "PUNCTUATION",          value: "(" },
-//  { type: "IDENTIFIER",           value: "i" },
-//  { type: "OPERATOR",             value: ">" },
-//  { type: "OPERATOR",             value: "=" },
-//  { type: "NUMBER",               value: "0" },
-//  { type: "PUNCTUATION",          value: ")" },
-//  { type: "TERMINATOR",           value: "EOF"}
-//];
-//var parser = make_parse();
-//var actual = parser(tokenStream);
+var expected = {
+  "type": "Program",
+  "body": [
+    {
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "a"
+          },
+          "init": {
+            "type": "Literal",
+            "value": 0,
+            "raw": "0"
+          }
+        }
+      ],
+      "kind": "var"
+    },
+    {
+      "type": "ForStatement",
+      "init": {
+        "type": "VariableDeclaration",
+        "declarations": [
+          {
+            "type": "VariableDeclarator",
+            "id": {
+              "type": "Identifier",
+              "name": "i"
+            },
+            "init": {
+              "type": "Literal",
+              "value": 10,
+              "raw": "10"
+            }
+          }
+        ],
+        "kind": "var"
+      },
+      "test": {
+        "type": "BinaryExpression",
+        "operator": ">",
+        "left": {
+          "type": "Identifier",
+          "name": "i"
+        },
+        "right": {
+          "type": "Literal",
+          "value": 0,
+          "raw": "0"
+        }
+      },
+      "update": {
+        "type": "UpdateExpression",
+        "operator": "--",
+        "argument": {
+          "type": "Identifier",
+          "name": "i"
+        },
+        "prefix": false
+      },
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "UpdateExpression",
+              "operator": "++",
+              "argument": {
+                "type": "Identifier",
+                "name": "a"
+              },
+              "prefix": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "EmptyStatement"
+    }
+  ],
+  "sourceType": "module"
+};
+var tokenStream = [
+  { type: "DECLARATION_KEYWORD",  value: "var" },
+  { type: "IDENTIFIER",           value: "a" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "0" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "STATEMENT_KEYWORD",    value: "for" },
+  { type: "PUNCTUATION",          value: "(" },
+  { type: "DECLARATION_KEYWORD",  value: "var" },
+  { type: "IDENTIFIER",           value: "i" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "10" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "IDENTIFIER",           value: "i" },
+  { type: "OPERATOR",             value: ">" },
+  { type: "NUMBER",               value: "0" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "IDENTIFIER",           value: "i" },
+  { type: "OPERATOR",             value: "-" },
+  { type: "OPERATOR",             value: "-" },
+  { type: "PUNCTUATION",          value: ")" },
+  { type: "PUNCTUATION",          value: "{" },
+  { type: "IDENTIFIER",           value: "a" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "PUNCTUATION",          value: "}" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "TERMINATOR",           value: "EOF"}
+];
+var parser = make_parse();
+var actual = parser(tokenStream);
 
 
 
 
-//console.log("############################");
-//console.log("############################");
-//console.log("##### BEGIN AST OUTPUT #####");
-//console.log(util.inspect(actual, {
-//  colors: true,
-//  depth: null
-//}));
-//console.log("############################");
-//console.log("############################");
-//console.log("############################");
-//console.log(util.inspect(expected, {
-//  colors: true,
-//  depth: null
-//}));
-//console.log("############################");
-//console.log("############################");
-//console.log("############################");
-//var dfrnc = diff(actual,expected);
-//console.log(dfrnc);
+console.log("############################");
+console.log("############################");
+console.log("##### BEGIN AST OUTPUT #####");
+console.log(util.inspect(actual, {
+  colors: true,
+  depth: null
+}));
+console.log("############################");
+console.log("############################");
+console.log("############################");
+console.log(util.inspect(expected, {
+  colors: true,
+  depth: null
+}));
+console.log("############################");
+console.log("############################");
+console.log("########## DIFF ############");
+var dfrnc = diff(actual,expected);
+console.log(dfrnc);
 
 module.exports = make_parse;
