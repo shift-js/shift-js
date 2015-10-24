@@ -20,22 +20,6 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle variable reassignment', function () {
-        input = 'var a = 1; a = 2';
-        output = [
-          { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "1" },
-          { type: "PUNCTUATION",          value: ";"},
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "2" },
-          { type: "TERMINATOR",           value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
       it('should handle strings', function () {
         input = 'var b = "hello"';
         output = [
@@ -91,34 +75,6 @@ describe('Lexer', function() {
     });
 
     describe('Basic collections', function () {
-
-      it('should handle empty arrays', function () {
-        input = 'var empty = []';
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "empty" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "ARRAY_START",                value: "["},
-          { type: "ARRAY_END",                  value: "]"},
-          { type: "TERMINATOR",                 value: "EOF" }
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      it('should handle empty dictionaries', function () {
-        input = 'var empty = [:]';
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "empty" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "DICTIONARY_START",           value: "["},
-          { type: "PUNCTUATION",                value: ":"},
-          { type: "DICTIONARY_END",             value: "]"},
-          { type: "TERMINATOR",                 value: "EOF" }
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
       it('should handle arrays', function () {
         input = 'var e = ["Eggs", "Milk", "Bacon"]';
         output = [
