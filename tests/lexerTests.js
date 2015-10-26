@@ -2103,6 +2103,36 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      it('handle for-in loops that iterate over a range', function () {
+        input = String.raw`var sum = 0
+                      for i in 0..<5 {
+                          sum += i
+                      }`;;
+        output = [
+          { type: 'DECLARATION_KEYWORD',            value: 'var' },
+          { type: 'IDENTIFIER',                     value: 'sum' },
+          { type: 'OPERATOR',                       value: '=' },
+          { type: 'NUMBER',                         value: '0' },
+          { type: 'TERMINATOR',                     value: '\\n' },
+          { type: "STATEMENT_KEYWORD",              value: "for" },
+          { type: "IDENTIFIER",                     value: "i" },
+          { type: "STATEMENT_KEYWORD",              value: "in" },
+          { type: 'NUMBER',                         value: '0' },
+          { type: 'HALF-OPEN_RANGE',                value: '..<'},
+          { type: 'NUMBER',                         value: '5' },
+          { type: "PUNCTUATION",                    value: "{" },
+          { type: "TERMINATOR",                     value: "\\n"},
+          { type: "IDENTIFIER",                     value: "sum" },
+          { type: "OPERATOR",                       value: "+" },
+          { type: "OPERATOR",                       value: "=" },
+          { type: "IDENTIFIER",                     value: "i" },
+          { type: "TERMINATOR",                     value: "\\n"},
+          { type: "PUNCTUATION",                    value: "}" },
+          { type: "TERMINATOR",                     value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
       it('should handle for-in loops that iterate over items in a dictionary', function () {
         input = String.raw`let interestingNumbers = [
                           "Prime": [2, 3, 5, 7, 11, 13],
@@ -3146,6 +3176,174 @@ describe('Lexer', function() {
                     { type: "STATEMENTS_END",       value: "}" },  
                     { type: "TERMINATOR",           value: "EOF"}
                   ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      xit('should handle functions that do no use var when declaring parameters and invocations with named arguments', function () {
+        input = String.raw`func greet(name: String, day: String) -> String {
+                        return "Hello \(name), today is \(day)."
+                    }
+                    greet("Bob", day: "Tuesday")`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "func"},
+          { type: "IDENTIFIER",                 value: "greet" },
+          { type: "PARAMS_START",               value: "(" },
+          { type: "IDENTIFIER",                 value: "name" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_STRING",                value: "String" }, 
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "day" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_STRING",                value: "String" }, 
+          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "RETURN_ARROW",               value: "->" }, 
+          { type: "TYPE_STRING",                value: "String" }, 
+          { type: "STATEMENTS_START",           value: "{" },  
+          { type: "TERMINATOR",                 value: "\\n"},
+          { type: "STATEMENT_KEYWORD",          value: "return"},
+          { type: "STRING",                     value: "Hello " },
+          { type: "STRING_INTERPOLATION_START", value: "\\(" },
+          { type: "IDENTIFIER",                 value: "name" },
+          { type: "STRING_INTERPOLATION_END",   value: ")" },
+          { type: "STRING",                     value: ", today is " },
+          { type: "STRING_INTERPOLATION_START", value: "\\(" },
+          { type: "IDENTIFIER",                 value: "day" },
+          { type: "STRING_INTERPOLATION_END",   value: ")" },
+          { type: "STRING",                     value: "." },
+          { type: "TERMINATOR",                 value: "\\n"},
+          { type: "STATEMENTS_END",             value: "}" },
+          { type: "IDENTIFIER",                 value: "greet" },
+          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "STRING",                     value: "Bob" },   
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "day" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "STRING",                     value: "Tuesday" },   
+          { type: "INVOCATION_END",             value: ")" }, 
+          { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      xit('should handle functions that return tuples', function () {
+        input = String.raw`func returnTuple(num: Int) -> (plusFive: Int, timesFive: Int) {
+                          let plusFiveResult = num + 5
+                          let timesFiveResult = num * 5
+                          return (plusFiveResult, timesFiveResult)
+                      }
+                      returnTuple(5)`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "func"},
+          { type: "IDENTIFIER",                 value: "returnTuple" },
+          { type: "PARAMS_START",               value: "(" },
+          { type: "IDENTIFIER",                 value: "num" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" }, 
+          { type: "PARAMS_END",                 value: ")" }, 
+          
+          { type: "RETURN_ARROW",               value: "->" },
+          
+          { type: "TUPLE_START",                value: "("},
+          { type: "ELEMENT_NAME",               value: "plusFive" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PUNCTUATION",                value: "," }, 
+          { type: "ELEMENT_NAME",               value: "timesFive" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "TUPLE_END",                  value: ")"},
+          { type: "STATEMENTS_START",           value: "{" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "plusFiveResult" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "num" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "NUMBER",                     value: "5" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "timesFiveResult" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "num" },
+          { type: "OPERATOR",                   value: "*" },
+          { type: "NUMBER",                     value: "5" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENT_KEYWORD",          value: "return"},
+          { type: "TUPLE_START",                value: "("},
+          { type: "IDENTIFIER",                 value: "plusFiveResult" },
+          { type: "PUNCTUATION",                value: "," }, 
+          { type: "IDENTIFIER",                 value: "timesFiveResult" },
+          { type: "TUPLE_END",                  value: ")"},
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENTS_END",             value: "}" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "IDENTIFIER",                 value: "greet" },
+          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "NUMBER",                     value: "5" },   
+          { type: "INVOCATION_END",             value: ")" }, 
+          { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      xit('should handle functions that return tuples with mixed values', function () {
+        input = String.raw`func nameAndAge(name: String, age: Int) -> (name: String, age: Int) {
+                          return (name, age)
+                      }
+                      let person = nameAndAge("Steve", age: 45)`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "func"},
+          { type: "IDENTIFIER",                 value: "nameAndAge" },
+          { type: "PARAMS_START",               value: "(" },
+          { type: "IDENTIFIER",                 value: "name" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_STRING",                value: "String" },
+          { type: "PUNCTUATION",                value: "," }, 
+          { type: "IDENTIFIER",                 value: "age" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" }, 
+          { type: "PARAMS_END",                 value: ")" }, 
+          
+          { type: "RETURN_ARROW",               value: "->" },
+          
+          { type: "TUPLE_START",                value: "(" },
+          { type: "ELEMENT_NAME",               value: "name" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_STRING",                value: "String" },
+          { type: "PUNCTUATION",                value: "," }, 
+          { type: "ELEMENT_NAME",               value: "age" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" }, 
+          { type: "TUPLE_END",                  value: ")" }, 
+          { type: "STATEMENTS_START",           value: "{" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENT_KEYWORD",          value: "return"},
+          { type: "TUPLE_START",                value: "("},
+          { type: "IDENTIFIER",                 value: "name" },
+          { type: "PUNCTUATION",                value: "," }, 
+          { type: "IDENTIFIER",                 value: "age" },
+          { type: "TUPLE_END",                  value: ")"},
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENTS_END",             value: "}" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "IDENTIFIER",                 value: "nameAndAge" },
+          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "STRING",                     value: "Steve" },   
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "age" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "NUMBER",                     value: "45" },   
+          { type: "INVOCATION_END",             value: ")" }, 
+          { type: "TERMINATOR",                 value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
