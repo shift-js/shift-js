@@ -3584,6 +3584,68 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      xit('should handle functions that have variadic parameters', function () {
+        input = String.raw`func sumOf(numbers: Int...) -> Int {
+                          var sum = 0
+                          for number in numbers {
+                              sum += number
+                          }
+                          return sum
+                      }
+                      sumOf(1,2,3)`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "func"},
+          { type: "IDENTIFIER",                 value: "sumOf" },
+          { type: "PARAMS_START",               value: "(" },
+          { type: "IDENTIFIER",                 value: "numbers" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "VARIADIC_PARAM",             value: "..." }, 
+          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "RETURN_ARROW",               value: "->" },
+          { type: "TYPE_NUMBER",                value: "Int" }, 
+          { type: "STATEMENTS_START",           value: "{" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "sum" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "NUMBER",                     value: "0" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENT_KEYWORD",          value: "for" },
+          { type: "IDENTIFIER",                 value: "number" },
+          { type: "STATEMENT_KEYWORD",          value: "in" },
+          { type: "IDENTIFIER",                 value: "numbers" },
+          { type: "PUNCTUATION",                value: "{" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          { type: "IDENTIFIER",                 value: "sum" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "number" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          { type: "PUNCTUATION",                value: "}" },
+          
+          { type: "STATEMENT_KEYWORD",          value: "return"},
+          { type: "IDENTIFIER",                 value: "sum" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENTS_END",             value: "}" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "IDENTIFIER",                 value: "sumOf" },
+          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "NUMBER",                     value: "1" },   
+          { type: "PUNCTUATION",                value: "," },
+          { type: "NUMBER",                     value: "2" },   
+          { type: "PUNCTUATION",                value: "," },
+          { type: "NUMBER",                     value: "3" },   
+          { type: "INVOCATION_END",             value: ")" }, 
+          { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
     }); 
 
   });
