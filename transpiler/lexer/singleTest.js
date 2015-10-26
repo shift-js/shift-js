@@ -46,24 +46,18 @@ var swiftCodeAnswers = [
   { type: "IDENTIFIER",           value: "lastName" },
   { type: "TERMINATOR",           value: "\\n"},
 
-  { type: "INVOCATION_START",     value: "(" }, 
-  { type: "IDENTIFIER",           value: "personName" },
-  { type: "INVOCATION_END",       value: ")" },   
-  { type: "TERMINATOR",           value: "\\n"},
-
-  { type: "STATEMENTS_END",       value: "}" }, 
+  { type: "STATEMENTS_END",       value: "}" },  
   { type: "TERMINATOR",           value: "\\n"},
 
   { type: "STATEMENT_KEYWORD",    value: "return"}, 
   { type: "IDENTIFIER",           value: "giveString" },
   { type: "INVOCATION_START",     value: "(" }, 
-  { type: "INVOCATION_END",       value: ")" },
+  { type: "INVOCATION_END",       value: ")" },   
   { type: "TERMINATOR",           value: "\\n"},
 
   { type: "STATEMENTS_END",       value: "}" },  
   { type: "TERMINATOR",           value: "EOF"}
-]
-;
+];
 
 console.log(lexer(swiftCode));
 console.log(diff(lexer(swiftCode),swiftCodeAnswers));

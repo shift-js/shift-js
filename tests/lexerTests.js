@@ -2332,6 +2332,164 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      it('should handle functions that have if statements that use {} and have a return value', function() {
+        input = String.raw`func sayHello(var alreadyGreeted: Bool) -> String {
+                if alreadyGreeted {
+                    return "blah"
+                } 
+            }`;
+        output = [
+                    { type: "DECLARATION_KEYWORD",  value: "func"},
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "PARAMS_START",         value: "(" },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_BOOLEAN",         value: "Bool" }, 
+                    { type: "PARAMS_END",           value: ")" }, 
+                    { type: "RETURN_ARROW",         value: "->" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "STATEMENTS_START",     value: "{" },  
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "STATEMENT_KEYWORD",    value: "if" },
+                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
+                    { type: "PUNCTUATION",          value: "{" },
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "STRING",               value: "blah" }, 
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "PUNCTUATION",          value: "}" },
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "STATEMENTS_END",       value: "}" },  
+                    { type: "TERMINATOR",           value: "EOF"}
+                  ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle functions that have if and else statements that use {} and have a return value', function() {
+        input = String.raw`func sayHello(var personName: String, var alreadyGreeted: Bool) -> String {
+                    if alreadyGreeted {
+                        return sayHello(personName) + " blah"
+                    } else {
+                        return sayHello(personName)
+                    }
+                }`;
+        output = [
+                    { type: "DECLARATION_KEYWORD",  value: "func"},
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "PARAMS_START",         value: "(" },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "personName" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "PUNCTUATION",          value: "," },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_BOOLEAN",         value: "Bool" }, 
+                    { type: "PARAMS_END",           value: ")" }, 
+                    { type: "RETURN_ARROW",         value: "->" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "STATEMENTS_START",     value: "{" },  
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "STATEMENT_KEYWORD",    value: "if" },
+                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
+                    { type: "PUNCTUATION",          value: "{" },
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "INVOCATION_START",     value: "(" }, 
+                    { type: "IDENTIFIER",           value: "personName" },
+                    { type: "INVOCATION_END",       value: ")" }, 
+                    { type: "OPERATOR",             value: "+" }, 
+                    { type: "STRING",               value: " blah" }, 
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "PUNCTUATION",          value: "}" },
+                    { type: "STATEMENT_KEYWORD",    value: "else" },
+                    { type: "PUNCTUATION",          value: "{" },
+                    { type: "TERMINATOR",           value: "\\n"}, 
+
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "INVOCATION_START",     value: "(" }, 
+                    { type: "IDENTIFIER",           value: "personName" },
+                    { type: "INVOCATION_END",       value: ")" },
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "PUNCTUATION",          value: "}" },
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "STATEMENTS_END",       value: "}" },  
+                    { type: "TERMINATOR",           value: "EOF"}
+                  ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle nested functions with function invocation', function() {
+        input = String.raw`func sayHello(var firstName: String, var lastName: String) -> String {
+                    func giveString() -> String {
+                      return firstName + " " + lastName
+                    }
+                    return giveString()
+                }`;
+        output = [
+                    { type: "DECLARATION_KEYWORD",  value: "func"},
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "PARAMS_START",         value: "(" },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "firstName" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "PUNCTUATION",          value: "," },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "lastName" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "PARAMS_END",           value: ")" }, 
+                    { type: "RETURN_ARROW",         value: "->" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "STATEMENTS_START",     value: "{" },  
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "DECLARATION_KEYWORD",  value: "func"},
+                    { type: "IDENTIFIER",           value: "giveString" },
+                    { type: "PARAMS_START",         value: "(" },
+                    { type: "PARAMS_END",           value: ")" }, 
+                    { type: "RETURN_ARROW",         value: "->" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "STATEMENTS_START",     value: "{" },  
+                    { type: "TERMINATOR",           value: "\\n"},  
+
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "IDENTIFIER",           value: "firstName" },
+                    { type: "OPERATOR",             value: "+" },
+                    { type: "STRING",               value: " " },
+                    { type: "OPERATOR",             value: "+" },
+                    { type: "IDENTIFIER",           value: "lastName" },
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "STATEMENTS_END",       value: "}" },  
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "IDENTIFIER",           value: "giveString" },
+                    { type: "INVOCATION_START",     value: "(" }, 
+                    { type: "INVOCATION_END",       value: ")" },   
+                    { type: "TERMINATOR",           value: "\\n"},
+
+                    { type: "STATEMENTS_END",       value: "}" },  
+                    { type: "TERMINATOR",           value: "EOF"}
+                  ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
     }); 
 
   });

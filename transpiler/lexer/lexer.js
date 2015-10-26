@@ -149,6 +149,7 @@ module.exports = function(code) {
       continue;
     }
     
+    //handling functions lexing
     if (chunk === 'func') {
       lexerFunctions.checkFor('KEYWORD', chunk, tokens);
       var temp = {};
@@ -181,8 +182,19 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-    //TODO, need to have all {} punctuations add and substract to insideFunction[insideFunction.length - 1].statements
-    if (insideFunction.length && chunk === '}' && insideFunction[insideFunction.length - 1].statements === 1) {
+    if (insideFunction.length && chunk === '{' && insideFunction[insideFunction.length - 1].statements === 1) {
+      lexerFunctions.checkFor('PUNCTUATION', chunk, tokens);
+      insideFunction[insideFunction.length - 1].curly++;
+      advanceAndClear(1);
+      continue;
+    }
+    if (insideFunction.length && chunk === '}' && insideFunction[insideFunction.length - 1].statements === 1 && insideFunction[insideFunction.length - 1].curly > 0) {
+      lexerFunctions.checkFor('PUNCTUATION', chunk, tokens);
+      insideFunction[insideFunction.length - 1].curly--;
+      advanceAndClear(1);
+      continue;
+    }
+    if (insideFunction.length && chunk === '}' && insideFunction[insideFunction.length - 1].statements === 1 && insideFunction[insideFunction.length - 1].curly === 0) {
       lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
       insideFunction[insideFunction.length - 1].statements--;
       insideFunction.pop();
