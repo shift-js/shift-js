@@ -4,15 +4,32 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     mochaTest: {
+      lexer: {
+        options: {
+          reporter: 'spec'
+        },
+        src: [
+          'tests/lexerTests.js'
+        ]
+      },
+      parser: {
+        options: {
+          reporter: 'spec'
+        },
+        src: [
+          'transpiler/parser/test/parserTests.js'
+        ]
+      },
       test: {
         options: {
           reporter: 'spec'
         },
         src: [
-          'transpiler/lexer/test/lexerTests.js',
+          'tests/lexerTests.js',
           'transpiler/parser/test/parserTests.js'
         ]
       }
+
     },
 
     jshint: {
@@ -30,6 +47,7 @@ module.exports = function(grunt) {
 
   });
 
+  // grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-mocha-test');
   // grunt.loadNpmTasks('grunt-contrib-watch');
@@ -39,7 +57,17 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', [
     // 'jshint',
-    'mochaTest'
+    'mochaTest:test'
+  ]);
+
+  grunt.registerTask('testLexer', [
+    // 'jshint',
+    'mochaTest:lexer'
+  ]);
+
+    grunt.registerTask('testParser', [
+    // 'jshint',
+    'mochaTest:parser'
   ]);
 
 };

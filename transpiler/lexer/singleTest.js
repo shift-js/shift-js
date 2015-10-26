@@ -1,7 +1,11 @@
-String.raw`func minMax(var array: [Int]) -> (min: Int, max: Int) {
+var lexer = require("./lexer");
+var deepEqual = require("./helperFunctions").deepEqual;
+var diff = require("./helperFunctions").diff;
+
+var swiftCode = String.raw`func minMax(var array: [Int]) -> (min: Int, max: Int) {
     var currentMin = array[0]
     var currentMax = array[0]
-    for value in array[1..<array.count] {
+    for value in array[1..<2] {
         if value < currentMin {
             currentMin = value
         } else if value > currentMax {
@@ -9,12 +13,13 @@ String.raw`func minMax(var array: [Int]) -> (min: Int, max: Int) {
         }
     }
     return (currentMin, currentMax)
-}`
-
-[
+}`;
+     
+var swiftCodeAnswers = [
      { type: "DECLARATION_KEYWORD",  value: "func"},
      { type: "IDENTIFIER",           value: "minMax" },
      { type: "PARAMS_START",         value: "(" },
+     { type: "DECLARATION_KEYWORD",  value: "var"},
      { type: "IDENTIFIER",           value: "array" },
      { type: "PUNCTUATION",          value: ":" }, 
      { type: "ARRAY_START",          value: "["},
@@ -61,7 +66,8 @@ String.raw`func minMax(var array: [Int]) -> (min: Int, max: Int) {
           { type: "NUMBER",               value: "1" },
           { type: "HALF-OPEN_RANGE",      value: "..<" },
           //TODO get native methods working
-          { type: "NODUCKINGCLUE",               value: "array.count" },     
+          { type: "NUMBER",               value: "2" },
+          // { type: "NODUCKINGCLUE",               value: "array.count" },     
 
      { type: "SUBSTRING_LOOKUP_END",     value: "]" },
      { type: "PUNCTUATION",          value: "{" },
@@ -105,42 +111,15 @@ String.raw`func minMax(var array: [Int]) -> (min: Int, max: Int) {
           { type: "TUPLE_START",                value: "("},
           { type: "IDENTIFIER",                     value: "currentMin"},
           { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                     value: "not currentMax"},
+          { type: "IDENTIFIER",                     value: "currentMax"},
           { type: "TUPLE_END",                  value: ")"},
           { type: "TERMINATOR",           value: "\\n"},
 
      { type: "STATEMENTS_END",       value: "}" },  
      { type: "TERMINATOR",           value: "EOF"}
-     ]
+     ];
 
-String.raw``
-
-String.raw``
-
-String.raw``
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+console.log(lexer(swiftCode));
+console.log(diff(lexer(swiftCode),swiftCodeAnswers));
+console.log(deepEqual(lexer(swiftCode),swiftCodeAnswers));
 

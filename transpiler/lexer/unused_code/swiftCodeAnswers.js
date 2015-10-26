@@ -1,24 +1,21 @@
 module.exports = {
 
-  swiftCodeAnswers: [
-    // 1
-    [
-      { type: "DECLARATION_KEYWORD",  value: "var" },
-      { type: "IDENTIFIER",           value: "a" },
-      { type: "OPERATOR",             value: "=" },
-      { type: "NUMBER",               value: "3" },
-      { type: "TERMINATOR",           value: "EOF"}
-    ],
-    // 2
-    [
-      { type: "DECLARATION_KEYWORD",  value: "var" },
-      { type: "IDENTIFIER",           value: "b" },
-      { type: "OPERATOR",             value: "=" },
-      { type: "STRING",               value: "hello" },
-      { type: "TERMINATOR",           value: "EOF"}
-    ],
-    // 3
-    [
+  swiftCodeAnswers: {
+    1:  [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "3" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ],
+    2:  [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "hello" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ],
+    3:  [
       { type: "DECLARATION_KEYWORD",  value: "var" },
       { type: "IDENTIFIER",           value: "c" },
       { type: "OPERATOR",             value: "=" },
@@ -676,5 +673,5 @@ module.exports = {
     //   { type: "TERMINATOR",           value: "EOF"}
     // ]
 
-  ]
+  }
 };
