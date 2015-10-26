@@ -10,6 +10,19 @@ module.exports = {
   //   ']': 'DICTIONARY_END'
   // },
 
+  FUNCTION_DECLARATION: {
+    '(': 'PARAMS_START',
+    ')': 'PARAMS_END',
+    '{': 'STATEMENTS_START',
+    '}': 'STATEMENTS_END',
+    '->': 'RETURN_ARROW'
+  },
+
+  FUNCTION_INVOCATION: {
+    '(': 'INVOCATION_START',
+    ')': 'INVOCATION_END'
+  },
+
   COLLECTION: {
     '[': 'ARRAY_START',
     ']': 'COLLECTION_END'
