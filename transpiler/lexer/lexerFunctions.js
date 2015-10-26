@@ -255,7 +255,12 @@ module.exports = {
         }
         return true;
       } else if (lastToken.type === 'DECLARATION_KEYWORD' ||
-        lastToken.value === 'for') {
+        lastToken.value === 'for' || 
+        
+        // special conditions to handle for-in loops that iterate over dictionaries
+        (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||
+        (lastToken.value === ',' && tokens[tokens.length - 3].value) === '(' &&
+        tokens[tokens.length - 4].value === 'for') {
         if (tokens) {
           module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
         }
