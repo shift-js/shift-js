@@ -8,17 +8,17 @@ module.exports = {
   checkForEvaluationPoint: function(currCol, nextCol) {
     if (
 
-        module.exports.checkForWhitespace(currCol) ||
-        module.exports.checkForWhitespace(nextCol) ||
-        module.exports.checkFor('PUNCTUATION', nextCol) ||
-        module.exports.checkFor('PUNCTUATION', currCol) ||
-        module.exports.checkFor('OPERATOR', nextCol) ||
-        module.exports.checkFor('OPERATOR', currCol) ||
-        nextCol === '"' || nextCol === ']' || currCol === '[' ||
-        currCol === ']' || nextCol === '[' || nextCol === '\n' ||
-        nextCol === undefined
+      module.exports.checkForWhitespace(currCol) ||
+      module.exports.checkForWhitespace(nextCol) ||
+      module.exports.checkFor('PUNCTUATION', nextCol) ||
+      module.exports.checkFor('PUNCTUATION', currCol) ||
+      module.exports.checkFor('OPERATOR', nextCol) ||
+      module.exports.checkFor('OPERATOR', currCol) ||
+      nextCol === '"' || nextCol === ']' || currCol === '[' ||
+      currCol === ']' || nextCol === '[' || nextCol === '\n' ||
+      nextCol === undefined
 
-      ) {
+    ) {
 
       return true;
 
@@ -59,27 +59,27 @@ module.exports = {
     }
     var type = typeof chunk;
     var obj = {
-    'boolean': function(chunk, tokens) {
-                if (tokens) {
-                  module.exports.makeToken(undefined, chunk, tokens, 'BOOLEAN', JSON.stringify(chunk));
-                }
-                if (cb) {cb(chunk, tokens)}
-                return true;
-              },
-    'string': function(chunk, tokens) {
-                if (tokens) {
-                  module.exports.makeToken(undefined, chunk, tokens, 'STRING', chunk);
-                }
-                if (cb) {cb(chunk, tokens)}
-                return true;
-              },
-    'number': function(chunk, tokens) {
-                if (tokens) {
-                  module.exports.makeToken(undefined, chunk, tokens, 'NUMBER', JSON.stringify(chunk));
-                }
-                if (cb) {cb(chunk, tokens)}
-                return true;
-              }
+      'boolean': function(chunk, tokens) {
+        if (tokens) {
+          module.exports.makeToken(undefined, chunk, tokens, 'BOOLEAN', JSON.stringify(chunk));
+        }
+        if (cb) {cb(chunk, tokens)}
+        return true;
+      },
+      'string': function(chunk, tokens) {
+        if (tokens) {
+          module.exports.makeToken(undefined, chunk, tokens, 'STRING', chunk);
+        }
+        if (cb) {cb(chunk, tokens)}
+        return true;
+      },
+      'number': function(chunk, tokens) {
+        if (tokens) {
+          module.exports.makeToken(undefined, chunk, tokens, 'NUMBER', JSON.stringify(chunk));
+        }
+        if (cb) {cb(chunk, tokens)}
+        return true;
+      }
     };
     if (obj[type] === undefined) {
       return false;
@@ -89,8 +89,8 @@ module.exports = {
   },
 
   // handles start of multi-line and single-line comments
-  checkForCommentStart: function(insideComment, chunk, tokens, currCol, 
-    nextCol) {
+  checkForCommentStart: function(insideComment, chunk, tokens, currCol,
+                                 nextCol) {
     if (currCol === '/' && nextCol === '*' && !(insideComment.multi && insideComment.single)) {
       insideComment.multi = true;
       chunk += nextCol;
@@ -105,7 +105,7 @@ module.exports = {
     }
     return false;
   },
-  
+
   // tokenizes comment contents and handles end of single and multi-line comments
   handleComment: function(insideComment, chunk, tokens, currCol, nextCol, nextNextCol, cb) {
     if (insideComment.multi) {
@@ -122,7 +122,7 @@ module.exports = {
         module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
         cb(1);
         return true;
-      } 
+      }
     }
     else if (insideComment.single && (nextCol === undefined || nextCol === '\n')) {
       insideComment.multi = false;
@@ -181,20 +181,20 @@ module.exports = {
   },
 
   checkForStringInterpolationStart: function(stringInterpolation, insideString,
-    chunk, tokens, nextCol, nextNextCol) {
+                                             chunk, tokens, nextCol, nextNextCol) {
     if (!stringInterpolation.status && nextCol === '\\' && nextNextCol === '(') {
       stringInterpolation.status = true;
       if (chunk !== "") {
         module.exports.checkForLiteral(chunk + '"', tokens);
       }
-     module.exports.makeToken("SPECIAL_STRING", "\\(", tokens);
-     insideString.status = false;
-     return true;
+      module.exports.makeToken("SPECIAL_STRING", "\\(", tokens);
+      insideString.status = false;
+      return true;
     }
   },
 
   checkForStringInterpolationEnd: function(stringInterpolation, insideString,
-    tokens, currCol) {
+                                           tokens, currCol) {
     if (stringInterpolation.status && currCol === ")") {
       stringInterpolation.status = false;
       module.exports.makeToken("SPECIAL_STRING", ")", tokens);
@@ -209,7 +209,7 @@ module.exports = {
   },
 
   checkForTupleStart: function(insideTuple, chunk, tokens, lastToken,
-    currCol, nextCol, nextNextCol, cb) {
+                               currCol, nextCol, nextNextCol, cb) {
     if (!insideTuple.status && currCol === '(' && (lastToken.value === '=' ||
       lastToken.value === 'return' || lastToken.value === '->') ) {
       module.exports.makeToken(undefined, undefined, tokens,
@@ -258,24 +258,24 @@ module.exports = {
 
   // helper function to check for identifiers
   checkForIdentifier: function(chunk, tokens, lastToken, variable_names) {
-      if (variable_names[chunk]) {
-        if (tokens) {
-          module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
-        }
-        return true;
-      } else if (lastToken.type === 'DECLARATION_KEYWORD' ||
-        lastToken.value === 'for' || 
-        
-        // special conditions to handle for-in loops that iterate over dictionaries
-        (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||
-        (lastToken.value === ',' && tokens[tokens.length - 3].value) === '(' &&
-        tokens[tokens.length - 4].value === 'for') {
-        if (tokens) {
-          module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
-        }
-        variable_names[chunk] = true;
-        return true;
+    if (variable_names[chunk]) {
+      if (tokens) {
+        module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }
+      return true;
+    } else if (lastToken.type === 'DECLARATION_KEYWORD' ||
+      lastToken.value === 'for' ||
+
+        // special conditions to handle for-in loops that iterate over dictionaries
+      (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||
+      (lastToken.value === ',' && tokens[tokens.length - 3].value) === '(' &&
+      tokens[tokens.length - 4].value === 'for') {
+      if (tokens) {
+        module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
+      }
+      variable_names[chunk] = true;
+      return true;
+    }
     return false;
   },
 

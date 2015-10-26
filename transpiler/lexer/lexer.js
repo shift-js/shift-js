@@ -60,15 +60,15 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue
     }
-    
+
     // comment handling
-    if (lexerFunctions.checkForCommentStart(insideComment, chunk, tokens, 
-      currCol, nextCol)) {
+    if (lexerFunctions.checkForCommentStart(insideComment, chunk, tokens,
+        currCol, nextCol)) {
       advanceAndClear(2);
       continue;
     }
     if (lexerFunctions.handleComment(insideComment, chunk, tokens,
-      currCol, nextCol, nextNextCol, advanceAndClear)) {
+        currCol, nextCol, nextNextCol, advanceAndClear)) {
       continue;
     }
     if (lexerFunctions.checkIfInsideComment(insideComment)) {
@@ -112,12 +112,12 @@ module.exports = function(code) {
 
     // string interpolation handling
     if (lexerFunctions.checkForStringInterpolationStart(stringInterpolation,
-      insideString, chunk, tokens, nextCol, nextNextCol)) {
+        insideString, chunk, tokens, nextCol, nextNextCol)) {
       advanceAndClear(3);
       continue;
     }
     if(lexerFunctions.checkForStringInterpolationEnd(stringInterpolation,
-      insideString, tokens, currCol, nextNextCol)) {
+        insideString, tokens, currCol, nextNextCol)) {
       advanceAndClear(1);
       chunk = '"';
       continue;
@@ -148,12 +148,12 @@ module.exports = function(code) {
 
     // tuple handling
     if (lexerFunctions.checkForTupleStart(insideTuple, chunk, tokens, lastToken,
-    currCol, nextCol, nextNextCol, advanceAndClear)) {
+        currCol, nextCol, nextNextCol, advanceAndClear)) {
       advanceAndClear(1);
       continue;
     }
     if (insideTuple.status && lexerFunctions.handleTuple(insideTuple, chunk,
-      tokens, currCol, nextCol)) {
+        tokens, currCol, nextCol)) {
       advanceAndClear(1);
       continue;
     }
@@ -162,7 +162,7 @@ module.exports = function(code) {
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
-    
+
     //handling functions lexing
     if (chunk === 'func') {
       lexerFunctions.checkFor('KEYWORD', chunk, tokens);
@@ -218,16 +218,16 @@ module.exports = function(code) {
     }
 
     //TODO function declaration
-    
+
     // collection initializer syntax handling
-    if (tokens.length && currCol === '(' && nextCol === ')' && 
+    if (tokens.length && currCol === '(' && nextCol === ')' &&
       (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
       lexerFunctions.checkFor('FUNCTION_INVOCATION', nextCol, tokens);
       advanceAndClear(2);
       continue;
     }
-        
+
     // main evaluation block
     if (!insideString.status && !insideNumber.status &&
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
@@ -240,7 +240,7 @@ module.exports = function(code) {
           tokens[tokens.length - 1].type = lastCollection.type || 'ARRAY_END';
           insideCollection.pop();
         });
-      } else if (tokens.length && lastToken.type !== 'IDENTIFIER' && 
+      } else if (tokens.length && lastToken.type !== 'IDENTIFIER' &&
         lastToken.type !== 'SUBSTRING_LOOKUP_END' && currCol === '[') {
         lexerFunctions.checkFor('COLLECTION', chunk, tokens, function(){
           insideCollection.push({type: undefined, location: tokens.length-1});})
@@ -267,7 +267,7 @@ module.exports = function(code) {
     advance(1);
     // console.log(tokens);
   }
-  
+
   if (tokens[tokens.length - 1].value === '\\n') {
     lexerFunctions.makeToken(undefined, undefined, tokens, 'TERMINATOR', 'EOF');
   }
