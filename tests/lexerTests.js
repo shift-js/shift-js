@@ -1921,6 +1921,7 @@ describe('Lexer', function() {
           { type: "PUNCTUATION",          value: "}" }, 
           { type: "TERMINATOR",           value: "EOF"},
         ]
+        expect(lexer(input)).to.deep.equal(output);
       }); 
 
     });
