@@ -2,7 +2,6 @@ var lexer = require("./lexer");
 var deepEqual = require("./helperFunctions").deepEqual;
 var diff = require("./helperFunctions").diff;
 
-
 var swiftCode = String.raw`let interestingNumbers = [
                           "Prime": [2, 3, 5, 7, 11, 13],
                           "Fibonacci": [1, 1, 2, 3, 5, 8],
@@ -113,6 +112,7 @@ var swiftCodeAnswers = [
     { type: "TERMINATOR",                     value: "EOF"},
 
   ];
+>>>>>>> affaa96b9af006616380ac951fb4803fb1c50222
 
 console.log(lexer(swiftCode));
 console.log(diff(lexer(swiftCode),swiftCodeAnswers));

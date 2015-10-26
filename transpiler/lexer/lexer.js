@@ -1,4 +1,3 @@
-
 var lexerFunctions = require("./lexerFunctions");
 
 module.exports = function(code) {
@@ -89,11 +88,26 @@ module.exports = function(code) {
       insideString.status = true;
     }
 
+
+
     // number handling
-    if (lexerFunctions.handleNumber(insideString, insideNumber, chunk,
-      tokens, nextCol)) {
+    if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol)) {
       advanceAndClear(1);
       continue;
+    }
+
+    // handle ranges
+    if (!insideString.status && !lexerFunctions.checkIfInsideComment(insideComment)) {
+      if (currCol === '.' && nextCol === '.' && nextNextCol === '.') {
+        lexerFunctions.checkFor('RANGES', '...', tokens);
+        advanceAndClear(3);
+        continue;
+      }
+      if (currCol === '.' && nextCol === '.' && nextNextCol === '<') {
+        lexerFunctions.checkFor('RANGES', '..<', tokens);
+        advanceAndClear(3);
+        continue;
+      }
     }
 
     // string interpolation handling

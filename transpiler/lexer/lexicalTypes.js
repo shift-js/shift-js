@@ -10,6 +10,11 @@ module.exports = {
   //   ']': 'DICTIONARY_END'
   // },
 
+  RANGES: {
+    '...': 'CLOSED_RANGE',
+    '..<': 'HALF-OPEN_RANGE',
+  },
+
   FUNCTION_DECLARATION: {
     '(': 'PARAMS_START',
     ')': 'PARAMS_END',

@@ -158,14 +158,23 @@ module.exports = {
     return false;
   },
 
-  handleNumber: function(insideString, insideNumber, chunk, tokens, nextCol) {
+  handleNumber: function(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol) {
     if (NUMBER.test(chunk) && !insideString.status && !insideNumber.status) {
       insideNumber.status = true;
     }
+    //have an integer or decimal
     if (insideNumber.status && (nextCol === '\n' ||
-      (isNaN(nextCol) && (nextCol !== '.')))) {
+      (isNaN(nextCol) && (nextCol !== '.') && (nextNextCol !== '.')))) {
       insideNumber.status = false;
-      module.exports.checkForLiteral(chunk, tokens);
+      module.exports.makeToken(undefined, chunk, tokens, 'NUMBER', chunk.trim());
+      module.exports.handleEndOfFile(nextCol, tokens);
+      return true;
+    }
+
+    //have a range
+    if (insideNumber.status && (nextCol === '.') && (nextNextCol === '.')) {
+      insideNumber.status = false;
+      module.exports.makeToken(undefined, chunk, tokens, 'NUMBER', chunk.trim());
       module.exports.handleEndOfFile(nextCol, tokens);
       return true;
     }
