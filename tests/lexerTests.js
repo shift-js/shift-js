@@ -2103,6 +2103,37 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      xit('handle for-in loops that iterate over a range', function () {
+        input = String.raw`var sum = 0
+                      for i in 0..<5 {
+                          sum += i
+                      }`;;
+        output = [
+          { type: 'DECLARATION_KEYWORD',            value: 'var' },
+          { type: 'IDENTIFIER',                     value: 'sum' },
+          { type: 'OPERATOR',                       value: '=' },
+          { type: 'NUMBER',                         value: '0' },
+          { type: 'TERMINATOR',                     value: '\\n' },
+          { type: 'STRING',                         value: 'Prime' },
+          { type: "STATEMENT_KEYWORD",              value: "for" },
+          { type: "IDENTIFIER",                     value: "kind" },
+          { type: "IDENTIFIER",                     value: "i" },
+          { type: "STATEMENT_KEYWORD",              value: "in" },
+          { type: 'HALF-OPEN_RANGE',                value: '..<'},
+          { type: 'NUMBER',                         value: '5' },
+          { type: "PUNCTUATION",                    value: "{" },
+          { type: "TERMINATOR",                     value: "\\n"},
+          { type: "IDENTIFIER",                     value: "sum" },
+          { type: "OPERATOR",                       value: "+" },
+          { type: "OPERATOR",                       value: "=" },
+          { type: "IDENTIFIER",                     value: "i" },
+          { type: "TERMINATOR",                     value: "\\n"},
+          { type: "PUNCTUATION",                    value: "}" },
+          { type: "TERMINATOR",                     value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
       it('should handle for-in loops that iterate over items in a dictionary', function () {
         input = String.raw`let interestingNumbers = [
                           "Prime": [2, 3, 5, 7, 11, 13],
