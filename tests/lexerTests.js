@@ -3179,7 +3179,7 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      xit('', function () {
+      xit('hould handle functions that do no use var when declaring parameters and invocations with named arguments', function () {
         input = String.raw`func greet(name: String, day: String) -> String {
                         return "Hello \(name), today is \(day)."
                     }
