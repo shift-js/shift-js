@@ -1,6 +1,6 @@
-var lexicalTypes    = require('./../lexicalTypes');
-var lexerFunctions  = require('./../lexerFunctions');
-var lexer           = require('./../lexer');
+var lexicalTypes    = require('./../transpiler/lexer/lexicalTypes');
+var lexerFunctions  = require('./../transpiler/lexer/lexerFunctions');
+var lexer           = require('./../transpiler/lexer/lexer');
 var expect          = require('chai').expect;
 
 
@@ -2271,6 +2271,64 @@ describe('Lexer', function() {
           { type: "PUNCTUATION",          value: ";" },    
           { type: "TERMINATOR",           value: "EOF"}
         ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle functions that return strings', function() {
+        input = String.raw`func sayHelloWorld() -> String {
+                               return "hello, world"
+                           }`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "sayHelloWorld" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" }, 
+          { type: "TYPE_STRING",          value: "String" }, 
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"}, 
+          { type: "STRING",               value: "hello, world" }, 
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENTS_END",       value: "}"},  
+          { type: "TERMINATOR",           value: "EOF"}
+        ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle functions that return strings', function() {
+        input = String.raw`func sayHello(var personName: String) -> String {
+                              let greeting = "Hello, " + personName + "!"
+                              return greeting
+                          }`;
+        output = [
+                    { type: "DECLARATION_KEYWORD",  value: "func"},
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "PARAMS_START",         value: "(" },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "personName" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "PARAMS_END",           value: ")" }, 
+                    { type: "RETURN_ARROW",         value: "->" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "STATEMENTS_START",     value: "{" },  
+                    { type: "TERMINATOR",           value: "\\n"},
+                    { type: "DECLARATION_KEYWORD",  value: "let" },
+                    { type: "IDENTIFIER",           value: "greeting" },
+                    { type: "OPERATOR",             value: "=" },
+                    { type: "STRING",               value: "Hello, " }, 
+                    { type: "OPERATOR",             value: "+" },  
+                    { type: "IDENTIFIER",           value: "personName" },
+                    { type: "OPERATOR",             value: "+" },
+                    { type: "STRING",               value: "!" }, 
+                    { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "IDENTIFIER",           value: "greeting" }, 
+                    { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENTS_END",       value: "}"},  
+                    { type: "TERMINATOR",           value: "EOF"}
+                  ]
         expect(lexer(input)).to.deep.equal(output);
       });
 

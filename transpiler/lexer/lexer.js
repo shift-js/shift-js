@@ -109,6 +109,11 @@ module.exports = function(code) {
       continue;
     }
 
+    if (insideFunction.length && currCol === "-" && nextCol === ">") {
+      lexerFunctions.checkFor('FUNCTION_DECLARATION', "->", tokens);
+      advanceAndClear(2);
+      continue;
+    }
     if (chunk === '(' && FUNCTION_NAMES[lastToken.value]) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', chunk, tokens);
       var tmp = {};
