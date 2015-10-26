@@ -1,4 +1,4 @@
-String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
+String.raw`func minMax(array: [Int]) -> (var min: Int, var max: Int) {
     var currentMin = array[0]
     var currentMax = array[0]
     for value in array[1..<array.count] {
