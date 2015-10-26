@@ -645,9 +645,108 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      xit('should handle ranges', function () {
-        input = 'var a = 1...5; var b = 1..<5';
-        output = "FILL_ME_IN";
+      it('should handle closed ranges', function () {
+          input = 'var a = 1...5';
+          output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "CLOSED_RANGE",         value: "..." },
+          { type: "NUMBER",               value: "5" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+      it('should handle decimal ending in 0 closed ranges', function () {
+          input = 'var a = 1.0...5.0';
+          output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1.0" },
+          { type: "CLOSED_RANGE",         value: "..." },
+          { type: "NUMBER",               value: "5.0" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+      it('should handle random decimal closed ranges', function () {
+          input = 'var a = 1.2...5.3';
+          output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1.2" },
+          { type: "CLOSED_RANGE",         value: "..." },
+          { type: "NUMBER",               value: "5.3" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+      it('should handle half-open ranges', function () {
+              input = 'var b = 1..<5';
+              output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "HALF-OPEN_RANGE",      value: "..<" },
+          { type: "NUMBER",               value: "5" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+              expect(lexer(input)).to.deep.equal(output);
+            });
+
+      it('should handle decimal ending in 0 half-open ranges', function () {
+          input = 'var a = 1.0..<5.0';
+          output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1.0" },
+          { type: "HALF-OPEN_RANGE",      value: "..<" },
+          { type: "NUMBER",               value: "5.0" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+      it('should handle random decimal half-open ranges', function () {
+          input = 'var a = 1.2..<5.3';
+          output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1.2" },
+          { type: "HALF-OPEN_RANGE",      value: "..<" },
+          { type: "NUMBER",               value: "5.3" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+      it('should handle all ranges', function () {
+        input = 'var a = 1...5; var b = 2..<6';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "CLOSED_RANGE",         value: "..." },
+          { type: "NUMBER",               value: "5" },
+          { type: "PUNCTUATION",          value: ";"},
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "2" },
+          { type: "HALF-OPEN_RANGE",      value: "..<" },
+          { type: "NUMBER",               value: "6" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
     });
