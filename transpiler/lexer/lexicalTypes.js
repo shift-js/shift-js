@@ -9,7 +9,7 @@ module.exports = {
   //   '[': 'DICTIONARY_START',
   //   ']': 'DICTIONARY_END'
   // },
-  
+
   COLLECTION: {
     '[': 'ARRAY_START',
     ']': 'COLLECTION_END'
