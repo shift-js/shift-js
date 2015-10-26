@@ -2955,7 +2955,7 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle functions that return strings', function() {
+      it('should handle functions with an input that return strings', function() {
         input = String.raw`func sayHello(var personName: String) -> String {
                               let greeting = "Hello, " + personName + "!"
                               return greeting

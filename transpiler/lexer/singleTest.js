@@ -2,117 +2,122 @@ var lexer = require("./lexer");
 var deepEqual = require("./helperFunctions").deepEqual;
 var diff = require("./helperFunctions").diff;
 
-var swiftCode = String.raw`let interestingNumbers = [
-                          "Prime": [2, 3, 5, 7, 11, 13],
-                          "Fibonacci": [1, 1, 2, 3, 5, 8],
-                          "Square": [1, 4, 9, 16, 25],
-                      ]
-                      var largest = 0
-                      for (kind, numbers) in interestingNumbers {
-                          for number in numbers {
-                              if number > largest {
-                                  largest = number
-                              }
-                          }
-                      }`;
+var swiftCode = String.raw`func minMax(var array: [Int]) -> (min: Int, max: Int) {
+    var currentMin = array[0]
+    var currentMax = array[0]
+    for value in array[1..<2] {
+        if value < currentMin {
+            currentMin = value
+        } else if value > currentMax {
+            currentMax = value
+        }
+    }
+    return (currentMin, currentMax)
+}`;
      
 var swiftCodeAnswers = [
-    { type: 'DECLARATION_KEYWORD',            value: 'let' },
-    { type: 'IDENTIFIER',                     value: 'interestingNumbers' },
-    { type: 'OPERATOR',                       value: '=' },
-    { type: 'DICTIONARY_START',               value: '[' },
-    { type: 'TERMINATOR',                     value: '\\n' },
-    { type: 'STRING',                         value: 'Prime' },
-    { type: 'PUNCTUATION',                    value: ':' },
-    { type: 'ARRAY_START',                    value: '[' },
-    { type: 'NUMBER',                         value: '2' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '3' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '5' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '7' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '11' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '13' },
-    { type: 'ARRAY_END',                      value: ']' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'TERMINATOR',                     value: '\\n' },
-    { type: 'STRING',                         value: 'Fibonacci' },
-    { type: 'PUNCTUATION',                    value: ':' },
-    { type: 'ARRAY_START',                    value: '[' },
-    { type: 'NUMBER',                         value: '1' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '1' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '2' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '3' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '5' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '8' },
-    { type: 'ARRAY_END',                      value: ']' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'TERMINATOR',                     value: '\\n' },
-    { type: 'STRING',                         value: 'Square' },
-    { type: 'PUNCTUATION',                    value: ':' },
-    { type: 'ARRAY_START',                    value: '[' },
-    { type: 'NUMBER',                         value: '1' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '4' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '9' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '16' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'NUMBER',                         value: '25' },
-    { type: 'ARRAY_END',                      value: ']' },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: 'TERMINATOR',                     value: '\\n' },
-    { type: 'DICTIONARY_END',                 value: ']' },
-    { type: 'TERMINATOR',                     value: '\\n' },
-    { type: "DECLARATION_KEYWORD",            value: "var" },
-    { type: "IDENTIFIER",                     value: "largest" },
-    { type: "OPERATOR",                       value: "=" },
-    { type: "NUMBER",                         value: "0" },
-    { type: 'TERMINATOR',                     value: '\\n' },
-    { type: "STATEMENT_KEYWORD",              value: "for" },
-    { type: 'PUNCTUATION',                    value: '(' },
-    { type: "IDENTIFIER",                     value: "kind" },
-    { type: 'PUNCTUATION',                    value: ',' },
-    { type: "IDENTIFIER",                     value: "numbers" },
-    { type: 'PUNCTUATION',                    value: ')' },
-    { type: "STATEMENT_KEYWORD",              value: "in" },
-    { type: "IDENTIFIER",                     value: "interestingNumbers" }, 
-    { type: "PUNCTUATION",                    value: "{" },
-    { type: "TERMINATOR",                     value: "\\n"},
-    { type: "STATEMENT_KEYWORD",              value: "for" },
-    { type: "IDENTIFIER",                     value: "number" },
-    { type: "STATEMENT_KEYWORD",              value: "in" },
-    { type: "IDENTIFIER",                     value: "numbers" }, 
-    { type: "PUNCTUATION",                    value: "{" },
-    { type: "TERMINATOR",                     value: "\\n"},
-    { type: "STATEMENT_KEYWORD",              value: "if" },
-    { type: "IDENTIFIER",                     value: "number" },
-    { type: "OPERATOR",                       value: ">" },
-    { type: "IDENTIFIER",                     value: "largest" },
-    { type: "PUNCTUATION",                    value: "{" },
-    { type: "TERMINATOR",                     value: "\\n"},
-    { type: "IDENTIFIER",                     value: "largest" },
-    { type: "OPERATOR",                       value: "=" },
-    { type: "IDENTIFIER",                     value: "number" },
-    { type: "TERMINATOR",                     value: "\\n"},
-    { type: "PUNCTUATION",                    value: "}" },
-    { type: "TERMINATOR",                     value: "\\n"},
-    { type: "PUNCTUATION",                    value: "}" },
-    { type: "TERMINATOR",                     value: "\\n"},
-    { type: "PUNCTUATION",                    value: "}" },
-    { type: "TERMINATOR",                     value: "EOF"},
+     { type: "DECLARATION_KEYWORD",  value: "func"},
+     { type: "IDENTIFIER",           value: "minMax" },
+     { type: "PARAMS_START",         value: "(" },
+     { type: "DECLARATION_KEYWORD",  value: "var"},
+     { type: "IDENTIFIER",           value: "array" },
+     { type: "PUNCTUATION",          value: ":" }, 
+     { type: "ARRAY_START",          value: "["},
+     { type: "TYPE_NUMBER",          value: "Int" }, 
+     { type: "ARRAY_END",            value: "]"},    
+     { type: "PARAMS_END",           value: ")" }, 
+     { type: "RETURN_ARROW",         value: "->" },     
+     { type: "TUPLE_START",          value: "("},
+     { type: "TUPLE_ELEMENT_NAME",   value: "min"},
+     { type: "PUNCTUATION",          value: ":" },
+     { type: "TYPE_NUMBER",          value: "Int" }, 
+     { type: "PUNCTUATION",          value: "," },
+     { type: "TUPLE_ELEMENT_NAME",   value: "max"},
+     { type: "PUNCTUATION",          value: ":" },
+     { type: "TYPE_NUMBER",          value: "Int" }, 
+     { type: "TUPLE_END",            value: ")"},
+     { type: "STATEMENTS_START",     value: "{" },  
+     { type: "TERMINATOR",           value: "\\n"},
 
-  ];
->>>>>>> affaa96b9af006616380ac951fb4803fb1c50222
+     { type: "DECLARATION_KEYWORD",  value: "var" },
+     { type: "IDENTIFIER",           value: "currentMin" },
+     { type: "OPERATOR",             value: "=" },
+     { type: "IDENTIFIER",           value: "array" },
+     { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+     { type: "NUMBER",               value: "0" },
+     { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+     { type: "TERMINATOR",           value: "\\n"},
+
+     { type: "DECLARATION_KEYWORD",  value: "var" },
+     { type: "IDENTIFIER",           value: "currentMax" },
+     { type: "OPERATOR",             value: "=" },
+     { type: "IDENTIFIER",           value: "array" },
+     { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+     { type: "NUMBER",               value: "0" },
+     { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+     { type: "TERMINATOR",           value: "\\n"},
+
+     { type: "STATEMENT_KEYWORD",    value: "for" },
+     { type: "IDENTIFIER",           value: "value" },
+     { type: "STATEMENT_KEYWORD",    value: "in" },
+     { type: "IDENTIFIER",           value: "array" },
+     { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+     
+          { type: "NUMBER",               value: "1" },
+          { type: "HALF-OPEN_RANGE",      value: "..<" },
+          //TODO get native methods working
+          { type: "NUMBER",               value: "2" },
+          // { type: "NODUCKINGCLUE",               value: "array.count" },     
+
+     { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+     { type: "PUNCTUATION",          value: "{" },
+     { type: "TERMINATOR",           value: "\\n"},
+
+
+
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "IDENTIFIER",           value: "value" },
+          { type: "OPERATOR",             value: "<" },
+          { type: "IDENTIFIER",           value: "currentMin" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "IDENTIFIER",           value: "currentMin" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "value" }, 
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "STATEMENT_KEYWORD",    value: "else" },
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "IDENTIFIER",           value: "value" },
+          { type: "OPERATOR",             value: ">" },
+          { type: "IDENTIFIER",           value: "currentMax" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "IDENTIFIER",           value: "currentMax" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "value" },
+          { type: "TERMINATOR",           value: "\\n"},
+ 
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "\\n"},
+
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "TUPLE_START",                value: "("},
+          { type: "IDENTIFIER",                     value: "currentMin"},
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                     value: "currentMax"},
+          { type: "TUPLE_END",                  value: ")"},
+          { type: "TERMINATOR",           value: "\\n"},
+
+     { type: "STATEMENTS_END",       value: "}" },  
+     { type: "TERMINATOR",           value: "EOF"}
+     ];
 
 console.log(lexer(swiftCode));
 console.log(diff(lexer(swiftCode),swiftCodeAnswers));
