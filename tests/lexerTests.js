@@ -2103,7 +2103,7 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      xit('handle for-in loops that iterate over a range', function () {
+      it('handle for-in loops that iterate over a range', function () {
         input = String.raw`var sum = 0
                       for i in 0..<5 {
                           sum += i
@@ -2114,11 +2114,10 @@ describe('Lexer', function() {
           { type: 'OPERATOR',                       value: '=' },
           { type: 'NUMBER',                         value: '0' },
           { type: 'TERMINATOR',                     value: '\\n' },
-          { type: 'STRING',                         value: 'Prime' },
           { type: "STATEMENT_KEYWORD",              value: "for" },
-          { type: "IDENTIFIER",                     value: "kind" },
           { type: "IDENTIFIER",                     value: "i" },
           { type: "STATEMENT_KEYWORD",              value: "in" },
+          { type: 'NUMBER',                         value: '0' },
           { type: 'HALF-OPEN_RANGE',                value: '..<'},
           { type: 'NUMBER',                         value: '5' },
           { type: "PUNCTUATION",                    value: "{" },
