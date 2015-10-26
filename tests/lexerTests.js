@@ -35,6 +35,44 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+      
+      it('should handle variable names with underscores', function () {
+        input = String.raw`var my_var = 5`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "my_var" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "5" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+      it('should handle lines that end with a semicolon', function () {
+        input = String.raw`var myVar = 5;`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "myVar" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "5" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+      it('should handle variable declarations with erratic spacing', function () {
+        input = String.raw`var myVar                   =                       5          ;`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "myVar" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "5" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle strings', function () {
         input = 'var b = "hello"';
@@ -118,6 +156,42 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+      
+      it('should handle initializer syntax for arrays', function () {
+        input = String.raw`var empty = [String]();`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "empty" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "ARRAY_START",                value: "["},
+          { type: "TYPE_STRING",                value: "String"},
+          { type: "ARRAY_END",                  value: "]"},
+          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "PUNCTUATION",                value: ";"},
+          { type: "TERMINATOR",                 value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+      it('should handle initializer syntax for dictionaries', function () {
+        input = String.raw`var empty = [String:UInt16]();`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "empty" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "DICTIONARY_START",           value: "["},
+          { type: "TYPE_STRING",                value: "String"},
+          { type: "PUNCTUATION",                value: ":"},
+          { type: "TYPE_NUMBER",                value: "UInt16"},
+          { type: "DICTIONARY_END",             value: "]"},
+          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "PUNCTUATION",                value: ";"},
+          { type: "TERMINATOR",                 value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle arrays', function () {
         input = 'var e = ["Eggs", "Milk", "Bacon"]';
@@ -132,6 +206,25 @@ describe('Lexer', function() {
           { type: "PUNCTUATION",          value: "," },
           { type: "STRING",               value: "Bacon" },
           { type: "ARRAY_END",            value: "]" },
+          { type: "TERMINATOR",           value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle arrays with erratic spacing', function () {
+        input = 'var e = [  "Eggs","Milk",           "Bacon"                ] ;';
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "e" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "STRING",               value: "Eggs" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "Milk" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "Bacon" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -211,7 +304,7 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle let and erratic spacing', function () {
+      it('should handle erratic spacing', function () {
         input = 'let g = [1 : "one",2   :"two", 3: "three"]';
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
@@ -634,6 +727,35 @@ describe('Lexer', function() {
           { type: "NUMBER",                     value: "99" },
           { type: "STRING_INTERPOLATION_END",   value: ")" },
           { type: "STRING",                     value: ", 2, 3" },
+          { type: "TERMINATOR",                 value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
+      it('should handle interpolation containing operations on identifiers', function () {
+        input = String.raw`let a = 3; let b = 5; let sum = "the sum of a and b is \(a + b).";`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "a" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "NUMBER",                     value: "3" },
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "b" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "NUMBER",                     value: "5" },
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "sum" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "STRING",                     value: "the sum of a and b is " },
+          { type: "STRING_INTERPOLATION_START", value: "\\(" },
+          { type: "IDENTIFIER",                 value: "a" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "IDENTIFIER",                 value: "b" },
+          { type: "STRING_INTERPOLATION_END",   value: ")" },
+          { type: "STRING",                     value: "." },
+          { type: "PUNCTUATION",                value: ";" },
           { type: "TERMINATOR",                 value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -2094,6 +2216,332 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+    });
+    
+    describe('Complex Control Flow', function () {
+
+      it('shold handle nested if-else statements within a loop', function () {
+        input = String.raw`var gameInProgress = false;
+                      var score = 0;
+                      var typeOfScore = "";
+                      var PAT = "";
+                      while gameInProgress {
+                          if typeOfScore != "" {
+                              if typeOfScore == "TD" {
+                                  score += 6
+                              } else if typeOfScore == "PAT" {
+                                  if PAT == "TD" {
+                                      score += 2
+                                  } else {
+                                      score += 1
+                                  }
+                              } else if typeOfScore == "FG" {
+                                  score += 3
+                              } else {
+                                  score += 2
+                              }
+                              typeOfScore = ""
+                          }
+                      }
+                      `;
+        output = [
+          { type: 'DECLARATION_KEYWORD',         value: 'var' },
+          { type: 'IDENTIFIER',                  value: 'gameInProgress' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'BOOLEAN',                     value: 'false' },
+          { type: 'PUNCTUATION',                 value: ';' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'DECLARATION_KEYWORD',         value: 'var' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '0' },
+          { type: 'PUNCTUATION',                 value: ';' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'DECLARATION_KEYWORD',         value: 'var' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: '' },
+          { type: 'PUNCTUATION',                 value: ';' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'DECLARATION_KEYWORD',         value: 'var' },
+          { type: 'IDENTIFIER',                  value: 'PAT' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: '' },
+          { type: 'PUNCTUATION',                 value: ';' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'STATEMENT_KEYWORD',           value: 'while' },
+          { type: 'IDENTIFIER',                  value: 'gameInProgress' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'STATEMENT_KEYWORD',           value: 'if' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '!' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: '' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'STATEMENT_KEYWORD',           value: 'if' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: 'TD' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '+' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '6' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'STATEMENT_KEYWORD',           value: 'else' },
+          { type: 'STATEMENT_KEYWORD',           value: 'if' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: 'PAT' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'STATEMENT_KEYWORD',           value: 'if' },
+          { type: 'IDENTIFIER',                  value: 'PAT' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: 'TD' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '+' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '2' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'STATEMENT_KEYWORD',           value: 'else' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '+' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '1' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'STATEMENT_KEYWORD',           value: 'else' },
+          { type: 'STATEMENT_KEYWORD',           value: 'if' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: 'FG' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '+' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '3' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'STATEMENT_KEYWORD',           value: 'else' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '+' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '2' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: '' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: 'EOF' } 
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle complex control flow with erratic spacing and inconsistent use of semicolons and parenthesis', function () {
+        input = String.raw`
+
+                    
+
+                    var gameInProgress = false;
+
+                    var score = 0
+
+                    var typeOfScore = "";
+                                             var PAT = "";
+
+
+                    while gameInProgress {
+                        if               (typeOfScore != "")
+                        {
+                        if typeOfScore == "TD" {
+                                score += 6
+                            } else if typeOfScore == "PAT" {
+                                if PAT == "TD" {
+                                    
+                                    score += 2;
+                                } else {
+                                    score += 1;
+                                    
+                            
+                                                                       }
+                            } else if (typeOfScore == "FG") {
+                                score += 3
+                            }
+                        
+                        else {
+                            
+                                score += 2
+                    }
+                            typeOfScore = ""
+                        }
+                     }
+
+                    `;
+        output = [
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'DECLARATION_KEYWORD',         value: 'var' },
+          { type: 'IDENTIFIER',                  value: 'gameInProgress' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'BOOLEAN',                     value: 'false' },
+          { type: 'PUNCTUATION',                 value: ';' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'DECLARATION_KEYWORD',         value: 'var' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '0' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'DECLARATION_KEYWORD',         value: 'var' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: '' },
+          { type: 'PUNCTUATION',                 value: ';' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'DECLARATION_KEYWORD',         value: 'var' },
+          { type: 'IDENTIFIER',                  value: 'PAT' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: '' },
+          { type: 'PUNCTUATION',                 value: ';' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'STATEMENT_KEYWORD',           value: 'while' },
+          { type: 'IDENTIFIER',                  value: 'gameInProgress' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'STATEMENT_KEYWORD',           value: 'if' },
+          { type: 'PUNCTUATION',                 value: '(' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '!' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: '' },
+          { type: 'PUNCTUATION',                 value: ')' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'STATEMENT_KEYWORD',           value: 'if' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: 'TD' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '+' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '6' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'STATEMENT_KEYWORD',           value: 'else' },
+          { type: 'STATEMENT_KEYWORD',           value: 'if' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: 'PAT' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'STATEMENT_KEYWORD',           value: 'if' },
+          { type: 'IDENTIFIER',                  value: 'PAT' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: 'TD' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '+' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '2' },
+          { type: 'PUNCTUATION',                 value: ';' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'STATEMENT_KEYWORD',           value: 'else' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '+' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '1' },
+          { type: 'PUNCTUATION',                 value: ';' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'STATEMENT_KEYWORD',           value: 'else' },
+          { type: 'STATEMENT_KEYWORD',           value: 'if' },
+          { type: 'PUNCTUATION',                 value: '(' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: 'FG' },
+          { type: 'PUNCTUATION',                 value: ')' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '+' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '3' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'STATEMENT_KEYWORD',           value: 'else' },
+          { type: 'PUNCTUATION',                 value: '{' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'score' },
+          { type: 'OPERATOR',                    value: '+' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'NUMBER',                      value: '2' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+          { type: 'OPERATOR',                    value: '=' },
+          { type: 'STRING',                      value: '' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'PUNCTUATION',                 value: '}' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: '\\n' },
+          { type: 'TERMINATOR',                  value: 'EOF' } 
+
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
     }); 
     
     describe('Functions', function() {
