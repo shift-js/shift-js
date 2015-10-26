@@ -203,10 +203,17 @@ module.exports = function(code) {
       continue;
     }
 
-
     //TODO function declaration
     
-    
+    // collection initializer syntax handling
+    if (tokens.length && currCol === '(' && nextCol === ')' && 
+      (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
+      lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
+      lexerFunctions.checkFor('FUNCTION_INVOCATION', nextCol, tokens);
+      advanceAndClear(2);
+      continue;
+    }
+        
     // main evaluation block
     if (!insideString.status && !insideNumber.status &&
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
