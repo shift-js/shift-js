@@ -21,6 +21,9 @@
   },
   "homepage": "https://github.com/shift-js/shift-js#readme",
   "dependencies": {
+    "bluebird": "^2.10.2",
+    "chokidar": "^1.2.0",
+    "commander": "^2.9.0",
     "deep-diff": "^0.3.3",
     "escodegen": "^1.7.0",
     "esprima-ast-utils": "0.0.6",

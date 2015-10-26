@@ -5,7 +5,7 @@ var escodegen = require('escodegen');
 var generator = escodegen.generate;
 
 module.exports = {
-  transpile: function(swiftString) {
+  compile: function(swiftString) {
     return generator(parser(lexer(swiftString)));
   },
   tokenize: function(swiftString) {
