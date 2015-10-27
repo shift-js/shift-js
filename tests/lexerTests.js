@@ -4181,7 +4181,7 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
-        xit('should handle basic property access via dot notation', function () {
+        it('should handle basic property access via dot notation', function () {
           input = String.raw`class VideoMode {
                                  var interlaced = false
                                  var frameRate = 0.0
@@ -4260,7 +4260,7 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "someFrameRate" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "someVideoMode" },
-            { type: "PROPERTY_ACCESS",            value: "." },
+            { type: "DOT_SYNTAX",                 value: "." },
             { type: "IDENTIFIER",                 value: "frameRate" },
             { type: "PUNCTUATION",                value: ";" },
             { type: "TERMINATOR",                 value: "\\n"},
@@ -4269,7 +4269,7 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "someWidth" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "someResolution" },
-            { type: "PROPERTY_ACCESS",            value: "." },
+            { type: "DOT_SYNTAX",                 value: "." },
             { type: "IDENTIFIER",                 value: "width" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];

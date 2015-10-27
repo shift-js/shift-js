@@ -233,6 +233,15 @@ module.exports = function(code) {
 
     //TODO function declaration
     
+    // collection initializer syntax handling
+    if (tokens.length && currCol === '(' && nextCol === ')' &&
+      (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
+      lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
+      lexerFunctions.checkFor('FUNCTION_INVOCATION', nextCol, tokens);
+      advanceAndClear(2);
+      continue;
+    }
+    
     
     // classes and structures handling
     if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
@@ -284,13 +293,10 @@ module.exports = function(code) {
       continue;
     }
     
-
-    // collection initializer syntax handling
-    if (tokens.length && currCol === '(' && nextCol === ')' &&
-      (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
-      lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
-      lexerFunctions.checkFor('FUNCTION_INVOCATION', nextCol, tokens);
-      advanceAndClear(2);
+    if (currCol === '.' && !lexerFunctions.checkForWhitespace(prevCol) &&
+      !lexerFunctions.checkForWhitespace(nextCol) && lastToken.type === 'IDENTIFIER') {
+      lexerFunctions.makeToken(undefined, chunk, tokens, 'DOT_SYNTAX', '.');
+      advanceAndClear(1);
       continue;
     }
 
