@@ -20,7 +20,8 @@ module.exports = {
     ')': 'PARAMS_END',
     '{': 'STATEMENTS_START',
     '}': 'STATEMENTS_END',
-    '->': 'RETURN_ARROW'
+    '->': 'RETURN_ARROW',
+    '...': 'VARIADIC_PARAM'
   },
 
   FUNCTION_INVOCATION: {

@@ -99,9 +99,15 @@ module.exports = function(code) {
     // handle ranges
     if (!insideString.status && !lexerFunctions.checkIfInsideComment(insideComment)) {
       if (currCol === '.' && nextCol === '.' && nextNextCol === '.') {
-        lexerFunctions.checkFor('RANGES', '...', tokens);
-        advanceAndClear(3);
-        continue;
+        if (insideFunction.length && insideFunction[insideFunction.length - 1].insideParams === true) {
+          lexerFunctions.checkFor('FUNCTION_DECLARATION', '...', tokens);
+          advanceAndClear(3);
+          continue;
+        } else {
+          lexerFunctions.checkFor('RANGES', '...', tokens);
+          advanceAndClear(3);
+          continue;
+        }
       }
       if (currCol === '.' && nextCol === '.' && nextNextCol === '<') {
         lexerFunctions.checkFor('RANGES', '..<', tokens);

@@ -3745,7 +3745,7 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      xit('should handle functions that have variadic parameters', function () {
+      it('should handle functions that have variadic parameters', function () {
         input = String.raw`func sumOf(numbers: Int...) -> Int {
                           var sum = 0
                           for number in numbers {
@@ -3780,13 +3780,16 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "numbers" },
           { type: "PUNCTUATION",                value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
+          
           { type: "IDENTIFIER",                 value: "sum" },
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "number" },
           { type: "TERMINATOR",                 value: "\\n"},
+
           { type: "PUNCTUATION",                value: "}" },
-          
+          { type: "TERMINATOR",                 value: "\\n"},
+
           { type: "STATEMENT_KEYWORD",          value: "return"},
           { type: "IDENTIFIER",                 value: "sum" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -3898,6 +3901,7 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "+" },
           { type: "IDENTIFIER",                 value: "number" },
           { type: "TERMINATOR",                 value: "\\n"},
+
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           
@@ -3964,6 +3968,9 @@ describe('Lexer', function() {
           { type: "BOOLEAN",                    value: "true" },
           { type: "TERMINATOR",                 value: "\\n"},
           
+          { type: "PUNCTUATION",                value: "}" },
+          { type: "TERMINATOR",                 value: "\\n"},
+
           { type: "PUNCTUATION",                value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           
