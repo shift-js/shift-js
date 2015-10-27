@@ -143,6 +143,7 @@ module.exports = function(code) {
       last.status = false;
       insideInvocation.pop();
       advanceAndClear(1);
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
 
