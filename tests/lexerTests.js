@@ -646,8 +646,8 @@ describe('Lexer', function() {
       });
 
       it('should handle closed ranges', function () {
-          input = 'var a = 1...5';
-          output = [
+        input = 'var a = 1...5';
+        output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
@@ -656,12 +656,12 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-          expect(lexer(input)).to.deep.equal(output);
-        });
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle decimal ending in 0 closed ranges', function () {
-          input = 'var a = 1.0...5.0';
-          output = [
+        input = 'var a = 1.0...5.0';
+        output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
@@ -670,12 +670,12 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5.0" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-          expect(lexer(input)).to.deep.equal(output);
-        });
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle random decimal closed ranges', function () {
-          input = 'var a = 1.2...5.3';
-          output = [
+        input = 'var a = 1.2...5.3';
+        output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
@@ -684,12 +684,12 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5.3" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-          expect(lexer(input)).to.deep.equal(output);
-        });
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle half-open ranges', function () {
-              input = 'var b = 1..<5';
-              output = [
+        input = 'var b = 1..<5';
+        output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
           { type: "OPERATOR",             value: "=" },
@@ -698,12 +698,12 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-              expect(lexer(input)).to.deep.equal(output);
-            });
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle decimal ending in 0 half-open ranges', function () {
-          input = 'var a = 1.0..<5.0';
-          output = [
+        input = 'var a = 1.0..<5.0';
+        output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
@@ -712,12 +712,12 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5.0" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-          expect(lexer(input)).to.deep.equal(output);
-        });
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle random decimal half-open ranges', function () {
-          input = 'var a = 1.2..<5.3';
-          output = [
+        input = 'var a = 1.2..<5.3';
+        output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
@@ -726,8 +726,8 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5.3" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-          expect(lexer(input)).to.deep.equal(output);
-        });
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle all ranges', function () {
         input = 'var a = 1...5; var b = 2..<6';
@@ -2992,33 +2992,33 @@ describe('Lexer', function() {
                               return greeting
                           }`;
         output = [
-                    { type: "DECLARATION_KEYWORD",  value: "func"},
-                    { type: "IDENTIFIER",           value: "sayHello" },
-                    { type: "PARAMS_START",         value: "(" },
-                    { type: "DECLARATION_KEYWORD",  value: "var"},
-                    { type: "IDENTIFIER",           value: "personName" },
-                    { type: "PUNCTUATION",          value: ":" }, 
-                    { type: "TYPE_STRING",          value: "String" }, 
-                    { type: "PARAMS_END",           value: ")" }, 
-                    { type: "RETURN_ARROW",         value: "->" }, 
-                    { type: "TYPE_STRING",          value: "String" }, 
-                    { type: "STATEMENTS_START",     value: "{" },  
-                    { type: "TERMINATOR",           value: "\\n"},
-                    { type: "DECLARATION_KEYWORD",  value: "let" },
-                    { type: "IDENTIFIER",           value: "greeting" },
-                    { type: "OPERATOR",             value: "=" },
-                    { type: "STRING",               value: "Hello, " }, 
-                    { type: "OPERATOR",             value: "+" },  
-                    { type: "IDENTIFIER",           value: "personName" },
-                    { type: "OPERATOR",             value: "+" },
-                    { type: "STRING",               value: "!" }, 
-                    { type: "TERMINATOR",           value: "\\n"},
-                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
-                    { type: "IDENTIFIER",           value: "greeting" }, 
-                    { type: "TERMINATOR",           value: "\\n"},
-                    { type: "STATEMENTS_END",       value: "}"},  
-                    { type: "TERMINATOR",           value: "EOF"}
-                  ]
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "sayHello" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "personName" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_STRING",          value: "String" }, 
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" }, 
+          { type: "TYPE_STRING",          value: "String" }, 
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let" },
+          { type: "IDENTIFIER",           value: "greeting" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "Hello, " }, 
+          { type: "OPERATOR",             value: "+" },  
+          { type: "IDENTIFIER",           value: "personName" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "STRING",               value: "!" }, 
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"}, 
+          { type: "IDENTIFIER",           value: "greeting" }, 
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENTS_END",       value: "}"},  
+          { type: "TERMINATOR",           value: "EOF"}
+        ]
         expect(lexer(input)).to.deep.equal(output);
       });
 
@@ -3029,34 +3029,34 @@ describe('Lexer', function() {
                 } 
             }`;
         output = [
-                    { type: "DECLARATION_KEYWORD",  value: "func"},
-                    { type: "IDENTIFIER",           value: "sayHello" },
-                    { type: "PARAMS_START",         value: "(" },
-                    { type: "DECLARATION_KEYWORD",  value: "var"},
-                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
-                    { type: "PUNCTUATION",          value: ":" }, 
-                    { type: "TYPE_BOOLEAN",         value: "Bool" }, 
-                    { type: "PARAMS_END",           value: ")" }, 
-                    { type: "RETURN_ARROW",         value: "->" }, 
-                    { type: "TYPE_STRING",          value: "String" }, 
-                    { type: "STATEMENTS_START",     value: "{" },  
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "sayHello" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "alreadyGreeted" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_BOOLEAN",         value: "Bool" }, 
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" }, 
+          { type: "TYPE_STRING",          value: "String" }, 
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "STATEMENT_KEYWORD",    value: "if" },
-                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
-                    { type: "PUNCTUATION",          value: "{" },
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "IDENTIFIER",           value: "alreadyGreeted" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
-                    { type: "STRING",               value: "blah" }, 
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"}, 
+          { type: "STRING",               value: "blah" }, 
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "PUNCTUATION",          value: "}" },
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "STATEMENTS_END",       value: "}" },  
-                    { type: "TERMINATOR",           value: "EOF"}
-                  ]
+          { type: "STATEMENTS_END",       value: "}" },  
+          { type: "TERMINATOR",           value: "EOF"}
+        ]
         expect(lexer(input)).to.deep.equal(output);
       });
 
@@ -3069,56 +3069,56 @@ describe('Lexer', function() {
                     }
                 }`;
         output = [
-                    { type: "DECLARATION_KEYWORD",  value: "func"},
-                    { type: "IDENTIFIER",           value: "sayHello" },
-                    { type: "PARAMS_START",         value: "(" },
-                    { type: "DECLARATION_KEYWORD",  value: "var"},
-                    { type: "IDENTIFIER",           value: "personName" },
-                    { type: "PUNCTUATION",          value: ":" }, 
-                    { type: "TYPE_STRING",          value: "String" }, 
-                    { type: "PUNCTUATION",          value: "," },
-                    { type: "DECLARATION_KEYWORD",  value: "var"},
-                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
-                    { type: "PUNCTUATION",          value: ":" }, 
-                    { type: "TYPE_BOOLEAN",         value: "Bool" }, 
-                    { type: "PARAMS_END",           value: ")" }, 
-                    { type: "RETURN_ARROW",         value: "->" }, 
-                    { type: "TYPE_STRING",          value: "String" }, 
-                    { type: "STATEMENTS_START",     value: "{" },  
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "sayHello" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "personName" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_STRING",          value: "String" }, 
+          { type: "PUNCTUATION",          value: "," },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "alreadyGreeted" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_BOOLEAN",         value: "Bool" }, 
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" }, 
+          { type: "TYPE_STRING",          value: "String" }, 
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "STATEMENT_KEYWORD",    value: "if" },
-                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
-                    { type: "PUNCTUATION",          value: "{" },
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "if" },
+          { type: "IDENTIFIER",           value: "alreadyGreeted" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
-                    { type: "IDENTIFIER",           value: "sayHello" },
-                    { type: "INVOCATION_START",     value: "(" }, 
-                    { type: "IDENTIFIER",           value: "personName" },
-                    { type: "INVOCATION_END",       value: ")" }, 
-                    { type: "OPERATOR",             value: "+" }, 
-                    { type: "STRING",               value: " blah" }, 
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"}, 
+          { type: "IDENTIFIER",           value: "sayHello" },
+          { type: "INVOCATION_START",     value: "(" }, 
+          { type: "IDENTIFIER",           value: "personName" },
+          { type: "INVOCATION_END",       value: ")" }, 
+          { type: "OPERATOR",             value: "+" }, 
+          { type: "STRING",               value: " blah" }, 
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "PUNCTUATION",          value: "}" },
-                    { type: "STATEMENT_KEYWORD",    value: "else" },
-                    { type: "PUNCTUATION",          value: "{" },
-                    { type: "TERMINATOR",           value: "\\n"}, 
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "STATEMENT_KEYWORD",    value: "else" },
+          { type: "PUNCTUATION",          value: "{" },
+          { type: "TERMINATOR",           value: "\\n"}, 
 
-                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
-                    { type: "IDENTIFIER",           value: "sayHello" },
-                    { type: "INVOCATION_START",     value: "(" }, 
-                    { type: "IDENTIFIER",           value: "personName" },
-                    { type: "INVOCATION_END",       value: ")" },
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"}, 
+          { type: "IDENTIFIER",           value: "sayHello" },
+          { type: "INVOCATION_START",     value: "(" }, 
+          { type: "IDENTIFIER",           value: "personName" },
+          { type: "INVOCATION_END",       value: ")" },
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "PUNCTUATION",          value: "}" },
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "STATEMENTS_END",       value: "}" },  
-                    { type: "TERMINATOR",           value: "EOF"}
-                  ]
+          { type: "STATEMENTS_END",       value: "}" },  
+          { type: "TERMINATOR",           value: "EOF"}
+        ]
         expect(lexer(input)).to.deep.equal(output);
       });
 
@@ -3130,53 +3130,53 @@ describe('Lexer', function() {
                     return giveString()
                 }`;
         output = [
-                    { type: "DECLARATION_KEYWORD",  value: "func"},
-                    { type: "IDENTIFIER",           value: "sayHello" },
-                    { type: "PARAMS_START",         value: "(" },
-                    { type: "DECLARATION_KEYWORD",  value: "var"},
-                    { type: "IDENTIFIER",           value: "firstName" },
-                    { type: "PUNCTUATION",          value: ":" }, 
-                    { type: "TYPE_STRING",          value: "String" }, 
-                    { type: "PUNCTUATION",          value: "," },
-                    { type: "DECLARATION_KEYWORD",  value: "var"},
-                    { type: "IDENTIFIER",           value: "lastName" },
-                    { type: "PUNCTUATION",          value: ":" }, 
-                    { type: "TYPE_STRING",          value: "String" }, 
-                    { type: "PARAMS_END",           value: ")" }, 
-                    { type: "RETURN_ARROW",         value: "->" }, 
-                    { type: "TYPE_STRING",          value: "String" }, 
-                    { type: "STATEMENTS_START",     value: "{" },  
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "sayHello" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "firstName" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_STRING",          value: "String" }, 
+          { type: "PUNCTUATION",          value: "," },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
+          { type: "IDENTIFIER",           value: "lastName" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_STRING",          value: "String" }, 
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" }, 
+          { type: "TYPE_STRING",          value: "String" }, 
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "DECLARATION_KEYWORD",  value: "func"},
-                    { type: "IDENTIFIER",           value: "giveString" },
-                    { type: "PARAMS_START",         value: "(" },
-                    { type: "PARAMS_END",           value: ")" }, 
-                    { type: "RETURN_ARROW",         value: "->" }, 
-                    { type: "TYPE_STRING",          value: "String" }, 
-                    { type: "STATEMENTS_START",     value: "{" },  
-                    { type: "TERMINATOR",           value: "\\n"},  
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "giveString" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" }, 
+          { type: "TYPE_STRING",          value: "String" }, 
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},  
 
-                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
-                    { type: "IDENTIFIER",           value: "firstName" },
-                    { type: "OPERATOR",             value: "+" },
-                    { type: "STRING",               value: " " },
-                    { type: "OPERATOR",             value: "+" },
-                    { type: "IDENTIFIER",           value: "lastName" },
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"}, 
+          { type: "IDENTIFIER",           value: "firstName" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "STRING",               value: " " },
+          { type: "OPERATOR",             value: "+" },
+          { type: "IDENTIFIER",           value: "lastName" },
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "STATEMENTS_END",       value: "}" },  
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENTS_END",       value: "}" },  
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
-                    { type: "IDENTIFIER",           value: "giveString" },
-                    { type: "INVOCATION_START",     value: "(" }, 
-                    { type: "INVOCATION_END",       value: ")" },   
-                    { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"}, 
+          { type: "IDENTIFIER",           value: "giveString" },
+          { type: "INVOCATION_START",     value: "(" }, 
+          { type: "INVOCATION_END",       value: ")" },   
+          { type: "TERMINATOR",           value: "\\n"},
 
-                    { type: "STATEMENTS_END",       value: "}" },  
-                    { type: "TERMINATOR",           value: "EOF"}
-                  ];
+          { type: "STATEMENTS_END",       value: "}" },  
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
@@ -3362,106 +3362,104 @@ describe('Lexer', function() {
                     return (currentMin, currentMax)
                 }`;
         output = [
-                   { type: "DECLARATION_KEYWORD",  value: "func"},
-                   { type: "IDENTIFIER",           value: "minMax" },
-                   { type: "PARAMS_START",         value: "(" },
-                   { type: "IDENTIFIER",           value: "array" },
-                   { type: "PUNCTUATION",          value: ":" }, 
-                   { type: "ARRAY_START",          value: "["},
-                   { type: "TYPE_NUMBER",          value: "Int" }, 
-                   { type: "ARRAY_END",            value: "]"},    
-                   { type: "PARAMS_END",           value: ")" }, 
-                   { type: "RETURN_ARROW",         value: "->" },     
-                   { type: "TUPLE_START",          value: "("},
-                   { type: "TUPLE_ELEMENT_NAME",   value: "min"},
-                   { type: "PUNCTUATION",          value: ":" },
-                   { type: "TYPE_NUMBER",          value: "Int" }, 
-                   { type: "PUNCTUATION",          value: "," },
-                   { type: "TUPLE_ELEMENT_NAME",   value: "max"},
-                   { type: "PUNCTUATION",          value: ":" },
-                   { type: "TYPE_NUMBER",          value: "Int" }, 
-                   { type: "TUPLE_END",            value: ")"},
-                   { type: "STATEMENTS_START",     value: "{" },  
-                   { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",          value: "func"},
+          { type: "IDENTIFIER",                   value: "minMax" },
+          { type: "PARAMS_START",                 value: "(" },
+          { type: "IDENTIFIER",                   value: "array" },
+          { type: "PUNCTUATION",                  value: ":" }, 
+          { type: "ARRAY_START",                  value: "["},
+          { type: "TYPE_NUMBER",                  value: "Int" }, 
+          { type: "ARRAY_END",                    value: "]"},    
+          { type: "PARAMS_END",                   value: ")" }, 
+          { type: "RETURN_ARROW",                 value: "->" },     
+          { type: "TUPLE_START",                  value: "("},
+          { type: "TUPLE_ELEMENT_NAME",           value: "min"},
+          { type: "PUNCTUATION",                  value: ":" },
+          { type: "TYPE_NUMBER",                  value: "Int" }, 
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "TUPLE_ELEMENT_NAME",           value: "max"},
+          { type: "PUNCTUATION",                  value: ":" },
+          { type: "TYPE_NUMBER",                  value: "Int" }, 
+          { type: "TUPLE_END",                    value: ")"},
+          { type: "STATEMENTS_START",             value: "{" },  
+          { type: "TERMINATOR",                   value: "\\n"},
+        
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "currentMin" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "array" },
+          { type: "SUBSTRING_LOOKUP_START",       value: "[" },
+          { type: "NUMBER",                       value: "0" },
+          { type: "SUBSTRING_LOOKUP_END",         value: "]" },
+          { type: "TERMINATOR",                   value: "\\n"},
 
-                   { type: "DECLARATION_KEYWORD",  value: "var" },
-                   { type: "IDENTIFIER",           value: "currentMin" },
-                   { type: "OPERATOR",             value: "=" },
-                   { type: "IDENTIFIER",           value: "array" },
-                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
-                   { type: "NUMBER",               value: "0" },
-                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
-                   { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "currentMax" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "array" },
+          { type: "SUBSTRING_LOOKUP_START",       value: "[" },
+          { type: "NUMBER",                       value: "0" },
+          { type: "SUBSTRING_LOOKUP_END",         value: "]" },
+          { type: "TERMINATOR",                   value: "\\n"},
 
-                   { type: "DECLARATION_KEYWORD",  value: "var" },
-                   { type: "IDENTIFIER",           value: "currentMax" },
-                   { type: "OPERATOR",             value: "=" },
-                   { type: "IDENTIFIER",           value: "array" },
-                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
-                   { type: "NUMBER",               value: "0" },
-                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
-                   { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",            value: "for" },
+          { type: "IDENTIFIER",                   value: "value" },
+          { type: "STATEMENT_KEYWORD",            value: "in" },
+          { type: "IDENTIFIER",                   value: "array" },
+          { type: "SUBSTRING_LOOKUP_START",       value: "[" },
+         
+          { type: "NUMBER",                       value: "1" },
+          { type: "HALF-OPEN_RANGE",              value: "..<" },
 
-                   { type: "STATEMENT_KEYWORD",    value: "for" },
-                   { type: "IDENTIFIER",           value: "value" },
-                   { type: "STATEMENT_KEYWORD",    value: "in" },
-                   { type: "IDENTIFIER",           value: "array" },
-                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
-                   
-                        { type: "NUMBER",               value: "1" },
-                        { type: "HALF-OPEN_RANGE",      value: "..<" },
-                        //TODO get native methods working
-                        { type: "NODUCKINGCLUE",               value: "array.count" },     
+          { type: "NODUCKINGCLUE",                value: "array.count" },     
+ 
+          { type: "SUBSTRING_LOOKUP_END",         value: "]" },
+          { type: "PUNCTUATION",                  value: "{" },
+          { type: "TERMINATOR",                   value: "\\n"},
 
-                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
-                   { type: "PUNCTUATION",          value: "{" },
-                   { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",            value: "if" },
+          { type: "IDENTIFIER",                   value: "value" },
+          { type: "OPERATOR",                     value: "<" },
+          { type: "IDENTIFIER",                   value: "currentMin" },
+          { type: "PUNCTUATION",                  value: "{" },
+          { type: "TERMINATOR",                   value: "\\n"},
 
+          { type: "IDENTIFIER",                   value: "currentMin" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "value" }, 
+          { type: "TERMINATOR",                   value: "\\n"},
 
+          { type: "PUNCTUATION",                  value: "}" },
+          { type: "STATEMENT_KEYWORD",            value: "else" },
+          { type: "STATEMENT_KEYWORD",            value: "if" },
+          { type: "IDENTIFIER",                   value: "value" },
+          { type: "OPERATOR",                     value: ">" },
+          { type: "IDENTIFIER",                   value: "currentMax" },
+          { type: "PUNCTUATION",                  value: "{" },
+          { type: "TERMINATOR",                   value: "\\n"},
 
-                        { type: "STATEMENT_KEYWORD",    value: "if" },
-                        { type: "IDENTIFIER",           value: "value" },
-                        { type: "OPERATOR",             value: "<" },
-                        { type: "IDENTIFIER",           value: "currentMin" },
-                        { type: "PUNCTUATION",          value: "{" },
-                        { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",                   value: "currentMax" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "value" },
+          { type: "TERMINATOR",                   value: "\\n"},
 
-                        { type: "IDENTIFIER",           value: "currentMin" },
-                        { type: "OPERATOR",             value: "=" },
-                        { type: "IDENTIFIER",           value: "value" }, 
-                        { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",                  value: "}" },
+          { type: "TERMINATOR",                   value: "\\n"},
 
-                        { type: "PUNCTUATION",          value: "}" },
-                        { type: "STATEMENT_KEYWORD",    value: "else" },
-                        { type: "STATEMENT_KEYWORD",    value: "if" },
-                        { type: "IDENTIFIER",           value: "value" },
-                        { type: "OPERATOR",             value: ">" },
-                        { type: "IDENTIFIER",           value: "currentMax" },
-                        { type: "PUNCTUATION",          value: "{" },
-                        { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",                  value: "}" },
+          { type: "TERMINATOR",                   value: "\\n"},
 
-                        { type: "IDENTIFIER",           value: "currentMax" },
-                        { type: "OPERATOR",             value: "=" },
-                        { type: "IDENTIFIER",           value: "value" },
-                        { type: "TERMINATOR",           value: "\\n"},
-               
-                        { type: "PUNCTUATION",          value: "}" },
-                        { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",            value: "return"},
+          { type: "TUPLE_START",                  value: "("},
+          { type: "IDENTIFIER",                   value: "currentMin"},
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "IDENTIFIER",                   value: "not currentMax"},
+          { type: "TUPLE_END",                    value: ")"},
+          { type: "TERMINATOR",                   value: "\\n"},
 
-                        { type: "PUNCTUATION",          value: "}" },
-                        { type: "TERMINATOR",           value: "\\n"},
-
-                        { type: "STATEMENT_KEYWORD",    value: "return"},
-                        { type: "TUPLE_START",                value: "("},
-                        { type: "IDENTIFIER",                     value: "currentMin"},
-                        { type: "PUNCTUATION",                value: "," },
-                        { type: "IDENTIFIER",                     value: "not currentMax"},
-                        { type: "TUPLE_END",                  value: ")"},
-                        { type: "TERMINATOR",           value: "\\n"},
-
-                   { type: "STATEMENTS_END",       value: "}" },  
-                   { type: "TERMINATOR",           value: "EOF"}
-                   ];
+          { type: "STATEMENTS_END",               value: "}" },  
+          { type: "TERMINATOR",                   value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
@@ -3479,108 +3477,106 @@ describe('Lexer', function() {
                     return (currentMin, currentMax)
                 }`;
         output = [
-                   { type: "DECLARATION_KEYWORD",  value: "func"},
-                   { type: "IDENTIFIER",           value: "minMax" },
-                   { type: "PARAMS_START",         value: "(" },
-                   { type: "DECLARATION_KEYWORD",  value: "var"},
-                   { type: "IDENTIFIER",           value: "array" },
-                   { type: "PUNCTUATION",          value: ":" }, 
-                   { type: "ARRAY_START",          value: "["},
-                   { type: "TYPE_NUMBER",          value: "Int" }, 
-                   { type: "ARRAY_END",            value: "]"},    
-                   { type: "PARAMS_END",           value: ")" }, 
-                   { type: "RETURN_ARROW",         value: "->" },     
-                   { type: "TUPLE_START",          value: "("},
-                   { type: "TUPLE_ELEMENT_NAME",   value: "min"},
-                   { type: "PUNCTUATION",          value: ":" },
-                   { type: "TYPE_NUMBER",          value: "Int" }, 
-                   { type: "PUNCTUATION",          value: "," },
-                   { type: "TUPLE_ELEMENT_NAME",   value: "max"},
-                   { type: "PUNCTUATION",          value: ":" },
-                   { type: "TYPE_NUMBER",          value: "Int" }, 
-                   { type: "TUPLE_END",            value: ")"},
-                   { type: "STATEMENTS_START",     value: "{" },  
-                   { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",            value: "func"},
+          { type: "IDENTIFIER",                     value: "minMax" },
+          { type: "PARAMS_START",                   value: "(" },
+          { type: "DECLARATION_KEYWORD",            value: "var"},
+          { type: "IDENTIFIER",                     value: "array" },
+          { type: "PUNCTUATION",                    value: ":" }, 
+          { type: "ARRAY_START",                    value: "["},
+          { type: "TYPE_NUMBER",                    value: "Int" }, 
+          { type: "ARRAY_END",                      value: "]"},    
+          { type: "PARAMS_END",                     value: ")" }, 
+          { type: "RETURN_ARROW",                   value: "->" },     
+          { type: "TUPLE_START",                    value: "("},
+          { type: "TUPLE_ELEMENT_NAME",             value: "min"},
+          { type: "PUNCTUATION",                    value: ":" },
+          { type: "TYPE_NUMBER",                    value: "Int" }, 
+          { type: "PUNCTUATION",                    value: "," },
+          { type: "TUPLE_ELEMENT_NAME",             value: "max"},
+          { type: "PUNCTUATION",                    value: ":" },
+          { type: "TYPE_NUMBER",                    value: "Int" }, 
+          { type: "TUPLE_END",                      value: ")"},
+          { type: "STATEMENTS_START",               value: "{" },  
+          { type: "TERMINATOR",                     value: "\\n"},
 
-                   { type: "DECLARATION_KEYWORD",  value: "var" },
-                   { type: "IDENTIFIER",           value: "currentMin" },
-                   { type: "OPERATOR",             value: "=" },
-                   { type: "IDENTIFIER",           value: "array" },
-                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
-                   { type: "NUMBER",               value: "0" },
-                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
-                   { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",            value: "var" },
+          { type: "IDENTIFIER",                     value: "currentMin" },
+          { type: "OPERATOR",                       value: "=" },
+          { type: "IDENTIFIER",                     value: "array" },
+          { type: "SUBSTRING_LOOKUP_START",         value: "[" },
+          { type: "NUMBER",                         value: "0" },
+          { type: "SUBSTRING_LOOKUP_END",           value: "]" },
+          { type: "TERMINATOR",                     value: "\\n"},
 
-                   { type: "DECLARATION_KEYWORD",  value: "var" },
-                   { type: "IDENTIFIER",           value: "currentMax" },
-                   { type: "OPERATOR",             value: "=" },
-                   { type: "IDENTIFIER",           value: "array" },
-                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
-                   { type: "NUMBER",               value: "0" },
-                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
-                   { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",            value: "var" },
+          { type: "IDENTIFIER",                     value: "currentMax" },
+          { type: "OPERATOR",                       value: "=" },
+          { type: "IDENTIFIER",                     value: "array" },
+          { type: "SUBSTRING_LOOKUP_START",         value: "[" },
+          { type: "NUMBER",                         value: "0" },
+          { type: "SUBSTRING_LOOKUP_END",           value: "]" },
+          { type: "TERMINATOR",                     value: "\\n"},
 
-                   { type: "STATEMENT_KEYWORD",    value: "for" },
-                   { type: "IDENTIFIER",           value: "value" },
-                   { type: "STATEMENT_KEYWORD",    value: "in" },
-                   { type: "IDENTIFIER",           value: "array" },
-                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "STATEMENT_KEYWORD",              value: "for" },
+          { type: "IDENTIFIER",                     value: "value" },
+          { type: "STATEMENT_KEYWORD",              value: "in" },
+          { type: "IDENTIFIER",                     value: "array" },
+          { type: "SUBSTRING_LOOKUP_START",         value: "[" },
                    
-                        { type: "NUMBER",               value: "1" },
-                        { type: "HALF-OPEN_RANGE",      value: "..<" },
-                        //TODO get native methods working
-                        { type: "NUMBER",               value: "2" },
-                        // { type: "NODUCKINGCLUE",               value: "array.count" },     
+          { type: "NUMBER",                         value: "1" },
+          { type: "HALF-OPEN_RANGE",                value: "..<" },
+          //TODO get native methods working
+          { type: "NUMBER",                         value: "2" },
+          // { type: "NODUCKINGCLUE",               value: "array.count" },     
 
-                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
-                   { type: "PUNCTUATION",          value: "{" },
-                   { type: "TERMINATOR",           value: "\\n"},
+          { type: "SUBSTRING_LOOKUP_END",           value: "]" },
+          { type: "PUNCTUATION",                    value: "{" },
+          { type: "TERMINATOR",                     value: "\\n"},
 
+          { type: "STATEMENT_KEYWORD",              value: "if" },
+          { type: "IDENTIFIER",                     value: "value" },
+          { type: "OPERATOR",                       value: "<" },
+          { type: "IDENTIFIER",                     value: "currentMin" },
+          { type: "PUNCTUATION",                    value: "{" },
+          { type: "TERMINATOR",                     value: "\\n"},
 
+          { type: "IDENTIFIER",                     value: "currentMin" },
+          { type: "OPERATOR",                       value: "=" },
+          { type: "IDENTIFIER",                     value: "value" }, 
+          { type: "TERMINATOR",                     value: "\\n"},
 
-                        { type: "STATEMENT_KEYWORD",    value: "if" },
-                        { type: "IDENTIFIER",           value: "value" },
-                        { type: "OPERATOR",             value: "<" },
-                        { type: "IDENTIFIER",           value: "currentMin" },
-                        { type: "PUNCTUATION",          value: "{" },
-                        { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",                    value: "}" },
+          { type: "STATEMENT_KEYWORD",              value: "else" },
+          { type: "STATEMENT_KEYWORD",              value: "if" },
+          { type: "IDENTIFIER",                     value: "value" },
+          { type: "OPERATOR",                       value: ">" },
+          { type: "IDENTIFIER",                     value: "currentMax" },
+          { type: "PUNCTUATION",                    value: "{" },
+          { type: "TERMINATOR",                     value: "\\n"},
 
-                        { type: "IDENTIFIER",           value: "currentMin" },
-                        { type: "OPERATOR",             value: "=" },
-                        { type: "IDENTIFIER",           value: "value" }, 
-                        { type: "TERMINATOR",           value: "\\n"},
-
-                        { type: "PUNCTUATION",          value: "}" },
-                        { type: "STATEMENT_KEYWORD",    value: "else" },
-                        { type: "STATEMENT_KEYWORD",    value: "if" },
-                        { type: "IDENTIFIER",           value: "value" },
-                        { type: "OPERATOR",             value: ">" },
-                        { type: "IDENTIFIER",           value: "currentMax" },
-                        { type: "PUNCTUATION",          value: "{" },
-                        { type: "TERMINATOR",           value: "\\n"},
-
-                        { type: "IDENTIFIER",           value: "currentMax" },
-                        { type: "OPERATOR",             value: "=" },
-                        { type: "IDENTIFIER",           value: "value" },
-                        { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",                     value: "currentMax" },
+          { type: "OPERATOR",                       value: "=" },
+          { type: "IDENTIFIER",                     value: "value" },
+          { type: "TERMINATOR",                     value: "\\n"},
                
-                        { type: "PUNCTUATION",          value: "}" },
-                        { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",                    value: "}" },
+          { type: "TERMINATOR",                     value: "\\n"},
 
-                        { type: "PUNCTUATION",          value: "}" },
-                        { type: "TERMINATOR",           value: "\\n"},
+          { type: "PUNCTUATION",                    value: "}" },
+          { type: "TERMINATOR",                     value: "\\n"},
 
-                        { type: "STATEMENT_KEYWORD",    value: "return"},
-                        { type: "TUPLE_START",                value: "("},
-                        { type: "IDENTIFIER",                     value: "currentMin"},
-                        { type: "PUNCTUATION",                value: "," },
-                        { type: "IDENTIFIER",                     value: "currentMax"},
-                        { type: "TUPLE_END",                  value: ")"},
-                        { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",              value: "return"},
+          { type: "TUPLE_START",                    value: "("},
+          { type: "IDENTIFIER",                     value: "currentMin"},
+          { type: "PUNCTUATION",                    value: "," },
+          { type: "IDENTIFIER",                     value: "currentMax"},
+          { type: "TUPLE_END",                      value: ")"},
+          { type: "TERMINATOR",                     value: "\\n"},
 
-                   { type: "STATEMENTS_END",       value: "}" },  
-                   { type: "TERMINATOR",           value: "EOF"}
-                   ];
+          { type: "STATEMENTS_END",       value: "}" },  
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
