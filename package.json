@@ -7,15 +7,14 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "grunt test",
-    "postinstall": "grunt test"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shift-js/shift-js.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/shift-js/shift-js/issues"
   },
