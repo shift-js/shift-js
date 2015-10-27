@@ -27,7 +27,7 @@ module.exports = {
     '(': 'INVOCATION_START',
     ')': 'INVOCATION_END'
   },
-  
+
   COLLECTION: {
     '[': 'ARRAY_START',
     ']': 'COLLECTION_END'

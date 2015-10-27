@@ -1,4 +1,4 @@
-var parser = require('../parser')();
+var make_parser = require('../parser');
 var expect = require('chai').expect;
 var util = require('util');
 var R = require('ramda');
@@ -8,6 +8,7 @@ describe('Parser', function() {
 
     // Test 1 - Swift input: 'var a = 3'
     it('should handle variable declarations with numbers', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "a" },
@@ -39,14 +40,12 @@ describe('Parser', function() {
         ],
         "sourceType": "module"
       };
-      // console.log(util.inspect(parser(input), {colors:true,depth:null}));
-      // console.log(util.inspect(output, {colors:true,depth:null}));
-      // expect(JSON.stringify(R.equals(parser(input)))).eql(JSON.stringify(R.equals(output)));
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
     // Test 2 - Swift input: 'var b = "hello"'
     it('should handle strings', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "b" },
@@ -83,6 +82,7 @@ describe('Parser', function() {
 
     // Test 3 - Swift input: 'var c = true'
     it('should handle booleans', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "c" },
@@ -119,6 +119,7 @@ describe('Parser', function() {
 
     // Test 4 - Swift input: 'var d = "Test this"'
     it('should handle strings with whitespace', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "d" },
@@ -157,6 +158,7 @@ describe('Parser', function() {
   describe('Basic collections and constants', function () {
     // Test 5 - Swift input: 'var e = ["Eggs", "Milk", "Bacon"]'
     it('should handle arrays', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "e" },
@@ -214,6 +216,7 @@ describe('Parser', function() {
 
     // Test 6 - Swift input: 'var f = ["one": 1, "two": 2, "three": 3]'
     it('should handle dictionaries', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "f" },
@@ -316,6 +319,7 @@ describe('Parser', function() {
     // Swift input: 'var error = (404, "not found")'
     // AST Explorer input: 'var error = { 0: 404, 1: 'not found' };'
     it('should handle tuples', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "error" },
@@ -393,6 +397,7 @@ describe('Parser', function() {
     // Swift input: 'let http200Status = (statusCode: 200, description: "OK");'
     // AST Explorer input: 'var http200Status = { statusCode: 200, description: "OK"};'
     it('should handle tuples with element names', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",        value: "let" },
         { type: "IDENTIFIER",                 value: "http200Status" },
@@ -471,6 +476,7 @@ describe('Parser', function() {
     // Swift input: 'var empty = ()';
     // AST Explorer input: 'var empty = {};'
     it('should handle empty tuples', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "empty" },
@@ -507,6 +513,7 @@ describe('Parser', function() {
 
     // Test 7 - Swift input: 'let g = [1 : "one",2   :"two", 3: "three"]'
     it('should handle let and erratic spacing', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "let" },
         { type: "IDENTIFIER",           value: "g" },
@@ -609,6 +616,7 @@ describe('Parser', function() {
 
     // Test 8 - Swift input: 'let h = 3.14'
     it('should handle floating point numbers', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "let" },
         { type: "IDENTIFIER",           value: "h" },
@@ -645,6 +653,7 @@ describe('Parser', function() {
 
     // Test 9 - Swift input: 'let i = 5+6'
     it('should handle unspaced operators', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "let" },
         { type: "IDENTIFIER",           value: "i" },
@@ -692,6 +701,7 @@ describe('Parser', function() {
 
     // Test 10 - Swift input: 'var j = 5 + 6 / 4 - (-16 % 4.2) * 55'
     it('should handle order of operations', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "j" },
@@ -796,6 +806,7 @@ describe('Parser', function() {
 
 
     it('should handle comparisons', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "l" },
@@ -901,6 +912,7 @@ describe('Parser', function() {
 
     // Swift input: 'var a = 1; var m = ++a; var n = --m;'
     it('should handle prefix operators', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "a" },
@@ -996,6 +1008,7 @@ describe('Parser', function() {
 
     // Swift input: 'var a = 1; var m = a++; var n = m--;'
     it('should handle postfix operators', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "a" },
@@ -1092,6 +1105,7 @@ describe('Parser', function() {
 
     // Swift input: 'var a = true; var b = !a; var c = -a; var d = +b'
     it('should handle unary operators', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "a" },
@@ -1212,6 +1226,7 @@ describe('Parser', function() {
 
     // Swift input: 'var a = (6 == 7) ? 1 : -1'
     it('should handle ternary operators', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "a" },
@@ -1285,6 +1300,7 @@ describe('Parser', function() {
 
     // Swift input: 'var g = 6 == 7 ? true : false;'
     it('should handle ternary operators without a parenthetical', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "g" },
@@ -1351,6 +1367,7 @@ describe('Parser', function() {
 
     // Swift input: 'let h = false; let i = h ? 1 : 2;'
     it('should handle ternary operators that include identifiers', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "let" },
         { type: "IDENTIFIER",           value: "h" },
@@ -1427,6 +1444,7 @@ describe('Parser', function() {
 
     // Swift input: 'var a = 1...5; var b = 1..<5'
     xit('should handle ranges', function () {
+      var parser = make_parser();
       input = "FILL_ME_IN"; // Don says maybe we should wait on ranges
       output = "FILL_ME_IN";
       expect(R.equals(parser(input), output)).to.equal(true);
@@ -1436,6 +1454,7 @@ describe('Parser', function() {
 
     // Swift input: 'var k = "Stephen" + " " + "Tabor" + "!"'
     it('should handle string concatenation', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "k" },
@@ -1507,6 +1526,7 @@ describe('Parser', function() {
     // Lexer input: 'var planet = "Earth"; let o = "\\(planet)"'
     // AST Explorer input: 'var planet = "Earth"; var o = "" + planet + ""'
     it('should handle string interpolation', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "planet" },
@@ -1589,6 +1609,7 @@ describe('Parser', function() {
     // Lexer input: 'var planet = "Earth"; let o = "Hello \\(planet)!"'
     // AST Explorer input: 'var planet = "Earth"; var o = "Hello " + planet + "!"'
     it('should handle string interpolation in the middle of a string', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "planet" },
@@ -1671,6 +1692,7 @@ describe('Parser', function() {
     // Lexer input: 'var p = "\\(100 - 99), 2, 3"'
     // AST Explorer input: 'var p = ""+100 - 99+", 2, 3"'
     it('should handle interpolation of operations', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "p" },
@@ -1743,6 +1765,7 @@ describe('Parser', function() {
 
     // Test 17 - Swift input: 'let q = ["array1": [1,2,3], "array2": [4,5,6]];'
     it('should handle dictionaries of arrays', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "let" },
         { type: "IDENTIFIER",           value: "q" },
@@ -1864,6 +1887,7 @@ describe('Parser', function() {
 
     // Test 18 - Swift input: 'var arr = [1, 2]; var s = arr[0];'
     it('should handle array access', function () {
+      var parser = make_parser();
       //TODO Commented out tokens were added by Verlon and Rex
       //TODO arr access w/out initialization throws exception
       input = [
@@ -1951,6 +1975,7 @@ describe('Parser', function() {
 
     // Test 19 - Swift input: 'let arr = [1, 2]; let t = 100; var u = arr[t - 99];'
     it('should handle array access with numeric operations', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "let" },
         { type: "IDENTIFIER",           value: "arr" },
@@ -2069,6 +2094,7 @@ describe('Parser', function() {
 
     // Swift input: 'let arr = [1,2]; var u = [arr[0]];'
     it('should handle arrays of that contain a substring lookup', function () {
+      var parser = make_parser();
       //TODO Works when token.type of SUBSTRING_LOOKUP is replaced with token.type PUNCTUATION
       //TODO Why no longer just
       input = [
@@ -2166,6 +2192,7 @@ describe('Parser', function() {
     // Test 20 - Swift input: 'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
     // AST Explorer input: 'let arr = [1,2]; var v = {}; v[arr[0]] = [[1,2], [3,4]]; v[arr[1]] = [["one", "two"], ["three", "four"]];'
     xit('should handle arrays of dictionaries', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "let" },
         { type: "IDENTIFIER",           value: "arr" },
@@ -2402,6 +2429,7 @@ describe('Parser', function() {
     // Test 21 - Swift input: 'var w = [1: [[1: "two"], [3: "four"]], 2: [["one": 2], ["three": 4]]];'
     // AST Explorer input: 'var w = {1:[{1: "two"}, {3: "four"}],2:[{"one": 2},{"three": 4}]};'
     it('should handle multi-nested lists', function () {
+      var parser = make_parser();
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "w" },
@@ -2597,6 +2625,7 @@ describe('Parser', function() {
 
       // Swift input: 'var a = 5; if (true) {--a};'
       it('should handle single-line if statements', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -2674,6 +2703,7 @@ describe('Parser', function() {
 
       // Swift input: 'var b = 6; if (5 <= 6) {b++};'
       it('should handle single-line if statements with multi-character logical operators', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
@@ -2762,6 +2792,7 @@ describe('Parser', function() {
 
       // Swift input: 'var c = 1; if (c == 1) {c *= 5};'
       it('should handle single-line if statements with multi-character logical operators and multi-character mathematical operators', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
@@ -2855,6 +2886,7 @@ describe('Parser', function() {
       // Swift input: 'var d = 1; if d != 2 {d++};'
       // AST Explorer input: 'var d = 1; if (d != 2) {d++};'
       it('should handle single-line if statements without a parenthetical', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "d" },
@@ -2941,6 +2973,7 @@ describe('Parser', function() {
       // Swift input: 'var e = 1; if (e + 1) == 2 {e = 5};'
       // AST Explorer input: 'var e = 1; if ((e + 1) == 2) {e = 5};'
       it('should handle complex conditionals without an outer parenthetical', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "e" },
@@ -3044,6 +3077,7 @@ describe('Parser', function() {
       // Swift input: 'var f = true; if !f {f = true} else {f = false};'
       // AST Explorer input: 'var f = true; if (!f) {f = true} else {f = false};'
       it('should handle single line if/else statements', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "f" },
@@ -3153,6 +3187,7 @@ describe('Parser', function() {
 
       // Swift input: 'var a = 1; if (1 > 2) {++a} else if (1 < 2) {--a} else {a = 42}'
       it('should handle single-line if/else-if/else statements with parentheticals', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -3309,6 +3344,7 @@ describe('Parser', function() {
       // Swift input: 'var a = 1; if 1 > 2 {++a} else if 1 < 2 {--a} else {a = 42}'
       // AST Explorer input: 'var a = 1; if (1 > 2) {++a} else if (1 < 2) {--a} else {a = 42}'
       it('should handle single-line if/else-if/else statements with parentheticals', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -3463,6 +3499,7 @@ describe('Parser', function() {
 
       // Swift input: 'var i = 10; while (i >= 0) {i--}'
       it('should handle single-line while loops with a parenthetical', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -3546,6 +3583,7 @@ describe('Parser', function() {
       // Swift input: 'var i = 10; while i >= 0 {i--}'
       // AST Explorer input: 'var i = 10; while (i >= 0) {i--}'
       it('should handle single-line while loops without a parenthetical', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -3627,6 +3665,7 @@ describe('Parser', function() {
       // Swift input: 'var i = 10; repeat {i--} while (i >= 0)'
       // AST Explorer input: 'var i = 10; do {i--} while (i >= 0)'
       it('should handle single-line repeat-while loops with a parenthetical', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -3711,6 +3750,7 @@ describe('Parser', function() {
       // Swift input: 'var i = 10; repeat {i--} while i >= 0'
       // AST Explorer input: 'var i = 10; do {i--} while (i >= 0)'
       it('should handle single-line repeat-while loops without a parenthetical', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -3795,6 +3835,7 @@ describe('Parser', function() {
 
       // Swift input: 'var a = 0; for (var i = 10; i > 0; i--) {a++};'
       it('should handle single-line for loops with a parenthetical', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -3917,6 +3958,7 @@ describe('Parser', function() {
       // Swift input: 'var b = 0; for var j = 0; j < 10; j++ {b++};'
       // AST Explorer input: 'var b = 0; for (var j = 0; j < 10; j++) {b++};'
       it('should handle single-line for loops without a parenthetical', function() {
+        var parser = make_parser();
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },

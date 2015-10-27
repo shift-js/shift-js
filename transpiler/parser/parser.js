@@ -1,185 +1,48 @@
 var util = require('util');
-var fs = require('fs');
-var R = require('ramda');
 var diff = require('deep-diff').diff;
-
 var helpers = require('./helperFunctions.js');
+var advance = require('./advance');
+var new_scope = require('./new_scope');
+var original_scope = require('./original_scope');
+var original_symbol = require('./original_symbol');
+var symbol = require('./symbol');
 
+var make_parser = function() {
 
-//TODO Monday October 19th
-//TODO Test cases 19 & 20 Use type PUNCTUATION rather than ARRAY_START || ARRAYEND
-//TODO TEST 20 Doesn't define arr 20 (SAME WITH 19)
-//TODO Transform test 21 in CleanUp function call
-//TODO After parsing, post-parse CleanUp function needs to remove unnecessary keywords from nodes
-//TODO    Examples would be:reserved, nud, led, std, lbp, scope
-//TODO Friday October 23rd
-//TODO Initializing empty collection tests: only empty tuples are tested. Add more.
-
-var make_parse = function() {
-
-  var scope;
-  var symbol_table = {};
-  var token;
-  var tokens;
-  var token_nr;
-
-  var itself = function() {
-    return this;
-  };
-
-  Array.prototype.hasItem = function(val) {
-    return this.indexOf(val) > -1;
-  };
-
-  var isNum = function(val) {
-    return /^\d+.*$/.test(val);
-  };
-
-  var isBool = function(val) {
-    return val === 'true' || val === 'false';
-  };
-
-  var original_scope = {
-    define: function(n) {
-      var t = this.def[n.value];
-      if (typeof t === "object") {
-        n.error(t.reserved ? "Already reserved." : "Already defined.");
-      }
-      this.def[n.value] = n;
-      n.reserved = false;
-      n.nud = itself;
-      n.led = null;
-      n.std = null;
-      n.lbp = 0;
-      n.scope = scope;
-      return n;
-    },
-    find: function(n) {
-      var e = this,
-        o;
-      while (true) {
-        o = e.def[n];
-        if (o && typeof o !== 'function') {
-          return e.def[n];
-        }
-        e = e.parent;
-        if (!e) {
-          o = symbol_table[n];
-          return o && typeof o !== 'function' ? o : symbol_table["(name)"];
-        }
-      }
-    },
-    pop: function() {
-      scope = this.parent;
-    },
-    reserve: function(n) {
-      if (n.arity !== "name" || n.reserved) {
-        return;
-      }
-      var t = this.def[n.value];
-      if (t) {
-        if (t.reserved) {
-          return;
-        }
-        if (t.arity === "name") {
-          n.error("Already defined.");
-        }
-      }
-      this.def[n.value] = n;
-      n.reserved = true;
-    }
-  };
-
-  var new_scope = function() {
-    var s = scope;
-    scope = Object.create(original_scope);
-    scope.def = {};
-    scope.parent = s;
-    return scope;
-  };
-
-  /**
-   * Look forward one token in the collection
-   */
-  var advance = function(id) {
-
-    var a, o, t, v;
-
-    if (id && token.id !== id) {
-      token.error("Expected '" + id + "'.");
-    }
-
-    if (token_nr >= tokens.length) {
-      token = symbol_table["(end)"];
-      return;
-    }
-
-    t = tokens[token_nr];
-    token_nr += 1;
-    v = t.value;
-    a = t.type;
-
-    var terminatorTokenTypes = ["ARRAY_END", "DICTIONARY_END", "TUPLE_END", "TERMINATOR"];
-    var primitiveTokenTypes = ["NUMBER", "BOOLEAN", "STRING"];
-    var collectionStartTokenTypes = ["ARRAY_START", "DICTIONARY_START", "TUPLE_START"];
-    var verbTokenTypes = ["PUNCTUATION", "OPERATOR", "SUBSTRING_LOOKUP_END", "SUBSTRING_LOOKUP_START"];
-    var nounTokenValues = ["DECLARATION_KEYWORD", "IDENTIFIER", "TUPLE_ELEMENT_NAME", "STATEMENT_KEYWORD"];
-
-    if (nounTokenValues.hasItem(a)) {
-      if (a === "DECLARATION_KEYWORD") v = "var";
-      o = scope.find(v);
-    } else if (collectionStartTokenTypes.hasItem(a)) {
-
-      if(a === "ARRAY_START") {
-        v = '[';
-        o = symbol_table['['];
-      } else {
-        v = '{';
-        o = symbol_table['{'];
-      }
-
-      if (!o) t.error("Unknown operator.");
-    } else if (terminatorTokenTypes.hasItem(a) || verbTokenTypes.hasItem(a)) {
-      o = symbol_table[v];
-      if (!o) t.error("Unknown operator.");
-    } else if (primitiveTokenTypes.hasItem(a)) {
-      o = symbol_table["(literal)"];
-      a = "literal";
-    } else {
-      t.error("Unexpected token.");
-    }
-
-    token = Object.create(o);
-    token.value = v;
-    token.arity = a;
-    return token;
-
-  };
+  var obj = {};
+  obj.scope;
+  obj.symbol_table = {};
+  obj.token;
+  obj.tokens;
+  obj.token_nr = 0;
 
   /**
    * Begin parsing an expression phrase from the current token
    * Calls itself recursively depending on the context.
    **/
   var expression = function(rbp) {
+
     var left;
-    var t = token;
-    advance();
+    var t = obj.token;
+    obj = advance(obj);
     left = t.nud();
 
     if (t.value === "++" || t.value === "--") {
       //Pre-fix operator
       left = t;
 
-      if(token.value !== "}") advance();
-    } else if (token.value === "++" || token.value === "--") {
+      if(obj.token.value !== "}") {
+        obj = advance(obj);
+      }
+    } else if (obj.token.value === "++" || obj.token.value === "--") {
       //Post-fix operators
-      if(token.value === "++") {
+      if(obj.token.value === "++") {
         left.type = "Identifier";
         left.name = left.value;
         delete left.value;
         delete left.arity;
 
-        advance();
+        obj = advance(obj);
         return {
           "type": "UpdateExpression",
           "operator": "++",
@@ -191,7 +54,7 @@ var make_parse = function() {
         left.name = left.value;
         delete left.value;
         delete left.arity;
-        advance();
+        obj = advance(obj);
         return {
           "type": "UpdateExpression",
           "operator": "--",
@@ -203,19 +66,19 @@ var make_parse = function() {
     } else if (t.operator === "+") {
       delete t.arity;
       delete t.value;
-      token.name = token.value;
-      token.type = "Identifier";
-      delete token.value;
-      delete token.arity;
-      t.argument = token;
+      obj.token.name = obj.token.value;
+      obj.token.type = "Identifier";
+      delete obj.token.value;
+      delete obj.token.arity;
+      t.argument = obj.token;
     }
 
     /**
      * Logic to handle the recursive case
      */
-    while (rbp < token.lbp) {
-      t = token;
-      advance();
+    while (rbp < obj.token.lbp) {
+      t = obj.token;
+      obj = advance(obj);
       left = t.led(left);
     }
 
@@ -226,7 +89,7 @@ var make_parse = function() {
       delete left.arity;
       delete left.value;
     }
-    else if (left.arity === "literal" && isNum(left.value)) {
+    else if (left.arity === "literal" && helpers.isNum(left.value)) {
       left.type = "Literal";
       left.raw = left.value;
       if (left.value.indexOf('.')) {
@@ -236,7 +99,7 @@ var make_parse = function() {
       }
       delete t.arity;
     }
-    else if (left.arity === "literal" && isBool(left.value)) {
+    else if (left.arity === "literal" && helpers.isBool(left.value)) {
       left.type = "Literal";
       left.raw = t.value;
       left.value = t.value === "true";
@@ -252,24 +115,24 @@ var make_parse = function() {
   };
 
   var statement = function() {
-    var n = token, v;
+    var n = obj.token, v;
 
 
     if (n.std) {
-      advance();
-      scope.reserve(n);
+      obj = advance(obj);
+      obj.scope.reserve(n);
       return n.std();
     }
     v = expression(0);
 
-    if(token.value === "}") {
+    if(obj.token.value === "}") {
       return v;
     }
 
     if (!v.assignment && v.id !== "(") {
       v.error("Bad expression statement.");
     }
-    advance(";");
+    obj = advance(obj, ";");
     return v;
   };
 
@@ -277,8 +140,8 @@ var make_parse = function() {
     var a = [], s, count = 0;
     while (true) {
       if(count >= optionalNumLoops) break;
-      if (token.id === ";" || token.id === "}" || token.id === "(end)" || token.id === "EOF") {
-        if(token.id === ";") {
+      if (obj.token.id === ";" || obj.token.id === "}" || obj.token.id === "(end)" || obj.token.id === "EOF") {
+        if(obj.token.id === ";") {
           a.push({
             "type": "EmptyStatement"
           });
@@ -295,8 +158,8 @@ var make_parse = function() {
   };
 
   var block = function() {
-    var t = token;
-    advance("{");
+    var t = obj.token;
+    obj = advance(obj, "{");
     var stdReturnVal = t.std();
 
     return {
@@ -309,33 +172,8 @@ var make_parse = function() {
 
   };
 
-  var original_symbol = {
-    nud: function() {
-      this.error("Undefined.");
-    },
-    led: function(left) {
-      this.error("Missing operator.");
-    }
-  };
-
-  var symbol = function(id, bp) {
-    var s = symbol_table[id];
-    bp = bp || 0;
-    if (s) {
-      if (bp >= s.lbp) {
-        s.lbp = bp;
-      }
-    } else {
-      s = Object.create(original_symbol);
-      s.id = s.value = id;
-      s.lbp = bp;
-      symbol_table[id] = s;
-    }
-    return s;
-  };
-
   var constant = function(s, v) {
-    var x = symbol(s);
+    var x = symbol(obj, original_symbol, s);
     x.nud = function() {
       scope.reserve(this);
       this.value = symbol_table[this.id].value;
@@ -347,7 +185,7 @@ var make_parse = function() {
   };
 
   var infix = function(id, bp, led) {
-    var s = symbol(id, bp);
+    var s = symbol(obj, original_symbol, id, bp);
     s.led = led || function(left) {
         //this.first = left;
         //this.second = expression(bp);
@@ -363,13 +201,12 @@ var make_parse = function() {
 
         }
 
-
         if(left.arity === "IDENTIFIER") {
           left.type = "Identifier";
           left.name = left.value;
           delete left.arity;
           delete left.value;
-        } else if(left.arity === "literal" && isNum(left.value)) {
+        } else if(left.arity === "literal" && helpers.isNum(left.value)) {
           // This is for type number
           left.type = "Literal";
           delete left.arity;
@@ -379,7 +216,7 @@ var make_parse = function() {
           } else {
             left.value = parseInt(left.value);
           }
-        } else if (left.arity === "literal" && isBool(left.value)) {
+        } else if (left.arity === "literal" && helpers.isBool(left.value)) {
           // This is for type boolean
 
         } else if (left.arity === "literal") {
@@ -398,7 +235,7 @@ var make_parse = function() {
   };
 
   var infixr = function(id, bp, led) {
-    var s = symbol(id, bp);
+    var s = symbol(obj, original_symbol, id, bp);
     s.led = led || function(left) {
         //this.first = left;
         //this.second = expression(bp - 1);
@@ -420,7 +257,7 @@ var make_parse = function() {
           left.name = left.value;
           delete left.arity;
           delete left.value;
-        } else if(left.arity === "literal" && isNum(left.value)) {
+        } else if(left.arity === "literal" && helpers.isNum(left.value)) {
           // This is for type number
           left.type = "Literal";
           delete left.arity;
@@ -430,7 +267,7 @@ var make_parse = function() {
           } else {
             left.value = parseInt(left.value);
           }
-        } else if (left.arity === "literal" && isBool(left.value)) {
+        } else if (left.arity === "literal" && helpers.isBool(left.value)) {
           // This is for type boolean
 
         } else if (left.arity === "literal") {
@@ -476,9 +313,9 @@ var make_parse = function() {
   };
 
   var prefix = function(id, nud) {
-    var s = symbol(id);
+    var s = symbol(obj, original_symbol, id);
     s.nud = nud || function() {
-        scope.reserve(this);
+        obj.scope.reserve(this);
         //this.first = expression(70);
         //this.arity = "unary";
 
@@ -519,21 +356,21 @@ var make_parse = function() {
   };
 
   var stmt = function(s, f) {
-    var x = symbol(s);
+    var x = symbol(obj, original_symbol, s);
     x.std = f;
     return x;
   };
 
-  symbol("EOF");
-  symbol("(end)");
-  symbol("(name)");
-  symbol(":");
-  symbol(";");
-  symbol(")");
-  symbol("]");
-  symbol("}");
-  symbol(",");
-  symbol("else");
+  symbol(obj, original_symbol, "EOF");
+  symbol(obj, original_symbol, "(end)");
+  symbol(obj, original_symbol, "(name)");
+  symbol(obj, original_symbol, ":");
+  symbol(obj, original_symbol, ";");
+  symbol(obj, original_symbol, ")");
+  symbol(obj, original_symbol, "]");
+  symbol(obj, original_symbol, "}");
+  symbol(obj, original_symbol, ",");
+  symbol(obj, original_symbol, "else");
 
   constant("true", true);
   constant("false", false);
@@ -542,9 +379,9 @@ var make_parse = function() {
   constant("Object", {});
   constant("Array", []);
 
-  symbol("(literal)").nud = itself;
+  symbol(obj, original_symbol, "(literal)").nud = helpers.itself;
 
-  symbol("this").nud = function() {
+  symbol(obj, original_symbol, "this").nud = function() {
     scope.reserve(this);
     this.arity = "this";
     return this;
@@ -568,7 +405,7 @@ var make_parse = function() {
 
     this.test = left;
     this.consequent = expression(0);
-    advance(":");
+    obj = advance(obj, ":");
     this.alternate = expression(0);
     //this.arity = "ternary";
     delete this.value;
@@ -597,13 +434,13 @@ var make_parse = function() {
 
   infix(".", 80, function(left) {
     this.first = left;
-    if (token.arity !== "name") {
-      token.error("Expected a property name.");
+    if (obj.token.arity !== "name") {
+      obj.token.error("Expected a property name.");
     }
-    token.arity = "literal";
-    this.second = token;
+    obj.token.arity = "literal";
+    this.second = obj.token;
     this.arity = "binary";
-    advance();
+    obj = advance(obj);
     return this;
   });
 
@@ -624,7 +461,7 @@ var make_parse = function() {
     //this.arity = "binary";
     delete this.arity;
     delete this.value;
-    advance("]");
+    obj = advance(obj, "]");
     return this;
   });
 
@@ -645,16 +482,16 @@ var make_parse = function() {
         left.error("Expected a variable name.");
       }
     }
-    if (token.id !== ")") {
+    if (obj.token.id !== ")") {
       while (true) {
         a.push(expression(0));
-        if (token.id !== ",") {
+        if (obj.token.id !== ",") {
           break;
         }
-        advance(",");
+        obj = advance(obj, ",");
       }
     }
-    advance(")");
+    obj = advance(obj, ")");
     return this;
   });
 
@@ -667,38 +504,38 @@ var make_parse = function() {
 
   prefix("(", function() {
     var e = expression(0);
-    advance(")");
+    obj = advance(obj, ")");
     return e;
   });
 
   prefix("function", function() {
     var a = [];
-    new_scope();
-    if (token.arity === "name") {
-      scope.define(token);
-      this.name = token.value;
-      advance();
+    obj.scope = new_scope(obj, original_scope);
+    if (obj.token.arity === "name") {
+      obj.scope.define(token);
+      this.name = obj.token.value;
+      obj = advance(obj);
     }
-    advance("(");
-    if (token.id !== ")") {
+    obj = advance(obj, "(");
+    if (obj.token.id !== ")") {
       while (true) {
-        if (token.arity !== "name") {
-          token.error("Expected a parameter name.");
+        if (obj.token.arity !== "name") {
+          obj.token.error("Expected a parameter name.");
         }
-        scope.define(token);
-        a.push(token);
-        advance();
-        if (token.id !== ",") {
+        obj.scope.define(token);
+        a.push(obj.token);
+        obj = advance(obj);
+        if (obj.token.id !== ",") {
           break;
         }
-        advance(",");
+        obj = advance(obj, ",");
       }
     }
     this.first = a;
-    advance(")");
-    advance("{");
+    obj = advance(obj, ")");
+    obj = advance(obj, "{");
     this.second = statements();
-    advance("}");
+    obj = advance(obj, "}");
     this.arity = "function";
     scope.pop();
     return this;
@@ -706,16 +543,16 @@ var make_parse = function() {
 
   prefix("[", function() {
     var a = [];
-    if (token.id !== "]") {
+    if (obj.token.id !== "]") {
       while (true) {
         a.push(expression(0));
-        if (token.id !== ",") {
+        if (obj.token.id !== ",") {
           break;
         }
-        advance(",");
+        obj = advance(obj, ",");
       }
     }
-    advance("]");
+    obj = advance(obj, "]");
     this.type = "ArrayExpression";
     delete this.value;
     delete this.raw;
@@ -731,21 +568,21 @@ var make_parse = function() {
   prefix("{", function() {
     var a = [], n, v;
 
-    var tmpLookAhead = tokens[token_nr];
+    var tmpLookAhead = obj.tokens[obj.token_nr];
     if(tmpLookAhead.value === ",") {
       // Handle Tuples w/out keys
 
       var a = [];
-      if (token.id !== "]") {
+      if (obj.token.id !== "]") {
         while (true) {
           a.push(expression(0));//TODO These are the properties
-          if (token.id !== ",") {
+          if (obj.token.id !== ",") {
             break;
           }
-          advance(",");
+          obj = advance(obj, ",");
         }
       }
-      advance(")");
+      obj = advance(obj, ")");
       this.type = "ObjectExpression";
       delete this.value;
       delete this.raw;
@@ -774,19 +611,17 @@ var make_parse = function() {
 
     }
 
-    if ((token.id !== "]" &&  token.id !== ")") && tmpLookAhead.value !== ",") {
+    if ((obj.token.id !== "]" &&  obj.token.id !== ")") && tmpLookAhead.value !== ",") {
       while (true) {
-        n = token;
+        n = obj.token;
         if (n.arity !== "IDENTIFIER" && n.arity !== "name" && n.arity !== "literal" && n.arity !== "TUPLE_ELEMENT_NAME") {
-          token.error("Bad property name.");
+          obj.token.error("Bad property name.");
         }
         if (n.arity !== "IDENTIFIER") {
 
-        } else {
-
         }
-        advance();
-        advance(":");
+        obj = advance(obj);
+        obj = advance(obj, ":");
         v = expression(0);
 
         var kvMap = {};
@@ -796,7 +631,7 @@ var make_parse = function() {
         kvMap.method = false;
         kvMap.shorthand = false;
 
-        if (n.arity === "literal" && isNum(n.value)) {
+        if (n.arity === "literal" && helpers.isNum(n.value)) {
           n.type = "Literal";
           n.raw = n.value;
           if (n.value.indexOf('.')) {
@@ -805,7 +640,7 @@ var make_parse = function() {
             n.value = parseInt(n.value);
           }
           delete n.arity;
-        } else if (n.arity === "literal" && isBool(n.value)) {
+        } else if (n.arity === "literal" && helpers.isBool(n.value)) {
           n.type = "Identifier";
           n.name = n.value;
           delete n.raw;
@@ -828,17 +663,17 @@ var make_parse = function() {
         /* a.push(v); */
         a.push(kvMap);
 
-        if (token.id !== ",") {
+        if (obj.token.id !== ",") {
           break;
         }
-        advance(",");
+        obj = advance(obj, ",");
       }
     }
 
     try {
-      advance("]");
+      obj = advance(obj, "]");
     } catch(e) {
-      advance(")");
+      obj = advance(obj, ")");
     }
 
     this.arity = "unary";
@@ -850,18 +685,17 @@ var make_parse = function() {
   });
 
   stmt("{", function() {
-    new_scope();
+    obj.scope = new_scope(obj, original_scope);
     var a = statements();
-    advance("}");
-    scope.pop();
+    obj = advance(obj, "}");
+    obj.scope.pop();
     return a;
   });
 
   stmt("var", function() {
-    var a = [],
-      n, t;
+    var a = [], n, t;
     while (true) {
-      n = token;
+      n = obj.token;
       if (n.arity !== "IDENTIFIER") {
         n.error("Expected a new variable identifier.");
       } else {
@@ -870,13 +704,13 @@ var make_parse = function() {
         delete n.arity;
       }
 
-      scope.define(n);
+      obj.scope.define(obj, n);
       delete n.value;
 
-      advance();
-      if (token.id === "=") {
-        t = token;
-        advance("=");
+      obj = advance(obj);
+      if (obj.token.id === "=") {
+        t = obj.token;
+        obj = advance(obj, "=");
 
         t.type = 'VariableDeclaration';
         t.kind = 'var';
@@ -894,41 +728,41 @@ var make_parse = function() {
 
         a.push(t);
       }
-      if (token.id === ";") {
+      if (obj.token.id === ";") {
         break;
         //return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
-      if (token.id !== ",") {
+      if (obj.token.id !== ",") {
         break;
       }
-      advance(",");
+      obj = advance(obj, ",");
     }
-    if(token.value === "var") {
+    if(obj.token.value === "var") {
       return a.length === 0 ? null : a.length === 1 ? a[0] : a;
     }
     try {
-      advance();
+      obj = advance(obj);
       //advance(";");//when actually was ("++")
     } catch (e) {
-      advance("EOF");
+      obj = advance(obj, "EOF");
     }
 
     return a.length === 0 ? null : a.length === 1 ? a[0] : a;
   });
 
   stmt("if", function() {
-    if(tokens[token_nr].value === "(") {
-      advance("(");
+    if(obj.tokens[obj.token_nr].value === "(") {
+      obj = advance(obj, "(");
       this.test = expression(0);
-      advance(")");
+      obj = advance(obj, ")");
     } else {
       this.test = expression(0);
     }
     this.consequent = block();
-    if (token.id === "else") {
-      scope.reserve(token);
-      advance("else");
-      this.alternate = token.id === "if" ? statement() : block();
+    if (obj.token.id === "else") {
+      obj.scope.reserve(obj.token);
+      obj = advance(obj, "else");
+      this.alternate = obj.token.id === "if" ? statement() : block();
     } else {
       this.alternate = null;
     }
@@ -940,21 +774,21 @@ var make_parse = function() {
   });
 
   stmt("return", function() {
-    if (token.id !== ";") {
+    if (obj.token.id !== ";") {
       this.first = expression(0);
     }
-    advance(";");
-    if (token.id !== "}") {
-      token.error("Unreachable statement.");
+    obj = advance(obj, ";");
+    if (obj.token.id !== "}") {
+      obj.token.error("Unreachable statement.");
     }
     this.arity = "statement";
     return this;
   });
 
   stmt("break", function() {
-    advance(";");
-    if (token.id !== "}") {
-      token.error("Unreachable statement.");
+    obj = advance(obj, ";");
+    if (obj.token.id !== "}") {
+      obj.token.error("Unreachable statement.");
     }
     this.arity = "statement";
     return this;
@@ -962,10 +796,10 @@ var make_parse = function() {
 
   stmt("while", function() {
     this.type = "WhileStatement";
-    if(tokens[token_nr-1].value === "(") {
-      advance("(");
+    if(obj.tokens[obj.token_nr-1].value === "(") {
+      obj = advance(obj, "(");
       this.test = expression(0);
-      advance(")");
+      obj = advance(obj, ")");
     } else {
       this.test = expression(0);
     }
@@ -979,22 +813,22 @@ var make_parse = function() {
 
   stmt("for", function() {
     this.type = "ForStatement";
-    if(tokens[token_nr-1].value === "(") {
-      advance("(");
+    if(obj.tokens[obj.token_nr-1].value === "(") {
+      obj = advance(obj, "(");
       //this.init = expression(0);
       this.init = statements(1);
       this.test = expression(0);
-      if(token.value === ";") {
-        advance(";");
+      if(obj.token.value === ";") {
+        obj = advance(obj, ";");
       }
       this.update = expression(0);
-      advance(")");
+      obj = advance(obj, ")");
     } else {
       this.init = statements(1);
       //this.init = expression(0);
       this.test = expression(0);
-      if(token.value === ";") {
-        advance(";");
+      if(obj.token.value === ";") {
+        obj = advance(obj, ";");
       }
       this.update = expression(0);
       //this.test = expression(0);
@@ -1011,13 +845,13 @@ var make_parse = function() {
   stmt("repeat", function() {
     this.type = "DoWhileStatement";
     this.body = block();
-    if(token.value === 'while') {
-      advance();
+    if(obj.token.value === 'while') {
+      obj = advance(obj);
     }
-    if(tokens[token_nr-1].value === "(") {
-      advance("(");
+    if(obj.tokens[obj.token_nr-1].value === "(") {
+      obj = advance(obj, "(");
       this.test = expression(0);
-      advance(")");
+      obj = advance(obj, ")");
     } else {
       this.test = expression(0);
     }
@@ -1031,21 +865,13 @@ var make_parse = function() {
 
 
   var parseTokenStream = function(input_tokens) {
-    tokens = helpers.cleanUpTokenStream(input_tokens);
 
-    token_nr = 0;
-    new_scope();
-    advance();
+    obj.tokens = helpers.cleanUpTokenStream(input_tokens);
+    obj.scope = new_scope(obj, original_scope);
+    obj = advance(obj);
     var s = statements();
-
-    advance();
-    //try {
-    //  advance("(end)");
-    //} catch (e) {
-    //  advance("EOF");
-    //}
-
-    scope.pop();
+    obj = advance(obj);
+    obj.scope.pop();
 
     var result = {
       type: 'Program',
@@ -1066,149 +892,4 @@ var make_parse = function() {
   return parseTokenStream;
 };
 
-
-
-
-var expected = {
-  "type": "Program",
-  "body": [
-    {
-      "type": "VariableDeclaration",
-      "declarations": [
-        {
-          "type": "VariableDeclarator",
-          "id": {
-            "type": "Identifier",
-            "name": "a"
-          },
-          "init": {
-            "type": "Literal",
-            "value": 0,
-            "raw": "0"
-          }
-        }
-      ],
-      "kind": "var"
-    },
-    {
-      "type": "ForStatement",
-      "init": {
-        "type": "VariableDeclaration",
-        "declarations": [
-          {
-            "type": "VariableDeclarator",
-            "id": {
-              "type": "Identifier",
-              "name": "i"
-            },
-            "init": {
-              "type": "Literal",
-              "value": 10,
-              "raw": "10"
-            }
-          }
-        ],
-        "kind": "var"
-      },
-      "test": {
-        "type": "BinaryExpression",
-        "operator": ">",
-        "left": {
-          "type": "Identifier",
-          "name": "i"
-        },
-        "right": {
-          "type": "Literal",
-          "value": 0,
-          "raw": "0"
-        }
-      },
-      "update": {
-        "type": "UpdateExpression",
-        "operator": "--",
-        "argument": {
-          "type": "Identifier",
-          "name": "i"
-        },
-        "prefix": false
-      },
-      "body": {
-        "type": "BlockStatement",
-        "body": [
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "UpdateExpression",
-              "operator": "++",
-              "argument": {
-                "type": "Identifier",
-                "name": "a"
-              },
-              "prefix": false
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "EmptyStatement"
-    }
-  ],
-  "sourceType": "module"
-};
-var tokenStream = [
-  { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "a" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "0" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "STATEMENT_KEYWORD",    value: "for" },
-  { type: "PUNCTUATION",          value: "(" },
-  { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "i" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "10" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "IDENTIFIER",           value: "i" },
-  { type: "OPERATOR",             value: ">" },
-  { type: "NUMBER",               value: "0" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "IDENTIFIER",           value: "i" },
-  { type: "OPERATOR",             value: "-" },
-  { type: "OPERATOR",             value: "-" },
-  { type: "PUNCTUATION",          value: ")" },
-  { type: "PUNCTUATION",          value: "{" },
-  { type: "IDENTIFIER",           value: "a" },
-  { type: "OPERATOR",             value: "+" },
-  { type: "OPERATOR",             value: "+" },
-  { type: "PUNCTUATION",          value: "}" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "TERMINATOR",           value: "EOF"}
-];
-var parser = make_parse();
-var actual = parser(tokenStream);
-
-
-
-
-console.log("############################");
-console.log("############################");
-console.log("##### BEGIN AST OUTPUT #####");
-console.log(util.inspect(actual, {
-  colors: true,
-  depth: null
-}));
-console.log("############################");
-console.log("############################");
-console.log("############################");
-console.log(util.inspect(expected, {
-  colors: true,
-  depth: null
-}));
-console.log("############################");
-console.log("############################");
-console.log("########## DIFF ############");
-var dfrnc = diff(actual,expected);
-console.log(dfrnc);
-
-module.exports = make_parse;
+module.exports = make_parser;
