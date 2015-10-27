@@ -87,6 +87,13 @@ var expression = function(obj, rbp) {
     left.type = "Literal";
     left.raw = '"' + t.value + '"';
   }
+  else if (left.operator === "=") {
+    var expStmt = {};
+    expStmt.type = "ExpressionStatement";
+    expStmt.expression = left;
+    left = expStmt;
+    left.assignment = true;
+  }
 
   return left;
 };

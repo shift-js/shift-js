@@ -1143,66 +1143,128 @@ describe('Parser', function() {
             { type: "TERMINATOR",           value: "EOF" }
         ];
         output = {
-          type: 'Program',
-          sourceType: 'module',
-          body:
-            [
-              {
-                type: 'VariableDeclaration',
-                kind: 'var',
-                declarations:
-                [
-                  {
-                    type: 'VariableDeclarator',
-                    id: { type: 'Identifier', name: 'l' },
-                    init: {
-                      type: 'LogicalExpression',
-                      operator: '||',
-                    left: {
-                      type: 'BinaryExpression',
-                      operator: '!=',
-                      left: {
-                        value: 6,
-                        type: 'Literal',
-                        raw: '6' },
-                      right: { value: 7, type: 'Literal', raw: '7' } },
-                    right:
-                    { type: 'LogicalExpression',
-                      operator: '||',
-                      left:
-                      { type: 'BinaryExpression',
-                        operator: '==',
-                        left: { value: 6, type: 'Literal', raw: '6' },
-                        right: { value: 7, type: 'Literal', raw: '7' } },
-                      right:
-                      { type: 'LogicalExpression',
-                        operator: '||',
-                        left:
-                        { type: 'BinaryExpression',
-                          operator: '>',
-                          left: { value: 6, type: 'Literal', raw: '6' },
-                          right: { value: 7, type: 'Literal', raw: '7' } },
-                        right:
-                        { type: 'LogicalExpression',
-                          operator: '||',
-                          left:
-                          { type: 'BinaryExpression',
-                            operator: '<',
-                            left: { value: 6, type: 'Literal', raw: '6' },
-                            right: { value: 7, type: 'Literal', raw: '7' } },
-                          right:
-                          { type: 'LogicalExpression',
-                            operator: '||',
-                            left:
-                            { type: 'BinaryExpression',
-                              operator: '>=',
-                              left: { value: 6, type: 'Literal', raw: '6' },
-                              right: { value: 7, type: 'Literal', raw: '7' } },
-                            right:
-                            { type: 'BinaryExpression',
-                              operator: '<=',
-                              left: { value: 6, type: 'Literal', raw: '6' },
-                              right: { value: 7, type: 'Literal', raw: '7' } } } } } } } } ] } ] };
+          "type": "Program",
+          "body": [
+            {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "l"
+                  },
+                  "init": {
+                    "type": "LogicalExpression",
+                    "operator": "||",
+                    "left": {
+                      "type": "BinaryExpression",
+                      "operator": "!=",
+                      "left": {
+                        "type": "Literal",
+                        "value": 6,
+                        "raw": "6"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": 7,
+                        "raw": "7"
+                      }
+                    },
+                    "right": {
+                      "type": "LogicalExpression",
+                      "operator": "||",
+                      "left": {
+                        "type": "BinaryExpression",
+                        "operator": "==",
+                        "left": {
+                          "type": "Literal",
+                          "value": 6,
+                          "raw": "6"
+                        },
+                        "right": {
+                          "type": "Literal",
+                          "value": 7,
+                          "raw": "7"
+                        }
+                      },
+                      "right": {
+                        "type": "LogicalExpression",
+                        "operator": "||",
+                        "left": {
+                          "type": "BinaryExpression",
+                          "operator": ">",
+                          "left": {
+                            "type": "Literal",
+                            "value": 6,
+                            "raw": "6"
+                          },
+                          "right": {
+                            "type": "Literal",
+                            "value": 7,
+                            "raw": "7"
+                          }
+                        },
+                        "right": {
+                          "type": "LogicalExpression",
+                          "operator": "||",
+                          "left": {
+                            "type": "BinaryExpression",
+                            "operator": "<",
+                            "left": {
+                              "type": "Literal",
+                              "value": 6,
+                              "raw": "6"
+                            },
+                            "right": {
+                              "type": "Literal",
+                              "value": 7,
+                              "raw": "7"
+                            }
+                          },
+                          "right": {
+                            "type": "LogicalExpression",
+                            "operator": "||",
+                            "left": {
+                              "type": "BinaryExpression",
+                              "operator": ">=",
+                              "left": {
+                                "type": "Literal",
+                                "value": 6,
+                                "raw": "6"
+                              },
+                              "right": {
+                                "type": "Literal",
+                                "value": 7,
+                                "raw": "7"
+                              }
+                            },
+                            "right": {
+                              "type": "BinaryExpression",
+                              "operator": "<=",
+                              "left": {
+                                "type": "Literal",
+                                "value": 6,
+                                "raw": "6"
+                              },
+                              "right": {
+                                "type": "Literal",
+                                "value": 7,
+                                "raw": "7"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "kind": "var"
+            }
+          ],
+          "sourceType": "module"
+        };
         expect(R.equals(parser(input), output)).to.equal(true);
       });
 
@@ -1761,7 +1823,7 @@ describe('Parser', function() {
         ];
         output = "FILL_ME_IN";
         expect(R.equals(parser(input), output)).to.equal(true);
-        });
+      });
 
       // Swift input: 'var a = 1.2...5.3'
       // AST Explorer input:

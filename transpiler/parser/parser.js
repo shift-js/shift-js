@@ -612,7 +612,7 @@ var make_parser = function() {
      * Walk result tree and remove properties that don't conform to Esprima standard.
      * */
     helpers.traverse(result, function(currentNode) {
-      helpers.deletePropertyIfExists(currentNode, ['reserved', 'nud', 'led', 'std', 'lbp', 'scope']);
+      helpers.deletePropertyIfExists(currentNode, ['reserved', 'nud', 'led', 'std', 'lbp', 'scope', 'assignment']);
     });
 
     return result;
