@@ -13,25 +13,110 @@ var expected = {
           "type": "VariableDeclarator",
           "id": {
             "type": "Identifier",
-            "name": "b"
+            "name": "a"
           },
           "init": {
             "type": "Literal",
-            "value": "hello",
-            "raw": "\"hello\""
+            "value": 0,
+            "raw": "0"
           }
         }
       ],
       "kind": "var"
+    },
+    {
+      "type": "ForStatement",
+      "init": {
+        "type": "VariableDeclaration",
+        "declarations": [
+          {
+            "type": "VariableDeclarator",
+            "id": {
+              "type": "Identifier",
+              "name": "i"
+            },
+            "init": {
+              "type": "Literal",
+              "value": 10,
+              "raw": "10"
+            }
+          }
+        ],
+        "kind": "var"
+      },
+      "test": {
+        "type": "BinaryExpression",
+        "operator": ">",
+        "left": {
+          "type": "Identifier",
+          "name": "i"
+        },
+        "right": {
+          "type": "Literal",
+          "value": 0,
+          "raw": "0"
+        }
+      },
+      "update": {
+        "type": "UpdateExpression",
+        "operator": "--",
+        "argument": {
+          "type": "Identifier",
+          "name": "i"
+        },
+        "prefix": false
+      },
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "UpdateExpression",
+              "operator": "++",
+              "argument": {
+                "type": "Identifier",
+                "name": "a"
+              },
+              "prefix": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "EmptyStatement"
     }
   ],
   "sourceType": "module"
 };
 var tokenStream = [
   { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "b" },
+  { type: "IDENTIFIER",           value: "a" },
   { type: "OPERATOR",             value: "=" },
-  { type: "STRING",               value: "hello" },
+  { type: "NUMBER",               value: "0" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "STATEMENT_KEYWORD",    value: "for" },
+  { type: "PUNCTUATION",          value: "(" },
+  { type: "DECLARATION_KEYWORD",  value: "var" },
+  { type: "IDENTIFIER",           value: "i" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "10" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "IDENTIFIER",           value: "i" },
+  { type: "OPERATOR",             value: ">" },
+  { type: "NUMBER",               value: "0" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "IDENTIFIER",           value: "i" },
+  { type: "OPERATOR",             value: "-" },
+  { type: "OPERATOR",             value: "-" },
+  { type: "PUNCTUATION",          value: ")" },
+  { type: "PUNCTUATION",          value: "{" },
+  { type: "IDENTIFIER",           value: "a" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "PUNCTUATION",          value: "}" },
+  { type: "PUNCTUATION",          value: ";" },
   { type: "TERMINATOR",           value: "EOF"}
 ];
 var parser = make_parse();

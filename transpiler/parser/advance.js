@@ -52,7 +52,7 @@ var advance = function(obj, id) {
 
   obj.token = Object.create(o);
   obj.token.value = v;
-  obj.token.arity = a;
+  obj.token.type = a;
 
   return obj;
 
