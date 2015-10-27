@@ -28,6 +28,21 @@ module.exports = {
     '(': 'INVOCATION_START',
     ')': 'INVOCATION_END'
   },
+  
+  CLASS_DEFINITION: {
+    '{': 'CLASS_DEFINITION_START',
+    '}': 'CLASS_DEFINITION_END'
+  },
+  
+  STRUCT_DEFINITION: {
+    '{': 'STRUCT_DEFINITION_START',
+    '}': 'STRUCT_DEFINITION_END'
+  },
+  
+  INSTANIIATION: {
+    '(': 'INSTANIIATION_START',
+    ')': 'INSTANIIATION_END'
+  },
 
   COLLECTION: {
     '[': 'ARRAY_START',

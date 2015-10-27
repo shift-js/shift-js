@@ -8,6 +8,8 @@ module.exports = function(code) {
   var currCol, prevCol, nextCol, nextNextCol;
   var VARIABLE_NAMES = {};
   var FUNCTION_NAMES = {};
+  var CLASS_NAMES = {}; 
+  var STRUCT_NAMES = {};
 
   // track state
   var emptyLine = {status: true};
@@ -15,6 +17,8 @@ module.exports = function(code) {
   var insideNumber = {status: false};
   var insideCollection = [];
   var insideFunction = [];
+  var insideClass = [];
+  var insideStruct = [];
   var stringInterpolation = {status: false, counter: 0};
   var substringLookup = {status: false};
   var insideComment = {multi: false, single: false};
@@ -227,6 +231,41 @@ module.exports = function(code) {
     }
 
     //TODO function declaration
+    
+    
+    // classes and structures handling
+    if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
+      chunk === '{') {
+      lexerFunctions.checkFor('CLASS_DEFINITION', chunk, tokens);
+      insideClass[insideClass.length - 1].curly++;
+      advanceAndClear(1);
+      continue;
+    }
+    if (insideClass.length && insideClass[insideClass.length - 1].curly === 1 &&
+      chunk === '}') {
+      lexerFunctions.checkFor('CLASS_DEFINITION', chunk, tokens);
+      insideClass.pop();
+      advanceAndClear(1);
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
+      continue;
+    }
+    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 0 &&
+      chunk === '{') {
+      lexerFunctions.checkFor('STRUCT_DEFINITION', chunk, tokens);
+      insideStruct[insideStruct.length - 1].curly++;
+      advanceAndClear(1);
+      continue;
+    }
+    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 1 &&
+      chunk === '}') {
+      lexerFunctions.checkFor('STRUCT_DEFINITION', chunk, tokens);
+      insideStruct.pop();
+      advanceAndClear(1);
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
+      continue;
+    }
+    
+    
 
     // collection initializer syntax handling
     if (tokens.length && currCol === '(' && nextCol === ')' &&
@@ -262,7 +301,7 @@ module.exports = function(code) {
         }) ||
         lexerFunctions.checkFor('OPERATOR', chunk, tokens) ||
         lexerFunctions.checkFor('TERMINATOR', chunk, tokens) ||
-        lexerFunctions.checkForIdentifier(chunk, tokens, lastToken, VARIABLE_NAMES, insideFunction) ||
+        lexerFunctions.checkForIdentifier(chunk, tokens, lastToken, VARIABLE_NAMES, insideFunction, insideClass, insideStruct, CLASS_NAMES, STRUCT_NAMES) ||
         lexerFunctions.checkForLiteral(chunk, tokens);
       }
 

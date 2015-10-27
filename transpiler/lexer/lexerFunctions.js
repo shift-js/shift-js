@@ -257,8 +257,8 @@ module.exports = {
   },
 
   // helper function to check for identifiers
-  checkForIdentifier: function(chunk, tokens, lastToken, variable_names, insideFunction) {
-    if (variable_names[chunk]) {
+  checkForIdentifier: function(chunk, tokens, lastToken, VARIABLE_NAMES, insideFunction, insideClass, insideStruct, CLASS_NAMES, STRUCT_NAMES) {
+    if (VARIABLE_NAMES[chunk]) {
       if (tokens) {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }
@@ -273,7 +273,24 @@ module.exports = {
       if (tokens) {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }
-      variable_names[chunk] = true;
+      VARIABLE_NAMES[chunk] = true;
+      
+      // special conditions to handle identifiers for classes and structs
+      if (tokens[tokens.length - 2].value === 'class') {
+        var temp = {};
+        temp.status = true;
+        temp.curly = 0;
+        insideClass.push(temp);
+        CLASS_NAMES[chunk] = true;
+      }
+      if (tokens[tokens.length - 2].value === 'struct') {
+        var temp = {};
+        temp.status = true;
+        temp.curly = 0;
+        insideStruct.push(temp);
+        STRUCT_NAMES[chunk] = true;
+      }
+      
       return true;
     }
     return false;
