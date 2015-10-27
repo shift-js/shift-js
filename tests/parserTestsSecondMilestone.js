@@ -88,6 +88,7 @@ describe('Second Milestone Parser', function() {
         };
         expect(R.equals(parser(input), output)).to.equal(true);
       });
+
       // Swift input: 'var b = 6; if (5 <= 6) {b++};'
       it('should handle single-line if statements with multi-character logical operators', function() {
         input = [
@@ -1335,172 +1336,11 @@ describe('Second Milestone Parser', function() {
       it('should handle single-line for loops without a parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
-            { type: "IDENTIFIER",           value: "l" },
-            { type: "OPERATOR",             value: "=" },
-            { type: "NUMBER",               value: "6" },
-            { type: "OPERATOR",             value: "!" },
-            { type: "OPERATOR",             value: "=" },
-            { type: "NUMBER",               value: "7" },
-            { type: "OPERATOR",             value: "|" },
-            { type: "OPERATOR",             value: "|" },
-            { type: "NUMBER",               value: "6" },
-            { type: "OPERATOR",             value: "=" },
-            { type: "OPERATOR",             value: "=" },
-            { type: "NUMBER",               value: "7" },
-            { type: "OPERATOR",             value: "|" },
-            { type: "OPERATOR",             value: "|" },
-            { type: "NUMBER",               value: "6" },
-            { type: "OPERATOR",             value: ">" },
-            { type: "NUMBER",               value: "7" },
-            { type: "OPERATOR",             value: "|" },
-            { type: "OPERATOR",             value: "|" },
-            { type: "NUMBER",               value: "6" },
-            { type: "OPERATOR",             value: "<" },
-            { type: "NUMBER",               value: "7" },
-            { type: "OPERATOR",             value: "|" },
-            { type: "OPERATOR",             value: "|" },
-            { type: "NUMBER",               value: "6" },
-            { type: "OPERATOR",             value: ">" },
-            { type: "OPERATOR",             value: "=" },
-            { type: "NUMBER",               value: "7" },
-            { type: "OPERATOR",             value: "|" },
-            { type: "OPERATOR",             value: "|" },
-            { type: "NUMBER",               value: "6" },
-            { type: "OPERATOR",             value: "<" },
-            { type: "OPERATOR",             value: "=" },
-            { type: "NUMBER",               value: "7" },
-            { type: "PUNCTUATION",          value: ";" },
-            { type: "TERMINATOR",           value: "EOF" }
-        ];
-        output = {
-          "type": "Program",
-          "body": [
-            {
-              "type": "VariableDeclaration",
-              "declarations": [
-                {
-                  "type": "VariableDeclarator",
-                  "id": {
-                    "type": "Identifier",
-                    "name": "l"
-                  },
-                  "init": {
-                    "type": "LogicalExpression",
-                    "operator": "||",
-                    "left": {
-                      "type": "BinaryExpression",
-                      "operator": "!=",
-                      "left": {
-                        "type": "Literal",
-                        "value": 6,
-                        "raw": "6"
-                      },
-                      "right": {
-                        "type": "Literal",
-                        "value": 7,
-                        "raw": "7"
-                      }
-                    },
-                    "right": {
-                      "type": "LogicalExpression",
-                      "operator": "||",
-                      "left": {
-                        "type": "BinaryExpression",
-                        "operator": "==",
-                        "left": {
-                          "type": "Literal",
-                          "value": 6,
-                          "raw": "6"
-                        },
-                        "right": {
-                          "type": "Literal",
-                          "value": 7,
-                          "raw": "7"
-                        }
-                      },
-                      "right": {
-                        "type": "LogicalExpression",
-                        "operator": "||",
-                        "left": {
-                          "type": "BinaryExpression",
-                          "operator": ">",
-                          "left": {
-                            "type": "Literal",
-                            "value": 6,
-                            "raw": "6"
-                          },
-                          "right": {
-                            "type": "Literal",
-                            "value": 7,
-                            "raw": "7"
-                          }
-                        },
-                        "right": {
-                          "type": "LogicalExpression",
-                          "operator": "||",
-                          "left": {
-                            "type": "BinaryExpression",
-                            "operator": "<",
-                            "left": {
-                              "type": "Literal",
-                              "value": 6,
-                              "raw": "6"
-                            },
-                            "right": {
-                              "type": "Literal",
-                              "value": 7,
-                              "raw": "7"
-                            }
-                          },
-                          "right": {
-                            "type": "LogicalExpression",
-                            "operator": "||",
-                            "left": {
-                              "type": "BinaryExpression",
-                              "operator": ">=",
-                              "left": {
-                                "type": "Literal",
-                                "value": 6,
-                                "raw": "6"
-                              },
-                              "right": {
-                                "type": "Literal",
-                                "value": 7,
-                                "raw": "7"
-                              }
-                            },
-                            "right": {
-                              "type": "BinaryExpression",
-                              "operator": "<=",
-                              "left": {
-                                "type": "Literal",
-                                "value": 6,
-                                "raw": "6"
-                              },
-                              "right": {
-                                "type": "Literal",
-                                "value": 7,
-                                "raw": "7"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              ],
-              "kind": "var"
-            }
-          ],
-          "sourceType": "module"
-        };
-        expect(R.equals(parser(input), output)).to.equal(true);
-      });
-
-      // Swift input: 'var a = 1; var m = ++a; var n = --m;'
-      it('should handle prefix operators', function () {
-        input = [
+          { type: "IDENTIFIER",           value: "b" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "STATEMENT_KEYWORD",    value: "for" },
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "j" },
           { type: "OPERATOR",             value: "=" },
@@ -5570,9 +5410,4 @@ describe('Second Milestone Parser', function() {
       });
     });
   });
-<<<<<<< HEAD:transpiler/parser/test/parserTests.js
 });
-=======
-
-});
->>>>>>> c9f4695... Separate parser tests by milestone & move to project root:tests/parserTestsSecondMilestone.js
