@@ -2,20 +2,20 @@ var lexer = require("./lexer");
 var deepEqual = require("./helperFunctions").deepEqual;
 var diff = require("./helperFunctions").diff;
 
-var swiftCode = String.raw`class Medley {
-                          var a = 1
-                          var b = "hai, world"
-                          let c = true
-                          /* Comment 1 
-                          
-                          */ var d = 1 // Comment 2
-                          var e = ["Eggs", "Milk", "Bacon"];
-                          var f = ["one": 1, "two": 2, "three": 3]
-                          let http200Status = (statusCode: 200, description: "OK")
-                          var g = 5 + 6 / 4 - (-16 % 4.2) * 55
-                          let h = 6 != 9
-                          var i = "Stephen" + " " + "Tabor" + "!"
-                      }`;
+var swiftCode = String.raw`                                     class Medley {
+                  var a                                    = 1
+                  var b = "hai, world"
+                  let c =   true
+                  /* Comment 1 
+                  
+                  */ var                                  d = 1 // Comment 2
+              var e = [                    "Eggs", "Milk" ,"Bacon" ];
+                  var f = ["one": 1, "two": 2, "three": 3]
+                  let http200Status = (statusCode: 200,             description: "OK")
+                  var  g = 5 + 6 /          4 - (-16   % 4.2)*55
+                  let h = 6 != 9
+                  var           i = "Stephen"      + " " + "Tabor" +              "!"
+              }`;
      
 var swiftCodeAnswers = [
           { type: "DECLARATION_KEYWORD",        value: "class" },
