@@ -1,6 +1,7 @@
 node_modules
 transpiler/parser/test/newTests.js
-
+client/lib/**/*
+client/app/components/repl/api.js
 
 .floo
 .flooignore
