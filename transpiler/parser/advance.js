@@ -48,6 +48,8 @@ var advance = function(state, id) {
   } else if (tokenTypes.primitive.hasItem(a)) {
     o = state.symbolTable["(literal)"];
     a = "literal";
+  } else if(tokenTypes.comment.hasItem(a)) {
+    //TODO Handle comments here.
   } else {
     t.error("Unexpected token.");
   }
