@@ -4107,7 +4107,7 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
-        it('should handle basic instantiation of classes and structs', function () {
+        it('should handle basic initialization of classes and structs', function () {
           input = String.raw`class VideoMode {
                          var interlaced = false
                          var frameRate = 0.0
@@ -4165,16 +4165,16 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "someVideoMode" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "VideoMode" },
-            { type: "INSTANTIATION_START",        value: "(" }, 
-            { type: "INSTANTIATION_END",          value: ")" }, 
+            { type: "INITIALIZATION_START",       value: "(" }, 
+            { type: "INITIALIZATION_END",         value: ")" }, 
             { type: "TERMINATOR",                 value: "\\n"}, 
 
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "someResolution" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "Resolution" },
-            { type: "INSTANTIATION_START",        value: "(" }, 
-            { type: "INSTANTIATION_END",          value: ")" }, 
+            { type: "INITIALIZATION_START",       value: "(" }, 
+            { type: "INITIALIZATION_END",         value: ")" }, 
             { type: "PUNCTUATION",                value: ";" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
@@ -4242,16 +4242,16 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "someVideoMode" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "VideoMode" },
-            { type: "INSTANTIATION_START",        value: "(" }, 
-            { type: "INSTANTIATION_END",          value: ")" }, 
+            { type: "INITIALIZATION_START",        value: "(" }, 
+            { type: "INITIALIZATION_END",          value: ")" }, 
             { type: "TERMINATOR",                 value: "\\n"}, 
 
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "someResolution" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "Resolution" },
-            { type: "INSTANTIATION_START",        value: "(" }, 
-            { type: "INSTANTIATION_END",          value: ")" }, 
+            { type: "INITIALIZATION_START",       value: "(" }, 
+            { type: "INITIALIZATION_END",         value: ")" }, 
             { type: "PUNCTUATION",                value: ";" },
             { type: "TERMINATOR",                 value: "\\n"}, 
             { type: "TERMINATOR",                 value: "\\n"}, 

@@ -24,7 +24,7 @@ module.exports = function(code) {
   var insideComment = {multi: false, single: false};
   var insideTuple = [];
   var insideInvocation = [];
-  var insideInstantiation = [];
+  var insideInitialization = [];
   // TODO - scope
 
   // advances the position of i by specified number of positions
@@ -276,18 +276,18 @@ module.exports = function(code) {
     }
     if (tokens.length && (CLASS_NAMES[lastToken.value] || 
       STRUCT_NAMES[lastToken.value] && chunk === '(')) {
-      lexerFunctions.checkFor('INSTANTIATION', chunk, tokens)
+      lexerFunctions.checkFor('INITIALIZATION', chunk, tokens)
       var temp = {};
       temp.status = true;
       temp.parens = 1;
-      insideInstantiation.push(temp);
+      insideInitialization.push(temp);
       advanceAndClear(1);
       continue;
     }
-    if (chunk === ')' && insideInstantiation.length && 
-      insideInstantiation[insideInstantiation.length - 1].parens === 1) {
-      lexerFunctions.checkFor('INSTANTIATION', chunk, tokens);
-      insideInstantiation.pop();
+    if (chunk === ')' && insideInitialization.length && 
+      insideInitialization[insideInitialization.length - 1].parens === 1) {
+      lexerFunctions.checkFor('INITIALIZATION', chunk, tokens);
+      insideInitialization.pop();
       advanceAndClear(1);
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
