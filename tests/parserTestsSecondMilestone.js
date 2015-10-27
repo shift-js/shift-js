@@ -1760,11 +1760,11 @@ describe('Second Milestone Parser', function() {
       });
     });
 
-    xdescribe('Multi-line statements', function() {
+    describe('Multi-line statements', function() {
 
       // input = String.raw`var b = true;
       //          var c = 0;`;
-      xit('should handle simple multi-line variable assignment', function() {
+      it('should handle simple multi-line variable assignment', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
@@ -1781,28 +1781,18 @@ describe('Second Milestone Parser', function() {
         ];
         output = {
           "type": "Program",
-          "start": 0,
-          "end": 24,
           "body": [
             {
               "type": "VariableDeclaration",
-              "start": 0,
-              "end": 13,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 4,
-                  "end": 12,
                   "id": {
                     "type": "Identifier",
-                    "start": 4,
-                    "end": 5,
                     "name": "b"
                   },
                   "init": {
                     "type": "Literal",
-                    "start": 8,
-                    "end": 12,
                     "value": true,
                     "raw": "true"
                   }
@@ -1812,23 +1802,15 @@ describe('Second Milestone Parser', function() {
             },
             {
               "type": "VariableDeclaration",
-              "start": 14,
-              "end": 24,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 18,
-                  "end": 23,
                   "id": {
                     "type": "Identifier",
-                    "start": 18,
-                    "end": 19,
                     "name": "c"
                   },
                   "init": {
                     "type": "Literal",
-                    "start": 22,
-                    "end": 23,
                     "value": 0,
                     "raw": "0"
                   }

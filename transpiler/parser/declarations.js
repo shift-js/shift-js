@@ -19,6 +19,8 @@ var statement = require('./statement');
 var declarations = {
   symbols: function(state) {
     symbol(state, originalSymbol, "EOF");
+    symbol(state, originalSymbol, "\n");
+    symbol(state, originalSymbol, "\\n");
     symbol(state, originalSymbol, "(end)");
     symbol(state, originalSymbol, "(name)");
     symbol(state, originalSymbol, ":");
@@ -358,13 +360,10 @@ var declarations = {
       if(state.token.value === "var") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
-      try {
+      state = advance(state);
+      if(state.token.value === "\\n") {
         state = advance(state);
-        //advance(";");//when actually was ("++")
-      } catch (e) {
-        state = advance(state, "EOF");
       }
-
       return a.length === 0 ? null : a.length === 1 ? a[0] : a;
     });
 
