@@ -46,7 +46,7 @@ module.exports = {
     if (emptyLine.status && !module.exports.checkForWhitespace(currCol)) {
       emptyLine.status = false;
     }
-    if (emptyLine.status && lastToken.value === '\\n') {
+    if (emptyLine.status && lastToken && lastToken.value === '\\n') {
       return true;
     }
     return false;
@@ -125,7 +125,7 @@ module.exports = {
       }
     }
     else if (insideComment.single && (nextCol === undefined || nextCol === '\n')) {
-      insideComment.multi = false;
+      insideComment.single = false;
       module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
       module.exports.handleEndOfFile(nextCol, tokens);
       cb(1);

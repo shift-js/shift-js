@@ -292,6 +292,15 @@ module.exports = function(code) {
       continue;
     }
     
+    // handles parentheses inside class and struct initialization
+    if (chunk === '(' && insideInitialization.length && 
+      insideInitialization[insideInitialization.length - 1].parens >= 1) {
+      insideInitialization[insideInitialization.length - 1].parens++;
+    }
+    if (chunk === ')' && insideInitialization.length) {
+      insideInitialization[insideInitialization.length - 1].parens--;
+    }
+    
     // handles property access and method calls via dot notation
     if (currCol === '.' && !lexerFunctions.checkForWhitespace(prevCol) &&
       !lexerFunctions.checkForWhitespace(nextCol) && lastToken.type === 'IDENTIFIER') {
