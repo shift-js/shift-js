@@ -2787,8 +2787,8 @@ describe('Lexer', function() {
     }); 
     
     describe('Functions', function() {
-      
-      it('should handle function declaration and invocation with no spacing', function() {
+
+      it('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
         input = String.raw`func someFunction(var a: Int){
                     a = a + 1;
                 }
@@ -2822,10 +2822,44 @@ describe('Lexer', function() {
         ]
         expect(lexer(input)).to.deep.equal(output);
       });
+      
+      it('should handle function declaration and invocation with no spacing', function() {
+        input = String.raw`func someFunction(a: Int){
+                    a = a + 1;
+                }
+                someFunction(5);`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "func"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "PARAMS_START",         value: "(" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: ":" }, 
+          { type: "TYPE_NUMBER",          value: "Int" }, 
+          { type: "PARAMS_END",           value: ")" },  
+          { type: "STATEMENTS_START",     value: "{" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENTS_END",       value: "}"},
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "IDENTIFIER",           value: "someFunction" },
+          { type: "INVOCATION_START",     value: "(" }, 
+          { type: "NUMBER",               value: "5" },   
+          { type: "INVOCATION_END",       value: ")" }, 
+          { type: "PUNCTUATION",          value: ";" },    
+          { type: "TERMINATOR",           value: "EOF"}
+        ]
+        expect(lexer(input)).to.deep.equal(output);
+      });
     
 
     it('should handle function declaration and invocation with normal spacing', function() {
-        input = String.raw`func someFunction (var a: Int) {
+        input = String.raw`func someFunction (a: Int) {
                     a = a + 1;
                 }
                 someFunction(5);`
@@ -2833,7 +2867,6 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
           { type: "PARAMS_START",         value: "(" },
-          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
@@ -2860,7 +2893,7 @@ describe('Lexer', function() {
       });
     
       it('should handle function declaration and invocation with no space after the function name', function() {
-        input = String.raw`func someFunction(var a: Int) {
+        input = String.raw`func someFunction(a: Int) {
                     a = a + 1;
                 }
                 someFunction(5);`;
@@ -2868,7 +2901,6 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
           { type: "PARAMS_START",         value: "(" },
-          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
@@ -2895,7 +2927,7 @@ describe('Lexer', function() {
       });
 
       it('should handle function declaration and invocation with no space after the parameter declaration', function() {
-        input = String.raw`func someFunction (var a: Int){
+        input = String.raw`func someFunction (a: Int){
                     a = a + 1;
                 }
                 someFunction(5);`
@@ -2903,7 +2935,6 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
           { type: "PARAMS_START",         value: "(" },
-          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
@@ -2930,7 +2961,7 @@ describe('Lexer', function() {
       });
 
       it('should handle function declaration and invocation with erratic spacing', function() {
-        input = String.raw`func someFunction        (var a: Int)     {
+        input = String.raw`func someFunction        (a: Int)     {
                               a = a + 1;
                           }
                           someFunction      (5);`;
@@ -2938,7 +2969,6 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
           { type: "PARAMS_START",         value: "(" },
-          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
@@ -2987,7 +3017,7 @@ describe('Lexer', function() {
       });
 
       it('should handle functions with an input that return strings', function() {
-        input = String.raw`func sayHello(var personName: String) -> String {
+        input = String.raw`func sayHello(personName: String) -> String {
                               let greeting = "Hello, " + personName + "!"
                               return greeting
                           }`;
@@ -2995,7 +3025,6 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "sayHello" },
           { type: "PARAMS_START",         value: "(" },
-          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "personName" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_STRING",          value: "String" }, 
@@ -3023,7 +3052,7 @@ describe('Lexer', function() {
       });
 
       it('should handle functions that have if statements that use {} and have a return value', function() {
-        input = String.raw`func sayHello(var alreadyGreeted: Bool) -> String {
+        input = String.raw`func sayHello(alreadyGreeted: Bool) -> String {
                 if alreadyGreeted {
                     return "blah"
                 } 
@@ -3032,7 +3061,6 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "sayHello" },
           { type: "PARAMS_START",         value: "(" },
-          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "alreadyGreeted" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_BOOLEAN",         value: "Bool" }, 
@@ -3061,7 +3089,7 @@ describe('Lexer', function() {
       });
 
       it('should handle functions that have if and else statements that use {} and have a return value', function() {
-        input = String.raw`func sayHello(var personName: String, var alreadyGreeted: Bool) -> String {
+        input = String.raw`func sayHello(personName: String, alreadyGreeted: Bool) -> String {
                     if alreadyGreeted {
                         return sayHello(personName) + " blah"
                     } else {
@@ -3072,12 +3100,10 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "sayHello" },
           { type: "PARAMS_START",         value: "(" },
-          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "personName" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_STRING",          value: "String" }, 
           { type: "PUNCTUATION",          value: "," },
-          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "alreadyGreeted" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_BOOLEAN",         value: "Bool" }, 
@@ -3123,7 +3149,7 @@ describe('Lexer', function() {
       });
 
       it('should handle nested functions with function invocation', function() {
-        input = String.raw`func sayHello(var firstName: String, var lastName: String) -> String {
+        input = String.raw`func sayHello(firstName: String, lastName: String) -> String {
                     func giveString() -> String {
                       return firstName + " " + lastName
                     }
@@ -3133,12 +3159,10 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "sayHello" },
           { type: "PARAMS_START",         value: "(" },
-          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "firstName" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_STRING",          value: "String" }, 
           { type: "PUNCTUATION",          value: "," },
-          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "lastName" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_STRING",          value: "String" }, 
@@ -3181,7 +3205,7 @@ describe('Lexer', function() {
       });
 
       it('should handle functions that do no use var when declaring parameters and invocations with named arguments', function () {
-        input = String.raw`func greet(var name: String, var day: String) -> String {
+        input = String.raw`func greet(name: String, day: String) -> String {
                         return "Hello \(name), today is \(day)."
                     }
                     greet("Bob", day: "Tuesday")`;
@@ -3189,12 +3213,10 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "greet" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "DECLARATION_KEYWORD",        value: "var"},
           { type: "IDENTIFIER",                 value: "name" },
           { type: "PUNCTUATION",                value: ":" }, 
           { type: "TYPE_STRING",                value: "String" }, 
           { type: "PUNCTUATION",                value: "," },
-          { type: "DECLARATION_KEYWORD",        value: "var"},
           { type: "IDENTIFIER",                 value: "day" },
           { type: "PUNCTUATION",                value: ":" }, 
           { type: "TYPE_STRING",                value: "String" }, 
@@ -3230,7 +3252,7 @@ describe('Lexer', function() {
       });
 
       it('should handle functions that return tuples', function () {
-        input = String.raw`func returnTuple(var num: Int) -> (plusFive: Int, timesFive: Int) {
+        input = String.raw`func returnTuple(num: Int) -> (plusFive: Int, timesFive: Int) {
                           let plusFiveResult = num + 5
                           let timesFiveResult = num * 5
                           return (plusFiveResult, timesFiveResult)
@@ -3240,7 +3262,6 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "returnTuple" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "DECLARATION_KEYWORD",        value: "var"},
           { type: "IDENTIFIER",                 value: "num" },
           { type: "PUNCTUATION",                value: ":" }, 
           { type: "TYPE_NUMBER",                value: "Int" }, 
@@ -3297,7 +3318,7 @@ describe('Lexer', function() {
       });
 
       it('should handle functions that return tuples with mixed values', function () {
-        input = String.raw`func nameAndAge( var name: String, var age: Int) -> (name: String, age: Int) {
+        input = String.raw`func nameAndAge(name: String, age: Int) -> (name: String, age: Int) {
                           return (name, age)
                       }
                       let person = nameAndAge("Steve", age: 45)`;
@@ -3305,12 +3326,10 @@ describe('Lexer', function() {
                   { type: "DECLARATION_KEYWORD",        value: "func"},
                   { type: "IDENTIFIER",                 value: "nameAndAge" },
                   { type: "PARAMS_START",               value: "(" },
-                  { type: "DECLARATION_KEYWORD",        value: "var"},
                   { type: "IDENTIFIER",                 value: "name" },
                   { type: "PUNCTUATION",                value: ":" }, 
                   { type: "TYPE_STRING",                value: "String" },
-                  { type: "PUNCTUATION",                value: "," },
-                  { type: "DECLARATION_KEYWORD",        value: "var"}, 
+                  { type: "PUNCTUATION",                value: "," }, 
                   { type: "IDENTIFIER",                 value: "age" },
                   { type: "PUNCTUATION",                value: ":" }, 
                   { type: "TYPE_NUMBER",                value: "Int" }, 
@@ -3358,7 +3377,7 @@ describe('Lexer', function() {
       });
 
       xit('should handle functions with for loops, if and else if statments, and native count methods', function () {
-        input = String.raw`func minMax(var array: [Int]) -> (min: Int, max: Int) {
+        input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
                     var currentMin = array[0]
                     var currentMax = array[0]
                     for value in array[1..<array.count] {
@@ -3473,7 +3492,7 @@ describe('Lexer', function() {
       });
 
       it('should handle functions with for loops and if and else if statments', function () {
-        input = String.raw`func minMax(var array: [Int]) -> (min: Int, max: Int) {
+        input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
                     var currentMin = array[0]
                     var currentMax = array[0]
                     for value in array[1..<2] {
@@ -3489,7 +3508,6 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",            value: "func"},
           { type: "IDENTIFIER",                     value: "minMax" },
           { type: "PARAMS_START",                   value: "(" },
-          { type: "DECLARATION_KEYWORD",            value: "var"},
           { type: "IDENTIFIER",                     value: "array" },
           { type: "PUNCTUATION",                    value: ":" }, 
           { type: "ARRAY_START",                    value: "["},
