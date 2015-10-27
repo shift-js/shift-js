@@ -35,7 +35,7 @@ var original_scope = {
     scope = this.parent;
   },
   reserve: function(n) {
-    if (n.arity !== "name" || n.reserved) {
+    if (n.type !== "name" || n.reserved) {
       return;
     }
     var t = this.def[n.value];
@@ -43,7 +43,7 @@ var original_scope = {
       if (t.reserved) {
         return;
       }
-      if (t.arity === "name") {
+      if (t.type === "name") {
         n.error("Already defined.");
       }
     }
