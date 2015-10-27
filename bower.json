@@ -1,0 +1,19 @@
+{
+  "name": "shift-js",
+  "version": "0.0.1",
+  "homepage": "shiftjs.com",
+  "description": "Swift to JS Transpiler",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "client/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.6",
+    "angular-route": "~1.4.6"
+  }
+}
