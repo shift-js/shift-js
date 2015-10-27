@@ -2,37 +2,56 @@ var lexer = require("./lexer");
 var deepEqual = require("./helperFunctions").deepEqual;
 var diff = require("./helperFunctions").diff;
 
-var swiftCode = String.raw`func someFunction(a: Int){
-                    a = a + 1;
-                }
-                someFunction(5);`;
+var swiftCode = String.raw`func makeIncrementer() -> ((Int) -> Int) {
+                              func addOne(number: Int) -> Int {
+                                  return 1 + number
+                              }
+                              return addOne
+                          }`;
      
 var swiftCodeAnswers = [
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "someFunction" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "+" },
-          { type: "NUMBER",               value: "1" },
-          { type: "PUNCTUATION",          value: ";" },  
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "STATEMENTS_END",       value: "}"},
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "IDENTIFIER",           value: "someFunction" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "NUMBER",               value: "5" },   
-          { type: "INVOCATION_END",       value: ")" }, 
-          { type: "PUNCTUATION",          value: ";" },    
-          { type: "TERMINATOR",           value: "EOF"}
-        ]
+          { type: "DECLARATION_KEYWORD",        value: "func"},
+          { type: "IDENTIFIER",                 value: "makeIncrementer" },
+          { type: "PARAMS_START",               value: "(" },
+          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "RETURN_ARROW",               value: "->" },
+          { type: "PUNCTUATION",                value: "(" }, 
+          { type: "PARAMS_START",               value: "(" },
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PARAMS_END",                 value: ")" },
+          { type: "RETURN_ARROW",               value: "->" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PUNCTUATION",                value: ")" },
+          { type: "STATEMENTS_START",           value: "{" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "func"},
+          { type: "IDENTIFIER",                 value: "addOne" },
+          { type: "PARAMS_START",               value: "(" },
+          { type: "IDENTIFIER",                 value: "number" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PARAMS_END",                 value: ")" },
+          { type: "RETURN_ARROW",               value: "->" },
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "STATEMENTS_START",           value: "{" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENT_KEYWORD",          value: "return"},
+          { type: "NUMBER",                     value: "1" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "IDENTIFIER",                 value: "number" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          { type: "STATEMENTS_END",             value: "}" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENT_KEYWORD",          value: "return"},
+          { type: "IDENTIFIER",                 value: "addOne" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENTS_END",             value: "}" },
+          { type: "TERMINATOR",                 value: "EOF"}
+        ];
 
 console.log(lexer(swiftCode));
 console.log(diff(lexer(swiftCode),swiftCodeAnswers));
