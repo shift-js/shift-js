@@ -14,4 +14,4 @@ module.exports = {
   ast: function(tokens) {
     return lexer(parser(tokens));
   }
-}
+};

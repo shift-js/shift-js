@@ -749,6 +749,39 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+      
+      it('should handle ranges delimited by identifiers', function () {
+        input = String.raw`let start = 0; let end = 10; let range = start..<end; let fullRange = start...end;`;
+        output = [
+          { type: "DECLARATION_KEYWORD",            value: "let" },
+          { type: "IDENTIFIER",                 value: "start" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "NUMBER",                     value: "0" },
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "end" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "NUMBER",                     value: "10" },
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "range" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "start" },
+          { type: "HALF-OPEN_RANGE",            value: "..<" },
+          { type: "IDENTIFIER",                 value: "end" },
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "fullRange" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "start" },
+          { type: "CLOSED_RANGE",               value: "..." },
+          { type: "IDENTIFIER",                 value: "end" },
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+      
     });
 
     describe('String concatenation and interpolation', function () {
@@ -2789,10 +2822,11 @@ describe('Lexer', function() {
     describe('Functions', function() {
 
       it('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
-        input = String.raw`func someFunction(var a: Int){
-                    a = a + 1;
-                }
-                someFunction(5);`;
+        input = String.raw`func someFunction(var a: Int) -> Int {
+                              a = a + 1;
+                              return a;
+                          }
+                          someFunction(5);`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
@@ -2801,7 +2835,9 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" },  
+          { type: "TYPE_NUMBER",          value: "Int" }, 
           { type: "STATEMENTS_START",     value: "{" },  
           { type: "TERMINATOR",           value: "\\n"},
           { type: "IDENTIFIER",           value: "a" },
@@ -2809,7 +2845,11 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "NUMBER",               value: "1" },
-          { type: "PUNCTUATION",          value: ";" },  
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENTS_END",       value: "}"},
           { type: "TERMINATOR",           value: "\\n"},
@@ -2824,10 +2864,11 @@ describe('Lexer', function() {
       });
       
       it('should handle function declaration and invocation with no spacing', function() {
-        input = String.raw`func someFunction(a: Int){
-                    a = a + 1;
-                }
-                someFunction(5);`;
+        input = String.raw`func someFunction(a: Int)->Int{
+                                let a = a + 1;
+                                return a
+                            }
+                            someFunction(5);`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
@@ -2835,15 +2876,21 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" },  
+          { type: "TYPE_NUMBER",          value: "Int" }, 
           { type: "STATEMENTS_START",     value: "{" },  
           { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "IDENTIFIER",           value: "a" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENTS_END",       value: "}"},
           { type: "TERMINATOR",           value: "\\n"},
@@ -2858,11 +2905,12 @@ describe('Lexer', function() {
       });
     
 
-    it('should handle function declaration and invocation with normal spacing', function() {
-        input = String.raw`func someFunction (a: Int) {
-                    a = a + 1;
-                }
-                someFunction(5);`
+    it('should handle function declaration and invocation with spaces between each part of the declaration', function() {
+        input = String.raw`func someFunction (a: Int) -> Int {
+                                let a = a + 1;
+                                return a
+                            }
+                            someFunction(5);`
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
@@ -2870,15 +2918,21 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" },  
+          { type: "TYPE_NUMBER",          value: "Int" }, 
           { type: "STATEMENTS_START",     value: "{" },  
           { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "IDENTIFIER",           value: "a" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENTS_END",       value: "}"},
           { type: "TERMINATOR",           value: "\\n"},
@@ -2893,10 +2947,11 @@ describe('Lexer', function() {
       });
     
       it('should handle function declaration and invocation with no space after the function name', function() {
-        input = String.raw`func someFunction(a: Int) {
-                    a = a + 1;
-                }
-                someFunction(5);`;
+        input = String.raw`func someFunction(a: Int) -> Int {
+                                let a = a + 1;
+                                return a
+                            }
+                            someFunction(5);`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
@@ -2904,15 +2959,21 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" },  
+          { type: "TYPE_NUMBER",          value: "Int" }, 
           { type: "STATEMENTS_START",     value: "{" },  
           { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "IDENTIFIER",           value: "a" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENTS_END",       value: "}"},
           { type: "TERMINATOR",           value: "\\n"},
@@ -2927,44 +2988,52 @@ describe('Lexer', function() {
       });
 
       it('should handle function declaration and invocation with no space after the parameter declaration', function() {
-        input = String.raw`func someFunction (a: Int){
-                    a = a + 1;
-                }
-                someFunction(5);`
+        input = String.raw`func someFunction(a: Int)-> Int {
+                                let a = a + 1;
+                                return a
+                            }
+                            someFunction(5);`
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "someFunction" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "+" },
-          { type: "NUMBER",               value: "1" },
-          { type: "PUNCTUATION",          value: ";" },  
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "STATEMENTS_END",       value: "}"},
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "IDENTIFIER",           value: "someFunction" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "NUMBER",               value: "5" },   
-          { type: "INVOCATION_END",       value: ")" }, 
-          { type: "PUNCTUATION",          value: ";" },    
-          { type: "TERMINATOR",           value: "EOF"}
+         { type: "DECLARATION_KEYWORD",  value: "func"},
+         { type: "IDENTIFIER",           value: "someFunction" },
+         { type: "PARAMS_START",         value: "(" },
+         { type: "IDENTIFIER",           value: "a" },
+         { type: "PUNCTUATION",          value: ":" }, 
+         { type: "TYPE_NUMBER",          value: "Int" }, 
+         { type: "PARAMS_END",           value: ")" }, 
+         { type: "RETURN_ARROW",         value: "->" },  
+         { type: "TYPE_NUMBER",          value: "Int" }, 
+         { type: "STATEMENTS_START",     value: "{" },  
+         { type: "TERMINATOR",           value: "\\n"},
+         { type: "DECLARATION_KEYWORD",  value: "let"},
+         { type: "IDENTIFIER",           value: "a" },
+         { type: "OPERATOR",             value: "=" },
+         { type: "IDENTIFIER",           value: "a" },
+         { type: "OPERATOR",             value: "+" },
+         { type: "NUMBER",               value: "1" },
+         { type: "PUNCTUATION",          value: ";" },  
+         { type: "TERMINATOR",           value: "\\n"},
+         { type: "STATEMENT_KEYWORD",    value: "return"},
+         { type: "IDENTIFIER",           value: "a" },
+         { type: "TERMINATOR",           value: "\\n"},
+         { type: "STATEMENTS_END",       value: "}"},
+         { type: "TERMINATOR",           value: "\\n"},
+         { type: "IDENTIFIER",           value: "someFunction" },
+         { type: "INVOCATION_START",     value: "(" }, 
+         { type: "NUMBER",               value: "5" },   
+         { type: "INVOCATION_END",       value: ")" }, 
+         { type: "PUNCTUATION",          value: ";" },    
+         { type: "TERMINATOR",           value: "EOF"}
         ]
         expect(lexer(input)).to.deep.equal(output);
       });
 
       it('should handle function declaration and invocation with erratic spacing', function() {
-        input = String.raw`func someFunction        (a: Int)     {
-                              a = a + 1;
-                          }
-                          someFunction      (5);`;
+        input = String.raw`func  someFunction(a: Int)           ->  Int{
+                                let a = a +               1;
+                                return                                  a
+                            }
+                            someFunction           (5)       ;`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
@@ -2972,15 +3041,21 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" },  
+          { type: "TYPE_NUMBER",          value: "Int" }, 
           { type: "STATEMENTS_START",     value: "{" },  
           { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "IDENTIFIER",           value: "a" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENTS_END",       value: "}"},
           { type: "TERMINATOR",           value: "\\n"},
@@ -3051,12 +3126,16 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle functions that have if statements that use {} and have a return value', function() {
+      it('should handle functions that have if else statements that use curly braces and have a return value', function() {
         input = String.raw`func sayHello(alreadyGreeted: Bool) -> String {
-                if alreadyGreeted {
-                    return "blah"
-                } 
-            }`;
+                                if alreadyGreeted {
+                                    return "blah"
+                                } else {
+                                    return "hello"
+                                }
+                            }
+
+                            sayHello(true)`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "sayHello" },
@@ -3080,69 +3159,25 @@ describe('Lexer', function() {
           { type: "TERMINATOR",           value: "\\n"},
 
           { type: "PUNCTUATION",          value: "}" },
-          { type: "TERMINATOR",           value: "\\n"},
-
-          { type: "STATEMENTS_END",       value: "}" },  
-          { type: "TERMINATOR",           value: "EOF"}
-        ]
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      it('should handle functions that have if and else statements that use {} and have a return value', function() {
-        input = String.raw`func sayHello(personName: String, alreadyGreeted: Bool) -> String {
-                    if alreadyGreeted {
-                        return sayHello(personName) + " blah"
-                    } else {
-                        return sayHello(personName)
-                    }
-                }`;
-        output = [
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "PUNCTUATION",          value: "," },
-          { type: "IDENTIFIER",           value: "alreadyGreeted" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_BOOLEAN",         value: "Bool" }, 
-          { type: "PARAMS_END",           value: ")" }, 
-          { type: "RETURN_ARROW",         value: "->" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},
-
-          { type: "STATEMENT_KEYWORD",    value: "if" },
-          { type: "IDENTIFIER",           value: "alreadyGreeted" },
-          { type: "PUNCTUATION",          value: "{" },
-          { type: "TERMINATOR",           value: "\\n"},
-
-          { type: "STATEMENT_KEYWORD",    value: "return"}, 
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "INVOCATION_END",       value: ")" }, 
-          { type: "OPERATOR",             value: "+" }, 
-          { type: "STRING",               value: " blah" }, 
-          { type: "TERMINATOR",           value: "\\n"},
-
-          { type: "PUNCTUATION",          value: "}" },
           { type: "STATEMENT_KEYWORD",    value: "else" },
           { type: "PUNCTUATION",          value: "{" },
-          { type: "TERMINATOR",           value: "\\n"}, 
-
-          { type: "STATEMENT_KEYWORD",    value: "return"}, 
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "INVOCATION_END",       value: ")" },
           { type: "TERMINATOR",           value: "\\n"},
-
+          
+          { type: "STATEMENT_KEYWORD",    value: "return"}, 
+          { type: "STRING",               value: "hello" }, 
+          { type: "TERMINATOR",           value: "\\n"},
+          
           { type: "PUNCTUATION",          value: "}" },
           { type: "TERMINATOR",           value: "\\n"},
 
           { type: "STATEMENTS_END",       value: "}" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "TERMINATOR",           value: "\\n"},
+          
+          { type: "IDENTIFIER",           value: "sayHello" },
+          { type: "INVOCATION_START",     value: "(" },
+          { type: "BOOLEAN",              value: "true" },  
+          { type: "INVOCATION_END",       value: ")" }, 
           { type: "TERMINATOR",           value: "EOF"}
         ]
         expect(lexer(input)).to.deep.equal(output);
@@ -3204,7 +3239,7 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle functions that do no use var when declaring parameters and invocations with named arguments', function () {
+      it('should handle functions with string interpolation', function () {
         input = String.raw`func greet(name: String, day: String) -> String {
                         return "Hello \(name), today is \(day)."
                     }
@@ -3247,6 +3282,109 @@ describe('Lexer', function() {
           { type: "STRING",                     value: "Tuesday" },   
           { type: "INVOCATION_END",             value: ")" }, 
           { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle functions with many arguments', function () {
+        input = String.raw`func addSevenInts(first: Int, second: Int, third: Int, fourth: Int, fifth: Int, sixth: Int, seventh: Int) -> Int {
+                          let sum = first + second + third + fourth + fifth + sixth + seventh
+                          return sum
+                      }
+                      addSevenInts(143242134, second: 34543, third: 4, fourth: 6, fifth: 0, sixth: 56, seventh: 5)`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "func"},
+          { type: "IDENTIFIER",                 value: "addSevenInts" },
+          { type: "PARAMS_START",               value: "(" },
+          { type: "IDENTIFIER",                 value: "first" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "second" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "third" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "fourth" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "fifth" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "sixth" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "seventh" },
+          { type: "PUNCTUATION",                value: ":" }, 
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PARAMS_END",                 value: ")" },
+          { type: "RETURN_ARROW",               value: "->" },
+          
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "STATEMENTS_START",           value: "{" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "sum" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "first" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "IDENTIFIER",                 value: "second" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "IDENTIFIER",                 value: "third" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "IDENTIFIER",                 value: "fourth" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "IDENTIFIER",                 value: "fifth" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "IDENTIFIER",                 value: "sixth" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "IDENTIFIER",                 value: "seventh" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENT_KEYWORD",          value: "return"},
+          { type: "IDENTIFIER",                 value: "sum" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENTS_END",             value: "}" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "IDENTIFIER",                 value: "addSevenInts" },
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "NUMBER",                     value: "143242134" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "second" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "NUMBER",                     value: "34543" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "third" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "NUMBER",                     value: "4" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "fourth" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "NUMBER",                     value: "6" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "fifth" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "NUMBER",                     value: "0" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "sixth" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "NUMBER",                     value: "56" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "IDENTIFIER",                 value: "seventh" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "NUMBER",                     value: "5" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "EOF"}
+
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -3908,6 +4046,250 @@ describe('Lexer', function() {
           { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
+      });
+
+    });
+    
+    xdescribe('Classes and Stuctures', function () {
+      
+      xdescribe('Basic Tests', function () {
+        
+        xit('should handle basic definitions of classes and structs', function () {
+          input = String.raw`class VideoMode {
+                                var interlaced = false
+                                var frameRate = 0.0
+                            }
+                            struct Resolution {
+                                var width = 0
+                                var height = 0
+                            }`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "class" },
+            { type: "IDENTIFIER",                 value: "VideoMode" },
+            { type: "CLASS_DEFINITION_START",     value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "interlaced" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "BOOLEAN",                    value: "false" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "frameRate" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "0.0" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "CLASS_DEFINITION_END",       value: "}" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "struct" },
+            { type: "IDENTIFIER",                 value: "Resolution" },
+            { type: "STRUCT_DEFINITION_START",    value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "width" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "height" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "STRUCT_DEFINITION_END",      value: "}" },
+            { type: "TERMINATOR",                 value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        xit('should handle basic instantiation of classes and structs', function () {
+          input = String.raw`class VideoMode {
+                         var interlaced = false
+                         var frameRate = 0.0
+                      }
+                      struct Resolution {
+                          var width = 0
+                          var height = 0
+                      }
+
+                      let someVideoMode = VideoMode()
+                      let someResolution = Resolution();`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "someResolution" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "Resolution" },
+            { type: "INSTANIIATION_START",        value: "(" }, 
+            { type: "INSTANIIATION_END",          value: ")" }, 
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "someVideoMode" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "VideoMode" },
+            { type: "INSTANIIATION_START",        value: "(" }, 
+            { type: "INSTANIIATION_END",          value: ")" }, 
+            { type: "PUNCTUATION",                value: ";" },
+            { type: "TERMINATOR",                 value: "EOF"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "class" },
+            { type: "IDENTIFIER",                 value: "VideoMode" },
+            { type: "CLASS_DEFINITION_START",     value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "interlaced" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "BOOLEAN",                    value: "false" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "frameRate" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "0.0" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "CLASS_DEFINITION_END",       value: "}" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "struct" },
+            { type: "IDENTIFIER",                 value: "Resolution" },
+            { type: "STRUCT_DEFINITION_START",    value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "width" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "height" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "STRUCT_DEFINITION_END",      value: "}" },
+            { type: "TERMINATOR",                 value: "EOF"},
+
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "someVideoMode" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "VideoMode" },
+            { type: "INSTANIIATION_START",        value: "(" }, 
+            { type: "INSTANIIATION_END",          value: ")" }, 
+            { type: "TERMINATOR",                 value: "\\n"}, 
+
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "someResolution" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "Resolution" },
+            { type: "INSTANIIATION_START",        value: "(" }, 
+            { type: "INSTANIIATION_END",          value: ")" }, 
+            { type: "PUNCTUATION",                value: ";" },
+            { type: "TERMINATOR",                 value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        xit('should handle basic property access via dot notation', function () {
+          input = String.raw`class VideoMode {
+                                 var interlaced = false
+                                 var frameRate = 0.0
+                              }
+                              struct Resolution {
+                                  var width = 0
+                                  var height = 0
+                              }
+
+                              let someVideoMode = VideoMode()
+                              let someResolution = Resolution();
+                              
+                              let someFrameRate = someVideoMode.frameRate;
+                              let someWidth = someResolution.width`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "class" },
+            { type: "IDENTIFIER",                 value: "VideoMode" },
+            { type: "CLASS_DEFINITION_START",     value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "interlaced" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "BOOLEAN",                    value: "false" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "frameRate" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "0.0" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "CLASS_DEFINITION_END",       value: "}" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "struct" },
+            { type: "IDENTIFIER",                 value: "Resolution" },
+            { type: "STRUCT_DEFINITION_START",    value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "width" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "height" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "STRUCT_DEFINITION_END",      value: "}" },
+            { type: "TERMINATOR",                 value: "EOF"},
+
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "someVideoMode" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "VideoMode" },
+            { type: "INSTANIIATION_START",        value: "(" }, 
+            { type: "INSTANIIATION_END",          value: ")" }, 
+            { type: "TERMINATOR",                 value: "\\n"}, 
+
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "someResolution" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "Resolution" },
+            { type: "INSTANIIATION_START",        value: "(" }, 
+            { type: "INSTANIIATION_END",          value: ")" }, 
+            { type: "PUNCTUATION",                value: ";" },
+            { type: "TERMINATOR",                 value: "\\n"}, 
+            
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "someFrameRate" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "someVideoMode" },
+            { type: "PROPERTY_ACCESS",            value: "." },
+            { type: "IDENTIFIER",                 value: "frameRate" },
+            { type: "PUNCTUATION",                value: ";" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "someWidth" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "someResolution" },
+            { type: "PROPERTY_ACCESS",            value: "." },
+            { type: "IDENTIFIER",                 value: "width" },
+            { type: "TERMINATOR",                 value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
       });
 
     }); 

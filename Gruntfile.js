@@ -17,7 +17,9 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'transpiler/parser/test/parserTests.js'
+          'tests/parserTestsFirstMilestone.js',
+          'tests/parserTestsSecondMilestone.js',
+          'tests/parserTestsThirdMilestone.js'
         ]
       },
       test: {
@@ -26,7 +28,9 @@ module.exports = function(grunt) {
         },
         src: [
           'tests/lexerTests.js',
-          'transpiler/parser/test/parserTests.js'
+          'tests/parserTestsFirstMilestone.js',
+          'tests/parserTestsSecondMilestone.js',
+          'tests/parserTestsThirdMilestone.js'
         ]
       }
 
@@ -40,7 +44,6 @@ module.exports = function(grunt) {
         force: false,
         jshintrc: '.jshintrc',
         ignores: [
-          'transpiler/parser/test_cases_generator_output.js'
         ]
       }
     },
