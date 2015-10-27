@@ -33,7 +33,7 @@ var makeParser = function() {
   var parseTokenStream = function(inputTokens) {
     state.tokens = helpers.cleanUpTokenStream(inputTokens);
     state.scope = newScope(state, originalScope);
-    state = advance(state);
+    state = advance(state);//TODO This is where comments first can be found
     var s = statements(state);
     state = advance(state);
     state.scope.pop();

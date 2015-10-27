@@ -1760,11 +1760,11 @@ describe('Second Milestone Parser', function() {
       });
     });
 
-    xdescribe('Multi-line statements', function() {
+    describe('Multi-line statements', function() {
 
       // input = String.raw`var b = true;
       //          var c = 0;`;
-      xit('should handle simple multi-line variable assignment', function() {
+      it('should handle simple multi-line variable assignment', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
@@ -1781,28 +1781,18 @@ describe('Second Milestone Parser', function() {
         ];
         output = {
           "type": "Program",
-          "start": 0,
-          "end": 24,
           "body": [
             {
               "type": "VariableDeclaration",
-              "start": 0,
-              "end": 13,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 4,
-                  "end": 12,
                   "id": {
                     "type": "Identifier",
-                    "start": 4,
-                    "end": 5,
                     "name": "b"
                   },
                   "init": {
                     "type": "Literal",
-                    "start": 8,
-                    "end": 12,
                     "value": true,
                     "raw": "true"
                   }
@@ -1812,23 +1802,15 @@ describe('Second Milestone Parser', function() {
             },
             {
               "type": "VariableDeclaration",
-              "start": 14,
-              "end": 24,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 18,
-                  "end": 23,
                   "id": {
                     "type": "Identifier",
-                    "start": 18,
-                    "end": 19,
                     "name": "c"
                   },
                   "init": {
                     "type": "Literal",
-                    "start": 22,
-                    "end": 23,
                     "value": 0,
                     "raw": "0"
                   }
@@ -1845,7 +1827,7 @@ describe('Second Milestone Parser', function() {
       // input = String.raw`var e = ["Eggs", "Milk", "Bacon"]
       //          var f = ["one": 1, "two": 2, "three": 3]
       //          let g = [1 : "one",2   :"two", 3: "three"]`;
-      xit('should handle complex multi-line variable assignment without semi-colons', function() {
+      it('should handle complex multi-line variable assignment without semi-colons', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "e" },
@@ -1895,47 +1877,31 @@ describe('Second Milestone Parser', function() {
         ];
         output = {
           "type": "Program",
-          "start": 0,
-          "end": 117,
           "body": [
             {
               "type": "VariableDeclaration",
-              "start": 0,
-              "end": 33,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 4,
-                  "end": 33,
                   "id": {
                     "type": "Identifier",
-                    "start": 4,
-                    "end": 5,
                     "name": "e"
                   },
                   "init": {
                     "type": "ArrayExpression",
-                    "start": 8,
-                    "end": 33,
                     "elements": [
                       {
                         "type": "Literal",
-                        "start": 9,
-                        "end": 15,
                         "value": "Eggs",
                         "raw": "\"Eggs\""
                       },
                       {
                         "type": "Literal",
-                        "start": 17,
-                        "end": 23,
                         "value": "Milk",
                         "raw": "\"Milk\""
                       },
                       {
                         "type": "Literal",
-                        "start": 25,
-                        "end": 32,
                         "value": "Bacon",
                         "raw": "\"Bacon\""
                       }
@@ -1947,92 +1913,66 @@ describe('Second Milestone Parser', function() {
             },
             {
               "type": "VariableDeclaration",
-              "start": 34,
-              "end": 74,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 38,
-                  "end": 74,
                   "id": {
                     "type": "Identifier",
-                    "start": 38,
-                    "end": 39,
                     "name": "f"
                   },
                   "init": {
                     "type": "ObjectExpression",
-                    "start": 42,
-                    "end": 74,
                     "properties": [
                       {
                         "type": "Property",
-                        "start": 43,
-                        "end": 51,
-                        "method": false,
-                        "shorthand": false,
-                        "computed": false,
                         "key": {
                           "type": "Literal",
-                          "start": 43,
-                          "end": 48,
                           "value": "one",
                           "raw": "\"one\""
                         },
+                        "computed": false,
                         "value": {
                           "type": "Literal",
-                          "start": 50,
-                          "end": 51,
                           "value": 1,
                           "raw": "1"
                         },
-                        "kind": "init"
+                        "kind": "init",
+                        "method": false,
+                        "shorthand": false
                       },
                       {
                         "type": "Property",
-                        "start": 53,
-                        "end": 61,
-                        "method": false,
-                        "shorthand": false,
-                        "computed": false,
                         "key": {
                           "type": "Literal",
-                          "start": 53,
-                          "end": 58,
                           "value": "two",
                           "raw": "\"two\""
                         },
+                        "computed": false,
                         "value": {
                           "type": "Literal",
-                          "start": 60,
-                          "end": 61,
                           "value": 2,
                           "raw": "2"
                         },
-                        "kind": "init"
+                        "kind": "init",
+                        "method": false,
+                        "shorthand": false
                       },
                       {
                         "type": "Property",
-                        "start": 63,
-                        "end": 73,
-                        "method": false,
-                        "shorthand": false,
-                        "computed": false,
                         "key": {
                           "type": "Literal",
-                          "start": 63,
-                          "end": 70,
                           "value": "three",
                           "raw": "\"three\""
                         },
+                        "computed": false,
                         "value": {
                           "type": "Literal",
-                          "start": 72,
-                          "end": 73,
                           "value": 3,
                           "raw": "3"
                         },
-                        "kind": "init"
+                        "kind": "init",
+                        "method": false,
+                        "shorthand": false
                       }
                     ]
                   }
@@ -2042,92 +1982,66 @@ describe('Second Milestone Parser', function() {
             },
             {
               "type": "VariableDeclaration",
-              "start": 75,
-              "end": 117,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 79,
-                  "end": 117,
                   "id": {
                     "type": "Identifier",
-                    "start": 79,
-                    "end": 80,
                     "name": "g"
                   },
                   "init": {
                     "type": "ObjectExpression",
-                    "start": 83,
-                    "end": 117,
                     "properties": [
                       {
                         "type": "Property",
-                        "start": 84,
-                        "end": 93,
-                        "method": false,
-                        "shorthand": false,
-                        "computed": false,
                         "key": {
                           "type": "Literal",
-                          "start": 84,
-                          "end": 85,
                           "value": 1,
                           "raw": "1"
                         },
+                        "computed": false,
                         "value": {
                           "type": "Literal",
-                          "start": 88,
-                          "end": 93,
                           "value": "one",
                           "raw": "\"one\""
                         },
-                        "kind": "init"
+                        "kind": "init",
+                        "method": false,
+                        "shorthand": false
                       },
                       {
                         "type": "Property",
-                        "start": 94,
-                        "end": 104,
-                        "method": false,
-                        "shorthand": false,
-                        "computed": false,
                         "key": {
                           "type": "Literal",
-                          "start": 94,
-                          "end": 95,
                           "value": 2,
                           "raw": "2"
                         },
+                        "computed": false,
                         "value": {
                           "type": "Literal",
-                          "start": 99,
-                          "end": 104,
                           "value": "two",
                           "raw": "\"two\""
                         },
-                        "kind": "init"
+                        "kind": "init",
+                        "method": false,
+                        "shorthand": false
                       },
                       {
                         "type": "Property",
-                        "start": 106,
-                        "end": 116,
-                        "method": false,
-                        "shorthand": false,
-                        "computed": false,
                         "key": {
                           "type": "Literal",
-                          "start": 106,
-                          "end": 107,
                           "value": 3,
                           "raw": "3"
                         },
+                        "computed": false,
                         "value": {
                           "type": "Literal",
-                          "start": 109,
-                          "end": 116,
                           "value": "three",
                           "raw": "\"three\""
                         },
-                        "kind": "init"
+                        "kind": "init",
+                        "method": false,
+                        "shorthand": false
                       }
                     ]
                   }
@@ -2139,7 +2053,7 @@ describe('Second Milestone Parser', function() {
           "sourceType": "module"
         };
         expect(R.equals(parser(input), output)).to.equal(true);
-      })
+      });
 
       // input = String.raw`var name: String = "Joe"
       //         let num: Int = 5;
@@ -2148,12 +2062,12 @@ describe('Second Milestone Parser', function() {
       //         let truth: Bool = false
       //         `;
       // AST explorer input:
-      // var nam = "Joe"
+      // var name = "Joe"
       // var num = 5;
       // var anotherNum = 6
       // var yetAnotherNum = 4.2;
       // var truth = false
-      xit('should handle simple multi-line variable assignment with type annotations', function() {
+      it('should handle simple multi-line variable assignment with type annotations', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "name" },
@@ -2196,28 +2110,18 @@ describe('Second Milestone Parser', function() {
         ];
         output = {
           "type": "Program",
-          "start": 0,
-          "end": 90,
           "body": [
             {
               "type": "VariableDeclaration",
-              "start": 0,
-              "end": 15,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 4,
-                  "end": 15,
                   "id": {
                     "type": "Identifier",
-                    "start": 4,
-                    "end": 7,
-                    "name": "nam"
+                    "name": "name"
                   },
                   "init": {
                     "type": "Literal",
-                    "start": 10,
-                    "end": 15,
                     "value": "Joe",
                     "raw": "\"Joe\""
                   }
@@ -2227,23 +2131,15 @@ describe('Second Milestone Parser', function() {
             },
             {
               "type": "VariableDeclaration",
-              "start": 16,
-              "end": 28,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 20,
-                  "end": 27,
                   "id": {
                     "type": "Identifier",
-                    "start": 20,
-                    "end": 23,
                     "name": "num"
                   },
                   "init": {
                     "type": "Literal",
-                    "start": 26,
-                    "end": 27,
                     "value": 5,
                     "raw": "5"
                   }
@@ -2253,23 +2149,15 @@ describe('Second Milestone Parser', function() {
             },
             {
               "type": "VariableDeclaration",
-              "start": 29,
-              "end": 47,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 33,
-                  "end": 47,
                   "id": {
                     "type": "Identifier",
-                    "start": 33,
-                    "end": 43,
                     "name": "anotherNum"
                   },
                   "init": {
                     "type": "Literal",
-                    "start": 46,
-                    "end": 47,
                     "value": 6,
                     "raw": "6"
                   }
@@ -2279,23 +2167,15 @@ describe('Second Milestone Parser', function() {
             },
             {
               "type": "VariableDeclaration",
-              "start": 48,
-              "end": 72,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 52,
-                  "end": 71,
                   "id": {
                     "type": "Identifier",
-                    "start": 52,
-                    "end": 65,
                     "name": "yetAnotherNum"
                   },
                   "init": {
                     "type": "Literal",
-                    "start": 68,
-                    "end": 71,
                     "value": 4.2,
                     "raw": "4.2"
                   }
@@ -2305,23 +2185,15 @@ describe('Second Milestone Parser', function() {
             },
             {
               "type": "VariableDeclaration",
-              "start": 73,
-              "end": 90,
               "declarations": [
                 {
                   "type": "VariableDeclarator",
-                  "start": 77,
-                  "end": 90,
                   "id": {
                     "type": "Identifier",
-                    "start": 77,
-                    "end": 82,
                     "name": "truth"
                   },
                   "init": {
                     "type": "Literal",
-                    "start": 85,
-                    "end": 90,
                     "value": false,
                     "raw": "false"
                   }
@@ -2381,10 +2253,12 @@ describe('Second Milestone Parser', function() {
         ];
         output = {
           "type": "Program",
-          "start": 0,
-          "end": 25,
-          "body": [],
-          "sourceType": "module"
+          "sourceType": "module",
+          "body": [
+            {
+              "type": "EmptyStatement"
+            }
+          ]
         };
         expect(R.equals(parser(input), output)).to.equal(true);
       });

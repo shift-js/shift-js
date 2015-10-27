@@ -36,8 +36,12 @@ module.exports = {
     "IDENTIFIER",
     "TUPLE_ELEMENT_NAME",
     "STATEMENT_KEYWORD",
-    "TYPE_NUMBER"
+    "TYPE_NUMBER",
+    "TYPE_STRING",
+    "TYPE_BOOLEAN"
+  ],
+  comment : [
+    "COMMENT_START",
+    "COMMENT"
   ]
 };
-
-

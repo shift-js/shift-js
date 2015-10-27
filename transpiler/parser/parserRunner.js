@@ -5,108 +5,22 @@ var makeParse = require('./parser');
 
 var expected = {
   "type": "Program",
-  "body": [
-    {
-      "type": "VariableDeclaration",
-      "declarations": [
-        {
-          "type": "VariableDeclarator",
-          "id": {
-            "type": "Identifier",
-            "name": "someFunction"
-          },
-          "init": {
-            "type": "FunctionExpression",
-            "id": null,
-            "params": [
-              {
-                "type": "Identifier",
-                "name": "a"
-              }
-            ],
-            "defaults": [],
-            "body": {
-              "type": "BlockStatement",
-              "body": [
-                {
-                  "type": "ExpressionStatement",
-                  "expression": {
-                    "type": "AssignmentExpression",
-                    "operator": "=",
-                    "left": {
-                      "type": "Identifier",
-                      "name": "a"
-                    },
-                    "right": {
-                      "type": "BinaryExpression",
-                      "operator": "+",
-                      "left": {
-                        "type": "Identifier",
-                        "name": "a"
-                      },
-                      "right": {
-                        "type": "Literal",
-                        "value": 1,
-                        "raw": "1"
-                      }
-                    }
-                  }
-                }
-              ]
-            },
-            "generator": false,
-            "expression": false
-          }
-        }
-      ],
-      "kind": "var"
-    },
-    {
-      "type": "ExpressionStatement",
-      "expression": {
-        "type": "CallExpression",
-        "callee": {
-          "type": "Identifier",
-          "name": "someFunction"
-        },
-        "arguments": [
-          {
-            "type": "Literal",
-            "value": 5,
-            "raw": "5"
-          }
-        ]
-      }
-    }
-  ],
+  "start": 0,
+  "end": 140,
+  "body": [],
   "sourceType": "module"
 };
 var tokenStream = [
-  { type: "DECLARATION_KEYWORD",  value: "func"},
-  { type: "IDENTIFIER",           value: "someFunction" },
-  { type: "PARAMS_START",         value: "(" },
-  { type: "DECLARATION_KEYWORD",  value: "var"},
-  { type: "IDENTIFIER",           value: "a" },
-  { type: "PUNCTUATION",          value: ":" },
-  { type: "TYPE_NUMBER",          value: "Int" },
-  { type: "PARAMS_END",           value: ")" },
-  { type: "STATEMENTS_START",     value: "{" },
-  { type: "TERMINATOR",           value: "\\n"},
-  { type: "IDENTIFIER",           value: "a" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "IDENTIFIER",           value: "a" },
-  { type: "OPERATOR",             value: "+" },
-  { type: "NUMBER",               value: "1" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "TERMINATOR",           value: "\\n"},
-  { type: "STATEMENTS_END",       value: "}"},
-  { type: "TERMINATOR",           value: "\\n"},
-  { type: "IDENTIFIER",           value: "someFunction" },
-  { type: "INVOCATION_START",     value: "(" },
-  { type: "NUMBER",               value: "5" },
-  { type: "INVOCATION_END",       value: ")" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "TERMINATOR",           value: "EOF"}
+  { type: "COMMENT_START", value: "//"},
+  { type: "COMMENT", value: " function body goes here"},
+  { type: "TERMINATOR", value: "\\n"},
+  { type: "COMMENT_START", value: "//"},
+  { type: "COMMENT", value: " firstParameterName and secondParameterName refer to"},
+  { type: "TERMINATOR", value: "\\n"},
+  { type: "COMMENT_START", value: "//"},
+  { type: "COMMENT", value: " the argument values for the first and second parameters"},
+  { type: "TERMINATOR", value: "\\n"},
+  { type: "TERMINATOR", value: "EOF"}
 ];
 var parser = makeParse();
 

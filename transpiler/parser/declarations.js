@@ -19,6 +19,8 @@ var statement = require('./statement');
 var declarations = {
   symbols: function(state) {
     symbol(state, originalSymbol, "EOF");
+    symbol(state, originalSymbol, "\n");
+    symbol(state, originalSymbol, "\\n");
     symbol(state, originalSymbol, "(end)");
     symbol(state, originalSymbol, "(name)");
     symbol(state, originalSymbol, ":");
@@ -328,6 +330,18 @@ var declarations = {
         delete n.value;
 
         state = advance(state);
+
+        if(state.token.id === ":") {
+          state = advance(state, ":");
+          if(state.token.type === "TYPE_STRING") {
+            state = advance(state);
+          } else if(state.token.type === "TYPE_NUMBER") {
+            state = advance(state);
+          } else if(state.token.type === "TYPE_BOOLEAN") {
+            state = advance(state);
+          }
+        }
+
         if (state.token.id === "=") {
           t = state.token;
           state = advance(state, "=");
@@ -349,7 +363,10 @@ var declarations = {
         if (state.token.id === ";") {
           break;
           //return a.length === 0 ? null : a.length === 1 ? a[0] : a;
+        } else if(state.token.type === "TERMINATOR") {
+          state = advance(state);
         }
+
         if (state.token.id !== ",") {
           break;
         }
@@ -358,13 +375,10 @@ var declarations = {
       if(state.token.value === "var") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
-      try {
+      state = advance(state);
+      if(state.token.value === "\\n") {
         state = advance(state);
-        //advance(";");//when actually was ("++")
-      } catch (e) {
-        state = advance(state, "EOF");
       }
-
       return a.length === 0 ? null : a.length === 1 ? a[0] : a;
     });
 
