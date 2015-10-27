@@ -1,8 +1,8 @@
 var symbol = require('./symbol');
-var original_symbol = require('./original_symbol');
+var originalSymbol = require('./originalSymbol');
 
-var stmt = function(obj, s, f) {
-  var x = symbol(obj, original_symbol, s);
+var stmt = function(state, s, f) {
+  var x = symbol(state, originalSymbol, s);
   x.std = f;
   return x;
 };

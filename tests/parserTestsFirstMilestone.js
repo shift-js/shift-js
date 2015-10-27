@@ -1,4 +1,4 @@
-var make_parser = require('../transpiler/parser/parser');
+var makeParser = require('../transpiler/parser/parser');
 var expect = require('chai').expect;
 var util = require('util');
 var R = require('ramda');
@@ -6,7 +6,7 @@ var parser;
 
 describe('Parser', function() {
   beforeEach(function() {
-    parser = make_parser();
+    parser = makeParser();
   });
 
   describe('First milestone', function() {

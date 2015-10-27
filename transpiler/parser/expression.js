@@ -5,28 +5,28 @@ var helpers = require('./helperFunctions');
  * Begin parsing an expression phrase from the current token
  * Calls itself recursively depending on the context.
  **/
-var expression = function(obj, rbp) {
+var expression = function(state, rbp) {
 
   var left;
-  var t = obj.token;
-  obj = advance(obj);
+  var t = state.token;
+  state = advance(state);
   left = t.nud();
 
   if (t.value === "++" || t.value === "--") {
     //Pre-fix operator
     left = t;
 
-    if(obj.token.value !== "}") {
-      obj = advance(obj);
+    if(state.token.value !== "}") {
+      state = advance(state);
     }
-  } else if (obj.token.value === "++" || obj.token.value === "--") {
+  } else if (state.token.value === "++" || state.token.value === "--") {
     //Post-fix operators
-    if(obj.token.value === "++") {
+    if(state.token.value === "++") {
       left.type = "Identifier";
       left.name = left.value;
       delete left.value;
 
-      obj = advance(obj);
+      state = advance(state);
       return {
         "type": "UpdateExpression",
         "operator": "++",
@@ -37,7 +37,7 @@ var expression = function(obj, rbp) {
       left.type = "Identifier";
       left.name = left.value;
       delete left.value;
-      obj = advance(obj);
+      state = advance(state);
       return {
         "type": "UpdateExpression",
         "operator": "--",
@@ -48,18 +48,18 @@ var expression = function(obj, rbp) {
     }
   } else if (t.operator === "+") {
     delete t.value;
-    obj.token.name = obj.token.value;
-    obj.token.type = "Identifier";
-    delete obj.token.value;
-    t.argument = obj.token;
+    state.token.name = state.token.value;
+    state.token.type = "Identifier";
+    delete state.token.value;
+    t.argument = state.token;
   }
 
   /**
    * Logic to handle the recursive case
    */
-  while (rbp < obj.token.lbp) {
-    t = obj.token;
-    obj = advance(obj);
+  while (rbp < state.token.lbp) {
+    t = state.token;
+    state = advance(state);
     left = t.led(left);//assignments
   }
 

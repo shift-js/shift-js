@@ -2,9 +2,9 @@ var util = require('util');
 var diff = require('deep-diff').diff;
 var helpers = require('./helperFunctions.js');
 var advance = require('./advance');
-var new_scope = require('./new_scope');
-var original_scope = require('./original_scope');
-var original_symbol = require('./original_symbol');
+var newScope = require('./newScope');
+var originalScope = require('./originalScope');
+var originalSymbol = require('./originalSymbol');
 var symbol = require('./symbol');
 var block = require('./block');
 var expression = require('./expression');
@@ -17,35 +17,35 @@ var statements = require('./statements');
 var statement = require('./statement');
 
 var declarations = {
-  symbols: function(obj) {
-    symbol(obj, original_symbol, "EOF");
-    symbol(obj, original_symbol, "(end)");
-    symbol(obj, original_symbol, "(name)");
-    symbol(obj, original_symbol, ":");
-    symbol(obj, original_symbol, ";");
-    symbol(obj, original_symbol, ")");
-    symbol(obj, original_symbol, "]");
-    symbol(obj, original_symbol, "}");
-    symbol(obj, original_symbol, ",");
-    symbol(obj, original_symbol, "else");
-    symbol(obj, original_symbol, "(literal)").nud = helpers.itself;
-    symbol(obj, original_symbol, "this").nud = function() {
-      scope.reserve(this);
+  symbols: function(state) {
+    symbol(state, originalSymbol, "EOF");
+    symbol(state, originalSymbol, "(end)");
+    symbol(state, originalSymbol, "(name)");
+    symbol(state, originalSymbol, ":");
+    symbol(state, originalSymbol, ";");
+    symbol(state, originalSymbol, ")");
+    symbol(state, originalSymbol, "]");
+    symbol(state, originalSymbol, "}");
+    symbol(state, originalSymbol, ",");
+    symbol(state, originalSymbol, "else");
+    symbol(state, originalSymbol, "(literal)").nud = helpers.itself;
+    symbol(state, originalSymbol, "this").nud = function() {
+      state.scope.reserve(this);
       this.type = "this";
       return this;
     };
   },
 
-  assignments: function(obj) {
-    assignment(obj, "=");
-    assignment(obj, "+=");
-    assignment(obj, "-=");
-    assignment(obj, "*=");
-    assignment(obj, "/=");
+  assignments: function(state) {
+    assignment(state, "=");
+    assignment(state, "+=");
+    assignment(state, "-=");
+    assignment(state, "*=");
+    assignment(state, "/=");
   },
 
-  infixes: function(obj) {
-    infix(obj, "?", 20, function(left) {
+  infixes: function(state) {
+    infix(state, "?", 20, function(left) {
       this.type = "ConditionalExpression";
       if(left.type === "IDENTIFIER") {
         left.type = "Identifier";
@@ -53,41 +53,41 @@ var declarations = {
         delete left.value;
       }
       this.test = left;
-      this.consequent = expression(obj, 0);
-      obj = advance(obj, ":");
-      this.alternate = expression(obj, 0);
+      this.consequent = expression(state, 0);
+      state = advance(state, ":");
+      this.alternate = expression(state, 0);
       delete this.value;
       return this;
     });
 
-    infixr(obj, "&&", 30);
-    infixr(obj, "||", 30);
-    infixr(obj, "===", 40);
-    infixr(obj, "==", 40);
-    infixr(obj, "!==", 40);
-    infixr(obj, "!=", 40);
-    infixr(obj, "<", 40);
-    infixr(obj, "<=", 40);
-    infixr(obj, ">", 40);
-    infixr(obj, ">=", 40);
-    infix(obj, "+", 50);
-    infix(obj, "-", 50);
-    infix(obj, "*", 60);
-    infix(obj, "/", 60);
-    infix(obj, "%", 60);
-    //infix(obj, ".", 80, function(left) {
+    infixr(state, "&&", 30);
+    infixr(state, "||", 30);
+    infixr(state, "===", 40);
+    infixr(state, "==", 40);
+    infixr(state, "!==", 40);
+    infixr(state, "!=", 40);
+    infixr(state, "<", 40);
+    infixr(state, "<=", 40);
+    infixr(state, ">", 40);
+    infixr(state, ">=", 40);
+    infix(state, "+", 50);
+    infix(state, "-", 50);
+    infix(state, "*", 60);
+    infix(state, "/", 60);
+    infix(state, "%", 60);
+    //infix(state, ".", 80, function(left) {
     //  this.first = left;
-    //  if (obj.token.type !== "name") {
-    //    obj.token.error("Expected a property name.");
+    //  if (state.token.type !== "name") {
+    //    state.token.error("Expected a property name.");
     //  }
-    //  obj.token.type = "literal";
-    //  this.second = obj.token;
-    //  this.type = "binary";
-    //  obj = advance(obj);
-    //  return this;
+    //  state.token.type = "literal";
+    //  this.second = state.token;
+    //  state.type = "binary";
+    //  state = advance(state);
+    //  return state;
     //});
 
-    infix(obj, "[", 80, function(left) {
+    infix(state, "[", 80, function(left) {
       this.type = "MemberExpression";
       this.computed = true;
       if(left.type === 'IDENTIFIER'){
@@ -96,13 +96,13 @@ var declarations = {
         delete left.value;
       }
       this.object = left;
-      this.property = expression(obj, 0);
+      this.property = expression(state, 0);
       delete this.value;
-      obj = advance(obj, "]");
+      state = advance(state, "]");
       return this;
     });
 
-    //infix(obj, "(", 80, function(left) {
+    //infix(state, "(", 80, function(left) {
     //  var a = [];
     //  if (left.id === "." || left.id === "[") {
     //    this.type = "ternary";
@@ -119,79 +119,79 @@ var declarations = {
     //      left.error("Expected a variable name.");
     //    }
     //  }
-    //  if (obj.token.id !== ")") {
+    //  if (state.token.id !== ")") {
     //    while (true) {
-    //      a.push(expression(obj, 0));
-    //      if (obj.token.id !== ",") {
+    //      a.push(expression(state, 0));
+    //      if (state.token.id !== ",") {
     //        break;
     //      }
-    //      obj = advance(obj, ",");
+    //      state = advance(state, ",");
     //    }
     //  }
-    //  obj = advance(obj, ")");
+    //  state = advance(state, ")");
     //  return this;
     //});
   },
 
-  prefixes: function(obj) {
-    prefix(obj, "+");
-    prefix(obj, "!");
-    prefix(obj, "++");
-    prefix(obj, "--");
-    prefix(obj, "-");
-    prefix(obj, "typeof");
+  prefixes: function(state) {
+    prefix(state, "+");
+    prefix(state, "!");
+    prefix(state, "++");
+    prefix(state, "--");
+    prefix(state, "-");
+    prefix(state, "typeof");
 
-    prefix(obj, "(", function() {
-      var e = expression(obj, 0);
-      obj = advance(obj, ")");
+    prefix(state, "(", function() {
+      var e = expression(state, 0);
+      state = advance(state, ")");
       return e;
     });
 
-    //prefix("function", function() {
-    //  var a = [];
-    //  obj.scope = new_scope(obj, original_scope);
-    //  if (obj.token.type === "name") {
-    //    obj.scope.define(token);
-    //    this.name = obj.token.value;
-    //    obj = advance(obj);
-    //  }
-    //  obj = advance(obj, "(");
-    //  if (obj.token.id !== ")") {
-    //    while (true) {
-    //      if (obj.token.type !== "name") {
-    //        obj.token.error("Expected a parameter name.");
-    //      }
-    //      obj.scope.define(token);
-    //      a.push(obj.token);
-    //      obj = advance(obj);
-    //      if (obj.token.id !== ",") {
-    //        break;
-    //      }
-    //      obj = advance(obj, ",");
-    //    }
-    //  }
-    //  this.first = a;
-    //  obj = advance(obj, ")");
-    //  obj = advance(obj, "{");
-    //  this.second = statements();
-    //  obj = advance(obj, "}");
-    //  this.type = "function";
-    //  scope.pop();
-    //  return this;
-    //});
-
-    prefix(obj, "[", function() {
+    prefix(state, "function", function() {
       var a = [];
-      if (obj.token.id !== "]") {
+      state.scope = newScope(state, originalScope);
+      if (state.token.type === "name") {
+        state.scope.define(token);
+        this.name = state.token.value;
+        state = advance(state);
+      }
+      state = advance(state, "(");
+      if (state.token.id !== ")") {
         while (true) {
-          a.push(expression(obj, 0));
-          if (obj.token.id !== ",") {
+          if (state.token.type !== "name") {
+            state.token.error("Expected a parameter name.");
+          }
+          state.scope.define(token);
+          a.push(state.token);
+          state = advance(state);
+          if (state.token.id !== ",") {
             break;
           }
-          obj = advance(obj, ",");
+          state = advance(state, ",");
         }
       }
-      obj = advance(obj, "]");
+      this.first = a;
+      state = advance(state, ")");
+      state = advance(state, "{");
+      this.second = statements();
+      state = advance(state, "}");
+      this.type = "function";
+      scope.pop();
+      return this;
+    });
+
+    prefix(state, "[", function() {
+      var a = [];
+      if (state.token.id !== "]") {
+        while (true) {
+          a.push(expression(state, 0));
+          if (state.token.id !== ",") {
+            break;
+          }
+          state = advance(state, ",");
+        }
+      }
+      state = advance(state, "]");
       this.type = "ArrayExpression";
       delete this.value;
       delete this.raw;
@@ -199,22 +199,22 @@ var declarations = {
       return this;
     });
 
-    prefix(obj, "{", function() {
+    prefix(state, "{", function() {
       var a = [], n, v;
-      var tmpLookAhead = obj.tokens[obj.token_nr];
+      var tmpLookAhead = state.tokens[state.index];
       if(tmpLookAhead.value === ",") {
         // Handle Tuples w/out keys
         var a = [];
-        if (obj.token.id !== "]") {
+        if (state.token.id !== "]") {
           while (true) {
-            a.push(expression(obj, 0));
-            if (obj.token.id !== ",") {
+            a.push(expression(state, 0));
+            if (state.token.id !== ",") {
               break;
             }
-            obj = advance(obj, ",");
+            state = advance(state, ",");
           }
         }
-        obj = advance(obj, ")");
+        state = advance(state, ")");
         this.type = "ObjectExpression";
         delete this.value;
         delete this.raw;
@@ -238,15 +238,15 @@ var declarations = {
         return this;
       }
 
-      if ((obj.token.id !== "]" &&  obj.token.id !== ")") && tmpLookAhead.value !== ",") {
+      if ((state.token.id !== "]" &&  state.token.id !== ")") && tmpLookAhead.value !== ",") {
         while (true) {
-          n = obj.token;
+          n = state.token;
           if (n.type !== "IDENTIFIER" && n.type !== "name" && n.type !== "literal" && n.type !== "TUPLE_ELEMENT_NAME") {
-            obj.token.error("Bad property name.");
+            state.token.error("Bad property name.");
           }
-          obj = advance(obj);
-          obj = advance(obj, ":");
-          v = expression(obj, 0);
+          state = advance(state);
+          state = advance(state, ":");
+          v = expression(state, 0);
 
           var kvMap = {};
           kvMap.type = "Property";
@@ -283,17 +283,17 @@ var declarations = {
           /* a.push(v); */
           a.push(kvMap);
 
-          if (obj.token.id !== ",") {
+          if (state.token.id !== ",") {
             break;
           }
-          obj = advance(obj, ",");
+          state = advance(state, ",");
         }
       }
 
       try {
-        obj = advance(obj, "]");
+        state = advance(state, "]");
       } catch(e) {
-        obj = advance(obj, ")");
+        state = advance(state, ")");
       }
 
       this.type = "unary";
@@ -304,19 +304,19 @@ var declarations = {
     });
   },
 
-  stmts: function(obj) {
-    stmt(obj, "{", function() {
-      obj.scope = new_scope(obj, original_scope);
-      var a = statements(obj);
-      obj = advance(obj, "}");
-      obj.scope.pop();
+  stmts: function(state) {
+    stmt(state, "{", function() {
+      state.scope = newScope(state, originalScope);
+      var a = statements(state);
+      state = advance(state, "}");
+      state.scope.pop();
       return a;
     });
 
-    stmt(obj, "var", function() {
+    stmt(state, "var", function() {
       var a = [], n, t;
       while (true) {
-        n = obj.token;
+        n = state.token;
         if (n.type !== "IDENTIFIER") {
           n.error("Expected a new variable identifier.");
         } else {
@@ -324,13 +324,13 @@ var declarations = {
           n.name = n.value;
         }
 
-        obj.scope.define(obj, n);
+        state.scope.define(state, n);
         delete n.value;
 
-        obj = advance(obj);
-        if (obj.token.id === "=") {
-          t = obj.token;
-          obj = advance(obj, "=");
+        state = advance(state);
+        if (state.token.id === "=") {
+          t = state.token;
+          state = advance(state, "=");
 
           t.type = 'VariableDeclaration';
           t.kind = 'var';
@@ -341,46 +341,46 @@ var declarations = {
           }];
 
           t.declarations[0].id = n; //TODO FIX
-          t.declarations[0].init = expression(obj, 0);
+          t.declarations[0].init = expression(state, 0);
           delete t.value;
 
           a.push(t);
         }
-        if (obj.token.id === ";") {
+        if (state.token.id === ";") {
           break;
           //return a.length === 0 ? null : a.length === 1 ? a[0] : a;
         }
-        if (obj.token.id !== ",") {
+        if (state.token.id !== ",") {
           break;
         }
-        obj = advance(obj, ",");
+        state = advance(state, ",");
       }
-      if(obj.token.value === "var") {
+      if(state.token.value === "var") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
       try {
-        obj = advance(obj);
+        state = advance(state);
         //advance(";");//when actually was ("++")
       } catch (e) {
-        obj = advance(obj, "EOF");
+        state = advance(state, "EOF");
       }
 
       return a.length === 0 ? null : a.length === 1 ? a[0] : a;
     });
 
-    stmt(obj, "if", function() {
-      if(obj.tokens[obj.token_nr].value === "(") {
-        obj = advance(obj, "(");
-        this.test = expression(obj, 0);
-        obj = advance(obj, ")");
+    stmt(state, "if", function() {
+      if(state.tokens[state.index].value === "(") {
+        state = advance(state, "(");
+        this.test = expression(state, 0);
+        state = advance(state, ")");
       } else {
-        this.test = expression(obj, 0);
+        this.test = expression(state, 0);
       }
-      this.consequent = block(obj);
-      if (obj.token.id === "else") {
-        obj.scope.reserve(obj.token);
-        obj = advance(obj, "else");
-        this.alternate = obj.token.id === "if" ? statement(obj) : block(obj);
+      this.consequent = block(state);
+      if (state.token.id === "else") {
+        state.scope.reserve(state.token);
+        state = advance(state, "else");
+        this.alternate = state.token.id === "if" ? statement(state) : block(state);
       } else {
         this.alternate = null;
       }
@@ -390,87 +390,87 @@ var declarations = {
     });
 
     //stmt("return", function() {
-    //  if (obj.token.id !== ";") {
-    //    this.first = expression(obj, 0);
+    //  if (state.token.id !== ";") {
+    //    this.first = expression(state, 0);
     //  }
-    //  obj = advance(obj, ";");
-    //  if (obj.token.id !== "}") {
-    //    obj.token.error("Unreachable statement.");
+    //  state = advance(state, ";");
+    //  if (state.token.id !== "}") {
+    //    state.token.error("Unreachable statement.");
     //  }
     //  return this;
     //});
 
     //stmt("break", function() {
-    //  obj = advance(obj, ";");
-    //  if (obj.token.id !== "}") {
-    //    obj.token.error("Unreachable statement.");
+    //  state = advance(state, ";");
+    //  if (state.token.id !== "}") {
+    //    state.token.error("Unreachable statement.");
     //  }
     //  return this;
     //});
 
-    stmt(obj, "while", function() {
+    stmt(state, "while", function() {
       this.type = "WhileStatement";
-      if(obj.tokens[obj.token_nr-1].value === "(") {
-        obj = advance(obj, "(");
-        this.test = expression(obj, 0);
-        obj = advance(obj, ")");
+      if(state.tokens[state.index-1].value === "(") {
+        state = advance(state, "(");
+        this.test = expression(state, 0);
+        state = advance(state, ")");
       } else {
-        this.test = expression(obj, 0);
+        this.test = expression(state, 0);
       }
-      this.body = block(obj);
+      this.body = block(state);
       delete this.value;
       return this;
     });
 
-    stmt(obj, "for", function() {
+    stmt(state, "for", function() {
       this.type = "ForStatement";
-      if(obj.tokens[obj.token_nr-1].value === "(") {
-        obj = advance(obj, "(");
-        this.init = statements(obj, 1);
-        this.test = expression(obj, 0);
-        if(obj.token.value === ";") {
-          obj = advance(obj, ";");
+      if(state.tokens[state.index-1].value === "(") {
+        state = advance(state, "(");
+        this.init = statements(state, 1);
+        this.test = expression(state, 0);
+        if(state.token.value === ";") {
+          state = advance(state, ";");
         }
-        this.update = expression(obj, 0);
-        obj = advance(obj, ")");
+        this.update = expression(state, 0);
+        state = advance(state, ")");
       } else {
-        this.init = statements(obj, 1);
-        this.test = expression(obj, 0);
-        if(obj.token.value === ";") {
-          obj = advance(obj, ";");
+        this.init = statements(state, 1);
+        this.test = expression(state, 0);
+        if(state.token.value === ";") {
+          state = advance(state, ";");
         }
-        this.update = expression(obj, 0);
+        this.update = expression(state, 0);
       }
-      this.body = block(obj);
+      this.body = block(state);
       delete this.value;
       return this;
     });
 
-    stmt(obj, "repeat", function() {
+    stmt(state, "repeat", function() {
       this.type = "DoWhileStatement";
-      this.body = block(obj);
-      if(obj.token.value === 'while') {
-        obj = advance(obj);
+      this.body = block(state);
+      if(state.token.value === 'while') {
+        state = advance(state);
       }
-      if(obj.tokens[obj.token_nr-1].value === "(") {
-        obj = advance(obj, "(");
-        this.test = expression(obj, 0);
-        obj = advance(obj, ")");
+      if(state.tokens[state.index-1].value === "(") {
+        state = advance(state, "(");
+        this.test = expression(state, 0);
+        state = advance(state, ")");
       } else {
-        this.test = expression(obj, 0);
+        this.test = expression(state, 0);
       }
       delete this.value;
       return this;
     });
 
   },
-  constants: function(obj) {
-    //constant("true", true);
-    //constant("false", false);
-    //constant("null", null);
-    //constant("pi", 3.141592653589793);
-    //constant("Object", {});
-    //constant("Array", []);
+  constants: function(state) {
+    //constant(state, "true", true);
+    //constant(state, "false", false);
+    //constant(state, "null", null);
+    //constant(state, "pi", 3.141592653589793);
+    //constant(state, "Object", {});
+    //constant(state, "Array", []);
   }
 
 

@@ -1,23 +1,23 @@
 var symbol = require('./symbol');
-var original_symbol = require('./original_symbol');
+var originalSymbol = require('./originalSymbol');
 var expression = require('./expression');
 
-var prefix = function(obj, id, nud) {
-  var s = symbol(obj, original_symbol, id);
+var prefix = function(state, id, nud) {
+  var s = symbol(state, originalSymbol, id);
   s.nud = nud || function() {
-      obj.scope.reserve(this);
+      state.scope.reserve(this);
       if (this.value === "++" || this.value === "--") {
         this.type = "UpdateExpression";
         this.operator = this.value;
         this.prefix = true;
-        this.argument = expression(obj, 70);
+        this.argument = expression(state, 70);
         delete this.value;
         //TODO Why don't we: 'return this;'
       } else if(this.value === "--") {
         this.type = "UpdateExpression";
         this.operator = "--";
         this.prefix = true;
-        this.argument = expression(obj, 70);
+        this.argument = expression(state, 70);
         delete this.value;
         //TODO Why don't we: 'return this;'
       } else if (this.value === "+") {
@@ -29,7 +29,7 @@ var prefix = function(obj, id, nud) {
         this.type = "UnaryExpression";
         this.operator = this.value;
         delete this.value;
-        this.argument = expression(obj, 70);
+        this.argument = expression(state, 70);
         this.prefix = true;
         return this;
       }

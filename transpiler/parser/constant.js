@@ -1,12 +1,12 @@
 var symbol = require('./symbol');
-var original_symbol = require('./original_symbol');
+var originalSymbol = require('./originalSymbol');
 
-var constant = function(obj, s, v) {
-  var x = symbol(obj, original_symbol, s);
+var constant = function(state, s, v) {
+  var x = symbol(state, originalSymbol, s);
   x.nud = function() {
-    obj.scope.reserve(this);
-    this.value = symbol_table[this.id].value;
-    this.type = "literal";//"literal" -> "Literal"
+    state.scope.reserve(this);
+    this.value = symbolTable[this.id].value;
+    this.type = "literal";//TODO "literal" -> "Literal"
     return this;
   };
   x.value = v;
