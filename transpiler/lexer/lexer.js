@@ -254,7 +254,7 @@ module.exports = function(code) {
         }) ||
         lexerFunctions.checkFor('OPERATOR', chunk, tokens) ||
         lexerFunctions.checkFor('TERMINATOR', chunk, tokens) ||
-        lexerFunctions.checkForIdentifier(chunk, tokens, lastToken, VARIABLE_NAMES) ||
+        lexerFunctions.checkForIdentifier(chunk, tokens, lastToken, VARIABLE_NAMES, insideFunction) ||
         lexerFunctions.checkForLiteral(chunk, tokens);
       }
 
