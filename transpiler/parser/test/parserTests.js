@@ -251,7 +251,7 @@ describe('Parser', function() {
     describe('Basic collections and constants', function () {
 
       // Swift input: 'var empty = []'
-      xit('should handle empty arrays', function () {
+      it('should handle empty arrays', function () {
         input = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "empty" },
@@ -466,7 +466,7 @@ describe('Parser', function() {
       });
 
       // Swift input: 'var e = [  "Eggs","Milk",           "Bacon"                ] ;'
-      xit('should handle arrays with erratic spacing', function () {
+      it('should handle arrays with erratic spacing', function () {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "e" },

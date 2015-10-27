@@ -2,9 +2,6 @@ var symbol = require('./symbol');
 var original_symbol = require('./original_symbol');
 var expression = require('./expression');
 
-
-
-
 var prefix = function(obj, id, nud) {
   var s = symbol(obj, original_symbol, id);
   s.nud = nud || function() {
