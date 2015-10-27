@@ -1,0 +1,41 @@
+var symbol = require('./symbol');
+var originalSymbol = require('./originalSymbol');
+var expression = require('./expression');
+
+var prefix = function(state, id, nud) {
+  var s = symbol(state, originalSymbol, id);
+  s.nud = nud || function() {
+      state.scope.reserve(this);
+      if (this.value === "++" || this.value === "--") {
+        this.type = "UpdateExpression";
+        this.operator = this.value;
+        this.prefix = true;
+        this.argument = expression(state, 70);
+        delete this.value;
+        //TODO Why don't we: 'return this;'
+      } else if(this.value === "--") {
+        this.type = "UpdateExpression";
+        this.operator = "--";
+        this.prefix = true;
+        this.argument = expression(state, 70);
+        delete this.value;
+        //TODO Why don't we: 'return this;'
+      } else if (this.value === "+") {
+        this.type = "UnaryExpression";
+        this.prefix = true;
+        this.operator = "+";
+        return this;
+      } else {
+        this.type = "UnaryExpression";
+        this.operator = this.value;
+        delete this.value;
+        this.argument = expression(state, 70);
+        this.prefix = true;
+        return this;
+      }
+
+    };
+  return s;
+};
+
+module.exports = prefix;

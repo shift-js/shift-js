@@ -3,7 +3,7 @@
  *
  */
 
-var expObj = {
+var helpers = {
   deletePropertyIfExists : function (node, propertyArray) {
     if(node !== null) {
       for (var i = 0; i < propertyArray.length; i++) {
@@ -135,4 +135,4 @@ var expObj = {
 
 };
 
-module.exports = expObj;
+module.exports = helpers;

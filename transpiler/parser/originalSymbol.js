@@ -1,4 +1,4 @@
-var original_symbol = {
+var originalSymbol = {
   nud: function() {
     this.error("Undefined.");
   },
@@ -7,4 +7,4 @@ var original_symbol = {
   }
 };
 
-module.exports = original_symbol;
+module.exports = originalSymbol;

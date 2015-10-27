@@ -1,8 +1,8 @@
 var helpers = require('./helperFunctions');
 
-var original_scope = {
-  define: function(params, n) {
-    var scope = params['scope'];
+var originalScope = {
+  define: function(state, n) {
+    var scope = state['scope'];
     var t = this.def[n.value];
     if (typeof t === "object") {
       n.error(t.reserved ? "Already reserved." : "Already defined.");
@@ -16,7 +16,7 @@ var original_scope = {
     n.scope = scope;
     return n;
   },
-  find: function(n, symbol_table) {
+  find: function(n, symbolTable) {
     var e = this,
       o;
     while (true) {
@@ -26,8 +26,8 @@ var original_scope = {
       }
       e = e.parent;
       if (!e) {
-        o = symbol_table[n];
-        return o && typeof o !== 'function' ? o : symbol_table["(name)"];
+        o = symbolTable[n];
+        return o && typeof o !== 'function' ? o : symbolTable["(name)"];
       }
     }
   },
@@ -52,4 +52,4 @@ var original_scope = {
   }
 };
 
-module.exports = original_scope;
+module.exports = originalScope;
