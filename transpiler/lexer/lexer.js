@@ -24,6 +24,7 @@ module.exports = function(code) {
   var insideComment = {multi: false, single: false};
   var insideTuple = [];
   var insideInvocation = [];
+  var insideInitialization = [];
   // TODO - scope
 
   // advances the position of i by specified number of positions
@@ -232,6 +233,15 @@ module.exports = function(code) {
 
     //TODO function declaration
     
+    // collection initializer syntax handling
+    if (tokens.length && currCol === '(' && nextCol === ')' &&
+      (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
+      lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
+      lexerFunctions.checkFor('FUNCTION_INVOCATION', nextCol, tokens);
+      advanceAndClear(2);
+      continue;
+    }
+    
     
     // classes and structures handling
     if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
@@ -264,15 +274,30 @@ module.exports = function(code) {
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
+    if (tokens.length && (CLASS_NAMES[lastToken.value] || 
+      STRUCT_NAMES[lastToken.value] && chunk === '(')) {
+      lexerFunctions.checkFor('INITIALIZATION', chunk, tokens)
+      var temp = {};
+      temp.status = true;
+      temp.parens = 1;
+      insideInitialization.push(temp);
+      advanceAndClear(1);
+      continue;
+    }
+    if (chunk === ')' && insideInitialization.length && 
+      insideInitialization[insideInitialization.length - 1].parens === 1) {
+      lexerFunctions.checkFor('INITIALIZATION', chunk, tokens);
+      insideInitialization.pop();
+      advanceAndClear(1);
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
+      continue;
+    }
     
-    
-
-    // collection initializer syntax handling
-    if (tokens.length && currCol === '(' && nextCol === ')' &&
-      (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
-      lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
-      lexerFunctions.checkFor('FUNCTION_INVOCATION', nextCol, tokens);
-      advanceAndClear(2);
+    // handles property access and method calls via dot notation
+    if (currCol === '.' && !lexerFunctions.checkForWhitespace(prevCol) &&
+      !lexerFunctions.checkForWhitespace(nextCol) && lastToken.type === 'IDENTIFIER') {
+      lexerFunctions.makeToken(undefined, chunk, tokens, 'DOT_SYNTAX', '.');
+      advanceAndClear(1);
       continue;
     }
 

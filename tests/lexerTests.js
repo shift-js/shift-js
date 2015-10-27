@@ -4107,7 +4107,7 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
-        xit('should handle basic instantiation of classes and structs', function () {
+        it('should handle basic initialization of classes and structs', function () {
           input = String.raw`class VideoMode {
                          var interlaced = false
                          var frameRate = 0.0
@@ -4120,23 +4120,6 @@ describe('Lexer', function() {
                       let someVideoMode = VideoMode()
                       let someResolution = Resolution();`;
           output = [
-            { type: "DECLARATION_KEYWORD",        value: "let" },
-            { type: "IDENTIFIER",                 value: "someResolution" },
-            { type: "OPERATOR",                   value: "=" },
-            { type: "IDENTIFIER",                 value: "Resolution" },
-            { type: "INSTANIIATION_START",        value: "(" }, 
-            { type: "INSTANIIATION_END",          value: ")" }, 
-            { type: "TERMINATOR",                 value: "\\n"},
-            
-            { type: "DECLARATION_KEYWORD",        value: "let" },
-            { type: "IDENTIFIER",                 value: "someVideoMode" },
-            { type: "OPERATOR",                   value: "=" },
-            { type: "IDENTIFIER",                 value: "VideoMode" },
-            { type: "INSTANIIATION_START",        value: "(" }, 
-            { type: "INSTANIIATION_END",          value: ")" }, 
-            { type: "PUNCTUATION",                value: ";" },
-            { type: "TERMINATOR",                 value: "EOF"},
-            
             { type: "DECLARATION_KEYWORD",        value: "class" },
             { type: "IDENTIFIER",                 value: "VideoMode" },
             { type: "CLASS_DEFINITION_START",     value: "{" },
@@ -4175,29 +4158,30 @@ describe('Lexer', function() {
             { type: "TERMINATOR",                 value: "\\n"},
             
             { type: "STRUCT_DEFINITION_END",      value: "}" },
-            { type: "TERMINATOR",                 value: "EOF"},
+            { type: "TERMINATOR",                 value: "\\n"},
+            { type: "TERMINATOR",                 value: "\\n"},
 
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "someVideoMode" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "VideoMode" },
-            { type: "INSTANIIATION_START",        value: "(" }, 
-            { type: "INSTANIIATION_END",          value: ")" }, 
+            { type: "INITIALIZATION_START",       value: "(" }, 
+            { type: "INITIALIZATION_END",         value: ")" }, 
             { type: "TERMINATOR",                 value: "\\n"}, 
 
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "someResolution" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "Resolution" },
-            { type: "INSTANIIATION_START",        value: "(" }, 
-            { type: "INSTANIIATION_END",          value: ")" }, 
+            { type: "INITIALIZATION_START",       value: "(" }, 
+            { type: "INITIALIZATION_END",         value: ")" }, 
             { type: "PUNCTUATION",                value: ";" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
         });
 
-        xit('should handle basic property access via dot notation', function () {
+        it('should handle basic property access via dot notation', function () {
           input = String.raw`class VideoMode {
                                  var interlaced = false
                                  var frameRate = 0.0
@@ -4251,30 +4235,32 @@ describe('Lexer', function() {
             { type: "TERMINATOR",                 value: "\\n"},
             
             { type: "STRUCT_DEFINITION_END",      value: "}" },
-            { type: "TERMINATOR",                 value: "EOF"},
+            { type: "TERMINATOR",                 value: "\\n"},
+            { type: "TERMINATOR",                 value: "\\n"},
 
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "someVideoMode" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "VideoMode" },
-            { type: "INSTANIIATION_START",        value: "(" }, 
-            { type: "INSTANIIATION_END",          value: ")" }, 
+            { type: "INITIALIZATION_START",        value: "(" }, 
+            { type: "INITIALIZATION_END",          value: ")" }, 
             { type: "TERMINATOR",                 value: "\\n"}, 
 
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "someResolution" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "Resolution" },
-            { type: "INSTANIIATION_START",        value: "(" }, 
-            { type: "INSTANIIATION_END",          value: ")" }, 
+            { type: "INITIALIZATION_START",       value: "(" }, 
+            { type: "INITIALIZATION_END",         value: ")" }, 
             { type: "PUNCTUATION",                value: ";" },
+            { type: "TERMINATOR",                 value: "\\n"}, 
             { type: "TERMINATOR",                 value: "\\n"}, 
             
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "someFrameRate" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "someVideoMode" },
-            { type: "PROPERTY_ACCESS",            value: "." },
+            { type: "DOT_SYNTAX",                 value: "." },
             { type: "IDENTIFIER",                 value: "frameRate" },
             { type: "PUNCTUATION",                value: ";" },
             { type: "TERMINATOR",                 value: "\\n"},
@@ -4283,7 +4269,7 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "someWidth" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "someResolution" },
-            { type: "PROPERTY_ACCESS",            value: "." },
+            { type: "DOT_SYNTAX",                 value: "." },
             { type: "IDENTIFIER",                 value: "width" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];

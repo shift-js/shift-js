@@ -39,9 +39,9 @@ module.exports = {
     '}': 'STRUCT_DEFINITION_END'
   },
   
-  INSTANIIATION: {
-    '(': 'INSTANIIATION_START',
-    ')': 'INSTANIIATION_END'
+  INITIALIZATION: {
+    '(': 'INITIALIZATION_START',
+    ')': 'INITIALIZATION_END'
   },
 
   COLLECTION: {
