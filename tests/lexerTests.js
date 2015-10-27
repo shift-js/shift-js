@@ -4050,11 +4050,11 @@ describe('Lexer', function() {
 
     });
     
-    xdescribe('Classes and Stuctures', function () {
+    describe('Classes and Stuctures', function () {
       
-      xdescribe('Basic Tests', function () {
+      describe('Basic Tests', function () {
         
-        xit('should handle basic definitions of classes and structs', function () {
+        it('should handle basic definitions of classes and structs', function () {
           input = String.raw`class VideoMode {
                                 var interlaced = false
                                 var frameRate = 0.0
