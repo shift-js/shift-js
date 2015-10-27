@@ -2822,10 +2822,11 @@ describe('Lexer', function() {
     describe('Functions', function() {
 
       it('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
-        input = String.raw`func someFunction(var a: Int){
-                    a = a + 1;
-                }
-                someFunction(5);`;
+        input = String.raw`func someFunction(var a: Int) -> Int {
+                              a = a + 1;
+                              return a;
+                          }
+                          someFunction(5);`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
@@ -2834,7 +2835,9 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" },  
+          { type: "TYPE_NUMBER",          value: "Int" }, 
           { type: "STATEMENTS_START",     value: "{" },  
           { type: "TERMINATOR",           value: "\\n"},
           { type: "IDENTIFIER",           value: "a" },
@@ -2842,7 +2845,11 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "NUMBER",               value: "1" },
-          { type: "PUNCTUATION",          value: ";" },  
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "IDENTIFIER",           value: "a" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENTS_END",       value: "}"},
           { type: "TERMINATOR",           value: "\\n"},
@@ -2857,10 +2864,11 @@ describe('Lexer', function() {
       });
       
       it('should handle function declaration and invocation with no spacing', function() {
-        input = String.raw`func someFunction(a: Int){
-                    a = a + 1;
-                }
-                someFunction(5);`;
+        input = String.raw`func someFunction(a: Int)->Int{
+                                let a = a + 1;
+                                return a
+                            }
+                            someFunction(5);`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
@@ -2868,15 +2876,21 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" },  
+          { type: "TYPE_NUMBER",          value: "Int" }, 
           { type: "STATEMENTS_START",     value: "{" },  
           { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "IDENTIFIER",           value: "a" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENTS_END",       value: "}"},
           { type: "TERMINATOR",           value: "\\n"},
@@ -2891,11 +2905,12 @@ describe('Lexer', function() {
       });
     
 
-    it('should handle function declaration and invocation with normal spacing', function() {
-        input = String.raw`func someFunction (a: Int) {
-                    a = a + 1;
-                }
-                someFunction(5);`
+    it('should handle function declaration and invocation with spaces between each part of the declaration', function() {
+        input = String.raw`func someFunction (a: Int) -> Int {
+                                let a = a + 1;
+                                return a
+                            }
+                            someFunction(5);`
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
@@ -2903,15 +2918,21 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" },  
+          { type: "TYPE_NUMBER",          value: "Int" }, 
           { type: "STATEMENTS_START",     value: "{" },  
           { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "IDENTIFIER",           value: "a" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENTS_END",       value: "}"},
           { type: "TERMINATOR",           value: "\\n"},
@@ -2926,10 +2947,11 @@ describe('Lexer', function() {
       });
     
       it('should handle function declaration and invocation with no space after the function name', function() {
-        input = String.raw`func someFunction(a: Int) {
-                    a = a + 1;
-                }
-                someFunction(5);`;
+        input = String.raw`func someFunction(a: Int) -> Int {
+                                let a = a + 1;
+                                return a
+                            }
+                            someFunction(5);`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
@@ -2937,15 +2959,21 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" },  
+          { type: "TYPE_NUMBER",          value: "Int" }, 
           { type: "STATEMENTS_START",     value: "{" },  
           { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "IDENTIFIER",           value: "a" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENTS_END",       value: "}"},
           { type: "TERMINATOR",           value: "\\n"},
@@ -2960,44 +2988,52 @@ describe('Lexer', function() {
       });
 
       it('should handle function declaration and invocation with no space after the parameter declaration', function() {
-        input = String.raw`func someFunction (a: Int){
-                    a = a + 1;
-                }
-                someFunction(5);`
+        input = String.raw`func someFunction(a: Int)-> Int {
+                                let a = a + 1;
+                                return a
+                            }
+                            someFunction(5);`
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "someFunction" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "+" },
-          { type: "NUMBER",               value: "1" },
-          { type: "PUNCTUATION",          value: ";" },  
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "STATEMENTS_END",       value: "}"},
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "IDENTIFIER",           value: "someFunction" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "NUMBER",               value: "5" },   
-          { type: "INVOCATION_END",       value: ")" }, 
-          { type: "PUNCTUATION",          value: ";" },    
-          { type: "TERMINATOR",           value: "EOF"}
+         { type: "DECLARATION_KEYWORD",  value: "func"},
+         { type: "IDENTIFIER",           value: "someFunction" },
+         { type: "PARAMS_START",         value: "(" },
+         { type: "IDENTIFIER",           value: "a" },
+         { type: "PUNCTUATION",          value: ":" }, 
+         { type: "TYPE_NUMBER",          value: "Int" }, 
+         { type: "PARAMS_END",           value: ")" }, 
+         { type: "RETURN_ARROW",         value: "->" },  
+         { type: "TYPE_NUMBER",          value: "Int" }, 
+         { type: "STATEMENTS_START",     value: "{" },  
+         { type: "TERMINATOR",           value: "\\n"},
+         { type: "DECLARATION_KEYWORD",  value: "let"},
+         { type: "IDENTIFIER",           value: "a" },
+         { type: "OPERATOR",             value: "=" },
+         { type: "IDENTIFIER",           value: "a" },
+         { type: "OPERATOR",             value: "+" },
+         { type: "NUMBER",               value: "1" },
+         { type: "PUNCTUATION",          value: ";" },  
+         { type: "TERMINATOR",           value: "\\n"},
+         { type: "STATEMENT_KEYWORD",    value: "return"},
+         { type: "IDENTIFIER",           value: "a" },
+         { type: "TERMINATOR",           value: "\\n"},
+         { type: "STATEMENTS_END",       value: "}"},
+         { type: "TERMINATOR",           value: "\\n"},
+         { type: "IDENTIFIER",           value: "someFunction" },
+         { type: "INVOCATION_START",     value: "(" }, 
+         { type: "NUMBER",               value: "5" },   
+         { type: "INVOCATION_END",       value: ")" }, 
+         { type: "PUNCTUATION",          value: ";" },    
+         { type: "TERMINATOR",           value: "EOF"}
         ]
         expect(lexer(input)).to.deep.equal(output);
       });
 
       it('should handle function declaration and invocation with erratic spacing', function() {
-        input = String.raw`func someFunction        (a: Int)     {
-                              a = a + 1;
-                          }
-                          someFunction      (5);`;
+        input = String.raw`func  someFunction(a: Int)           ->  Int{
+                                let a = a +               1;
+                                return                                  a
+                            }
+                            someFunction           (5)       ;`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
@@ -3005,15 +3041,21 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
+          { type: "PARAMS_END",           value: ")" }, 
+          { type: "RETURN_ARROW",         value: "->" },  
+          { type: "TYPE_NUMBER",          value: "Int" }, 
           { type: "STATEMENTS_START",     value: "{" },  
           { type: "TERMINATOR",           value: "\\n"},
+          { type: "DECLARATION_KEYWORD",  value: "let"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ";" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "STATEMENT_KEYWORD",    value: "return"},
+          { type: "IDENTIFIER",           value: "a" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENTS_END",       value: "}"},
           { type: "TERMINATOR",           value: "\\n"},
@@ -3084,12 +3126,16 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle functions that have if statements that use {} and have a return value', function() {
+      it('should handle functions that have if else statements that use curly braces and have a return value', function() {
         input = String.raw`func sayHello(alreadyGreeted: Bool) -> String {
-                if alreadyGreeted {
-                    return "blah"
-                } 
-            }`;
+                                if alreadyGreeted {
+                                    return "blah"
+                                } else {
+                                    return "hello"
+                                }
+                            }
+
+                            sayHello(true)`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "sayHello" },
@@ -3113,69 +3159,25 @@ describe('Lexer', function() {
           { type: "TERMINATOR",           value: "\\n"},
 
           { type: "PUNCTUATION",          value: "}" },
-          { type: "TERMINATOR",           value: "\\n"},
-
-          { type: "STATEMENTS_END",       value: "}" },  
-          { type: "TERMINATOR",           value: "EOF"}
-        ]
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      it('should handle functions that have if and else statements that use {} and have a return value', function() {
-        input = String.raw`func sayHello(personName: String, alreadyGreeted: Bool) -> String {
-                    if alreadyGreeted {
-                        return sayHello(personName) + " blah"
-                    } else {
-                        return sayHello(personName)
-                    }
-                }`;
-        output = [
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "PUNCTUATION",          value: "," },
-          { type: "IDENTIFIER",           value: "alreadyGreeted" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_BOOLEAN",         value: "Bool" }, 
-          { type: "PARAMS_END",           value: ")" }, 
-          { type: "RETURN_ARROW",         value: "->" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},
-
-          { type: "STATEMENT_KEYWORD",    value: "if" },
-          { type: "IDENTIFIER",           value: "alreadyGreeted" },
-          { type: "PUNCTUATION",          value: "{" },
-          { type: "TERMINATOR",           value: "\\n"},
-
-          { type: "STATEMENT_KEYWORD",    value: "return"}, 
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "INVOCATION_END",       value: ")" }, 
-          { type: "OPERATOR",             value: "+" }, 
-          { type: "STRING",               value: " blah" }, 
-          { type: "TERMINATOR",           value: "\\n"},
-
-          { type: "PUNCTUATION",          value: "}" },
           { type: "STATEMENT_KEYWORD",    value: "else" },
           { type: "PUNCTUATION",          value: "{" },
-          { type: "TERMINATOR",           value: "\\n"}, 
-
-          { type: "STATEMENT_KEYWORD",    value: "return"}, 
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "INVOCATION_END",       value: ")" },
           { type: "TERMINATOR",           value: "\\n"},
-
+          
+          { type: "STATEMENT_KEYWORD",    value: "return"}, 
+          { type: "STRING",               value: "hello" }, 
+          { type: "TERMINATOR",           value: "\\n"},
+          
           { type: "PUNCTUATION",          value: "}" },
           { type: "TERMINATOR",           value: "\\n"},
 
           { type: "STATEMENTS_END",       value: "}" },  
+          { type: "TERMINATOR",           value: "\\n"},
+          { type: "TERMINATOR",           value: "\\n"},
+          
+          { type: "IDENTIFIER",           value: "sayHello" },
+          { type: "INVOCATION_START",     value: "(" },
+          { type: "BOOLEAN",              value: "true" },  
+          { type: "INVOCATION_END",       value: ")" }, 
           { type: "TERMINATOR",           value: "EOF"}
         ]
         expect(lexer(input)).to.deep.equal(output);
