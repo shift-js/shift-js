@@ -16,9 +16,6 @@ var stmt = require('./stmt');
 var statements = require('./statements');
 var statement = require('./statement');
 
-
-
-
 var declarations = {
   symbols: function(obj) {
     symbol(obj, original_symbol, "EOF");
@@ -50,13 +47,11 @@ var declarations = {
   infixes: function(obj) {
     infix(obj, "?", 20, function(left) {
       this.type = "ConditionalExpression";
-
       if(left.type === "IDENTIFIER") {
         left.type = "Identifier";
         left.name = left.value;
         delete left.value;
       }
-
       this.test = left;
       this.consequent = expression(obj, 0);
       obj = advance(obj, ":");
@@ -468,6 +463,14 @@ var declarations = {
       return this;
     });
 
+  },
+  constants: function(obj) {
+    //constant("true", true);
+    //constant("false", false);
+    //constant("null", null);
+    //constant("pi", 3.141592653589793);
+    //constant("Object", {});
+    //constant("Array", []);
   }
 
 

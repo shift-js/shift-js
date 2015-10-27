@@ -60,7 +60,7 @@ var expression = function(obj, rbp) {
   while (rbp < obj.token.lbp) {
     t = obj.token;
     obj = advance(obj);
-    left = t.led(left);
+    left = t.led(left);//assignments
   }
 
 

@@ -4,7 +4,7 @@ var original_symbol = require('./original_symbol');
 var constant = function(obj, s, v) {
   var x = symbol(obj, original_symbol, s);
   x.nud = function() {
-    scope.reserve(this);
+    obj.scope.reserve(this);
     this.value = symbol_table[this.id].value;
     this.type = "literal";//"literal" -> "Literal"
     return this;
