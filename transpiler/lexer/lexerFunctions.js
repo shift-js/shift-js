@@ -125,7 +125,7 @@ module.exports = {
       }
     }
     else if (insideComment.single && (nextCol === undefined || nextCol === '\n')) {
-      insideComment.multi = false;
+      insideComment.single = false;
       module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
       module.exports.handleEndOfFile(nextCol, tokens);
       cb(1);
