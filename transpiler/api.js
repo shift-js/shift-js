@@ -13,7 +13,7 @@ var options = {
   }
 };
 
-module.exports = {
+var api = {
   compile: function(swiftString) {
     parser = make_parser();
     return generator(parser(lexer(swiftString)), options);
@@ -21,7 +21,9 @@ module.exports = {
   tokenize: function(swiftString) {
     return lexer(swiftString);
   },
-  ast: function(tokens) {
-    return lexer(parser(tokens));
+  ast: function(swiftString) {
+    return parser(lexer(swiftString));
   }
 };
+
+module.exports = api;

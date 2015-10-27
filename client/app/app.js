@@ -1,4 +1,5 @@
 angular.module('app', [
+  'app.api',
   'app.repl',
   'ngRoute'
 ])

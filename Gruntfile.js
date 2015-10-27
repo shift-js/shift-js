@@ -3,6 +3,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    browserify: {
+      api: {
+        src: 'client/app/components/repl/browserApi.js',
+        dest: 'client/app/components/repl/api.js'
+      }
+    },
+
     mochaTest: {
       lexer: {
         options: {
@@ -50,13 +57,11 @@ module.exports = function(grunt) {
 
   });
 
-  // grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-mocha-test');
-  // grunt.loadNpmTasks('grunt-contrib-watch');
-  // grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-browserify');
+  // grunt.loadNpmTasks('grunt-contrib-uglify');
   // grunt.loadNpmTasks('grunt-contrib-concat');
-  // grunt.loadNpmTasks('grunt-jsbeautifier');
 
   grunt.registerTask('test', [
     // 'jshint',
@@ -68,9 +73,14 @@ module.exports = function(grunt) {
     'mochaTest:lexer'
   ]);
 
-    grunt.registerTask('testParser', [
+  grunt.registerTask('testParser', [
     // 'jshint',
     'mochaTest:parser'
+  ]);
+
+  grunt.registerTask('build', [
+    'browserify',
+    'test'
   ]);
 
 };

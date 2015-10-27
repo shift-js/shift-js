@@ -1,5 +1,17 @@
 <div class="container">
-  <h1>Text text text</h1>
-  <textarea ng-model="replInput" rows="40" cols="80"></textarea>
-  <textarea rows="40" cols="80">{{replInput}}</textarea>
+  <h1>ShiftJS - Swift to JavaScript Transpiler</h1>
+  <select ng-model="option" ng-init="option='compile'" class="form-control">
+    <option value="compile">Transpile</option>
+    <option value="tokenize">Tokenize</option>
+    <option value="ast">AST</option>
+  </select>
+  <br>
+  <fieldset class="col-md-6">
+    <legend>Swift</legend>
+    <textarea class="form-control" ng-model="replInput" rows="30"></textarea>
+  </fieldset>
+  <fieldset class="col-md-6">
+    <legend>JavaScript</legend>
+    <textarea readonly class="form-control" rows="30">{{use(api[option], replInput)}}</textarea>
+  </fieldset>
 </div>
