@@ -9,11 +9,9 @@ var assignment = function(obj, id) {
     left.type = "Identifier";
     left.name = left.value;;
     delete left.value;
-
     this.left = left;
     this.right = expression(obj, 9);
     this.assignment = true;
-    delete this.assignment;
     this.operator = this.value;
     this.type = "AssignmentExpression";
     delete this.value;

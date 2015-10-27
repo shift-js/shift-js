@@ -18,6 +18,9 @@ var statement = function(obj) {
   if (!v.assignment && v.id !== "(") {
     v.error("Bad expression statement.");
   }
+  else if(obj.token.value === "EOF") {
+    return v;
+  }
   obj = advance(obj, ";");
   return v;
 };
