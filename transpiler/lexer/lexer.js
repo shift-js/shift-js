@@ -43,7 +43,6 @@ module.exports = function(code) {
   };
 
   while (code[i] !== undefined) {
-    debugger;
     chunk += code[i];
     currCol = code[i];
     prevCol = code[i - 1];

@@ -1,0 +1,6 @@
+textarea {
+  resize: none;
+  background-color: #fff !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
