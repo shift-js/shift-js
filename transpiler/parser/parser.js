@@ -2,9 +2,9 @@ var util = require('util');
 var diff = require('deep-diff').diff;
 var helpers = require('./helperFunctions.js');
 var advance = require('./advance');
-var new_scope = require('./new_scope');
-var original_scope = require('./original_scope');
-var original_symbol = require('./original_symbol');
+var newScope = require('./newScope');
+var originalScope = require('./originalScope');
+var originalSymbol = require('./originalSymbol');
 var symbol = require('./symbol');
 var block = require('./block');
 var expression = require('./expression');
@@ -14,29 +14,29 @@ var assignment = require('./assignment');
 var declarations = require('./declarations');
 var statements = require('./statements');
 
-var make_parser = function() {
+var makeParser = function() {
 
-  var obj = {};
-  obj.scope;
-  obj.symbol_table = {};
-  obj.token;
-  obj.tokens;
-  obj.token_nr = 0;
+  var state = {};
+  state.scope;
+  state.symbolTable = {};
+  state.token;
+  state.tokens;
+  state.index = 0;
 
-  declarations.symbols(obj);
-  declarations.assignments(obj);
-  declarations.infixes(obj);
-  declarations.prefixes(obj);
-  declarations.stmts(obj);
-  declarations.constants(obj);
+  declarations.symbols(state);
+  declarations.assignments(state);
+  declarations.infixes(state);
+  declarations.prefixes(state);
+  declarations.stmts(state);
+  declarations.constants(state);
 
-  var parseTokenStream = function(input_tokens) {
-    obj.tokens = helpers.cleanUpTokenStream(input_tokens);
-    obj.scope = new_scope(obj, original_scope);
-    obj = advance(obj);
-    var s = statements(obj);
-    obj = advance(obj);
-    obj.scope.pop();
+  var parseTokenStream = function(inputTokens) {
+    state.tokens = helpers.cleanUpTokenStream(inputTokens);
+    state.scope = newScope(state, originalScope);
+    state = advance(state);
+    var s = statements(state);
+    state = advance(state);
+    state.scope.pop();
 
     var result = {
       type: 'Program',
@@ -57,4 +57,4 @@ var make_parser = function() {
   return parseTokenStream;
 };
 
-module.exports = make_parser;
+module.exports = makeParser;

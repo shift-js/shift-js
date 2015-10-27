@@ -1,7 +1,7 @@
 var util = require('util');
 var diff = require('deep-diff').diff;
 var helpers = require('./helperFunctions.js');
-var make_parse = require('./parser');
+var makeParse = require('./parser');
 
 var expected = {
   "type": "Program",
@@ -13,101 +13,102 @@ var expected = {
           "type": "VariableDeclarator",
           "id": {
             "type": "Identifier",
-            "name": "f"
+            "name": "someFunction"
           },
           "init": {
-            "type": "Literal",
-            "value": true,
-            "raw": "true"
+            "type": "FunctionExpression",
+            "id": null,
+            "params": [
+              {
+                "type": "Identifier",
+                "name": "a"
+              }
+            ],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "a"
+                    },
+                    "right": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "Identifier",
+                        "name": "a"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
           }
         }
       ],
       "kind": "var"
     },
     {
-      "type": "IfStatement",
-      "test": {
-        "type": "UnaryExpression",
-        "operator": "!",
-        "argument": {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "CallExpression",
+        "callee": {
           "type": "Identifier",
-          "name": "f"
+          "name": "someFunction"
         },
-        "prefix": true
-      },
-      "consequent": {
-        "type": "BlockStatement",
-        "body": [
+        "arguments": [
           {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "AssignmentExpression",
-              "operator": "=",
-              "left": {
-                "type": "Identifier",
-                "name": "f"
-              },
-              "right": {
-                "type": "Literal",
-                "value": true,
-                "raw": "true"
-              }
-            }
-          }
-        ]
-      },
-      "alternate": {
-        "type": "BlockStatement",
-        "body": [
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "AssignmentExpression",
-              "operator": "=",
-              "left": {
-                "type": "Identifier",
-                "name": "f"
-              },
-              "right": {
-                "type": "Literal",
-                "value": false,
-                "raw": "false"
-              }
-            }
+            "type": "Literal",
+            "value": 5,
+            "raw": "5"
           }
         ]
       }
-    },
-    {
-      "type": "EmptyStatement"
     }
   ],
   "sourceType": "module"
 };
 var tokenStream = [
-  { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "f" },
+  { type: "DECLARATION_KEYWORD",  value: "func"},
+  { type: "IDENTIFIER",           value: "someFunction" },
+  { type: "PARAMS_START",         value: "(" },
+  { type: "DECLARATION_KEYWORD",  value: "var"},
+  { type: "IDENTIFIER",           value: "a" },
+  { type: "PUNCTUATION",          value: ":" },
+  { type: "TYPE_NUMBER",          value: "Int" },
+  { type: "PARAMS_END",           value: ")" },
+  { type: "STATEMENTS_START",     value: "{" },
+  { type: "TERMINATOR",           value: "\\n"},
+  { type: "IDENTIFIER",           value: "a" },
   { type: "OPERATOR",             value: "=" },
-  { type: "BOOLEAN",              value: "true" },
+  { type: "IDENTIFIER",           value: "a" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "NUMBER",               value: "1" },
   { type: "PUNCTUATION",          value: ";" },
-  { type: "STATEMENT_KEYWORD",    value: "if" },
-  { type: "OPERATOR",             value: "!" },
-  { type: "IDENTIFIER",           value: "f" },
-  { type: "PUNCTUATION",          value: "{" },
-  { type: "IDENTIFIER",           value: "f" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "BOOLEAN",              value: "true" },
-  { type: "PUNCTUATION",          value: "}" },
-  { type: "STATEMENT_KEYWORD",    value: "else" },
-  { type: "PUNCTUATION",          value: "{" },
-  { type: "IDENTIFIER",           value: "f" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "BOOLEAN",              value: "false" },
-  { type: "PUNCTUATION",          value: "}" },
+  { type: "TERMINATOR",           value: "\\n"},
+  { type: "STATEMENTS_END",       value: "}"},
+  { type: "TERMINATOR",           value: "\\n"},
+  { type: "IDENTIFIER",           value: "someFunction" },
+  { type: "INVOCATION_START",     value: "(" },
+  { type: "NUMBER",               value: "5" },
+  { type: "INVOCATION_END",       value: ")" },
   { type: "PUNCTUATION",          value: ";" },
   { type: "TERMINATOR",           value: "EOF"}
 ];
-var parser = make_parse();
+var parser = makeParse();
 
 /**
  * First time

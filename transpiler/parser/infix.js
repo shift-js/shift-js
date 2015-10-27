@@ -1,10 +1,10 @@
 var symbol = require('./symbol');
 var helpers = require('./helperFunctions');
 var expression = require('./expression');
-var original_symbol = require('./original_symbol');
+var originalSymbol = require('./originalSymbol');
 
-var infix = function(obj, id, bp, led) {
-  var s = symbol(obj, original_symbol, id, bp);
+var infix = function(state, id, bp, led) {
+  var s = symbol(state, originalSymbol, id, bp);
   s.led = led || function(left) {
       delete this.value;
       this.type = "BinaryExpression";
@@ -32,7 +32,7 @@ var infix = function(obj, id, bp, led) {
         left.raw = '"' + left.value + '"';
       }
       this.left = left;
-      this.right = expression(obj, bp);
+      this.right = expression(state, bp);
       return this;
     };
   return s;

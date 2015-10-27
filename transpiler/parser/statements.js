@@ -1,18 +1,18 @@
 var statement = require('./statement');
 
-var statements = function(obj, optionalNumLoops) {
+var statements = function(state, optionalNumLoops) {
   var a = [], s, count = 0;
   while (true) {
-    if(count >= optionalNumLoops) break;
-    if (obj.token.id === ";" || obj.token.id === "}" || obj.token.id === "(end)" || obj.token.id === "EOF") {
-      if(obj.token.id === ";") {
-        a.push({
-          "type": "EmptyStatement"
-        });
-      }
+    if(count >= optionalNumLoops) {
       break;
     }
-    s = statement(obj);
+    if (state.token.id === ";") {
+      a.push( { "type": "EmptyStatement" } );
+      break;
+    } else if (state.token.id === "}" || state.token.id === "(end)" || state.token.id === "EOF") {
+      break;
+    }
+    s = statement(state);
     if (s) {
       a.push(s);
       count++;
