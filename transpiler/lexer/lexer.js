@@ -178,6 +178,7 @@ module.exports = function(code) {
       temp.insideParams = false;
       temp.statements = 0;
       temp.curly = 0;
+      // temp.insideReturnType = true;
       // temp.index = tokens.length - 1;
       insideFunction.push(temp);
       advanceAndClear(2);
