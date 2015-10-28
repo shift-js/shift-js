@@ -109,6 +109,47 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+      
+      it('should variables declared with type annotations', function () {
+        input = String.raw`var name: String = "Joe"; var age: Int = 45;`;
+
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "name" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TYPE_STRING",          value: "String"},
+          { type: "OPERATOR",             value: "=" },
+          { type: "STRING",               value: "Joe" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "age" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TYPE_NUMBER",          value: "Int"},
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "45" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should variables declared with type annotations but no value', function () {
+        input = String.raw`var name: String; var age: Int;`;
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "name" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TYPE_STRING",          value: "String"},
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "age" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TYPE_NUMBER",          value: "Int"},
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle comments', function () {
         input = String.raw`/* Comment 1 */ var a = 1 // Comment 2`;
