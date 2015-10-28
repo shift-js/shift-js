@@ -5496,5 +5496,17 @@ describe('Lexer', function() {
 
     }); 
 
+    xdescribe('Native Methods', function () {
+
+      xit('should handle print statements', function () {
+        input = String.raw``;
+        output = [
+
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+    });
+
   });
 });
