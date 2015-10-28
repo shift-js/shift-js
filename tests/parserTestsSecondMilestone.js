@@ -2368,10 +2368,10 @@ describe('Second Milestone Parser', function() {
       //         }`;
       // AST Explorer input:
       // var diceRoll = 6;
-      // if (++diceRoll === 7) {
+      // if (++diceRoll == 7) {
       //   diceRoll = 1
       // }
-      xit('should handle simple multi-line if statements with complex conditions', function() {
+      it('should handle simple multi-line if statements with complex conditions', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "diceRoll" },
@@ -2420,7 +2420,7 @@ describe('Second Milestone Parser', function() {
               "type": "IfStatement",
               "test": {
                 "type": "BinaryExpression",
-                "operator": "===",
+                "operator": "==",
                 "left": {
                   "type": "UpdateExpression",
                   "operator": "++",
@@ -2769,7 +2769,7 @@ describe('Second Milestone Parser', function() {
       });
     });
 
-    xdescribe('Multi-line for loops', function() {
+    describe('Multi-line for loops', function() {
 
       // input = String.raw`var b = 0;
       //         for var i = 0; i < 10; i++ {
@@ -2780,7 +2780,7 @@ describe('Second Milestone Parser', function() {
       // for (var i = 0; i < 10; i++) {
       //   b++
       // }
-      xit('should handle simple multi-line for loops', function() {
+      it('should handle simple multi-line for loops', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },

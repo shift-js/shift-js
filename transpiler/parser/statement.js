@@ -9,9 +9,7 @@ var statement = function(state) {
     state.scope.reserve(n);
     return n.std();
   }
-  //else if(n.value === "\\n") {
-  //  state = advance(state);
-  //}
+
   v = expression(state, 0);
 
   if(state.token.value === "}") {

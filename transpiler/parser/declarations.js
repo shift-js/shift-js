@@ -339,6 +339,7 @@ var declarations = {
 
         state = advance(state);
 
+        /* Type Declarations */
         if(state.token.id === ":") {
           state = advance(state, ":");
           if(state.token.type === "TYPE_STRING") {
@@ -350,6 +351,7 @@ var declarations = {
           }
         }
 
+        /* Assignment to a variable declaration */
         if (state.token.id === "=") {
           t = state.token;
           state = advance(state, "=");
@@ -368,10 +370,27 @@ var declarations = {
 
           a.push(t);
         }
-        if (state.token.id === ";") {
+        /* Uninitialized variable declaration */
+        else if (state.token.id === ";") {
+          t = state.token;
+          t.type = 'VariableDeclaration';
+          t.kind = 'var';
+          t.declarations = [{
+            type: 'VariableDeclarator',
+            id: {},
+            init: {}
+          }];
+          t.declarations[0].id = n;
+          t.declarations[0].init = null;
+          delete t.value;
+
+          a.push(t);
           break;
-          //return a.length === 0 ? null : a.length === 1 ? a[0] : a;
         } else if(state.token.type === "TERMINATOR") {
+          state = advance(state);
+        }
+
+        if(state.token.id === ";") {
           state = advance(state);
         }
 
@@ -380,10 +399,19 @@ var declarations = {
         }
         state = advance(state, ",");
       }
+      //TODO outside of the while loop
+
+      if([";", "var", "if", "while", "repeat", "for"].hasItem(state.token.value)) {
+        return a.length === 0 ? null : a.length === 1 ? a[0] : a;
+      } else if(state.token.type === "IDENTIFIER") {
+        return a.length === 0 ? null : a.length === 1 ? a[0] : a;
+      }
+
+      state = advance(state);
+
       if(state.token.value === "var") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
-      state = advance(state);
       if(state.token.value === "\\n") {
         state = advance(state);
       }
@@ -391,13 +419,12 @@ var declarations = {
     });
 
     stmt(state, "if", function() {
+
       if(state.tokens[state.index].value === "(") {
         state = advance(state, "(");
         this.test = expression(state, 0);
         state = advance(state, ")");
       } else {
-        //TODO making a node of (++diceRoll)
-        //TODO when needs to make a tree of (++diceRoll == 7)
         this.test = expression(state, 0, true);
       }
       this.consequent = block(state);
@@ -411,6 +438,7 @@ var declarations = {
       this.type = "IfStatement";
       delete this.value;
       return this;
+
     });
 
     //stmt("return", function() {
