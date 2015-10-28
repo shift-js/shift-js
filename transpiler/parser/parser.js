@@ -33,15 +33,32 @@ var makeParser = function() {
   var parseTokenStream = function(inputTokens) {
     state.tokens = helpers.cleanUpTokenStream(inputTokens);
     state.scope = newScope(state, originalScope);
-    state = advance(state);//TODO This is where comments first can be found
+    state = advance(state);
+
+    while(true) {
+      // Remove leading new lines
+      if(state.token.value === "\\n") {
+        state = advance(state);
+      } else {
+        break;
+      }
+    }
+
     var s = statements(state);
     state = advance(state);
     state.scope.pop();
 
+    var bodyNodes;
+    if(s) {
+      bodyNodes = Array.isArray(s) ? s : [s];
+    } else {
+      bodyNodes = [];
+    }
+
     var result = {
       type: 'Program',
       sourceType: 'module',
-      body: Array.isArray(s) ? s : [s]
+      body: bodyNodes
     };
 
     /**

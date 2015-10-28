@@ -2211,7 +2211,7 @@ describe('Second Milestone Parser', function() {
       // // firstParameterName and secondParameterName refer to
       // // the argument values for the first and second parameters
       // `;
-      xit('should handle successive single-line comments', function() {
+      it('should handle successive single-line comments', function() {
         input = [
           { type: "COMMENT_START", value: "//"},
           { type: "COMMENT", value: " function body goes here"},
@@ -2226,8 +2226,6 @@ describe('Second Milestone Parser', function() {
         ];
         output = {
           "type": "Program",
-          "start": 0,
-          "end": 140,
           "body": [],
           "sourceType": "module"
         };
@@ -2239,7 +2237,7 @@ describe('Second Milestone Parser', function() {
       // Comment 2
       // */
       // `;
-      xit('should handle multi-line comments', function() {
+      it('should handle multi-line comments', function() {
         input = [
           { type: "MULTI_LINE_COMMENT_START", value: "/*"},
           { type: "TERMINATOR", value: "\\n"},
@@ -2254,11 +2252,7 @@ describe('Second Milestone Parser', function() {
         output = {
           "type": "Program",
           "sourceType": "module",
-          "body": [
-            {
-              "type": "EmptyStatement"
-            }
-          ]
+          "body": []
         };
         expect(R.equals(parser(input), output)).to.equal(true);
       });
