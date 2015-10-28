@@ -2,67 +2,47 @@ var lexer = require("./lexer");
 var deepEqual = require("./helperFunctions").deepEqual;
 var diff = require("./helperFunctions").diff;
 
-var swiftCode = String.raw`var resolutionHeight = 480
-                        struct Resolution {
-                            var width = 0
-                            var height = 0
-                        }
-
-                        let someResolution = Resolution(width: ((50 * 2) * 6) + 40, height: resolutionHeight)`;
+var swiftCode = String.raw`func addOne(input: Int) -> Int {
+                                return input + 1
+                            }
+                            addOne(((17 * 4) - 3) * 5)`;
      
 var swiftCodeAnswers = [
-         { type: "DECLARATION_KEYWORD",        value: "var" },
-         { type: "IDENTIFIER",                 value: "resolutionHeight" },
-         { type: "OPERATOR",                   value: "=" },
-         { type: "NUMBER",                     value: "480" },
+         { type: "DECLARATION_KEYWORD",        value: "func"},
+         { type: "IDENTIFIER",                 value: "addOne" },
+         { type: "PARAMS_START",               value: "(" },
+         { type: "IDENTIFIER",                 value: "input" },
+         { type: "PUNCTUATION",                value: ":" }, 
+         { type: "TYPE_NUMBER",                value: "Int" }, 
+         { type: "PARAMS_END",                 value: ")" }, 
+         { type: "RETURN_ARROW",               value: "->" },  
+         { type: "TYPE_NUMBER",                value: "Int" }, 
+         { type: "STATEMENTS_START",           value: "{" },  
          { type: "TERMINATOR",                 value: "\\n"},
          
-         { type: "DECLARATION_KEYWORD",        value: "struct" },
-         { type: "IDENTIFIER",                 value: "Resolution" },
-         { type: "STRUCT_DEFINITION_START",    value: "{" },
-         { type: "TERMINATOR",                 value: "\\n"},
-         
-         { type: "DECLARATION_KEYWORD",        value: "var" },
-         { type: "IDENTIFIER",                 value: "width" },
-         { type: "OPERATOR",                   value: "=" },
-         { type: "NUMBER",                     value: "0" },
-         { type: "TERMINATOR",                 value: "\\n"},
-         
-         { type: "DECLARATION_KEYWORD",        value: "var" },
-         { type: "IDENTIFIER",                 value: "height" },
-         { type: "OPERATOR",                   value: "=" },
-         { type: "NUMBER",                     value: "0" },
-         { type: "TERMINATOR",                 value: "\\n"},
-         
-         { type: "STRUCT_DEFINITION_END",      value: "}" },
-         { type: "TERMINATOR",                 value: "\\n"},
-         { type: "TERMINATOR",                 value: "\\n"},
-         
-         { type: "DECLARATION_KEYWORD",        value: "let" },
-         { type: "IDENTIFIER",                 value: "someResolution" },
-         { type: "OPERATOR",                   value: "=" },
-         { type: "IDENTIFIER",                 value: "Resolution" },
-         { type: "INITIALIZATION_START",       value: "(" }, 
-         { type: "IDENTIFIER",                 value: "width" },
-         { type: "PUNCTUATION",                value: ":" },
-         
-         { type: "PUNCTUATION",                value: "(" },
-         { type: "PUNCTUATION",                value: "(" },
-         { type: "NUMBER",                     value: "50" },
-         { type: "OPERATOR",                   value: "*" },
-         { type: "NUMBER",                     value: "2" },
-         { type: "PUNCTUATION",                value: ")" },
-         { type: "OPERATOR",                   value: "*" },
-         { type: "NUMBER",                     value: "6" },
-         { type: "PUNCTUATION",                value: ")" },
+         { type: "STATEMENT_KEYWORD",          value: "return"},
+         { type: "IDENTIFIER",                 value: "input" },
          { type: "OPERATOR",                   value: "+" },
-         { type: "NUMBER",                     value: "40" },
+         { type: "NUMBER",                     value: "1" },
+         { type: "TERMINATOR",                 value: "\\n"},
 
-         { type: "PUNCTUATION",                value: "," },
-         { type: "IDENTIFIER",                 value: "height" },
-         { type: "PUNCTUATION",                value: ":" },
-         { type: "IDENTIFIER",                 value: "resolutionHeight" },
-         { type: "INITIALIZATION_END",         value: ")" }, 
+         { type: "STATEMENTS_END",             value: "}" },  
+         { type: "TERMINATOR",                 value: "\\n"},
+         
+         { type: "IDENTIFIER",                 value: "addOne" },
+         { type: "INVOCATION_START",           value: "(" },
+         { type: "PUNCTUATION",                value: "(" },
+         { type: "PUNCTUATION",                value: "(" }, 
+         { type: "NUMBER",                     value: "17" },   
+         { type: "OPERATOR",                   value: "*" },
+         { type: "NUMBER",                     value: "4" },   
+         { type: "PUNCTUATION",                value: ")" }, 
+         { type: "OPERATOR",                   value: "-" },
+         { type: "NUMBER",                     value: "3" },   
+         { type: "PUNCTUATION",                value: ")" }, 
+         { type: "OPERATOR",                   value: "*" },
+         { type: "NUMBER",                     value: "5" },   
+         { type: "INVOCATION_END",             value: ")" }, 
          { type: "TERMINATOR",                 value: "EOF"}
         ];
 
