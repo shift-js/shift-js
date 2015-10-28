@@ -3447,7 +3447,7 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
-        xit('should handle function invocations with internal parentheses', function () {
+        it('should handle function invocations with internal parentheses', function () {
           input = String.raw`func addOne(input: Int) -> Int {
                                   return input + 1
                               }
@@ -4089,7 +4089,7 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
-        xit('should handle functions that take a function specified without parentheses as an argument', function () {
+        it('should handle functions that take a function specified without parentheses as an argument', function () {
           input = String.raw`func any(list: [Int], condition: (Int) -> Bool) -> Bool {
                                   for item in list {
                                       if condition(item) {
