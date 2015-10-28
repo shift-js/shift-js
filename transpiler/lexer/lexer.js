@@ -321,7 +321,8 @@ module.exports = function(code) {
     
     // handles property access and method calls via dot notation
     if (currCol === '.' && !lexerFunctions.checkForWhitespace(prevCol) &&
-      !lexerFunctions.checkForWhitespace(nextCol) && lastToken.type === 'IDENTIFIER') {
+      !lexerFunctions.checkForWhitespace(nextCol) && (
+        lastToken.type === 'IDENTIFIER' || lastToken.value === 'self')) {
       lexerFunctions.makeToken(undefined, chunk, tokens, 'DOT_SYNTAX', '.');
       advanceAndClear(1);
       continue;
