@@ -401,7 +401,7 @@ var declarations = {
       }
       //TODO outside of the while loop
 
-      if([";", "var", "if", "while", "repeat", "for"].hasItem(state.token.value)) {
+      if([";", "var", "if", "while", "repeat", "for", "++", "--"].hasItem(state.token.value)) {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       } else if(state.token.type === "IDENTIFIER") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
