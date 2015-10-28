@@ -43,6 +43,7 @@ module.exports = function(code) {
   };
 
   while (code[i] !== undefined) {
+    debugger;
     chunk += code[i];
     currCol = code[i];
     prevCol = code[i - 1];
@@ -134,6 +135,7 @@ module.exports = function(code) {
       continue;
     }
 
+    // Tokenizing return arrow
     if (insideFunction.length && currCol === "-" && nextCol === ">") {
       lexerFunctions.checkFor('FUNCTION_DECLARATION', "->", tokens);
       if (insideFunction[insideFunction.length - 1].insideReturnStatement === false) {
@@ -142,22 +144,51 @@ module.exports = function(code) {
       advanceAndClear(2);
       continue;
     }
+
+    if (insideFunction.length && lastFunction.insideParams === true && chunk === '(') {
+      lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
+        var len = tokens.length - 1;
+        while (tokens[len].type !== 'IDENTIFIER') {
+          len--;
+        }
+        FUNCTION_NAMES[tokens[len].value] = true;
+        advanceAndClear(1);
+        continue;
+    }
+
     if (chunk === '(' && FUNCTION_NAMES[lastToken.value]) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', chunk, tokens);
       var tmp = {};
       tmp.name = lastToken.value;
       tmp.status = true;
+      tmp.parens = 0;
       insideInvocation.push(tmp);
       advanceAndClear(1);
       continue;
     }
-    if (insideInvocation.length && (insideInvocation[insideInvocation.length - 1]).status && chunk === ')') {
+    if (insideInvocation.length && (insideInvocation[insideInvocation.length - 1]).status && chunk === ')' && (insideInvocation[insideInvocation.length - 1]).parens === 0) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', chunk, tokens);
-      var last = insideInvocation[insideInvocation.length - 1];
-      last.status = false;
+      var last = insideInvocation[insideInvocation.length - 1]; //may be unnecessary
+      last.status = false; //may be unnecessary since poping next
       insideInvocation.pop();
       advanceAndClear(1);
       lexerFunctions.handleEndOfFile(nextCol, tokens);
+      continue;
+    }
+
+    if (insideInvocation.length && chunk === '(' && (insideInvocation[insideInvocation.length - 1]).status) {
+      lexerFunctions.checkFor('PUNCTUATION', chunk, tokens);
+      var last = insideInvocation[insideInvocation.length - 1];
+      last.parens++;
+      advanceAndClear(1);
+      continue;
+    }
+
+    if (insideInvocation.length && chunk === ')' && (insideInvocation[insideInvocation.length - 1]).status) {
+      lexerFunctions.checkFor('PUNCTUATION', chunk, tokens);
+      var last = insideInvocation[insideInvocation.length - 1];
+      last.parens--;
+      advanceAndClear(1);
       continue;
     }
 
@@ -182,16 +213,22 @@ module.exports = function(code) {
     if (chunk === 'func') {
       lexerFunctions.checkFor('KEYWORD', chunk, tokens);
       var temp = {};
-      temp.status = true;
-      temp.insideParams = false;
-      temp.statements = 0;
-      temp.curly = 0;
-      temp.insideReturnStatement = false;
+      temp.status = true; // whether inside of a function declaration or not
+      temp.insideParams = false; // 3-valued statement for whether not started, inside, or ended function parameters declaration
+      temp.paramsParens = 0; // handles the parenthesis in the parameters of the parent function
+      temp.statements = 0; //number of statements where by a function statement start with a {
+      temp.curly = 0; // all other { such as for loops are counted as curly
+      temp.insideReturnStatement = false; // whether inside original function statement or not
       // temp.index = tokens.length - 1;
       insideFunction.push(temp);
       advanceAndClear(2);
       continue;
     }
+
+
+
+
+
     if (insideFunction.length && chunk === '(' &&
       insideFunction[insideFunction.length - 1].insideParams === false) {
       FUNCTION_NAMES[lastToken.value] = true;
