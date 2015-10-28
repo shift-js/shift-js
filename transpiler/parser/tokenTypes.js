@@ -36,12 +36,16 @@ module.exports = {
     "IDENTIFIER",
     "TUPLE_ELEMENT_NAME",
     "STATEMENT_KEYWORD",
+    "TYPE_BOOLEAN",
     "TYPE_NUMBER",
-    "TYPE_STRING",
-    "TYPE_BOOLEAN"
+    "TYPE_STRING"
   ],
   comment : [
     "COMMENT_START",
-    "COMMENT"
+    "COMMENT",
+    "MULTI_LINE_COMMENT_START",
+    "MULTI_LINE_COMMENT_END"
   ]
 };
+
+

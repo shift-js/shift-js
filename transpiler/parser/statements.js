@@ -1,7 +1,9 @@
 var statement = require('./statement');
 
-var statements = function(state, optionalNumLoops) {
+var statements = function(state, optionalNumLoops, breakIfEndParen) {
   var a = [], s, count = 0;
+  breakIfEndParen = breakIfEndParen || false;
+
   while (true) {
     if(count >= optionalNumLoops) {
       break;
@@ -11,6 +13,10 @@ var statements = function(state, optionalNumLoops) {
       break;
     } else if (state.token.id === "}" || state.token.id === "(end)" || state.token.id === "EOF") {
       break;
+    } else if (breakIfEndParen) {
+      if (state.token.id === ')') {
+        break;
+      }
     }
     s = statement(state);
     if (s) {

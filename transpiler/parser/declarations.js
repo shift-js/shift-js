@@ -371,7 +371,7 @@ var declarations = {
           a.push(t);
         }
         /* Uninitialized variable declaration */
-        else if (state.token.id === ";") {
+        else if ([";", ")"].hasItem(state.token.id)) {
           t = state.token;
           t.type = 'VariableDeclaration';
           t.kind = 'var';
@@ -476,7 +476,26 @@ var declarations = {
 
     stmt(state, "for", function() {
       this.type = "ForStatement";
-      if(state.tokens[state.index-1].value === "(") {
+
+      /* for( var identifier) 'in' identifier { .. } */
+      /* to distinguish this if from conventional for-loop below */
+      if(state.tokens[state.index-1].value === "(" && state.tokens[state.index+2].value === ")") {
+
+        this.type = "ForInStatement"
+        if (state.token.value === "(") {
+          state = advance(state);
+        }
+        this.left = statements(state, 1, true);
+        //state.token.value === "in"
+        state = advance(state);
+        this.each = false;
+        this.right = {};
+        this.right.type = "Identifier";
+        this.right.name = state.token.value;
+        state = advance(state);
+      }
+      /* for( var identifier..;exp;exp) { } */
+      else if(state.tokens[state.index-1].value === "(") {
         state = advance(state, "(");
         this.init = statements(state, 1);
         this.test = expression(state, 0);
@@ -485,7 +504,37 @@ var declarations = {
         }
         this.update = expression(state, 0);
         state = advance(state, ")");
+      }
+      /* for KEYWORD_DECLARATION IDENTIFIER "IN" IDENTIFIER { } */
+      else if(state.tokens[state.index-1].type === "IDENTIFIER" && state.tokens[state.index+1].type === "IDENTIFIER") {
+
+        this.type = "ForInStatement";
+
+        /* Splice in a var keyword */
+        var symbVar = state.symbolTable["var"];
+        var tkVar = Object.create(symbVar);
+        tkVar.value = "var";
+        tkVar.type = "DECLARATION_KEYWORD";
+        state.tokens.splice(state.index-1, 0, tkVar);
+        state.token = state.tokens[state.index-1];
+
+        /* Splice in an end parens */
+        var symbEndParen = state.symbolTable[")"];
+        var tkEndParen = Object.create(symbEndParen);
+        tkEndParen.value = ")";
+        tkEndParen.type = "PUNCTUATION";
+        state.tokens.splice(state.index+1, 0, tkEndParen);
+
+        this.left = statements(state, 1, true);
+        state = advance(state);
+        this.each = false;
+        this.right = {};
+        this.right.type = "Identifier";
+        this.right.name = state.token.value;
+        state = advance(state);
+
       } else {
+
         this.init = statements(state, 1);
         this.test = expression(state, 0);
         if(state.token.value === ";") {
@@ -493,6 +542,7 @@ var declarations = {
         }
         this.update = expression(state, 0);
       }
+
       this.body = block(state);
       delete this.value;
       return this;
@@ -526,6 +576,6 @@ var declarations = {
   }
 
 
-}
+};
 
 module.exports = declarations;

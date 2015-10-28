@@ -50,7 +50,6 @@ var helpers = {
    **/
   cleanUpTokenStream: function(input) {
     for (var i = 0; i < input.length; i++) {
-
       if (input[i].type === "STRING_INTERPOLATION_START" || input[i].type === "STRING_INTERPOLATION_END") {
         input[i].type = "OPERATOR";
         input[i].value = "+";
@@ -120,12 +119,23 @@ var helpers = {
           input[i].value = "/=";
         }
       }
+      if (input[i].value === "+") {
+        if (input[i + 1].value === "=") {
+          input.splice(i + 1, 1);
+          input[i].value = "+=";
+        }
+      }
+      if (input[i].value === "-") {
+        if (input[i + 1].value === "=") {
+          input.splice(i + 1, 1);
+          input[i].value = "-=";
+        }
+      }
 
       /* Remove inline comments */
       if (input[i].type === "COMMENT_START") {
         if (input[i + 1].type === "COMMENT") {
           input.splice(i, 2);
-          //input[i].value = "/=";
         }
       }
       /* Remove multi-line comments */
@@ -137,8 +147,8 @@ var helpers = {
             return input;//TODO BUG BUG if multiple comments
           }
         }
-
       }
+
     }
     return input;
   },

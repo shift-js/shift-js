@@ -35,8 +35,8 @@ var makeParser = function() {
     state.scope = newScope(state, originalScope);
     state = advance(state);
 
+    /* Remove leading new lines */
     while(true) {
-      // Remove leading new lines
       if(state.token.value === "\\n") {
         state = advance(state);
       } else {

@@ -5,63 +5,20 @@ var makeParse = require('./parser');
 
 var expected = {
   "type": "Program",
-  "body": [
-    {
-      "type": "VariableDeclaration",
-      "declarations": [
-        {
-          "type": "VariableDeclarator",
-          "id": {
-            "type": "Identifier",
-            "name": "diceRoll"
-          },
-          "init": {
-            "type": "Literal",
-            "value": 6,
-            "raw": "6"
-          }
-        }
-      ],
-      "kind": "var"
-    },
-    {
-      "type": "ExpressionStatement",
-      "expression": {
-        "type": "BinaryExpression",
-        "operator": "==",
-        "left": {
-          "type": "UpdateExpression",
-          "operator": "++",
-          "argument": {
-            "type": "Identifier",
-            "name": "diceRoll"
-          },
-          "prefix": true
-        },
-        "right": {
-          "type": "Literal",
-          "value": 7,
-          "raw": "7"
-        }
-      }
-    }
-  ],
+  "body": [],
   "sourceType": "module"
 };
 var tokenStream = [
-  { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "diceRoll" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "6" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "OPERATOR",             value: "+" },
-  { type: "OPERATOR",             value: "+" },
-  { type: "IDENTIFIER",           value: "diceRoll" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "7" },
-  { type: "PUNCTUATION",          value: ";" },
-  { type: "TERMINATOR",           value: "EOF"}
+  { type: "COMMENT_START", value: "//"},
+  { type: "COMMENT", value: " function body goes here"},
+  { type: "TERMINATOR", value: "\\n"},
+  { type: "COMMENT_START", value: "//"},
+  { type: "COMMENT", value: " firstParameterName and secondParameterName refer to"},
+  { type: "TERMINATOR", value: "\\n"},
+  { type: "COMMENT_START", value: "//"},
+  { type: "COMMENT", value: " the argument values for the first and second parameters"},
+  { type: "TERMINATOR", value: "\\n"},
+  { type: "TERMINATOR", value: "EOF"}
 ];
 var parser = makeParse();
 

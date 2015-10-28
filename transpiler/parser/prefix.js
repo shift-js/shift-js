@@ -29,7 +29,9 @@ var prefix = function(state, id, nud) {
         this.argument = expression(state, 70);
         this.prefix = true;
       }
+
       return this;
+
     };
   return s;
 };
