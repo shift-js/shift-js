@@ -292,7 +292,7 @@ module.exports = function(code) {
       continue;
     }
     if (tokens.length && (CLASS_NAMES[lastToken.value] || 
-      STRUCT_NAMES[lastToken.value] && chunk === '(')) {
+      STRUCT_NAMES[lastToken.value]) && chunk === '(') {
       lexerFunctions.checkFor('INITIALIZATION', chunk, tokens)
       var temp = {};
       temp.status = true;
@@ -331,7 +331,6 @@ module.exports = function(code) {
     // main evaluation block
     if (!insideString.status && !insideNumber.status &&
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
-
       if (insideCollection.length && lastCollection.type === undefined &&
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens)){
         lexerFunctions.determineCollectionType(insideCollection, tokens);
