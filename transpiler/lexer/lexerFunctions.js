@@ -265,6 +265,9 @@ module.exports = {
       return true;
     } else if (lastToken && (lastToken.type === 'DECLARATION_KEYWORD' ||
       lastToken.value === 'for' ||
+      
+      // special condition for multiple variables of the same type declared on a single line
+      (lastToken.value === ',' && VARIABLE_NAMES[tokens[tokens.length -2].value]) ||
 
         // special conditions to handle for-in loops that iterate over dictionaries
       (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||

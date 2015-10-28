@@ -150,6 +150,23 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+      
+      it('should handle multiple related variables of the same type on a single line, separated by commas', function () {
+        input = String.raw`var firstBase, secondBase, thirdBase: String`;
+
+        output = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "firstBase" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "IDENTIFIER",           value: "secondBase" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "IDENTIFIER",           value: "thirdBase" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "TYPE_STRING",          value: "String"},
+          { type: "TERMINATOR",           value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle comments', function () {
         input = String.raw`/* Comment 1 */ var a = 1 // Comment 2`;
