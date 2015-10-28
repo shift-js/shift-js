@@ -3859,7 +3859,7 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
-        xit('should handle functions that return functions where the return function is specified within parentheses', function () {
+        it('should handle functions that return functions where the return function is specified within parentheses', function () {
           input = String.raw`func makeIncrementer() -> ((Int) -> Int) {
                                 func addOne(number: Int) -> Int {
                                     return 1 + number

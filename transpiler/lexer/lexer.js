@@ -49,8 +49,11 @@ module.exports = function(code) {
     nextCol = code[i + 1];
     nextNextCol = code[i + 2];
     var lastToken = tokens[tokens.length - 1];
-    var lastCollection = insideCollection[insideCollection.length - 1];
     var lastCollectionIndex = insideCollection.length - 1;
+    var lastCollection = insideCollection[lastCollectionIndex];
+    var lastFunctionIndex = insideFunction.length - 1;
+    var lastFunction = insideFunction[lastFunctionIndex];
+
 
 
     // console.log(chunk);
@@ -91,8 +94,6 @@ module.exports = function(code) {
     } else if (currCol === '"') {
       insideString.status = true;
     }
-
-
 
     // number handling
     if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol)) {
@@ -135,7 +136,9 @@ module.exports = function(code) {
 
     if (insideFunction.length && currCol === "-" && nextCol === ">") {
       lexerFunctions.checkFor('FUNCTION_DECLARATION', "->", tokens);
-      insideFunction[insideFunction.length - 1].insideReturnStatement = true;
+      if (insideFunction[insideFunction.length - 1].insideReturnStatement === false) {
+        insideFunction[insideFunction.length - 1].insideReturnStatement = true;
+      }     
       advanceAndClear(2);
       continue;
     }
@@ -197,15 +200,30 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
+    
     if (insideFunction.length && chunk === ')' && insideFunction[insideFunction.length - 1].insideParams === true) {
       lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
       insideFunction[insideFunction.length - 1].insideParams = "ended";
       advanceAndClear(1);
       continue;
     }
+
+    if (tokens.length >= 2 && tokens[tokens.length - 2]['type'] === 'PUNCTUATION' && 
+      tokens[tokens.length - 2]['value'] === '(' && lastFunction && lastFunction.insideReturnStatement === true) {
+      tokens[tokens.length - 2].type = 'PARAMS_START';
+    }
+
+    if (insideFunction.length && chunk === ')' && insideFunction[insideFunction.length - 1].insideReturnStatement === true) {
+      lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
+      insideFunction[insideFunction.length - 1].insideReturnStatement = "ended";
+      advanceAndClear(1);
+      continue;
+    }
+
     if (insideFunction.length && chunk === '{' && insideFunction[insideFunction.length - 1].statements === 0) {
       lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
       insideFunction[insideFunction.length - 1].statements++;
+      insideFunction[insideFunction.length - 1].insideReturnStatement = "ended";
       advanceAndClear(1);
       continue;
     }
