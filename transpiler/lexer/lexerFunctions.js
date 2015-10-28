@@ -263,13 +263,13 @@ module.exports = {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }
       return true;
-    } else if (lastToken.type === 'DECLARATION_KEYWORD' ||
+    } else if (lastToken && (lastToken.type === 'DECLARATION_KEYWORD' ||
       lastToken.value === 'for' ||
 
         // special conditions to handle for-in loops that iterate over dictionaries
       (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||
       (lastToken.value === ',' && tokens[tokens.length - 3].value) === '(' &&
-      tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1]['insideParams'] === true)) {
+      tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1]['insideParams'] === true))) {
       if (tokens) {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }

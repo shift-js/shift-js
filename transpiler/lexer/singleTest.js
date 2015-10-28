@@ -2,21 +2,55 @@ var lexer = require("./lexer");
 var deepEqual = require("./helperFunctions").deepEqual;
 var diff = require("./helperFunctions").diff;
 
-var swiftCode = String.raw`class ParentClass {
-                                static func returnTen() -> Int {
-                                    return 10
-                                }
-                                class func returnString() -> String {
-                                    return "my string"
-                                }
+var swiftCode = String.raw`class SuperClass {
+                            var a = 0
+                            var b = 1
+                            func incrementA() {
+                                ++a
                             }
-                            ParentClass.returnTen()
-                            ParentClass.returnString()`;
+                            static func returnTen() -> Int {
+                                return 10
+                            }
+                            class func returnString() -> String {
+                                return "my string"
+                            }
+                        }
+
+                        class SubClass: SuperClass {
+                            var c = 2
+                        }`;
      
 var swiftCodeAnswers = [
     { type: "DECLARATION_KEYWORD",        value: "class" },
-    { type: "IDENTIFIER",                 value: "ParentClass" },
+    { type: "IDENTIFIER",                 value: "SuperClass" },
     { type: "CLASS_DEFINITION_START",     value: "{" },
+    { type: "TERMINATOR",                 value: "\\n"},
+    
+    { type: "DECLARATION_KEYWORD",        value: "var" },
+    { type: "IDENTIFIER",                 value: "a" },
+    { type: "OPERATOR",                   value: "=" },
+    { type: "NUMBER",                     value: "0" },
+    { type: "TERMINATOR",                 value: "\\n"},
+    
+    { type: "DECLARATION_KEYWORD",        value: "var" },
+    { type: "IDENTIFIER",                 value: "b" },
+    { type: "OPERATOR",                   value: "=" },
+    { type: "NUMBER",                     value: "1" },
+    { type: "TERMINATOR",                 value: "\\n"},
+    
+    { type: "DECLARATION_KEYWORD",        value: "func"},
+    { type: "IDENTIFIER",                 value: "incrementA" },
+    { type: "PARAMS_START",               value: "(" },
+    { type: "PARAMS_END",                 value: ")" }, 
+    { type: "STATEMENTS_START",           value: "{" },
+    { type: "TERMINATOR",                 value: "\\n"},
+
+    { type: "OPERATOR",                   value: "+" },
+    { type: "OPERATOR",                   value: "+" },
+    { type: "IDENTIFIER",                 value: "a" },
+    { type: "TERMINATOR",                 value: "\\n"},
+
+    { type: "STATEMENTS_END",             value: "}" },
     { type: "TERMINATOR",                 value: "\\n"},
     
     { type: "DECLARATION_KEYWORD",        value: "static"},
@@ -55,19 +89,22 @@ var swiftCodeAnswers = [
     
     { type: "CLASS_DEFINITION_END",       value: "}" },
     { type: "TERMINATOR",                 value: "\\n"},
-    
-    { type: "IDENTIFIER",                 value: "ParentClass" },
-    { type: "DOT_SYNTAX",                 value: "." },
-    { type: "IDENTIFIER",                 value: "returnTen" },
-    { type: "INVOCATION_START",           value: "(" },
-    { type: "INVOCATION_END",             value: ")" },
     { type: "TERMINATOR",                 value: "\\n"},
     
-    { type: "IDENTIFIER",                 value: "ParentClass" },
-    { type: "DOT_SYNTAX",                 value: "." },
-    { type: "IDENTIFIER",                 value: "returnString" },
-    { type: "INVOCATION_START",           value: "(" },
-    { type: "INVOCATION_END",             value: ")" },
+    { type: "DECLARATION_KEYWORD",        value: "class" },
+    { type: "IDENTIFIER",                 value: "SubClass" },
+    { type: "INHERITANCE_OPERATOR",       value: ":" },
+    { type: "IDENTIFIER",                 value: "SuperClass" },
+    { type: "CLASS_DEFINITION_START",     value: "{" },
+    { type: "TERMINATOR",                 value: "\\n"},
+    
+    { type: "DECLARATION_KEYWORD",        value: "var" },
+    { type: "IDENTIFIER",                 value: "c" },
+    { type: "OPERATOR",                   value: "=" },
+    { type: "NUMBER",                     value: "2" },
+    { type: "TERMINATOR",                 value: "\\n"},
+    
+    { type: "CLASS_DEFINITION_END",       value: "}" },
     { type: "TERMINATOR",                 value: "EOF"}
 ];
 

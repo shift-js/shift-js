@@ -259,8 +259,17 @@ module.exports = function(code) {
       continue;
     }
     
-    
-    // classes and structures handling
+    /////////////////////////////////////////////
+    //                                         // 
+    //      classes and structures handling    //
+    //                                         //
+    ///////////////////////////////////////////////////////////////////////////
+
+    // handles inheritance operators
+    if (tokens.length > 2 && tokens[tokens.length - 2].value === ':' && 
+      CLASS_NAMES[lastToken.value] && CLASS_NAMES[tokens[tokens.length - 3].value]) {
+      tokens[tokens.length - 2].type = 'INHERITANCE_OPERATOR';      
+    }
     if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
       chunk === '{') {
       lexerFunctions.checkFor('CLASS_DEFINITION', chunk, tokens);
@@ -327,6 +336,11 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
+    
+    ///////////////////////////////////////////////////////////////////////////
+    
+    
+    
 
     // main evaluation block
     if (!insideString.status && !insideNumber.status &&
