@@ -139,7 +139,6 @@ var helpers = {
         }
 
       }
-
     }
     return input;
   },

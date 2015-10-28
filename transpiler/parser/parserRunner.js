@@ -5,21 +5,63 @@ var makeParse = require('./parser');
 
 var expected = {
   "type": "Program",
-  "sourceType": "module",
-  "body": []
+  "body": [
+    {
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "diceRoll"
+          },
+          "init": {
+            "type": "Literal",
+            "value": 6,
+            "raw": "6"
+          }
+        }
+      ],
+      "kind": "var"
+    },
+    {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "BinaryExpression",
+        "operator": "==",
+        "left": {
+          "type": "UpdateExpression",
+          "operator": "++",
+          "argument": {
+            "type": "Identifier",
+            "name": "diceRoll"
+          },
+          "prefix": true
+        },
+        "right": {
+          "type": "Literal",
+          "value": 7,
+          "raw": "7"
+        }
+      }
+    }
+  ],
+  "sourceType": "module"
 };
 var tokenStream = [
-  { type: "MULTI_LINE_COMMENT_START", value: "/*"},
-  { type: "TERMINATOR", value: "\\n"},
-  { type: "COMMENT", value: "Comment 1"},
-
-  { type: "TERMINATOR", value: "\\n"},
-  { type: "COMMENT", value: "Comment 2"},
-  { type: "TERMINATOR", value: "\\n"},
-
-  { type: "MULTI_LINE_COMMENT_END", value: "*/"},
-  { type: "TERMINATOR", value: "\\n"},
-  { type: "TERMINATOR", value: "EOF"}
+  { type: "DECLARATION_KEYWORD",  value: "var" },
+  { type: "IDENTIFIER",           value: "diceRoll" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "6" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "IDENTIFIER",           value: "diceRoll" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "7" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "TERMINATOR",           value: "EOF"}
 ];
 var parser = makeParse();
 
