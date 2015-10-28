@@ -327,6 +327,62 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+  
+      it('should handle subscript lookups on arrays', function () {
+        input = String.raw`var d = [1, 2]; var one = d[0];`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "d" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "ARRAY_START",                value: "[" },
+          { type: "NUMBER",                     value: "1" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "NUMBER",                     value: "2" },
+          { type: "ARRAY_END",                  value: "]" },
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "one" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "d" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "NUMBER",                     value: "0" },
+          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          { type: "PUNCTUATION",                value: ";" },    
+          { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+  
+      it('should handle subscript lookups on dictionaries', function () {
+        input = String.raw`var d = ["one": 1, "two": 2]; var one = d["one"];`;
+
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "d" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "DICTIONARY_START",           value: "[" },
+          { type: "STRING",                     value: "one" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "NUMBER",                     value: "1" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "STRING",                     value: "two" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "NUMBER",                     value: "2" },
+          { type: "DICTIONARY_END",             value: "]" },
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "one" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "d" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "STRING",                     value: "one" },
+          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          { type: "PUNCTUATION",                value: ";" },    
+          { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
     });
 
     describe('Numbers and operations', function () {
@@ -1116,7 +1172,7 @@ describe('Lexer', function() {
           { type: "TERMINATOR",           value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
-      }) ;
+      });
     });
   });
 
