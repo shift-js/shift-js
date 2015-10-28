@@ -144,7 +144,7 @@ var declarations = {
     prefix(state, "typeof");
 
     prefix(state, "(", function() {
-      var e = expression(state, 0);
+      var e = expression(state, 0, true);
       state = advance(state, ")");
       return e;
     });
@@ -388,6 +388,8 @@ var declarations = {
         this.test = expression(state, 0);
         state = advance(state, ")");
       } else {
+        //TODO making a node of (++diceRoll)
+        //TODO when needs to make a tree of (++diceRoll == 7)
         this.test = expression(state, 0);
       }
       this.consequent = block(state);
