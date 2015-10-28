@@ -3912,7 +3912,7 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
-        xit('should handle functions that return functions where the return function is specified without parentheses', function () {
+        it('should handle functions that return functions where the return function is specified without parentheses', function () {
           input = String.raw`func makeIncrementer() -> (Int) -> Int {
                                 func addOne(number: Int) -> Int {
                                     return 1 + number
@@ -4084,6 +4084,9 @@ describe('Lexer', function() {
             { type: "BOOLEAN",                    value: "true" },
             { type: "TERMINATOR",                 value: "\\n"},
             
+            { type: "PUNCTUATION",                value: "}" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
             { type: "PUNCTUATION",                value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
             
