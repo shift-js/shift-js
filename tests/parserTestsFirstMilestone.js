@@ -289,7 +289,7 @@ describe('Parser', function() {
 
       // Swift input: 'var empty = [:]'
       // AST Explorer input: 'var empty = {}'
-      xit('should handle empty dictionaries', function () {
+      it('should handle empty dictionaries', function () {
         input = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "empty" },

@@ -204,6 +204,14 @@ var declarations = {
     prefix(state, "{", function() {
       var a = [], n, v;
       var tmpLookAhead = state.tokens[state.index];
+      if(tmpLookAhead.type === "DICTIONARY_END") {
+        state = advance(state);
+        this.type = "ObjectExpression";
+        this.properties = [];
+        delete this.value;
+        delete this.raw;
+        return this;
+      }
       if(tmpLookAhead.value === ",") {
         // Handle Tuples w/out keys
         var a = [];
