@@ -54,12 +54,19 @@ module.exports = function(grunt) {
         ]
       }
     },
+    
+    shell: {
+      rebase: {
+        command: 'git pull --rebase origin develop'
+      }
+    }
 
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-shell');
   // grunt.loadNpmTasks('grunt-contrib-uglify');
   // grunt.loadNpmTasks('grunt-contrib-concat');
 
@@ -76,6 +83,10 @@ module.exports = function(grunt) {
   grunt.registerTask('testParser', [
     // 'jshint',
     'mochaTest:parser'
+  ]);
+  
+  grunt.registerTask('rebase', [
+    'shell:rebase'
   ]);
 
   grunt.registerTask('build', [

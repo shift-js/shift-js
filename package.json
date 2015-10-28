@@ -29,6 +29,7 @@
     "escodegen": "^1.7.0",
     "esprima-ast-utils": "0.0.6",
     "express": "^4.13.3",
+    "grunt-shell": "^1.1.2",
     "ramda": "^0.18.0"
   },
   "devDependencies": {
