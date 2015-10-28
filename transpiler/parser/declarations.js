@@ -398,7 +398,7 @@ var declarations = {
       } else {
         //TODO making a node of (++diceRoll)
         //TODO when needs to make a tree of (++diceRoll == 7)
-        this.test = expression(state, 0);
+        this.test = expression(state, 0, true);
       }
       this.consequent = block(state);
       if (state.token.id === "else") {
