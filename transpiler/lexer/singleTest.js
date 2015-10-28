@@ -7,15 +7,16 @@ var swiftCode = String.raw`class Counter {
                                 func increment() {
                                     ++count
                                 }
-                                func incrementBy(amount: Int) {
-                                    count += amount
+                                func incrementBy(amount: Int, numberOfTimes: Int) {
+                                        count += amount * numberOfTimes
                                 }
                                 func reset() {
                                     count = 0
                                 }
                             }
                             var someCounter = Counter()
-                            someCounter.incrementBy(5)`;
+                            someCounter.incrementBy(50, numberOfTimes: 10)
+                            someCounter.count`;
      
 var swiftCodeAnswers = [
          { type: "DECLARATION_KEYWORD",        value: "class" },
@@ -50,6 +51,10 @@ var swiftCodeAnswers = [
          { type: "IDENTIFIER",                 value: "amount" },
          { type: "PUNCTUATION",                value: ":" }, 
          { type: "TYPE_NUMBER",                value: "Int" },  
+         { type: "PUNCTUATION",                value: "," },
+         { type: "IDENTIFIER",                 value: "numberOfTimes" },
+         { type: "PUNCTUATION",                value: ":" }, 
+         { type: "TYPE_NUMBER",                value: "Int" },  
          { type: "PARAMS_END",                 value: ")" }, 
          { type: "STATEMENTS_START",           value: "{" },
          { type: "TERMINATOR",                 value: "\\n"},
@@ -58,6 +63,8 @@ var swiftCodeAnswers = [
          { type: "OPERATOR",                   value: "+" },
          { type: "OPERATOR",                   value: "=" },
          { type: "IDENTIFIER",                 value: "amount" },
+         { type: "OPERATOR",                   value: "*" },
+         { type: "IDENTIFIER",                 value: "numberOfTimes" },
          { type: "TERMINATOR",                 value: "\\n"},
          
          { type: "STATEMENTS_END",             value: "}" },
@@ -93,8 +100,17 @@ var swiftCodeAnswers = [
          { type: "DOT_SYNTAX",                 value: "." },
          { type: "IDENTIFIER",                 value: "incrementBy" },
          { type: "INVOCATION_START",           value: "(" }, 
-         { type: "NUMBER",                     value: "5" },
+         { type: "NUMBER",                     value: "50" },
+         { type: "PUNCTUATION",                value: "," },
+         { type: "IDENTIFIER",                 value: "numberOfTimes" },
+         { type: "PUNCTUATION",                value: ":" },
+         { type: "NUMBER",                     value: "10" },
          { type: "INVOCATION_END",             value: ")" }, 
+         { type: "TERMINATOR",                 value: "\\n"},
+         
+         { type: "IDENTIFIER",                 value: "someCounter" },
+         { type: "DOT_SYNTAX",                 value: "." },
+         { type: "IDENTIFIER",                 value: "count" },
          { type: "TERMINATOR",                 value: "EOF"}
         ];
 
