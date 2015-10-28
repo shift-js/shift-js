@@ -178,7 +178,7 @@ describe('Second Milestone Parser', function() {
       });
 
       // Swift input: 'var c = 1; if (c == 1) {c *= 5};'
-      xit('should handle single-line if statements with multi-character logical operators and multi-character mathematical operators', function() {
+      it('should handle single-line if statements with multi-character logical operators and multi-character mathematical operators', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
@@ -357,7 +357,7 @@ describe('Second Milestone Parser', function() {
 
       // Swift input: 'var e = 1; if (e + 1) == 2 {e = 5};'
       // AST Explorer input: 'var e = 1; if ((e + 1) == 2) {e = 5};'
-      xit('should handle complex conditionals without an outer parenthetical', function() {
+      it('should handle complex conditionals without an outer parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "e" },
@@ -2211,7 +2211,7 @@ describe('Second Milestone Parser', function() {
       // // firstParameterName and secondParameterName refer to
       // // the argument values for the first and second parameters
       // `;
-      xit('should handle successive single-line comments', function() {
+      it('should handle successive single-line comments', function() {
         input = [
           { type: "COMMENT_START", value: "//"},
           { type: "COMMENT", value: " function body goes here"},
@@ -2226,8 +2226,6 @@ describe('Second Milestone Parser', function() {
         ];
         output = {
           "type": "Program",
-          "start": 0,
-          "end": 140,
           "body": [],
           "sourceType": "module"
         };
@@ -2239,7 +2237,7 @@ describe('Second Milestone Parser', function() {
       // Comment 2
       // */
       // `;
-      xit('should handle multi-line comments', function() {
+      it('should handle multi-line comments', function() {
         input = [
           { type: "MULTI_LINE_COMMENT_START", value: "/*"},
           { type: "TERMINATOR", value: "\\n"},
@@ -2254,11 +2252,7 @@ describe('Second Milestone Parser', function() {
         output = {
           "type": "Program",
           "sourceType": "module",
-          "body": [
-            {
-              "type": "EmptyStatement"
-            }
-          ]
+          "body": []
         };
         expect(R.equals(parser(input), output)).to.equal(true);
       });

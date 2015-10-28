@@ -204,6 +204,14 @@ var declarations = {
     prefix(state, "{", function() {
       var a = [], n, v;
       var tmpLookAhead = state.tokens[state.index];
+      if(tmpLookAhead.type === "DICTIONARY_END") {
+        state = advance(state);
+        this.type = "ObjectExpression";
+        this.properties = [];
+        delete this.value;
+        delete this.raw;
+        return this;
+      }
       if(tmpLookAhead.value === ",") {
         // Handle Tuples w/out keys
         var a = [];
@@ -390,7 +398,7 @@ var declarations = {
       } else {
         //TODO making a node of (++diceRoll)
         //TODO when needs to make a tree of (++diceRoll == 7)
-        this.test = expression(state, 0);
+        this.test = expression(state, 0, true);
       }
       this.consequent = block(state);
       if (state.token.id === "else") {

@@ -9,7 +9,7 @@ var expression = function(state, rbp, noWrapBinExpNodeInExpStmtBool) {
 
   var left;
   var t = state.token;
-  state = advance(state);
+  state = advance(state);//state.token.value==="{"
   if(t.value === "\\n") {
     t = state.token;
     state = advance(state);
