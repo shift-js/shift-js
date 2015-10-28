@@ -1397,6 +1397,194 @@ describe('Parser', function() {
         expect(R.equals(parser(input), output)).to.equal(true);
       });
 
+      // AST Explorer input: 'var diceRoll = 6; diceRoll == 7;'
+      it('should handle compound comparisons part 1 of 3', function() {
+        input = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "diceRoll" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "6" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "diceRoll" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "7" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        output = {
+          "type": "Program",
+          "body": [
+            {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "diceRoll"
+                  },
+                  "init": {
+                    "type": "Literal",
+                    "value": 6,
+                    "raw": "6"
+                  }
+                }
+              ],
+              "kind": "var"
+            },
+            {
+              "type": "ExpressionStatement",
+              "expression": {
+                "type": "BinaryExpression",
+                "operator": "==",
+                "left": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "right": {
+                  "type": "Literal",
+                  "value": 7,
+                  "raw": "7"
+                }
+              }
+            }
+          ],
+          "sourceType": "module"
+        };
+        expect(R.equals(parser(input), output)).to.equal(true);
+      });
+
+      // AST Explorer input: 'var diceRoll = 6; ++diceRoll == 7;'
+      it('should handle compound comparisons part 2 of 3', function() {
+        input = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "diceRoll" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "6" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "IDENTIFIER",           value: "diceRoll" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "7" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        output = {
+          "type": "Program",
+          "body": [
+            {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "diceRoll"
+                  },
+                  "init": {
+                    "type": "Literal",
+                    "value": 6,
+                    "raw": "6"
+                  }
+                }
+              ],
+              "kind": "var"
+            },
+            {
+              "type": "ExpressionStatement",
+              "expression": {
+                "type": "BinaryExpression",
+                "operator": "==",
+                "left": {
+                  "type": "UpdateExpression",
+                  "operator": "++",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "diceRoll"
+                  },
+                  "prefix": true
+                },
+                "right": {
+                  "type": "Literal",
+                  "value": 7,
+                  "raw": "7"
+                }
+              }
+            }
+          ],
+          "sourceType": "module"
+        };
+        expect(R.equals(parser(input), output)).to.equal(true);
+      });
+
+      // AST Explorer input: 'var diceRoll = 6; diceRoll++ == 7;'
+      it('should handle compound comparisons part 3 of 3', function() {
+        input = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "diceRoll" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "6" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "IDENTIFIER",           value: "diceRoll" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "+" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "7" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF"}
+        ];
+        output = {
+          "type": "Program",
+          "body": [
+            {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "diceRoll"
+                  },
+                  "init": {
+                    "type": "Literal",
+                    "value": 6,
+                    "raw": "6"
+                  }
+                }
+              ],
+              "kind": "var"
+            },
+            {
+              "type": "ExpressionStatement",
+              "expression": {
+                "type": "BinaryExpression",
+                "operator": "==",
+                "left": {
+                  "type": "UpdateExpression",
+                  "operator": "++",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "diceRoll"
+                  },
+                  "prefix": false
+                },
+                "right": {
+                  "type": "Literal",
+                  "value": 7,
+                  "raw": "7"
+                }
+              }
+            }
+          ],
+          "sourceType": "module"
+        };
+        expect(R.equals(parser(input), output)).to.equal(true);
+      });
+
       // Swift input: 'var a = true; var b = !a; var c = -a; var d = +b'
       it('should handle unary operators', function () {
         input = [

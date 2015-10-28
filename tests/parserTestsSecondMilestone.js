@@ -178,7 +178,7 @@ describe('Second Milestone Parser', function() {
       });
 
       // Swift input: 'var c = 1; if (c == 1) {c *= 5};'
-      it('should handle single-line if statements with multi-character logical operators and multi-character mathematical operators', function() {
+      xit('should handle single-line if statements with multi-character logical operators and multi-character mathematical operators', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
@@ -357,7 +357,7 @@ describe('Second Milestone Parser', function() {
 
       // Swift input: 'var e = 1; if (e + 1) == 2 {e = 5};'
       // AST Explorer input: 'var e = 1; if ((e + 1) == 2) {e = 5};'
-      it('should handle complex conditionals without an outer parenthetical', function() {
+      xit('should handle complex conditionals without an outer parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "e" },
@@ -2264,14 +2264,14 @@ describe('Second Milestone Parser', function() {
       });
     });
 
-    xdescribe('Multi-line if statements', function() {
+    describe('Multi-line if statements', function() {
 
       // input = String.raw`var a = false
       //         var b = 0;
       //         if (a) {
       //           b++;
       //         }`;
-      xit('should handle simple multi-line if statements', function() {
+      it('should handle simple multi-line if statements', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },

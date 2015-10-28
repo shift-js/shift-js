@@ -5,18 +5,23 @@ var helpers = require('./helperFunctions');
  * Begin parsing an expression phrase from the current token
  * Calls itself recursively depending on the context.
  **/
-var expression = function(state, rbp) {
+var expression = function(state, rbp, noWrapBinExpNodeInExpStmtBool) {
 
   var left;
   var t = state.token;
   state = advance(state);
+  if(t.value === "\\n") {
+    t = state.token;
+    state = advance(state);
+  }
   left = t.nud();
 
   if (t.value === "++" || t.value === "--") {
     //Pre-fix operator
     left = t;
 
-    if(state.token.value !== "}") {
+    if(state.token.value !== "}" && state.token.value !== "==") {
+      //state.token.value == "=="
       state = advance(state);
     }
   } else if (state.token.value === "++" || state.token.value === "--") {
@@ -25,26 +30,27 @@ var expression = function(state, rbp) {
       left.type = "Identifier";
       left.name = left.value;
       delete left.value;
-
       state = advance(state);
-      return {
+      var tmpParentNode = {
         "type": "UpdateExpression",
         "operator": "++",
         "prefix": false,
-        "argument": left
-      }
+        "argument": left,
+        assignment: true
+      };
+      left = tmpParentNode;
     } else {
       left.type = "Identifier";
       left.name = left.value;
       delete left.value;
       state = advance(state);
-      return {
+      var tmpParentNode = {
         "type": "UpdateExpression",
         "operator": "--",
         "prefix": false,
         "argument": left
-      }
-
+      };
+      left = tmpParentNode;
     }
   } else if (t.operator === "+") {
     delete t.value;
@@ -93,6 +99,18 @@ var expression = function(state, rbp) {
     expStmt.expression = left;
     left = expStmt;
     left.assignment = true;
+  } else if (left.operator === "==") {
+    //TODO toggle between two cases Ternary vs !Ternary
+
+    if(!noWrapBinExpNodeInExpStmtBool){
+      var expressionStmtNode = { type: 'ExpressionStatement' };
+      expressionStmtNode.expression = left;
+      left = expressionStmtNode;
+    }
+
+
+    } else if (left.operator === "===") {
+    //TODO
   }
 
   return left;

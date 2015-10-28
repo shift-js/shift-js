@@ -18,13 +18,27 @@ var statement = function(state) {
     return v;
   }
 
-  if (!v.assignment && v.id !== "(") {
+  if(state.token.value === ";") {
+    state = advance(state, ";");
+  }
+  if(state.token.value === "EOF") {
+    return v;
+  } else if (!v.assignment && v.id !== "(") {
     v.error("Bad expression statement.");
   }
-  else if(state.token.value === "EOF") {
-    return v;
+  //if (!v.assignment && v.id !== "(") {
+  //  v.error("Bad expression statement.");
+  //}
+  //else if(state.token.value === "EOF") {
+  //  return v;
+  //}
+
+  //state = advance(state, ";");
+  state = advance(state);
+
+  if(state.token.value === "\\n") {
+    state = advance(state);
   }
-  state = advance(state, ";");
   return v;
 };
 

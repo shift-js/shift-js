@@ -12,28 +12,24 @@ var prefix = function(state, id, nud) {
         this.prefix = true;
         this.argument = expression(state, 70);
         delete this.value;
-        //TODO Why don't we: 'return this;'
       } else if(this.value === "--") {
         this.type = "UpdateExpression";
         this.operator = "--";
         this.prefix = true;
         this.argument = expression(state, 70);
         delete this.value;
-        //TODO Why don't we: 'return this;'
       } else if (this.value === "+") {
         this.type = "UnaryExpression";
         this.prefix = true;
         this.operator = "+";
-        return this;
       } else {
         this.type = "UnaryExpression";
         this.operator = this.value;
         delete this.value;
         this.argument = expression(state, 70);
         this.prefix = true;
-        return this;
       }
-
+      return this;
     };
   return s;
 };
