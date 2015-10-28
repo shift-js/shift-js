@@ -5,22 +5,96 @@ var makeParse = require('./parser');
 
 var expected = {
   "type": "Program",
-  "start": 0,
-  "end": 140,
-  "body": [],
+  "body": [
+    {
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "a"
+          },
+          "init": {
+            "type": "Literal",
+            "value": false,
+            "raw": "false"
+          }
+        }
+      ],
+      "kind": "var"
+    },
+    {
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "b"
+          },
+          "init": {
+            "type": "Literal",
+            "value": 0,
+            "raw": "0"
+          }
+        }
+      ],
+      "kind": "var"
+    },
+    {
+      "type": "IfStatement",
+      "test": {
+        "type": "Identifier",
+        "name": "a"
+      },
+      "consequent": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "UpdateExpression",
+              "operator": "++",
+              "argument": {
+                "type": "Identifier",
+                "name": "b"
+              },
+              "prefix": false
+            }
+          }
+        ]
+      },
+      "alternate": null
+    }
+  ],
   "sourceType": "module"
 };
 var tokenStream = [
-  { type: "COMMENT_START", value: "//"},
-  { type: "COMMENT", value: " function body goes here"},
-  { type: "TERMINATOR", value: "\\n"},
-  { type: "COMMENT_START", value: "//"},
-  { type: "COMMENT", value: " firstParameterName and secondParameterName refer to"},
-  { type: "TERMINATOR", value: "\\n"},
-  { type: "COMMENT_START", value: "//"},
-  { type: "COMMENT", value: " the argument values for the first and second parameters"},
-  { type: "TERMINATOR", value: "\\n"},
-  { type: "TERMINATOR", value: "EOF"}
+  { type: "DECLARATION_KEYWORD",  value: "var" },
+  { type: "IDENTIFIER",           value: "a" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "BOOLEAN",              value: "false" },
+  { type: "TERMINATOR",           value: "\\n"},
+  { type: "DECLARATION_KEYWORD",  value: "var" },
+  { type: "IDENTIFIER",           value: "b" },
+  { type: "OPERATOR",             value: "=" },
+  { type: "NUMBER",               value: "0" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "TERMINATOR",           value: "\\n"},
+  { type: "STATEMENT_KEYWORD",    value: "if" },
+  { type: "PUNCTUATION",          value: "(" },
+  { type: "IDENTIFIER",           value: "a" },
+  { type: "PUNCTUATION",          value: ")" },
+  { type: "PUNCTUATION",          value: "{" },
+  { type: "TERMINATOR",           value: "\\n"},
+  { type: "IDENTIFIER",           value: "b" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "OPERATOR",             value: "+" },
+  { type: "PUNCTUATION",          value: ";" },
+  { type: "TERMINATOR",           value: "\\n"},
+  { type: "PUNCTUATION",          value: "}" },
+  { type: "TERMINATOR",           value: "EOF"},
 ];
 var parser = makeParse();
 

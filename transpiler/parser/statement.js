@@ -25,6 +25,9 @@ var statement = function(state) {
     return v;
   }
   state = advance(state, ";");
+  if(state.token.value === "\\n") {
+    state = advance(state);
+  }
   return v;
 };
 

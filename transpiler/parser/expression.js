@@ -10,6 +10,11 @@ var expression = function(state, rbp) {
   var left;
   var t = state.token;
   state = advance(state);
+  if(t.value === "\\n") {
+    t = state.token;
+    state = advance(state);
+  }
+  console.log(t);
   left = t.nud();
 
   if (t.value === "++" || t.value === "--") {
@@ -31,7 +36,8 @@ var expression = function(state, rbp) {
         "type": "UpdateExpression",
         "operator": "++",
         "prefix": false,
-        "argument": left
+        "argument": left,
+        assignment: true
       }
     } else {
       left.type = "Identifier";

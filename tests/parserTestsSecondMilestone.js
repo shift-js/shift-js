@@ -2264,14 +2264,14 @@ describe('Second Milestone Parser', function() {
       });
     });
 
-    xdescribe('Multi-line if statements', function() {
+    describe('Multi-line if statements', function() {
 
       // input = String.raw`var a = false
       //         var b = 0;
       //         if (a) {
       //           b++;
       //         }`;
-      xit('should handle simple multi-line if statements', function() {
+      it('should handle simple multi-line if statements', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
