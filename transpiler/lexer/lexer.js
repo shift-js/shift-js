@@ -95,8 +95,6 @@ module.exports = function(code) {
       insideString.status = true;
     }
 
-
-
     // number handling
     if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol)) {
       advanceAndClear(1);
