@@ -9,7 +9,7 @@ describe('Lexer', function() {
 
     describe('Basic tests', function () {
       it('should handle variable declarations with numbers', function () {
-        input = 'var a = 3';
+        input = String.raw`var a = 3`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -21,7 +21,7 @@ describe('Lexer', function() {
       });
 
       it('should handle variable reassignment', function () {
-        input = 'var a = 1; a = 2';
+        input = String.raw`var a = 1; a = 2`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -75,7 +75,7 @@ describe('Lexer', function() {
       });
 
       it('should handle strings', function () {
-        input = 'var b = "hello"';
+        input = String.raw`var b = "hello"`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
@@ -87,7 +87,7 @@ describe('Lexer', function() {
       });
 
       it('should handle booleans', function () {
-        input = 'var c = true';
+        input = String.raw`var c = true`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
@@ -99,7 +99,7 @@ describe('Lexer', function() {
       });
 
       it('should handle strings with whitespace', function () {
-        input = 'var d = "Test this"';
+        input = String.raw`var d = "Test this"`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "d" },
@@ -111,7 +111,7 @@ describe('Lexer', function() {
       });
 
       it('should handle comments', function () {
-        input = '/* Comment 1 */ var a = 1 // Comment 2';
+        input = String.raw`/* Comment 1 */ var a = 1 // Comment 2`;
         output = [
           { type: "MULTI_LINE_COMMENT_START",  value: "/*"},
           { type: "COMMENT",                   value: " Comment 1 "},
@@ -131,7 +131,7 @@ describe('Lexer', function() {
     describe('Basic collections', function () {
 
       it('should handle empty arrays', function () {
-        input = 'var empty = []';
+        input = String.raw`var empty = []`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "empty" },
@@ -144,7 +144,7 @@ describe('Lexer', function() {
       });
 
       it('should handle empty dictionaries', function () {
-        input = 'var empty = [:]';
+        input = String.raw`var empty = [:]`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "empty" },
@@ -194,7 +194,7 @@ describe('Lexer', function() {
       });
 
       it('should handle arrays', function () {
-        input = 'var e = ["Eggs", "Milk", "Bacon"]';
+        input = String.raw`var e = ["Eggs", "Milk", "Bacon"]`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "e" },
@@ -212,7 +212,7 @@ describe('Lexer', function() {
       });
 
       it('should handle arrays with erratic spacing', function () {
-        input = 'var e = [  "Eggs","Milk",           "Bacon"                ] ;';
+        input = String.raw`var e = [  "Eggs","Milk",           "Bacon"                ] ;`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "e" },
@@ -231,7 +231,7 @@ describe('Lexer', function() {
       });
 
       it('should handle dictionaries', function () {
-        input = 'var f = ["one": 1, "two": 2, "three": 3]';
+        input = String.raw`var f = ["one": 1, "two": 2, "three": 3]`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "f" },
@@ -255,7 +255,7 @@ describe('Lexer', function() {
       });
 
       it('should handle tuples', function () {
-        input = 'var error = (404, "not found")';
+        input = String.raw`var error = (404, "not found")`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "error" },
@@ -271,7 +271,7 @@ describe('Lexer', function() {
       });
       
       it('should handle tuples with element names', function () {
-        input = 'let http200Status = (statusCode: 200, description: "OK");';
+        input = String.raw`let http200Status = (statusCode: 200, description: "OK");`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "http200Status" },
@@ -292,7 +292,7 @@ describe('Lexer', function() {
       });
 
       it('should handle empty tuples', function () {
-        input = 'var empty = ()';
+        input = String.raw`var empty = ()`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "empty" },
@@ -305,7 +305,7 @@ describe('Lexer', function() {
       });
 
       it('should handle erratic spacing', function () {
-        input = 'let g = [1 : "one",2   :"two", 3: "three"]';
+        input = String.raw`let g = [1 : "one",2   :"two", 3: "three"]`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "g" },
@@ -331,7 +331,7 @@ describe('Lexer', function() {
 
     describe('Numbers and operations', function () {
       it('should handle floating point numbers', function () {
-        input = 'let h = 3.14';
+        input = String.raw`let h = 3.14`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "h" },
@@ -343,7 +343,7 @@ describe('Lexer', function() {
       });
 
       it('should handle unspaced operators', function () {
-        input = 'let i = 5+6';
+        input = String.raw`let i = 5+6`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "i" },
@@ -357,7 +357,7 @@ describe('Lexer', function() {
       });
 
       it('should handle order of operations', function () {
-        input = 'var j = 5 + 6 / 4 - (-16 % 4.2) * 55';
+        input = String.raw`var j = 5 + 6 / 4 - (-16 % 4.2) * 55`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "j" },
@@ -382,7 +382,7 @@ describe('Lexer', function() {
       });
 
       it('should handle comparisons', function () {
-        input = 'let l = 6 != 9';
+        input = String.raw`let l = 6 != 9`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "l" },
@@ -397,7 +397,7 @@ describe('Lexer', function() {
       });
       
       it('should handle complex comparisons', function () {
-        input = 'var l = 6 != 7 || 6 == 7 || 6 > 7 || 6 < 7 || 6 >= 7 || 6 <= 7;';
+        input = String.raw`var l = 6 != 7 || 6 == 7 || 6 > 7 || 6 < 7 || 6 >= 7 || 6 <= 7;`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "l" },
@@ -441,7 +441,7 @@ describe('Lexer', function() {
       });
 
       it('should handle prefix operators', function () {
-        input = 'var a = 1; var m = ++a; var n = --m;';
+        input = String.raw`var a = 1; var m = ++a; var n = --m;`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -468,7 +468,7 @@ describe('Lexer', function() {
       });
 
       it('should handle postfix operators', function () {
-        input = 'var a = 1; var m = a++; var n = m--;';
+        input = String.raw`var a = 1; var m = a++; var n = m--;`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -495,7 +495,7 @@ describe('Lexer', function() {
       });
 
       it('should handle unary operators', function () {
-        input = 'var a = true; var b = !a; var c = -a; var d = +b';
+        input = String.raw`var a = true; var b = !a; var c = -a; var d = +b`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "a" },
@@ -525,7 +525,7 @@ describe('Lexer', function() {
       });
 
       it('should handle compound assignment operators', function() {
-        input = 'var x = 5; x += 4; x -= 3; x *= 2; x /= 1; x %= 2;';
+        input = String.raw`var x = 5; x += 4; x -= 3; x *= 2; x /= 1; x %= 2;`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "x" },
@@ -563,7 +563,7 @@ describe('Lexer', function() {
       });
 
       it('should handle logical operators', function() {
-        input = 'var a = !true && true || true';
+        input = String.raw`var a = !true && true || true`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -582,7 +582,7 @@ describe('Lexer', function() {
       });
 
       it('should handle ternary operators', function () {
-        input = 'var a = (6 == 7) ? 1 : -1';
+        input = String.raw`var a = (6 == 7) ? 1 : -1`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "a" },
@@ -604,7 +604,7 @@ describe('Lexer', function() {
       });
 
       it('should handle ternary operators without a parenthetical', function () {
-        input = 'var g = 6 == 7 ? true : false;';
+        input = String.raw`var g = 6 == 7 ? true : false;`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "g" },
@@ -624,7 +624,7 @@ describe('Lexer', function() {
       });
       
       it('should handle ternary operators that include identifiers', function () {
-        input = 'let h = false; let i = h ? 1 : 2;';
+        input = String.raw`let h = false; let i = h ? 1 : 2;`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "h" },
@@ -646,7 +646,7 @@ describe('Lexer', function() {
       });
 
       it('should handle closed ranges', function () {
-        input = 'var a = 1...5';
+        input = String.raw`var a = 1...5`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -660,7 +660,7 @@ describe('Lexer', function() {
       });
 
       it('should handle decimal ending in 0 closed ranges', function () {
-        input = 'var a = 1.0...5.0';
+        input = String.raw`var a = 1.0...5.0`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -674,7 +674,7 @@ describe('Lexer', function() {
       });
 
       it('should handle random decimal closed ranges', function () {
-        input = 'var a = 1.2...5.3';
+        input = String.raw`var a = 1.2...5.3`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -688,7 +688,7 @@ describe('Lexer', function() {
       });
 
       it('should handle half-open ranges', function () {
-        input = 'var b = 1..<5';
+        input = String.raw`var b = 1..<5`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
@@ -702,7 +702,7 @@ describe('Lexer', function() {
       });
 
       it('should handle decimal ending in 0 half-open ranges', function () {
-        input = 'var a = 1.0..<5.0';
+        input = String.raw`var a = 1.0..<5.0`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -716,7 +716,7 @@ describe('Lexer', function() {
       });
 
       it('should handle random decimal half-open ranges', function () {
-        input = 'var a = 1.2..<5.3';
+        input = String.raw`var a = 1.2..<5.3`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -730,7 +730,7 @@ describe('Lexer', function() {
       });
 
       it('should handle all ranges', function () {
-        input = 'var a = 1...5; var b = 2..<6';
+        input = String.raw`var a = 1...5; var b = 2..<6`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -897,7 +897,7 @@ describe('Lexer', function() {
     describe('Nested collections', function () {
 
       it('should handle dictionaries of arrays', function () {
-        input = 'let q = ["array1": [1,2,3], "array2": [4,5,6]];';
+        input = String.raw`let q = ["array1": [1,2,3], "array2": [4,5,6]];`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "q" },
@@ -930,7 +930,7 @@ describe('Lexer', function() {
       });
 
       it('should handle array access', function () {
-        input = 'let arr = [1, 2]; var s = arr[0];';
+        input = String.raw`let arr = [1, 2]; var s = arr[0];`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "arr" },
@@ -955,7 +955,7 @@ describe('Lexer', function() {
       });
 
       it('should handle array access with numeric operations', function () {
-        input = 'let arr = [1, 2]; let t = 100; var u = arr[t - 99];';
+        input = String.raw`let arr = [1, 2]; let t = 100; var u = arr[t - 99];`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "arr" },
@@ -987,7 +987,7 @@ describe('Lexer', function() {
       });
 
       it('should handle arrays of that contain a substring lookup', function () {
-        input = 'let arr = [1,2]; var u = [arr[0]];';
+        input = String.raw`let arr = [1,2]; var u = [arr[0]];`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "arr" },
@@ -1014,7 +1014,7 @@ describe('Lexer', function() {
       });
 
       it('should handle arrays of dictionaries', function () {
-        input = 'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];';
+        input = String.raw`let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "arr" },
@@ -1074,7 +1074,7 @@ describe('Lexer', function() {
       });
 
       it('should handle multi-nested lists', function () {
-        input = 'var w = [1: [[1: "two"], [3: "four"]], 2: [["one": 2], ["three": 4]]];';
+        input = String.raw`var w = [1: [[1: "two"], [3: "four"]], 2: [["one": 2], ["three": 4]]];`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "w" },
@@ -1125,7 +1125,7 @@ describe('Lexer', function() {
     describe('Single-Line If statements', function() {
 
       it('should handle single-line if statements', function() {
-        input = 'var a = 5; if (true) {--a};';
+        input = String.raw`var a = 5; if (true) {--a};`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -1148,7 +1148,7 @@ describe('Lexer', function() {
       });
 
       it('should handle single-line if statements with multi-character logical operators', function() {
-        input = 'var b = 6; if (5 <= 6) {b++};';
+        input = String.raw`var b = 6; if (5 <= 6) {b++};`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
@@ -1174,7 +1174,7 @@ describe('Lexer', function() {
       });
 
       it('should handle single-line if statements with multi-character logical operators and multi-character mathematical operators', function() {
-        input = 'var c = 1; if (c == 1) {c *= 5};';
+        input = String.raw`var c = 1; if (c == 1) {c *= 5};`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
@@ -1201,7 +1201,7 @@ describe('Lexer', function() {
       });
 
       it('should handle single-line if statements without a parenthetical', function() {
-        input = 'var d = 1; if d != 2 {d++};';
+        input = String.raw`var d = 1; if d != 2 {d++};`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "d" },
@@ -1225,7 +1225,7 @@ describe('Lexer', function() {
       });
 
       it('should handle complex conditionals without an outer parenthetical', function() {
-        input = 'var e = 1; if (e + 1) == 2 {e = 5};';
+        input = String.raw`var e = 1; if (e + 1) == 2 {e = 5};`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "e" },
@@ -1253,7 +1253,7 @@ describe('Lexer', function() {
       });
 
       it('should handle single line if/else statements', function() {
-        input = 'var f = true; if !f {f = true} else {f = false};';
+        input = String.raw`var f = true; if !f {f = true} else {f = false};`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "f" },
@@ -1281,7 +1281,7 @@ describe('Lexer', function() {
       });
    
       it('should handle single-line if/else-if/else statements with parentheticals', function() {
-        input = 'var a = 1; if (1 > 2) {++a} else if (1 < 2) {--a} else {a = 42}';
+        input = String.raw`var a = 1; if (1 > 2) {++a} else if (1 < 2) {--a} else {a = 42}`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -1323,7 +1323,7 @@ describe('Lexer', function() {
       });
 
       it('should handle single-line if/else-if/else statements with parentheticals', function() {
-        input = 'var a = 1; if 1 > 2 {++a} else if 1 < 2 {--a} else {a = 42}';
+        input = String.raw`var a = 1; if 1 > 2 {++a} else if 1 < 2 {--a} else {a = 42}`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -1365,7 +1365,7 @@ describe('Lexer', function() {
     describe(' Single-Line While/Repeat-While loops', function() {
 
       it('should handle single-line while loops with a parenthetical', function() {
-        input = 'var i = 10; while (i >= 0) {i--}';
+        input = String.raw`var i = 10; while (i >= 0) {i--}`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -1390,7 +1390,7 @@ describe('Lexer', function() {
       });
 
       it('should handle single-line while loops without a parenthetical', function() {
-        input = 'var i = 10; while i >= 0 {i--}';
+        input = String.raw`var i = 10; while i >= 0 {i--}`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -1413,7 +1413,7 @@ describe('Lexer', function() {
       });
 
       it('should handle single-line repeat-while loops with a parenthetical', function() {
-        input = 'var i = 10; repeat {i--} while (i >= 0)';
+        input = String.raw`var i = 10; repeat {i--} while (i >= 0)`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -1439,7 +1439,7 @@ describe('Lexer', function() {
       });
 
       it('should handle single-line repeat-while loops without a parenthetical', function() {
-        input = 'var i = 10; repeat {i--} while i >= 0';
+        input = String.raw`var i = 10; repeat {i--} while i >= 0`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -1467,7 +1467,7 @@ describe('Lexer', function() {
     describe('Single-Line For loops', function() {
 
       it('should handle single-line for loops with a parenthetical', function() {
-        input = 'var a = 0; for (var i = 10; i > 0; i--) {a++};';
+        input = String.raw`var a = 0; for (var i = 10; i > 0; i--) {a++};`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
@@ -1501,7 +1501,7 @@ describe('Lexer', function() {
       });
 
       it('should handle single-line for loops without a parenthetical', function() {
-        input = 'var b = 0; for var j = 0; j < 10; j++ {b++};';
+        input = String.raw`var b = 0; for var j = 0; j < 10; j++ {b++};`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
@@ -1537,7 +1537,7 @@ describe('Lexer', function() {
     describe('Single-Line For-In loops', function() {
 
       it('should handle simple, single-line for-in loops without a parenthetical', function() {
-        input = 'var c = 0; var numbers = [1,2,3,4,5]; for n in numbers {c += n};';
+        input = String.raw`var c = 0; var numbers = [1,2,3,4,5]; for n in numbers {c += n};`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
@@ -1576,7 +1576,7 @@ describe('Lexer', function() {
       });
 
       it('should handle simple, single-line for-in loops with a parenthetical and the item declared as a variable', function() {
-        input = 'var c = 0; var numbers = [1,2,3,4,5]; for (var n) in numbers {c += n};';
+        input = String.raw`var c = 0; var numbers = [1,2,3,4,5]; for (var n) in numbers {c += n};`;
         output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
