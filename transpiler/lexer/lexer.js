@@ -259,8 +259,17 @@ module.exports = function(code) {
       continue;
     }
     
-    
-    // classes and structures handling
+    /////////////////////////////////////////////
+    //                                         // 
+    //      classes and structures handling    //
+    //                                         //
+    ///////////////////////////////////////////////////////////////////////////
+
+    // handles inheritance operators
+    if (tokens.length > 2 && tokens[tokens.length - 2].value === ':' && 
+      CLASS_NAMES[lastToken.value] && CLASS_NAMES[tokens[tokens.length - 3].value]) {
+      tokens[tokens.length - 2].type = 'INHERITANCE_OPERATOR';      
+    }
     if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
       chunk === '{') {
       lexerFunctions.checkFor('CLASS_DEFINITION', chunk, tokens);
@@ -292,7 +301,7 @@ module.exports = function(code) {
       continue;
     }
     if (tokens.length && (CLASS_NAMES[lastToken.value] || 
-      STRUCT_NAMES[lastToken.value] && chunk === '(')) {
+      STRUCT_NAMES[lastToken.value]) && chunk === '(') {
       lexerFunctions.checkFor('INITIALIZATION', chunk, tokens)
       var temp = {};
       temp.status = true;
@@ -327,11 +336,15 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
+    
+    ///////////////////////////////////////////////////////////////////////////
+    
+    
+    
 
     // main evaluation block
     if (!insideString.status && !insideNumber.status &&
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
-
       if (insideCollection.length && lastCollection.type === undefined &&
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens)){
         lexerFunctions.determineCollectionType(insideCollection, tokens);
