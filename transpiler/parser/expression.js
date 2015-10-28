@@ -5,27 +5,22 @@ var helpers = require('./helperFunctions');
  * Begin parsing an expression phrase from the current token
  * Calls itself recursively depending on the context.
  **/
-var expression = function(state, rbp, noWrapBinExpNodeInExpStmtBool) {
+var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
 
   var left;
   var t = state.token;
-  state = advance(state);//state.token.value==="{"
-  if(t.value === "\\n") {
-    t = state.token;
-    state = advance(state);
-  }
+  state = advance(state);
   left = t.nud();
 
   if (t.value === "++" || t.value === "--") {
-    //Pre-fix operator
+    /*Pre-fix operator*/
     left = t;
 
     if(state.token.value !== "}" && state.token.value !== "==") {
-      //state.token.value == "=="
       state = advance(state);
     }
   } else if (state.token.value === "++" || state.token.value === "--") {
-    //Post-fix operators
+    /*Post-fix operators*/
     if(state.token.value === "++") {
       left.type = "Identifier";
       left.name = left.value;
@@ -100,16 +95,14 @@ var expression = function(state, rbp, noWrapBinExpNodeInExpStmtBool) {
     left = expStmt;
     left.assignment = true;
   } else if (left.operator === "==") {
-    //TODO toggle between two cases Ternary vs !Ternary
 
-    if(!noWrapBinExpNodeInExpStmtBool){
+    if(!dontWrapBinExpNodeInExpStmtBool) {
       var expressionStmtNode = { type: 'ExpressionStatement' };
       expressionStmtNode.expression = left;
       left = expressionStmtNode;
     }
 
-
-    } else if (left.operator === "===") {
+  } else if (left.operator === "===") {
     //TODO
   }
 
