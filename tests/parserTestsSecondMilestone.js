@@ -1454,7 +1454,7 @@ describe('Second Milestone Parser', function() {
 
       // Swift input: 'var c = 0; var numbers = [1,2,3,4,5]; for (var n) in numbers {c += n};'
       // AST Explorer input: 'var c = 0; var numbers = [1,2,3,4,5]; for (var n in numbers) {c += n};'
-      xit('should handle simple, single-line for-in loops with a parenthetical and the item declared as a variable', function() {
+      it('should handle simple, single-line for-in loops with a parenthetical and the item declared as a variable', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
@@ -1609,7 +1609,7 @@ describe('Second Milestone Parser', function() {
 
       // Swift input: 'var c = 0; var numbers = [1,2,3,4,5]; for n in numbers {c += n};'
       // AST Explorer input: 'var c = 0; var numbers = [1,2,3,4,5]; for (var n in numbers) {c += n};'
-      xit('should handle simple, single-line for-in loops without a parenthetical', function() {
+      it('should handle simple, single-line for-in loops without a parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
@@ -1925,54 +1925,54 @@ describe('Second Milestone Parser', function() {
                     "properties": [
                       {
                         "type": "Property",
+                        "method": false,
+                        "shorthand": false,
+                        "computed": false,
                         "key": {
                           "type": "Literal",
                           "value": "one",
                           "raw": "\"one\""
                         },
-                        "computed": false,
                         "value": {
                           "type": "Literal",
                           "value": 1,
                           "raw": "1"
                         },
-                        "kind": "init",
-                        "method": false,
-                        "shorthand": false
+                        "kind": "init"
                       },
                       {
                         "type": "Property",
+                        "method": false,
+                        "shorthand": false,
+                        "computed": false,
                         "key": {
                           "type": "Literal",
                           "value": "two",
                           "raw": "\"two\""
                         },
-                        "computed": false,
                         "value": {
                           "type": "Literal",
                           "value": 2,
                           "raw": "2"
                         },
-                        "kind": "init",
-                        "method": false,
-                        "shorthand": false
+                        "kind": "init"
                       },
                       {
                         "type": "Property",
+                        "method": false,
+                        "shorthand": false,
+                        "computed": false,
                         "key": {
                           "type": "Literal",
                           "value": "three",
                           "raw": "\"three\""
                         },
-                        "computed": false,
                         "value": {
                           "type": "Literal",
                           "value": 3,
                           "raw": "3"
                         },
-                        "kind": "init",
-                        "method": false,
-                        "shorthand": false
+                        "kind": "init"
                       }
                     ]
                   }
@@ -1994,54 +1994,54 @@ describe('Second Milestone Parser', function() {
                     "properties": [
                       {
                         "type": "Property",
+                        "method": false,
+                        "shorthand": false,
+                        "computed": false,
                         "key": {
                           "type": "Literal",
                           "value": 1,
                           "raw": "1"
                         },
-                        "computed": false,
                         "value": {
                           "type": "Literal",
                           "value": "one",
                           "raw": "\"one\""
                         },
-                        "kind": "init",
-                        "method": false,
-                        "shorthand": false
+                        "kind": "init"
                       },
                       {
                         "type": "Property",
+                        "method": false,
+                        "shorthand": false,
+                        "computed": false,
                         "key": {
                           "type": "Literal",
                           "value": 2,
                           "raw": "2"
                         },
-                        "computed": false,
                         "value": {
                           "type": "Literal",
                           "value": "two",
                           "raw": "\"two\""
                         },
-                        "kind": "init",
-                        "method": false,
-                        "shorthand": false
+                        "kind": "init"
                       },
                       {
                         "type": "Property",
+                        "method": false,
+                        "shorthand": false,
+                        "computed": false,
                         "key": {
                           "type": "Literal",
                           "value": 3,
                           "raw": "3"
                         },
-                        "computed": false,
                         "value": {
                           "type": "Literal",
                           "value": "three",
                           "raw": "\"three\""
                         },
-                        "kind": "init",
-                        "method": false,
-                        "shorthand": false
+                        "kind": "init"
                       }
                     ]
                   }
@@ -2053,7 +2053,7 @@ describe('Second Milestone Parser', function() {
           "sourceType": "module"
         };
         expect(R.equals(parser(input), output)).to.equal(true);
-      });
+      })
 
       // input = String.raw`var name: String = "Joe"
       //         let num: Int = 5;
@@ -2251,8 +2251,8 @@ describe('Second Milestone Parser', function() {
         ];
         output = {
           "type": "Program",
-          "sourceType": "module",
-          "body": []
+          "body": [],
+          "sourceType": "module"
         };
         expect(R.equals(parser(input), output)).to.equal(true);
       });
@@ -2420,7 +2420,7 @@ describe('Second Milestone Parser', function() {
               "type": "IfStatement",
               "test": {
                 "type": "BinaryExpression",
-                "operator": "==",
+                "operator": "==",//TODO Type coersion -- Should we always convert swift(==) to js(===)
                 "left": {
                   "type": "UpdateExpression",
                   "operator": "++",
@@ -2496,7 +2496,7 @@ describe('Second Milestone Parser', function() {
       // } else {
       //   a = "x is false";
       // }
-      xit('should handle simple multi-line nested if statements', function() {
+      it('should handle simple multi-line nested if statements', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "x" },
@@ -2904,7 +2904,7 @@ describe('Second Milestone Parser', function() {
       //              total += arrays[i][j]
       //            }
       //          }`;
-      xit('should handle multi-line nested for loops', function() {
+      it('should handle multi-line nested for loops', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "arrays" },
@@ -3221,7 +3221,7 @@ describe('Second Milestone Parser', function() {
       });
     });
 
-    xdescribe('Multi-line for-in loops', function() {
+    describe('Multi-line for-in loops', function() {
 
       // input = String.raw`var c = 0
       //          var numbers = [1,2,3,4,5]
@@ -3234,7 +3234,7 @@ describe('Second Milestone Parser', function() {
       // for (n in numbers) {
       //  c += n
       // }
-      xit('should handle simple multi-line for-in loops', function() {
+      it('should handle simple multi-line for-in loops', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "c" },
@@ -3337,8 +3337,18 @@ describe('Second Milestone Parser', function() {
             {
               "type": "ForInStatement",
               "left": {
-                "type": "Identifier",
-                "name": "n"
+                "type": "VariableDeclaration",
+                "declarations": [
+                  {
+                    "type": "VariableDeclarator",
+                    "id": {
+                      "type": "Identifier",
+                      "name": "n"
+                    },
+                    "init": null
+                  }
+                ],
+                "kind": "var"
               },
               "right": {
                 "type": "Identifier",
@@ -5278,4 +5288,5 @@ describe('Second Milestone Parser', function() {
       });
     });
   });
+
 });
