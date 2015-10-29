@@ -6040,6 +6040,99 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      it('should handle the String methods for inserting and removing characters', function () {
+        input = String.raw`var greeting = "World"
+                            var firstPart = "Hello, "
+                            greeting.insert("!", atIndex: greeting.endIndex)
+                            greeting.insertContentsOf(firstPart.characters, at: greeting.startIndex)
+                            greeting.removeAtIndex(greeting.endIndex.predecessor())
+                            var range = greeting.startIndex...greeting.startIndex.advancedBy(6)
+                            greeting.removeRange(range)`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "greeting" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "STRING",                     value: "World" },
+          { type: "TERMINATOR",                 value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "firstPart" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "STRING",                     value: "Hello, " },
+          { type: "TERMINATOR",                 value: "\\n"},
+
+          { type: "IDENTIFIER",                 value: "greeting" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "insert"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "STRING",                     value: "!" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "METHOD_ARGUMENT_NAME",       value: "atIndex" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "IDENTIFIER",                 value: "greeting" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "endIndex" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "IDENTIFIER",                 value: "greeting" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "insertContentsOf"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "IDENTIFIER",                 value: "firstPart" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "characters" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "METHOD_ARGUMENT_NAME",       value: "at" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "IDENTIFIER",                 value: "greeting" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "startIndex" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+
+          { type: "IDENTIFIER",                 value: "greeting" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "removeAtIndex"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "IDENTIFIER",                 value: "greeting" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "endIndex" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "predecessor"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "range" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "greeting" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "startIndex" },
+          { type: "CLOSED_RANGE",               value: "..." },
+          { type: "IDENTIFIER",                 value: "greeting" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "startIndex" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "advancedBy"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "NUMBER",                     value: "6" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "IDENTIFIER",                 value: "greeting" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "removeRange"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "IDENTIFIER",                 value: "range" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
     });
 
   });
