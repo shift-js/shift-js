@@ -162,13 +162,13 @@ module.exports = function(code) {
 
     // Function Invocation Start
 
-    // if (deepEqual(lexerFunctions.handleFunctionInvocation(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation),"cb1")) {
+    // if (lexerFunctions.handleFunctionInvocation(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) === "cb1") {
     //   // debugger;
     //   advanceAndClear(1);
     //   continue;
     // } 
 
-    // if (deepEqual(lexerFunctions.handleFunctionInvocation(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation),"cb2")) {
+    // if (lexerFunctions.handleFunctionInvocation(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) === "cb2") {
     //   // debugger;
     //   advanceAndClear(1);
     //   lexerFunctions.handleEndOfFile(nextCol, tokens);
@@ -211,6 +211,7 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
+    
     //Function invocation end
 
     // tuple handling

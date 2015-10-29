@@ -27,7 +27,8 @@ module.exports = {
   },
 
   handleFunctionInvocation: function(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) {
-    if (chunk === '(' && FUNCTION_NAMES[lastToken.value] && tokens[tokens.length - 2].value !== 'func') {
+    if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
+      tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD')) {
       module.exports.checkFor('FUNCTION_INVOCATION', chunk, tokens);
       var tmp = {};
       tmp.name = lastToken.value;
