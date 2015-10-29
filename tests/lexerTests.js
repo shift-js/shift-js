@@ -5681,499 +5681,507 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle closed ranges', function () {
-        input = String.raw`var a = 1...5`;
-        output = [
-          { type: "DECLARATION_KEYWORD",      value: "var" },
-          { type: "IDENTIFIER",               value: "a" },
-          { type: "OPERATOR",                 value: "=" },
-          { type: "NUMBER",                   value: "1" },
-          { type: "CLOSED_RANGE",             value: "..." },
-          { type: "NUMBER",                   value: "5" },
-          { type: "TERMINATOR",               value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
+      describe('Range Operations', function () {
+        
+        it('should handle closed ranges', function () {
+          input = String.raw`var a = 1...5`;
+          output = [
+            { type: "DECLARATION_KEYWORD",      value: "var" },
+            { type: "IDENTIFIER",               value: "a" },
+            { type: "OPERATOR",                 value: "=" },
+            { type: "NUMBER",                   value: "1" },
+            { type: "CLOSED_RANGE",             value: "..." },
+            { type: "NUMBER",                   value: "5" },
+            { type: "TERMINATOR",               value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should handle decimal ending in 0 closed ranges', function () {
+          input = String.raw`var a = 1.0...5.0`;
+          output = [
+            { type: "DECLARATION_KEYWORD",      value: "var" },
+            { type: "IDENTIFIER",               value: "a" },
+            { type: "OPERATOR",                 value: "=" },
+            { type: "NUMBER",                   value: "1.0" },
+            { type: "CLOSED_RANGE",             value: "..." },
+            { type: "NUMBER",                   value: "5.0" },
+            { type: "TERMINATOR",               value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should handle random decimal closed ranges', function () {
+          input = String.raw`var a = 1.2...5.3`;
+          output = [
+            { type: "DECLARATION_KEYWORD",      value: "var" },
+            { type: "IDENTIFIER",               value: "a" },
+            { type: "OPERATOR",                 value: "=" },
+            { type: "NUMBER",                   value: "1.2" },
+            { type: "CLOSED_RANGE",             value: "..." },
+            { type: "NUMBER",                   value: "5.3" },
+            { type: "TERMINATOR",               value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should handle half-open ranges', function () {
+          input = String.raw`var b = 1..<5`;
+          output = [
+            { type: "DECLARATION_KEYWORD",      value: "var" },
+            { type: "IDENTIFIER",               value: "b" },
+            { type: "OPERATOR",                 value: "=" },
+            { type: "NUMBER",                   value: "1" },
+            { type: "HALF-OPEN_RANGE",          value: "..<" },
+            { type: "NUMBER",                   value: "5" },
+            { type: "TERMINATOR",               value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should handle decimal ending in 0 half-open ranges', function () {
+          input = String.raw`var a = 1.0..<5.0`;
+          output = [
+            { type: "DECLARATION_KEYWORD",      value: "var" },
+            { type: "IDENTIFIER",               value: "a" },
+            { type: "OPERATOR",                 value: "=" },
+            { type: "NUMBER",                   value: "1.0" },
+            { type: "HALF-OPEN_RANGE",          value: "..<" },
+            { type: "NUMBER",                   value: "5.0" },
+            { type: "TERMINATOR",               value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should handle random decimal half-open ranges', function () {
+          input = String.raw`var a = 1.2..<5.3`;
+          output = [
+            { type: "DECLARATION_KEYWORD",       value: "var" },
+            { type: "IDENTIFIER",                value: "a" },
+            { type: "OPERATOR",                  value: "=" },
+            { type: "NUMBER",                    value: "1.2" },
+            { type: "HALF-OPEN_RANGE",           value: "..<" },
+            { type: "NUMBER",                    value: "5.3" },
+            { type: "TERMINATOR",                value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should handle all ranges', function () {
+          input = String.raw`var a = 1...5; var b = 2..<6`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "a" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "CLOSED_RANGE",               value: "..." },
+            { type: "NUMBER",                     value: "5" },
+            { type: "PUNCTUATION",                value: ";"},
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "b" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "2" },
+            { type: "HALF-OPEN_RANGE",            value: "..<" },
+            { type: "NUMBER",                     value: "6" },
+            { type: "TERMINATOR",                 value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+        
+        it('should handle ranges delimited by identifiers', function () {
+          input = String.raw`let start = 0; let end = 10; let range = start..<end; let fullRange = start...end;`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "start" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "PUNCTUATION",                value: ";" },
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "end" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "NUMBER",                     value: "10" },
+            { type: "PUNCTUATION",                value: ";" },
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "range" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "start" },
+            { type: "HALF-OPEN_RANGE",            value: "..<" },
+            { type: "IDENTIFIER",                 value: "end" },
+            { type: "PUNCTUATION",                value: ";" },
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "fullRange" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "start" },
+            { type: "CLOSED_RANGE",               value: "..." },
+            { type: "IDENTIFIER",                 value: "end" },
+            { type: "PUNCTUATION",                value: ";" },
+            { type: "TERMINATOR",                 value: "EOF"}
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
       });
 
-      it('should handle decimal ending in 0 closed ranges', function () {
-        input = String.raw`var a = 1.0...5.0`;
-        output = [
-          { type: "DECLARATION_KEYWORD",      value: "var" },
-          { type: "IDENTIFIER",               value: "a" },
-          { type: "OPERATOR",                 value: "=" },
-          { type: "NUMBER",                   value: "1.0" },
-          { type: "CLOSED_RANGE",             value: "..." },
-          { type: "NUMBER",                   value: "5.0" },
-          { type: "TERMINATOR",               value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+      describe('String Properties and Methods', function () {
 
-      it('should handle random decimal closed ranges', function () {
-        input = String.raw`var a = 1.2...5.3`;
-        output = [
-          { type: "DECLARATION_KEYWORD",      value: "var" },
-          { type: "IDENTIFIER",               value: "a" },
-          { type: "OPERATOR",                 value: "=" },
-          { type: "NUMBER",                   value: "1.2" },
-          { type: "CLOSED_RANGE",             value: "..." },
-          { type: "NUMBER",                   value: "5.3" },
-          { type: "TERMINATOR",               value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+        it('should handle the String characters property', function () {
+          input = String.raw `var s = "my string, 123!"
+                              for c in s.characters {
+                                  print(c)
+                              }`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "my string, 123!" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "STATEMENT_KEYWORD",          value: "for" },
+            { type: "IDENTIFIER",                 value: "c" },
+            { type: "STATEMENT_KEYWORD",          value: "in" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "characters" },
+            { type: "PUNCTUATION",                value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "NATIVE_METHOD",              value: "print"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "c" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "PUNCTUATION",                value: "}" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
-      it('should handle half-open ranges', function () {
-        input = String.raw`var b = 1..<5`;
-        output = [
-          { type: "DECLARATION_KEYWORD",      value: "var" },
-          { type: "IDENTIFIER",               value: "b" },
-          { type: "OPERATOR",                 value: "=" },
-          { type: "NUMBER",                   value: "1" },
-          { type: "HALF-OPEN_RANGE",          value: "..<" },
-          { type: "NUMBER",                   value: "5" },
-          { type: "TERMINATOR",               value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+        it('should handle the String count property', function () {
+          input = String.raw `var s = "my string, 123!"
+                              let fifteen = s.characters.count`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "my string, 123!" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "let" },
+            { type: "IDENTIFIER",                 value: "fifteen" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "characters" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "count" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
-      it('should handle decimal ending in 0 half-open ranges', function () {
-        input = String.raw`var a = 1.0..<5.0`;
-        output = [
-          { type: "DECLARATION_KEYWORD",      value: "var" },
-          { type: "IDENTIFIER",               value: "a" },
-          { type: "OPERATOR",                 value: "=" },
-          { type: "NUMBER",                   value: "1.0" },
-          { type: "HALF-OPEN_RANGE",          value: "..<" },
-          { type: "NUMBER",                   value: "5.0" },
-          { type: "TERMINATOR",               value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+        it('should handle the String append method', function () {
+          input = String.raw `var s = "my string, 123!"
+                              var addChar: Character = "!"
+                              s.append(addChar)`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "my string, 123!" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "addChar" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "Character"},
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "!" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "append"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "addChar" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
-      it('should handle random decimal half-open ranges', function () {
-        input = String.raw`var a = 1.2..<5.3`;
-        output = [
-          { type: "DECLARATION_KEYWORD",       value: "var" },
-          { type: "IDENTIFIER",                value: "a" },
-          { type: "OPERATOR",                  value: "=" },
-          { type: "NUMBER",                    value: "1.2" },
-          { type: "HALF-OPEN_RANGE",           value: "..<" },
-          { type: "NUMBER",                    value: "5.3" },
-          { type: "TERMINATOR",                value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+        it('should handle the String indices and their associated methods', function () {
+          input = String.raw`var s = "my string, 123!"
+                             var zero = s.startIndex
+                             var one = s.startIndex.successor()
+                             var two = s.startIndex.advancedBy(2)
+                             var m = s[s.startIndex]
+                             var y = s[s.startIndex.advancedBy(1)]
+                             var fifteen = s.endIndex
+                             var fourteen = s.endIndex.predecessor()
+                             var bang = s[s.endIndex.predecessor()]`;
+                      //TODO // print("the letter s: \(s[s.startIndex.advancedBy(3)])")`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "my string, 123!" },
+            { type: "TERMINATOR",                 value: "\\n"},
 
-      it('should handle all ranges', function () {
-        input = String.raw`var a = 1...5; var b = 2..<6`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "a" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "NUMBER",                     value: "1" },
-          { type: "CLOSED_RANGE",               value: "..." },
-          { type: "NUMBER",                     value: "5" },
-          { type: "PUNCTUATION",                value: ";"},
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "b" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "NUMBER",                     value: "2" },
-          { type: "HALF-OPEN_RANGE",            value: "..<" },
-          { type: "NUMBER",                     value: "6" },
-          { type: "TERMINATOR",                 value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-      
-      it('should handle ranges delimited by identifiers', function () {
-        input = String.raw`let start = 0; let end = 10; let range = start..<end; let fullRange = start...end;`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "start" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "NUMBER",                     value: "0" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "end" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "NUMBER",                     value: "10" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "range" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "start" },
-          { type: "HALF-OPEN_RANGE",            value: "..<" },
-          { type: "IDENTIFIER",                 value: "end" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "fullRange" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "start" },
-          { type: "CLOSED_RANGE",               value: "..." },
-          { type: "IDENTIFIER",                 value: "end" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "TERMINATOR",                 value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "zero" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "startIndex" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "one" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "startIndex" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "successor"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
 
-      it('should handle the String characters property', function () {
-        input = String.raw `var s = "my string, 123!"
-                            for c in s.characters {
-                                print(c)
-                            }`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "my string, 123!" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "for" },
-          { type: "IDENTIFIER",                 value: "c" },
-          { type: "STATEMENT_KEYWORD",          value: "in" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "characters" },
-          { type: "PUNCTUATION",                value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "NATIVE_METHOD",              value: "print"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "IDENTIFIER",                 value: "c" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "PUNCTUATION",                value: "}" },
-          { type: "TERMINATOR",                 value: "EOF"},
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "two" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "startIndex" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "advancedBy"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "2" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "m" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "startIndex" },
+            { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "y" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "startIndex" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "advancedBy"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "fifteen" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "endIndex" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "fourteen" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "endIndex" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "predecessor"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "bang" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "endIndex" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "predecessor"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+            // { type: "TERMINATOR",                 value: "\\n"},
+            
+            // { type: "NATIVE_METHOD",              value: "print"},
+            // { type: "INVOCATION_START",           value: "(" },
+            // { type: "STRING",                     value: "the letter s: " },
+            // { type: "STRING_INTERPOLATION_START", value: "\\(" },
+            // { type: "IDENTIFIER",                 value: "s" },
+            // { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+            // { type: "IDENTIFIER",                 value: "s" },
+            // { type: "DOT_SYNTAX",                 value: "." },
+            // { type: "TYPE_PROPERTY",              value: "startIndex" },
+            // { type: "DOT_SYNTAX",                 value: "." },
+            // { type: "NATIVE_METHOD",              value: "advancedBy"},
+            // { type: "INVOCATION_START",           value: "(" },
+            // { type: "NUMBER",                     value: "3" },
+            // { type: "INVOCATION_END",             value: ")" },
+            // { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+            // { type: "STRING_INTERPOLATION_END",   value: ")" },
+            // { type: "STRING",                     value: "" },  
+            // { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
-      it('should handle the String count property', function () {
-        input = String.raw `var s = "my string, 123!"
-                            let fifteen = s.characters.count`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "my string, 123!" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "fifteen" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "characters" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "count" },
-          { type: "TERMINATOR",                 value: "EOF"},
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+        it('should handle the String methods for inserting and removing characters', function () {
+          input = String.raw`var greeting = "World"
+                              var firstPart = "Hello, "
+                              greeting.insert("!", atIndex: greeting.endIndex)
+                              greeting.insertContentsOf(firstPart.characters, at: greeting.startIndex)
+                              greeting.removeAtIndex(greeting.endIndex.predecessor())
+                              var range = greeting.startIndex...greeting.startIndex.advancedBy(6)
+                              greeting.removeRange(range)`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "greeting" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "World" },
+            { type: "TERMINATOR",                 value: "\\n"},
 
-      it('should handle the String append method', function () {
-        input = String.raw `var s = "my string, 123!"
-                            var addChar: Character = "!"
-                            s.append(addChar)`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "my string, 123!" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "addChar" },
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "TYPE_STRING",                value: "Character"},
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "!" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "append"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "IDENTIFIER",                 value: "addChar" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "EOF"},
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "firstPart" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "Hello, " },
+            { type: "TERMINATOR",                 value: "\\n"},
 
-      it('should handle the String indices and their associated methods', function () {
-        input = String.raw`var s = "my string, 123!"
-                           var zero = s.startIndex
-                           var one = s.startIndex.successor()
-                           var two = s.startIndex.advancedBy(2)
-                           var m = s[s.startIndex]
-                           var y = s[s.startIndex.advancedBy(1)]
-                           var fifteen = s.endIndex
-                           var fourteen = s.endIndex.predecessor()
-                           var bang = s[s.endIndex.predecessor()]`;
-                    //TODO // print("the letter s: \(s[s.startIndex.advancedBy(3)])")`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "my string, 123!" },
-          { type: "TERMINATOR",                 value: "\\n"},
+            { type: "IDENTIFIER",                 value: "greeting" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "insert"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "STRING",                     value: "!" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "METHOD_ARGUMENT_NAME",       value: "atIndex" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "IDENTIFIER",                 value: "greeting" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "endIndex" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "greeting" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "insertContentsOf"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "firstPart" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "characters" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "METHOD_ARGUMENT_NAME",       value: "at" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "IDENTIFIER",                 value: "greeting" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "startIndex" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
 
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "zero" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "startIndex" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "one" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "startIndex" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "successor"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "\\n"},
+            { type: "IDENTIFIER",                 value: "greeting" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "removeAtIndex"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "greeting" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "endIndex" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "predecessor"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
 
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "two" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "startIndex" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "advancedBy"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "NUMBER",                     value: "2" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "m" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "startIndex" },
-          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "y" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "startIndex" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "advancedBy"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "NUMBER",                     value: "1" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "fifteen" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "endIndex" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "fourteen" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "endIndex" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "predecessor"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "bang" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
-          { type: "IDENTIFIER",                 value: "s" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "endIndex" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "predecessor"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
-          // { type: "TERMINATOR",                 value: "\\n"},
-          
-          // { type: "NATIVE_METHOD",              value: "print"},
-          // { type: "INVOCATION_START",           value: "(" },
-          // { type: "STRING",                     value: "the letter s: " },
-          // { type: "STRING_INTERPOLATION_START", value: "\\(" },
-          // { type: "IDENTIFIER",                 value: "s" },
-          // { type: "SUBSTRING_LOOKUP_START",     value: "[" },
-          // { type: "IDENTIFIER",                 value: "s" },
-          // { type: "DOT_SYNTAX",                 value: "." },
-          // { type: "TYPE_PROPERTY",              value: "startIndex" },
-          // { type: "DOT_SYNTAX",                 value: "." },
-          // { type: "NATIVE_METHOD",              value: "advancedBy"},
-          // { type: "INVOCATION_START",           value: "(" },
-          // { type: "NUMBER",                     value: "3" },
-          // { type: "INVOCATION_END",             value: ")" },
-          // { type: "SUBSTRING_LOOKUP_END",       value: "]" },
-          // { type: "STRING_INTERPOLATION_END",   value: ")" },
-          // { type: "STRING",                     value: "" },  
-          // { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "EOF"},
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "range" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "greeting" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "startIndex" },
+            { type: "CLOSED_RANGE",               value: "..." },
+            { type: "IDENTIFIER",                 value: "greeting" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "startIndex" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "advancedBy"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "6" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "greeting" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "removeRange"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "range" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
-      it('should handle the String methods for inserting and removing characters', function () {
-        input = String.raw`var greeting = "World"
-                            var firstPart = "Hello, "
-                            greeting.insert("!", atIndex: greeting.endIndex)
-                            greeting.insertContentsOf(firstPart.characters, at: greeting.startIndex)
-                            greeting.removeAtIndex(greeting.endIndex.predecessor())
-                            var range = greeting.startIndex...greeting.startIndex.advancedBy(6)
-                            greeting.removeRange(range)`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "greeting" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "World" },
-          { type: "TERMINATOR",                 value: "\\n"},
+        it('should handle the has prefix and has suffix string methods', function () {
+          input = String.raw `var famousAuthor = "F. Scott Fitzgerald"
+                              print(famousAuthor.hasPrefix("F. Scott"))
+                              var famousDriver = "Dale Earnhardt, Jr."
+                              print(famousDriver.hasSuffix("Jr."))`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "famousAuthor" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "F. Scott Fitzgerald" },
+            { type: "TERMINATOR",                 value: "\\n"},
 
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "firstPart" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "Hello, " },
-          { type: "TERMINATOR",                 value: "\\n"},
+            { type: "NATIVE_METHOD",              value: "print"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "famousAuthor" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "hasPrefix"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "STRING",                     value: "F. Scott" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "famousDriver" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "Dale Earnhardt, Jr." },
+            { type: "TERMINATOR",                 value: "\\n"},
 
-          { type: "IDENTIFIER",                 value: "greeting" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "insert"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "STRING",                     value: "!" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "METHOD_ARGUMENT_NAME",       value: "atIndex" },
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "IDENTIFIER",                 value: "greeting" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "endIndex" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "IDENTIFIER",                 value: "greeting" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "insertContentsOf"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "IDENTIFIER",                 value: "firstPart" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "characters" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "METHOD_ARGUMENT_NAME",       value: "at" },
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "IDENTIFIER",                 value: "greeting" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "startIndex" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "\\n"},
+            { type: "NATIVE_METHOD",              value: "print"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "famousDriver" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "hasSuffix"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "STRING",                     value: "Jr." },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
-          { type: "IDENTIFIER",                 value: "greeting" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "removeAtIndex"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "IDENTIFIER",                 value: "greeting" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "endIndex" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "predecessor"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "\\n"},
-
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "range" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "greeting" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "startIndex" },
-          { type: "CLOSED_RANGE",               value: "..." },
-          { type: "IDENTIFIER",                 value: "greeting" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "TYPE_PROPERTY",              value: "startIndex" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "advancedBy"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "NUMBER",                     value: "6" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "IDENTIFIER",                 value: "greeting" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "removeRange"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "IDENTIFIER",                 value: "range" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "EOF"},
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      it('should handle the has prefix and has suffix string methods', function () {
-        input = String.raw `var famousAuthor = "F. Scott Fitzgerald"
-                            print(famousAuthor.hasPrefix("F. Scott"))
-                            var famousDriver = "Dale Earnhardt, Jr."
-                            print(famousDriver.hasSuffix("Jr."))`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "famousAuthor" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "F. Scott Fitzgerald" },
-          { type: "TERMINATOR",                 value: "\\n"},
-
-          { type: "NATIVE_METHOD",              value: "print"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "IDENTIFIER",                 value: "famousAuthor" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "hasPrefix"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "STRING",                     value: "F. Scott" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "famousDriver" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "STRING",                     value: "Dale Earnhardt, Jr." },
-          { type: "TERMINATOR",                 value: "\\n"},
-
-          { type: "NATIVE_METHOD",              value: "print"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "IDENTIFIER",                 value: "famousDriver" },
-          { type: "DOT_SYNTAX",                 value: "." },
-          { type: "NATIVE_METHOD",              value: "hasSuffix"},
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "STRING",                     value: "Jr." },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "EOF"},
-        ];
-        expect(lexer(input)).to.deep.equal(output);
       });
 
     });
