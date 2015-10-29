@@ -5874,6 +5874,142 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      it('should handle the String indices and their associated methods', function () {
+        input = String.raw`var s = "my string, 123!"
+                           var zero = s.startIndex
+                           var one = s.startIndex.successor()
+                           var two = s.startIndex.advancedBy(2)
+                           var m = s[s.startIndex]
+                           var y = s[s.startIndex.advancedBy(1)]
+                           var fifteen = s.endIndex
+                           var fourteen = s.endIndex.predecessor()
+                           var bang = s[s.endIndex.predecessor()]`;
+                    //TODO // print("the letter s: \(s[s.startIndex.advancedBy(3)])")`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "STRING",                     value: "my string, 123!" },
+          { type: "TERMINATOR",                 value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "zero" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "startIndex" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "one" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "startIndex" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "successor"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "two" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "startIndex" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "advancedBy"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "NUMBER",                     value: "2" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "m" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "startIndex" },
+          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "y" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "startIndex" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "advancedBy"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "NUMBER",                     value: "1" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "fifteen" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "endIndex" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "fourteen" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "endIndex" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "predecessor"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "bang" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "endIndex" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "predecessor"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          // { type: "TERMINATOR",                 value: "\\n"},
+          
+          // { type: "NATIVE_METHOD",              value: "print"},
+          // { type: "INVOCATION_START",           value: "(" },
+          // { type: "STRING",                     value: "the letter s: " },
+          // { type: "STRING_INTERPOLATION_START", value: "\\(" },
+          // { type: "IDENTIFIER",                 value: "s" },
+          // { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          // { type: "IDENTIFIER",                 value: "s" },
+          // { type: "DOT_SYNTAX",                 value: "." },
+          // { type: "TYPE_PROPERTY",              value: "startIndex" },
+          // { type: "DOT_SYNTAX",                 value: "." },
+          // { type: "NATIVE_METHOD",              value: "advancedBy"},
+          // { type: "INVOCATION_START",           value: "(" },
+          // { type: "NUMBER",                     value: "3" },
+          // { type: "INVOCATION_END",             value: ")" },
+          // { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          // { type: "STRING_INTERPOLATION_END",   value: ")" },
+          // { type: "STRING",                     value: "" },  
+          // { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
     });
 
   });

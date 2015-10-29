@@ -11,13 +11,18 @@ module.exports = {
   // },
 
   NATIVE_METHOD: {
-    'print': 'NATIVE_METHOD',
+    'advancedBy': 'NATIVE_METHOD',
     'append': 'NATIVE_METHOD',
+    'predecessor': 'NATIVE_METHOD',
+    'print': 'NATIVE_METHOD',
+    'successor': 'NATIVE_METHOD',
   },
   
   TYPE_PROPERTY: {
     'characters': 'TYPE_PROPERTY',
     'count': 'TYPE_PROPERTY',
+    'endIndex': 'TYPE_PROPERTY',
+    'startIndex': 'TYPE_PROPERTY',
   },
 
   RANGES: {
