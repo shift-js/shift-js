@@ -162,10 +162,15 @@ module.exports = {
     return false;
   },
 
-  handleNumber: function(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol) {
+  handleNumber: function(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol, cb) {
     if (NUMBER.test(chunk) && !insideString.status && !insideNumber.status) {
       insideNumber.status = true;
     }
+    // have an _ in the input
+    if (insideNumber.status && nextCol === '_') {
+      return "skip";
+    }
+
     //have an integer or decimal
     if (insideNumber.status && (nextCol === '\n' ||
       (isNaN(nextCol) && (nextCol !== '.') && (nextNextCol !== '.')))) {
