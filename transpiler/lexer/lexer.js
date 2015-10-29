@@ -160,8 +160,8 @@ module.exports = function(code) {
         continue;
     }
 
-    if (chunk === '(' && FUNCTION_NAMES[lastToken.value] && 
-      tokens[tokens.length - 2].value !== 'func') {
+    if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
+      tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', chunk, tokens);
       var tmp = {};
       tmp.name = lastToken.value;
@@ -367,7 +367,8 @@ module.exports = function(code) {
     // handles property access and method calls via dot notation
     if (currCol === '.' && !lexerFunctions.checkForWhitespace(prevCol) &&
       !lexerFunctions.checkForWhitespace(nextCol) && (
-        lastToken.type === 'IDENTIFIER' || lastToken.value === 'self')) {
+        lastToken.type === 'IDENTIFIER' || lastToken.value === 'self' ||
+        lastToken.type === 'TYPE_PROPERTY')) {
       lexerFunctions.makeToken(undefined, chunk, tokens, 'DOT_SYNTAX', '.');
       advanceAndClear(1);
       continue;
@@ -394,6 +395,8 @@ module.exports = function(code) {
           insideCollection.push({type: undefined, location: tokens.length-1});})
       } else {
         lexerFunctions.checkFor('KEYWORD', chunk, tokens) ||
+        lexerFunctions.checkFor('NATIVE_METHOD', chunk, tokens) ||
+        lexerFunctions.checkFor('TYPE_PROPERTY', chunk, tokens) ||
         lexerFunctions.checkFor('TYPE', chunk, tokens) ||
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) ||
         lexerFunctions.checkFor('SUBSTRING_LOOKUP', chunk, tokens, function() {

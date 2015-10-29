@@ -10,6 +10,16 @@ module.exports = {
   //   ']': 'DICTIONARY_END'
   // },
 
+  NATIVE_METHOD: {
+    'print': 'NATIVE_METHOD',
+    'append': 'NATIVE_METHOD',
+  },
+  
+  TYPE_PROPERTY: {
+    'characters': 'TYPE_PROPERTY',
+    'count': 'TYPE_PROPERTY',
+  },
+
   RANGES: {
     '...': 'CLOSED_RANGE',
     '..<': 'HALF-OPEN_RANGE',
@@ -204,6 +214,7 @@ module.exports = {
   },
   
   TYPE: {
+    'Character': 'TYPE_STRING',
     'Double': 'TYPE_NUMBER',
     'Float': 'TYPE_NUMBER',
     'Bool': 'TYPE_BOOLEAN',
