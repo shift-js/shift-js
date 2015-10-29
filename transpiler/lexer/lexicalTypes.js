@@ -10,6 +10,10 @@ module.exports = {
   //   ']': 'DICTIONARY_END'
   // },
 
+  NATIVE_METHOD: {
+    "print": 'NATIVE_METHOD',
+  },
+
   RANGES: {
     '...': 'CLOSED_RANGE',
     '..<': 'HALF-OPEN_RANGE',
