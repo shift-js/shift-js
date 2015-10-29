@@ -566,6 +566,9 @@ var declarations = {
         this.test = expression(state, 0);
       }
       delete this.value;
+      if(state.token.value === ";") {
+        state = advance(state);
+      }
       return this;
     });
 
