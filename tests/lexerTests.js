@@ -6211,6 +6211,28 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        it('should handle the array count property', function () {
+          input = String.raw `var arr = [1,2]
+                              arr.count`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "2" },
+            { type: "ARRAY_END",                  value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "count"},
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
       });
 
     });
