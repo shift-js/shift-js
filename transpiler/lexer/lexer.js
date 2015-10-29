@@ -10,6 +10,7 @@ module.exports = function(code) {
   var FUNCTION_NAMES = {};
   var CLASS_NAMES = {}; 
   var STRUCT_NAMES = {};
+  var TUPLE_ELEMENT_NAMES = {}
 
   // track state
   var emptyLine = {status: true};
@@ -54,8 +55,6 @@ module.exports = function(code) {
     var lastCollection = insideCollection[lastCollectionIndex];
     var lastFunctionIndex = insideFunction.length - 1;
     var lastFunction = insideFunction[lastFunctionIndex];
-
-
 
     // console.log(chunk);
     // console.log(currCol);
@@ -201,7 +200,7 @@ module.exports = function(code) {
       continue;
     }
     if (insideTuple.status && lexerFunctions.handleTuple(insideTuple, chunk,
-        tokens, currCol, nextCol)) {
+        tokens, currCol, nextCol, TUPLE_ELEMENT_NAMES)) {
       advanceAndClear(1);
       continue;
     }
@@ -226,10 +225,6 @@ module.exports = function(code) {
       advanceAndClear(2);
       continue;
     }
-
-
-
-
 
     if (insideFunction.length && chunk === '(' &&
       insideFunction[insideFunction.length - 1].insideParams === false) {
@@ -375,14 +370,13 @@ module.exports = function(code) {
     }
     
     ///////////////////////////////////////////////////////////////////////////
-    
-    
-    
 
     // main evaluation block
     if (!insideString.status && !insideNumber.status &&
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
-      if (insideCollection.length && lastCollection.type === undefined &&
+      if (lastToken && lastToken.type === 'DOT_SYNTAX' && TUPLE_ELEMENT_NAMES[chunk]) {
+        lexerFunctions.makeToken(undefined, undefined, tokens, 'TUPLE_ELEMENT_NAME', chunk);
+      } else if (insideCollection.length && lastCollection.type === undefined &&
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens)){
         lexerFunctions.determineCollectionType(insideCollection, tokens);
       } else if (insideCollection.length && currCol === ']' && !substringLookup.status) {

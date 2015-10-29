@@ -232,9 +232,10 @@ module.exports = {
     return false;
   },
 
-  handleTuple: function(insideTuple, chunk, tokens, currCol, nextCol) {
+  handleTuple: function(insideTuple, chunk, tokens, currCol, nextCol, TUPLE_ELEMENT_NAMES) {
     if (nextCol === ':') {
       module.exports.makeToken(undefined, undefined, tokens, 'TUPLE_ELEMENT_NAME', chunk);
+      TUPLE_ELEMENT_NAMES[chunk] = true;
       return true;
     } else if (currCol === ',') {
       insideTuple.verified = true;
