@@ -3527,7 +3527,7 @@ describe('Second Milestone Parser', function() {
       });
     });
 
-    xdescribe('Multi-Line While/Repeat-While loops', function() {
+    describe('Multi-Line While/Repeat-While loops', function() {
 
       // input = String.raw`var i = 10;
       //         while i >= 0 {
@@ -3538,7 +3538,7 @@ describe('Second Milestone Parser', function() {
       // while (i >= 0) {
       //   i--
       // }
-      xit('should handle multi-line while loops without a parenthetical', function() {
+      it('should handle multi-line while loops without a parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -3624,7 +3624,7 @@ describe('Second Milestone Parser', function() {
       //         while (i >= 0) {
       //           i--
       //         }`;
-      xit('should handle multi-line while loops with a parenthetical', function() {
+      it('should handle multi-line while loops with a parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -3717,7 +3717,7 @@ describe('Second Milestone Parser', function() {
       // do {
       //  i--
       // } while (i > 0);
-      xit('should handle multi-line repeat-while loops with a parenthetical', function() {
+      it('should handle multi-line repeat-while loops with a parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
@@ -3811,7 +3811,7 @@ describe('Second Milestone Parser', function() {
       // do {
       //  i--
       // } while (i > 0);
-      xit('should handle multi-line repeat-while loops without a parenthetical', function() {
+      it('should handle multi-line repeat-while loops without a parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
