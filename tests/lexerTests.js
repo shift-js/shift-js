@@ -6133,6 +6133,49 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      it('should handle the has prefix and has suffix string methods', function () {
+        input = String.raw `var famousAuthor = "F. Scott Fitzgerald"
+                            print(famousAuthor.hasPrefix("F. Scott"))
+                            var famousDriver = "Dale Earnhardt, Jr."
+                            print(famousDriver.hasSuffix("Jr."))`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "famousAuthor" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "STRING",                     value: "F. Scott Fitzgerald" },
+          { type: "TERMINATOR",                 value: "\\n"},
+
+          { type: "NATIVE_METHOD",              value: "print"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "IDENTIFIER",                 value: "famousAuthor" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "hasPrefix"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "STRING",                     value: "F. Scott" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "famousDriver" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "STRING",                     value: "Dale Earnhardt, Jr." },
+          { type: "TERMINATOR",                 value: "\\n"},
+
+          { type: "NATIVE_METHOD",              value: "print"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "IDENTIFIER",                 value: "famousDriver" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "hasSuffix"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "STRING",                     value: "Jr." },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
     });
 
   });
