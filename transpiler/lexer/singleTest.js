@@ -16,7 +16,14 @@ var swiftCodeAnswers = [
         { type: "TERMINATOR",           value: "EOF" }
 ];
 
-console.log(lexer(swiftCode));
+var ans = lexer(swiftCode);
+var i = 0;
+var mapped = ans.map(function(obj){
+    obj['index'] = i;
+    i++;
+    return obj;
+});
+console.log(mapped);
 console.log(diff(lexer(swiftCode),swiftCodeAnswers));
 console.log(deepEqual(lexer(swiftCode),swiftCodeAnswers));
 

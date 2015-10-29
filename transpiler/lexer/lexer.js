@@ -84,6 +84,7 @@ module.exports = function(code) {
       continue;
     }
 
+    // ignoring whitespace
     if (chunk === ' ') {
       advanceAndClear(1);
       continue;
@@ -285,8 +286,6 @@ module.exports = function(code) {
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
-
-    //TODO function declaration
     
     // collection initializer syntax handling
     if (tokens.length && currCol === '(' && nextCol === ')' &&
