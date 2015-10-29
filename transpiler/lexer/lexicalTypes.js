@@ -18,6 +18,11 @@ module.exports = {
     'successor': 'NATIVE_METHOD',
   },
   
+  METHOD_ARGUMENT_NAME: {
+    'at': 'METHOD_ARGUMENT_NAME',
+    'atIndex': 'METHOD_ARGUMENT_NAME'
+  },
+  
   TYPE_PROPERTY: {
     'characters': 'TYPE_PROPERTY',
     'count': 'TYPE_PROPERTY',

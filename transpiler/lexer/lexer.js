@@ -412,6 +412,7 @@ module.exports = function(code) {
       } else {
         lexerFunctions.checkFor('KEYWORD', chunk, tokens) ||
         lexerFunctions.checkFor('NATIVE_METHOD', chunk, tokens) ||
+        lexerFunctions.checkFor('METHOD_ARGUMENT_NAME', chunk, tokens) ||
         lexerFunctions.checkFor('TYPE_PROPERTY', chunk, tokens) ||
         lexerFunctions.checkFor('TYPE', chunk, tokens) ||
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) ||
