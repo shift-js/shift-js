@@ -5,6 +5,7 @@ client/app/components/repl/api.js
 
 transpiler/lexer/singleTest.js
 transpiler/lexer/tmpFunction.js
+transpiler/lexer/tmpFunctionInvoke.js
 
 .floo
 .flooignore
