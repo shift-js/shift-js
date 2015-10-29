@@ -2,18 +2,14 @@ var lexer = require("./lexer");
 var deepEqual = require("./helperFunctions").deepEqual;
 var diff = require("./helperFunctions").diff;
 
-var swiftCode = String.raw`var firstBase, secondBase, thirdBase: String`;
+var swiftCode = String.raw`let justOverOneMillion = 1_000_000.000_000_1`;
      
 var swiftCodeAnswers = [
-    { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "firstBase" },
-        { type: "PUNCTUATION",          value: "," },
-        { type: "IDENTIFIER",           value: "secondBase" },
-        { type: "PUNCTUATION",          value: "," },
-        { type: "IDENTIFIER",           value: "thirdBase" },
-        { type: "PUNCTUATION",          value: ":" },
-        { type: "TYPE_STRING",          value: "String"},
-        { type: "TERMINATOR",           value: "EOF" }
+    { type: "DECLARATION_KEYWORD",        value: "let" },
+    { type: "IDENTIFIER",                 value: "justOverOneMillion" },
+    { type: "OPERATOR",                   value: "=" },
+    { type: "NUMBER",                     value: "1000000.0000001" },
+    { type: "TERMINATOR",                 value: "EOF" }
 ];
 
 var ans = lexer(swiftCode);
