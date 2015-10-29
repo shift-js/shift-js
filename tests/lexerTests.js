@@ -456,6 +456,19 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      xit('should handle numeric literals written with underscores', function () {
+        input = String.raw`let justOverOneMillion = 1_000_000.000_000_1`;
+
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "justOverOneMillion" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "NUMBER",                     value: "1000000.0000001" },
+          { type: "TERMINATOR",                 value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
       it('should handle unspaced operators', function () {
         input = String.raw`let i = 5+6`;
         output = [
