@@ -11,7 +11,11 @@ module.exports = {
   // },
 
   NATIVE_METHOD: {
-    "print": 'NATIVE_METHOD',
+    'print': 'NATIVE_METHOD',
+  },
+  
+  TYPE_PROPERTY: {
+    'characters': 'TYPE_PROPERTY'
   },
 
   RANGES: {

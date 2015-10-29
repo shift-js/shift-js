@@ -395,6 +395,7 @@ module.exports = function(code) {
       } else {
         lexerFunctions.checkFor('KEYWORD', chunk, tokens) ||
         lexerFunctions.checkFor('NATIVE_METHOD', chunk, tokens) ||
+        lexerFunctions.checkFor('TYPE_PROPERTY', chunk, tokens) ||
         lexerFunctions.checkFor('TYPE', chunk, tokens) ||
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) ||
         lexerFunctions.checkFor('SUBSTRING_LOOKUP', chunk, tokens, function() {

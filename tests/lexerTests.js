@@ -5565,7 +5565,7 @@ describe('Lexer', function() {
 
     }); 
 
-    describe('Native Methods', function () {
+    describe('Native Methods and Type Properties', function () {
 
       it('should handle calls to print', function () {
         input = String.raw`var name = "Joe"
@@ -5654,13 +5654,13 @@ describe('Lexer', function() {
       it('should handle closed ranges', function () {
         input = String.raw`var a = 1...5`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "1" },
-          { type: "CLOSED_RANGE",         value: "..." },
-          { type: "NUMBER",               value: "5" },
-          { type: "TERMINATOR",           value: "EOF"}
+          { type: "DECLARATION_KEYWORD",      value: "var" },
+          { type: "IDENTIFIER",               value: "a" },
+          { type: "OPERATOR",                 value: "=" },
+          { type: "NUMBER",                   value: "1" },
+          { type: "CLOSED_RANGE",             value: "..." },
+          { type: "NUMBER",                   value: "5" },
+          { type: "TERMINATOR",               value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5668,13 +5668,13 @@ describe('Lexer', function() {
       it('should handle decimal ending in 0 closed ranges', function () {
         input = String.raw`var a = 1.0...5.0`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "1.0" },
-          { type: "CLOSED_RANGE",         value: "..." },
-          { type: "NUMBER",               value: "5.0" },
-          { type: "TERMINATOR",           value: "EOF"}
+          { type: "DECLARATION_KEYWORD",      value: "var" },
+          { type: "IDENTIFIER",               value: "a" },
+          { type: "OPERATOR",                 value: "=" },
+          { type: "NUMBER",                   value: "1.0" },
+          { type: "CLOSED_RANGE",             value: "..." },
+          { type: "NUMBER",                   value: "5.0" },
+          { type: "TERMINATOR",               value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5682,13 +5682,13 @@ describe('Lexer', function() {
       it('should handle random decimal closed ranges', function () {
         input = String.raw`var a = 1.2...5.3`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "1.2" },
-          { type: "CLOSED_RANGE",         value: "..." },
-          { type: "NUMBER",               value: "5.3" },
-          { type: "TERMINATOR",           value: "EOF"}
+          { type: "DECLARATION_KEYWORD",      value: "var" },
+          { type: "IDENTIFIER",               value: "a" },
+          { type: "OPERATOR",                 value: "=" },
+          { type: "NUMBER",                   value: "1.2" },
+          { type: "CLOSED_RANGE",             value: "..." },
+          { type: "NUMBER",                   value: "5.3" },
+          { type: "TERMINATOR",               value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5696,13 +5696,13 @@ describe('Lexer', function() {
       it('should handle half-open ranges', function () {
         input = String.raw`var b = 1..<5`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "b" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "1" },
-          { type: "HALF-OPEN_RANGE",      value: "..<" },
-          { type: "NUMBER",               value: "5" },
-          { type: "TERMINATOR",           value: "EOF"}
+          { type: "DECLARATION_KEYWORD",      value: "var" },
+          { type: "IDENTIFIER",               value: "b" },
+          { type: "OPERATOR",                 value: "=" },
+          { type: "NUMBER",                   value: "1" },
+          { type: "HALF-OPEN_RANGE",          value: "..<" },
+          { type: "NUMBER",                   value: "5" },
+          { type: "TERMINATOR",               value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5710,13 +5710,13 @@ describe('Lexer', function() {
       it('should handle decimal ending in 0 half-open ranges', function () {
         input = String.raw`var a = 1.0..<5.0`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "1.0" },
-          { type: "HALF-OPEN_RANGE",      value: "..<" },
-          { type: "NUMBER",               value: "5.0" },
-          { type: "TERMINATOR",           value: "EOF"}
+          { type: "DECLARATION_KEYWORD",      value: "var" },
+          { type: "IDENTIFIER",               value: "a" },
+          { type: "OPERATOR",                 value: "=" },
+          { type: "NUMBER",                   value: "1.0" },
+          { type: "HALF-OPEN_RANGE",          value: "..<" },
+          { type: "NUMBER",                   value: "5.0" },
+          { type: "TERMINATOR",               value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5724,13 +5724,13 @@ describe('Lexer', function() {
       it('should handle random decimal half-open ranges', function () {
         input = String.raw`var a = 1.2..<5.3`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "1.2" },
-          { type: "HALF-OPEN_RANGE",      value: "..<" },
-          { type: "NUMBER",               value: "5.3" },
-          { type: "TERMINATOR",           value: "EOF"}
+          { type: "DECLARATION_KEYWORD",       value: "var" },
+          { type: "IDENTIFIER",                value: "a" },
+          { type: "OPERATOR",                  value: "=" },
+          { type: "NUMBER",                    value: "1.2" },
+          { type: "HALF-OPEN_RANGE",           value: "..<" },
+          { type: "NUMBER",                    value: "5.3" },
+          { type: "TERMINATOR",                value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5738,20 +5738,20 @@ describe('Lexer', function() {
       it('should handle all ranges', function () {
         input = String.raw`var a = 1...5; var b = 2..<6`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "1" },
-          { type: "CLOSED_RANGE",         value: "..." },
-          { type: "NUMBER",               value: "5" },
-          { type: "PUNCTUATION",          value: ";"},
-          { type: "DECLARATION_KEYWORD",  value: "var" },
-          { type: "IDENTIFIER",           value: "b" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "2" },
-          { type: "HALF-OPEN_RANGE",      value: "..<" },
-          { type: "NUMBER",               value: "6" },
-          { type: "TERMINATOR",           value: "EOF"}
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "a" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "NUMBER",                     value: "1" },
+          { type: "CLOSED_RANGE",               value: "..." },
+          { type: "NUMBER",                     value: "5" },
+          { type: "PUNCTUATION",                value: ";"},
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "b" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "NUMBER",                     value: "2" },
+          { type: "HALF-OPEN_RANGE",            value: "..<" },
+          { type: "NUMBER",                     value: "6" },
+          { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5759,7 +5759,7 @@ describe('Lexer', function() {
       it('should handle ranges delimited by identifiers', function () {
         input = String.raw`let start = 0; let end = 10; let range = start..<end; let fullRange = start...end;`;
         output = [
-          { type: "DECLARATION_KEYWORD",            value: "let" },
+          { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "start" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
@@ -5784,6 +5784,39 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "end" },
           { type: "PUNCTUATION",                value: ";" },
           { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle the String characters property', function () {
+        input = String.raw `var s = "my string, 123!"
+                            for c in s.characters {
+                                print(c)
+                            }`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "STRING",                     value: "my string, 123!" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "STATEMENT_KEYWORD",          value: "for" },
+          { type: "IDENTIFIER",                 value: "c" },
+          { type: "STATEMENT_KEYWORD",          value: "in" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "characters" },
+          { type: "PUNCTUATION",                value: "{" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "NATIVE_METHOD",              value: "print"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "IDENTIFIER",                 value: "c" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "PUNCTUATION",                value: "}" },
+          { type: "TERMINATOR",                 value: "EOF"},
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
