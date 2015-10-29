@@ -26,8 +26,41 @@ module.exports = {
     return false;
   },
 
-  handleFunctionInvocation: function(chunk, nextCol, lastToken, FUNCTION_NAMES, insideInvocation, cb1, cb2, cb3) {
+  handleFunctionInvocation: function(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) {
+    if (chunk === '(' && FUNCTION_NAMES[lastToken.value] && tokens[tokens.length - 2].value !== 'func') {
+      module.exports.checkFor('FUNCTION_INVOCATION', chunk, tokens);
+      var tmp = {};
+      tmp.name = lastToken.value;
+      tmp.status = true;
+      tmp.parens = 0;
+      insideInvocation.push(tmp);
+      return "cb1";
+    }
+    
+    if (insideInvocation.length && (insideInvocation[insideInvocation.length - 1]).status && chunk === ')' && 
+      (insideInvocation[insideInvocation.length - 1]).parens === 0) {
+      module.exports.checkFor('FUNCTION_INVOCATION', chunk, tokens);
+      var last = insideInvocation[insideInvocation.length - 1]; //may be unnecessary
+      last.status = false; //may be unnecessary since poping next
+      insideInvocation.pop();
+      return "cb2";
+    }
 
+    if (insideInvocation.length && chunk === '(' && (insideInvocation[insideInvocation.length - 1]).status) {
+      module.exports.checkFor('PUNCTUATION', chunk, tokens);
+      var last = insideInvocation[insideInvocation.length - 1];
+      last.parens++;
+      return "cb1";
+    }
+
+    if (insideInvocation.length && chunk === ')' && (insideInvocation[insideInvocation.length - 1]).status) {
+      module.exports.checkFor('PUNCTUATION', chunk, tokens);
+      var last = insideInvocation[insideInvocation.length - 1];
+      last.parens--;
+      return "cb1";
+    }
+    
+    return false;
   },
 
   // helper function to make token and add to tokens array
