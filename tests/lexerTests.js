@@ -3596,7 +3596,7 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
-        xit('should handle functions with for loops, if and else if statments, and native count methods', function () {
+        it('should handle functions with for loops, if and else if statments, and native count methods', function () {
           input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
                       var currentMin = array[0]
                       var currentMax = array[0]
@@ -3659,7 +3659,9 @@ describe('Lexer', function() {
             { type: "NUMBER",                       value: "1" },
             { type: "HALF-OPEN_RANGE",              value: "..<" },
 
-            { type: "NODUCKINGCLUE",                value: "array.count" },     
+            { type: "IDENTIFIER",                   value: "array" },
+            { type: "DOT_SYNTAX",                   value: "." },
+            { type: "TYPE_PROPERTY",                value: "count" },     
    
             { type: "SUBSTRING_LOOKUP_END",         value: "]" },
             { type: "PUNCTUATION",                  value: "{" },
@@ -3701,7 +3703,7 @@ describe('Lexer', function() {
             { type: "TUPLE_START",                  value: "("},
             { type: "IDENTIFIER",                   value: "currentMin"},
             { type: "PUNCTUATION",                  value: "," },
-            { type: "IDENTIFIER",                   value: "not currentMax"},
+            { type: "IDENTIFIER",                   value: "currentMax"},
             { type: "TUPLE_END",                    value: ")"},
             { type: "TERMINATOR",                   value: "\\n"},
 
