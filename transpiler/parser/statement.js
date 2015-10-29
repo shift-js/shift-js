@@ -9,6 +9,18 @@ var statement = function(state) {
     state.scope.reserve(n);
     return n.std();
   }
+
+
+  if(state.token.value === ";") {
+    state = advance(state);
+  }
+  if(state.token.value === "\\n") {
+    state = advance(state);
+  }
+  if(state.token.value === "}") {
+    return v;
+  }
+
   v = expression(state, 0);
 
   if(state.token.value === ";") {
@@ -28,6 +40,7 @@ var statement = function(state) {
     v.error("Bad expression statement.");
   }
   state = advance(state, ";");
+
   return v;
 };
 

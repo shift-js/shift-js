@@ -10,6 +10,7 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
   var left;
   var t = state.token;
   state = advance(state);
+  //console.log(t);
   left = t.nud();
 
   if (t.value === "++" || t.value === "--") {

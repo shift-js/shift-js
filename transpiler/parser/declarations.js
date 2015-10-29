@@ -385,7 +385,11 @@ var declarations = {
           delete t.value;
 
           a.push(t);
+          if(state.token.id === ";") {
+            state = advance(state);
+          }
           break;
+
         } else if(state.token.type === "TERMINATOR") {
           state = advance(state);
         }
