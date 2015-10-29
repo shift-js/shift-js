@@ -15,7 +15,8 @@ module.exports = {
   },
   
   TYPE_PROPERTY: {
-    'characters': 'TYPE_PROPERTY'
+    'characters': 'TYPE_PROPERTY',
+    'count': 'TYPE_PROPERTY',
   },
 
   RANGES: {

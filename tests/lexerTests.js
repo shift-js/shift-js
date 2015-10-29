@@ -4666,15 +4666,15 @@ describe('Lexer', function() {
 
       it('should handle basic class instance method definitions, and their invocation', function () {
         input = String.raw`class Counter {
-                                var count = 0
+                                var total = 0
                                 func increment() {
-                                    ++count
+                                    ++total
                                 }
                                 func incrementBy(amount: Int) {
-                                    count += amount
+                                    total += amount
                                 }
                                 func reset() {
-                                    count = 0
+                                    total = 0
                                 }
                             }
                             var someCounter = Counter()
@@ -4687,7 +4687,7 @@ describe('Lexer', function() {
           { type: "TERMINATOR",                 value: "\\n"},
           
           { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -4701,7 +4701,7 @@ describe('Lexer', function() {
           
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "TERMINATOR",                 value: "\\n"},
           
           { type: "STATEMENTS_END",             value: "}" },
@@ -4717,7 +4717,7 @@ describe('Lexer', function() {
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
           
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "amount" },
@@ -4733,7 +4733,7 @@ describe('Lexer', function() {
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
           
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -4765,20 +4765,20 @@ describe('Lexer', function() {
 
       it('should handle basic class instance method definitions with multiple parameter names, and their invocation', function () {
         input = String.raw`class Counter {
-                                var count = 0
+                                var total = 0
                                 func increment() {
-                                    ++count
+                                    ++total
                                 }
                                 func incrementBy(amount: Int, numberOfTimes: Int) {
-                                        count += amount * numberOfTimes
+                                        total += amount * numberOfTimes
                                 }
                                 func reset() {
-                                    count = 0
+                                    total = 0
                                 }
                             }
                             var someCounter = Counter()
                             someCounter.incrementBy(50, numberOfTimes: 10)
-                            someCounter.count`;
+                            someCounter.total`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "class" },
           { type: "IDENTIFIER",                 value: "Counter" },
@@ -4786,7 +4786,7 @@ describe('Lexer', function() {
           { type: "TERMINATOR",                 value: "\\n"},
           
           { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -4800,7 +4800,7 @@ describe('Lexer', function() {
           
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "TERMINATOR",                 value: "\\n"},
           
           { type: "STATEMENTS_END",             value: "}" },
@@ -4820,7 +4820,7 @@ describe('Lexer', function() {
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
           
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "amount" },
@@ -4838,7 +4838,7 @@ describe('Lexer', function() {
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
           
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -4871,7 +4871,7 @@ describe('Lexer', function() {
           
           { type: "IDENTIFIER",                 value: "someCounter" },
           { type: "DOT_SYNTAX",                 value: "." },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -4879,15 +4879,15 @@ describe('Lexer', function() {
 
       it('should handle basic instance method definitions that use self, and their invocation', function () {
         input = String.raw`class Counter {
-                                var count = 0
+                                var total = 0
                                 func increment() {
-                                    ++self.count
+                                    ++self.total
                                 }
                                 func incrementBy(amount: Int) {
-                                    self.count += amount
+                                    self.total += amount
                                 }
                                 func reset() {
-                                    self.count = 0
+                                    self.total = 0
                                 }
                             }
                             var someCounter = Counter()
@@ -4900,7 +4900,7 @@ describe('Lexer', function() {
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -4916,7 +4916,7 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "+" },
           { type: "EXPRESSION_OR_TYPE_KEYWORD", value: "self" },
           { type: "DOT_SYNTAX",                 value: "." },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "STATEMENTS_END",             value: "}" },
@@ -4934,7 +4934,7 @@ describe('Lexer', function() {
 
           { type: "EXPRESSION_OR_TYPE_KEYWORD", value: "self" },
           { type: "DOT_SYNTAX",                 value: "." },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "amount" },
@@ -4952,7 +4952,7 @@ describe('Lexer', function() {
 
           { type: "EXPRESSION_OR_TYPE_KEYWORD", value: "self" },
           { type: "DOT_SYNTAX",                 value: "." },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -4984,15 +4984,15 @@ describe('Lexer', function() {
 
       it('should handle basic struct mutating method definitions', function () {
         input = String.raw`struct Counter {
-                                var count = 0
+                                var total = 0
                                 mutating func increment() {
-                                    ++count
+                                    ++total
                                 }
                                 mutating func incrementBy(amount: Int) {
-                                    count += amount
+                                    total += amount
                                 }
                                 mutating func reset() {
-                                    count = 0
+                                    total = 0
                                 }
                             }`;
         output = [
@@ -5002,7 +5002,7 @@ describe('Lexer', function() {
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -5017,7 +5017,7 @@ describe('Lexer', function() {
 
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "STATEMENTS_END",             value: "}" },
@@ -5034,7 +5034,7 @@ describe('Lexer', function() {
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "amount" },
@@ -5051,7 +5051,7 @@ describe('Lexer', function() {
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -5067,9 +5067,9 @@ describe('Lexer', function() {
 
       it('should handle basic struct mutating methods that assign to self', function () {
         input = String.raw`struct Counter {
-                                var count = 0
+                                var total = 0
                                 mutating func increment() {
-                                    self = Counter(count: ++count)
+                                    self = Counter(total: ++total)
                                 }
                             }`;
         output = [
@@ -5079,7 +5079,7 @@ describe('Lexer', function() {
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -5096,11 +5096,11 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "Counter" },
           { type: "INITIALIZATION_START",       value: "(" },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "PUNCTUATION",                value: ":" },
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "count" },
+          { type: "IDENTIFIER",                 value: "total" },
           { type: "INITIALIZATION_END",         value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5816,6 +5816,29 @@ describe('Lexer', function() {
           { type: "TERMINATOR",                 value: "\\n"},
           
           { type: "PUNCTUATION",                value: "}" },
+          { type: "TERMINATOR",                 value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle the String count property', function () {
+        input = String.raw `var s = "my string, 123!"
+                            let fifteen = s.characters.count`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "STRING",                     value: "my string, 123!" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "let" },
+          { type: "IDENTIFIER",                 value: "fifteen" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "characters" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "count" },
           { type: "TERMINATOR",                 value: "EOF"},
         ];
         expect(lexer(input)).to.deep.equal(output);
