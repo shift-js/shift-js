@@ -20,6 +20,9 @@ var statement = function(state) {
   if(state.token.value === "}") {
     return v;
   }
+  if(state.token.value === "EOF") {
+    return v;
+  }
 
   v = expression(state, 0);
 

@@ -10,7 +10,15 @@ var block = function(state) {
   var blockStmtChildNode;
 
   /* Logic as to whether statement node needs a parent node wrapper */
-  if(stdReturnVal.type === "IfStatement") {
+  if(Array.isArray(stdReturnVal)) {
+    //for(var d=0; d<stdReturnVal.length; d++) {
+    //  var currentNode = stdReturnVal[d];
+    //  if(currentNode.type === "IfStatement") {
+    //    blockStmtChildNode = stdReturnVal[d];
+    //  }
+    //}
+    blockStmtChildNode = stdReturnVal;
+  } else if(stdReturnVal.type === "IfStatement") {
     blockStmtChildNode = stdReturnVal;
   } else if(stdReturnVal.type === "ForStatement") {
     blockStmtChildNode = stdReturnVal;
@@ -24,10 +32,10 @@ var block = function(state) {
     blockStmtChildNode = stdReturnVal;
   }
 
-  return {
-    type: 'BlockStatement',
-    body: [ blockStmtChildNode ]
-  };
+  var blockStmt = { type: 'BlockStatement' };
+  blockStmt.body = (Array.isArray(blockStmtChildNode)) ? blockStmtChildNode : [blockStmtChildNode];
+
+  return blockStmt;
 };
 
 module.exports = block;

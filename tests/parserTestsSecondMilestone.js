@@ -4307,7 +4307,7 @@ describe('Second Milestone Parser', function() {
       });
     });
 
-    xdescribe('Complex Control Flow', function () {
+    describe('Complex Control Flow', function () {
 
       // input = String.raw`var gameInProgress = false;
       //               var score = 0;
@@ -4355,7 +4355,7 @@ describe('Second Milestone Parser', function() {
       //         typeOfScore = ""
       //     }
       // }
-      xit('should handle nested if-else statements within a loop', function () {
+      it('should handle nested if-else statements within a loop', function () {
         input = [
           { type: 'DECLARATION_KEYWORD',         value: 'var' },
           { type: 'IDENTIFIER',                  value: 'gameInProgress' },
