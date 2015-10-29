@@ -4133,6 +4133,20 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        xit('should handle functions whose invocation contains string interpolation that contains a function invocation', function () {
+          input = String.raw`func returnWorld() -> String {
+                                  return "World"
+                              }
+                              func printInput(input: String) {
+                                  print(input)
+                              }
+                              printInput("Hello, \(returnWorld())!")`;
+          output = [
+
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
       });
 
     });
@@ -4470,6 +4484,20 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "resolutionHeight" },
           { type: "INITIALIZATION_END",         value: ")" }, 
           { type: "TERMINATOR",                 value: "EOF"}
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      xit('should handle complex memberwise initialization with string interpolation that contains a function invocation', function () {
+        input = String.raw`struct Greeting {
+                              var greeting = ""
+                          }
+                          func returnWorld() -> String {
+                              return "World"
+                          }
+                          var helloWorld = Greeting(greeting: "Hello, \(returnWorld())!")`;
+        output = [
+
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
