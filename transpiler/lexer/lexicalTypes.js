@@ -13,6 +13,8 @@ module.exports = {
   NATIVE_METHOD: {
     'advancedBy': 'NATIVE_METHOD',
     'append': 'NATIVE_METHOD',
+    'insert': 'NATIVE_METHOD',
+    'insertContentsOf': 'NATIVE_METHOD',
     'predecessor': 'NATIVE_METHOD',
     'print': 'NATIVE_METHOD',
     'successor': 'NATIVE_METHOD',
