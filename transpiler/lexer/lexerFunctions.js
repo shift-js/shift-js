@@ -26,6 +26,10 @@ module.exports = {
     return false;
   },
 
+  handleFunctionInvocation: function(chunk, nextCol, lastToken, FUNCTION_NAMES, insideInvocation, cb1, cb2, cb3) {
+
+  },
+
   // helper function to make token and add to tokens array
   makeToken: function(lexicalType, chunk, tokens, type, value) {
     if (tokens) {
