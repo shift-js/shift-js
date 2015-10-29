@@ -97,8 +97,12 @@ module.exports = function(code) {
     }
 
     // number handling
-    if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol)) {
+    if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol) === true) {
       advanceAndClear(1);
+      continue;
+    } else if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol) === "skip"){
+      advance(2);
+      lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
 

@@ -41,7 +41,6 @@ var swiftCodeAnswers = [
    { type: "TUPLE_ELEMENT_NAME",             value: "two"},
    { type: "PUNCTUATION",                    value: ";" },
    { type: "TERMINATOR",                     value: "EOF" }
-];
 
 console.log(lexer(swiftCode));
 console.log(diff(lexer(swiftCode),swiftCodeAnswers));

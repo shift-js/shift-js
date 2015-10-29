@@ -499,7 +499,7 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      xit('should handle numeric literals written with underscores', function () {
+      it('should handle numeric literals written with underscores', function () {
         input = String.raw`let justOverOneMillion = 1_000_000.000_000_1`;
 
         output = [
