@@ -160,6 +160,21 @@ module.exports = function(code) {
         continue;
     }
 
+    // Function Invocation Start
+
+    // if (deepEqual(lexerFunctions.handleFunctionInvocation(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation),"cb1")) {
+    //   // debugger;
+    //   advanceAndClear(1);
+    //   continue;
+    // } 
+
+    // if (deepEqual(lexerFunctions.handleFunctionInvocation(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation),"cb2")) {
+    //   // debugger;
+    //   advanceAndClear(1);
+    //   lexerFunctions.handleEndOfFile(nextCol, tokens);
+    //   continue;
+    // } 
+
     if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
       tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', chunk, tokens);
@@ -196,6 +211,7 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
+    //Function invocation end
 
     // tuple handling
     if (lexerFunctions.checkForTupleStart(insideTuple, chunk, tokens, lastToken,
