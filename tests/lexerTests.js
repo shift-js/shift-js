@@ -5844,6 +5844,36 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      it('should handle the String append method', function () {
+        input = String.raw `var s = "my string, 123!"
+                            var addChar: Character = "!"
+                            s.append(addChar)`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "STRING",                     value: "my string, 123!" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "addChar" },
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "TYPE_STRING",                value: "Character"},
+          { type: "OPERATOR",                   value: "=" },
+          { type: "STRING",                     value: "!" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "append"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "IDENTIFIER",                 value: "addChar" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
     });
 
   });

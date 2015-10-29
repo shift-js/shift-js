@@ -12,6 +12,7 @@ module.exports = {
 
   NATIVE_METHOD: {
     'print': 'NATIVE_METHOD',
+    'append': 'NATIVE_METHOD',
   },
   
   TYPE_PROPERTY: {
@@ -213,6 +214,7 @@ module.exports = {
   },
   
   TYPE: {
+    'Character': 'TYPE_STRING',
     'Double': 'TYPE_NUMBER',
     'Float': 'TYPE_NUMBER',
     'Bool': 'TYPE_BOOLEAN',
