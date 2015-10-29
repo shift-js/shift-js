@@ -3,6 +3,7 @@ transpiler/parser/test/newTests.js
 client/lib/**/*
 client/app/components/repl/api.js
 transpiler/lexer/singleTest.js
+transpiler/lexer/tmpFunction.js
 
 .floo
 .flooignore
