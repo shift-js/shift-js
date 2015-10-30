@@ -73,11 +73,7 @@ describe('Parser', function() {
                     "type": "Identifier",
                     "name": "a"
                   },
-                  "init": {
-                    "type": "Literal",
-                    "value": 1,
-                    "raw": "1"
-                  }
+                  "init": { "type": "Literal", "value": 1, "raw": "1" }
                 }
               ],
               "kind": "var"
@@ -87,15 +83,8 @@ describe('Parser', function() {
               "expression": {
                 "type": "AssignmentExpression",
                 "operator": "=",
-                "left": {
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                "right": {
-                  "type": "Literal",
-                  "value": 2,
-                  "raw": "2"
-                }
+                "left": {"type": "Identifier", "name": "a"},
+                "right": {"type": "Literal", "value": 2, "raw": "2"}
               }
             }
           ],
@@ -2769,11 +2758,239 @@ describe('Parser', function() {
         expect(R.equals(parser(input), output)).to.equal(true);
       });
 
-
+      // Test xx - Swift input: 'let firstNum = 1; let secNum = 2; var dict = [firstNum: [[1,2], [3,4]], secNum: [["one", "two"], ["three", "four"]]];'
+      // AST Explorer input:
+      /*
+      var firstNum = 1;
+      var secNum = 2;
+      var dict = {};
+      dict[firstNum] = [[1,2], [3,4]];
+      dict[secNum] = [["one", "two"], ["three", "four"]];
+      */
+      it('should handle basic dynamic key assignment in dictionary creation', function() {
+        input = [
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "firstNum" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "secNum" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "DECLARATION_KEYWORD",  value: "var" },
+          { type: "IDENTIFIER",           value: "dict" },
+          { type: "OPERATOR",             value: "=" },
+          { type: "DICTIONARY_START",     value: "[" },
+          { type: "IDENTIFIER",           value: "firstNum" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "NUMBER",               value: "1" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "2" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "NUMBER",               value: "3" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "NUMBER",               value: "4" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "IDENTIFIER",           value: "secNum" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "STRING",               value: "one" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "two" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "ARRAY_START",          value: "[" },
+          { type: "STRING",               value: "three" },
+          { type: "PUNCTUATION",          value: "," },
+          { type: "STRING",               value: "four" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "ARRAY_END",            value: "]" },
+          { type: "DICTIONARY_END",       value: "]" },
+          { type: "PUNCTUATION",          value: ";" },
+          { type: "TERMINATOR",           value: "EOF" }
+        ];
+        output = {
+          "type": "Program",
+          "body": [
+            {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "firstNum"
+                  },
+                  "init": {
+                    "type": "Literal",
+                    "value": 1,
+                    "raw": "1"
+                  }
+                }
+              ],
+              "kind": "var"
+            },
+            {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "secNum"
+                  },
+                  "init": {
+                    "type": "Literal",
+                    "value": 2,
+                    "raw": "2"
+                  }
+                }
+              ],
+              "kind": "var"
+            },
+            {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "dict"
+                  },
+                  "init": {
+                    "type": "ObjectExpression",
+                    "properties": []
+                  }
+                }
+              ],
+              "kind": "var"
+            },
+            {
+              "type": "ExpressionStatement",
+              "expression": {
+                "type": "AssignmentExpression",
+                "operator": "=",
+                "left": {
+                  "type": "MemberExpression",
+                  "computed": true,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "dict"
+                  },
+                  "property": {
+                    "type": "Identifier",
+                    "name": "firstNum"
+                  }
+                },
+                "right": {
+                  "type": "ArrayExpression",
+                  "elements": [
+                    {
+                      "type": "ArrayExpression",
+                      "elements": [
+                        {
+                          "type": "Literal",
+                          "value": 1,
+                          "raw": "1"
+                        },
+                        {
+                          "type": "Literal",
+                          "value": 2,
+                          "raw": "2"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "ArrayExpression",
+                      "elements": [
+                        {
+                          "type": "Literal",
+                          "value": 3,
+                          "raw": "3"
+                        },
+                        {
+                          "type": "Literal",
+                          "value": 4,
+                          "raw": "4"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "ExpressionStatement",
+              "expression": {
+                "type": "AssignmentExpression",
+                "operator": "=",
+                "left": {
+                  "type": "MemberExpression",
+                  "computed": true,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "dict"
+                  },
+                  "property": {
+                    "type": "Identifier",
+                    "name": "secNum"
+                  }
+                },
+                "right": {
+                  "type": "ArrayExpression",
+                  "elements": [
+                    {
+                      "type": "ArrayExpression",
+                      "elements": [
+                        {
+                          "type": "Literal",
+                          "value": "one",
+                          "raw": "\"one\""
+                        },
+                        {
+                          "type": "Literal",
+                          "value": "two",
+                          "raw": "\"two\""
+                        }
+                      ]
+                    },
+                    {
+                      "type": "ArrayExpression",
+                      "elements": [
+                        {
+                          "type": "Literal",
+                          "value": "three",
+                          "raw": "\"three\""
+                        },
+                        {
+                          "type": "Literal",
+                          "value": "four",
+                          "raw": "\"four\""
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "sourceType": "module"
+        };
+        expect(R.equals(parser(input), output)).to.equal(true);
+      });
 
       // Test 20 - Swift input: 'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
-      // AST Explorer input: 'let arr = [1,2]; var v = {}; v[arr[0]] = [[1,2], [3,4]]; v[arr[1]] = [["one", "two"], ["three", "four"]];'
-      xit('should handle arrays of dictionaries', function () {
+      // AST Explorer input: 'var arr = [1,2]; var v = {}; v[arr[0]] = [[1,2], [3,4]]; v[arr[1]] = [["one", "two"], ["three", "four"]];'
+      it('should handle arrays of dictionaries', function () {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
           { type: "IDENTIFIER",           value: "arr" },
@@ -2794,6 +3011,7 @@ describe('Parser', function() {
           { type: "PUNCTUATION",          value: "]" },
           { type: "PUNCTUATION",          value: ":" },
           { type: "ARRAY_START",          value: "[" },
+          { type: "ARRAY_START",          value: "[" },
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: "," },
           { type: "NUMBER",               value: "2" },
@@ -2811,6 +3029,7 @@ describe('Parser', function() {
           { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: "]" },
           { type: "PUNCTUATION",          value: ":" },
+          { type: "ARRAY_START",          value: "[" },
           { type: "ARRAY_START",          value: "[" },
           { type: "STRING",               value: "one" },
           { type: "PUNCTUATION",          value: "," },
@@ -2856,7 +3075,7 @@ describe('Parser', function() {
                   }
                 }
               ],
-              "kind": "let"
+              "kind": "var"
             },
             {
               "type": "VariableDeclaration",
