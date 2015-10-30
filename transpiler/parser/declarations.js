@@ -203,6 +203,16 @@ var declarations = {
 
     prefix(state, "{", function() {
       var a = [], n, v;
+
+      while(true) {
+        if(state.token.value === "\\n") {
+          state = advance(state);
+        }
+        else {
+          break;
+        }
+      }
+
       var tmpLookAhead = state.tokens[state.index];
       if(tmpLookAhead.type === "DICTIONARY_END") {
         state = advance(state);
@@ -247,11 +257,12 @@ var declarations = {
         }
         return this;
       }
-
+      /* Get all things in dictionary */
       if ((state.token.id !== "]" &&  state.token.id !== ")") && tmpLookAhead.value !== ",") {
         while (true) {
           n = state.token;
-          if (n.type !== "IDENTIFIER" && n.type !== "name" && n.type !== "literal" && n.type !== "TUPLE_ELEMENT_NAME") {
+          /* if  */
+          if (n.type !== "IDENTIFIER" && n.type !== "literal" && n.type !== "TUPLE_ELEMENT_NAME") {
             state.token.error("Bad property name.");
           }
           state = advance(state);
@@ -296,12 +307,35 @@ var declarations = {
           if (state.token.id !== ",") {
             break;
           }
+
+          while(true) {
+            if(state.token.value === "\\n") {
+              state = advance(state);
+            }
+            else {
+              break;
+            }
+          }
+
           state = advance(state, ",");
+
+          while(true) {
+            if(state.token.value === "\\n") {
+              state = advance(state);
+            }
+            else {
+              break;
+            }
+          }
+
+          if(state.token.type === "DICTIONARY_END") {
+            break;
+          }
         }
       }
 
       try {
-        state = advance(state, "]");
+        state = advance(state, "]");//TODO just one here
       } catch(e) {
         state = advance(state, ")");
       }
@@ -393,6 +427,7 @@ var declarations = {
         } else if(state.token.type === "TERMINATOR") {
           state = advance(state);
         }
+        //TODO maybe check for newlines here
 
         if(state.token.id === ";") {
           state = advance(state);
@@ -409,6 +444,8 @@ var declarations = {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       } else if(state.token.type === "IDENTIFIER") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
+      } else if(state.token.value === "\\n") {
+        return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
 
       state = advance(state);
@@ -416,22 +453,56 @@ var declarations = {
       if(state.token.value === "var") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
-      if(state.token.value === "\\n") {
-        state = advance(state);
+      //if(state.token.value === "\\n") {
+      //  state = advance(state);
+      //}
+      while(true) {
+        if(state.token.value === "\\n") {
+          state = advance(state);
+        }
+        else {
+          break;
+        }
       }
       return a.length === 0 ? null : a.length === 1 ? a[0] : a;
     });
 
     stmt(state, "if", function() {
 
-      if(state.tokens[state.index].value === "(") {
-        state = advance(state, "(");
+      /* Determine whether the conditional for this
+         if statement is surrounded by parentheses */
+      var parenthetical = false;
+      var allTokens = state.tokens.slice();
+      var indexOfNextToken = state.index;
+      var startIndexOfNextBlock = 0;
+
+      for(var t=indexOfNextToken; t<allTokens.length; t++) {
+        if(allTokens[t].value === "{") {
+          startIndexOfNextBlock = t;
+          break;
+        }
+      }
+      if(startIndexOfNextBlock > 0 && allTokens[startIndexOfNextBlock - 1].value === ")") {
+        parenthetical = true;
+      }
+
+      if(parenthetical) {
+        state = advance(state, "(");//This parens isn't actual wrapping the conditional.
         this.test = expression(state, 0);
+        if(this.test.type === "ExpressionStatement") {
+          this.test = this.test.expression;
+        }
         state = advance(state, ")");
       } else {
         this.test = expression(state, 0, true);
+        if(this.test.type === "ExpressionStatement") {
+          this.test = this.test.expression;
+        }
       }
+
       this.consequent = block(state);
+
+      /* block directly followed by else or else if statement? */
       if (state.token.id === "else") {
         state.scope.reserve(state.token);
         state = advance(state, "else");
@@ -439,10 +510,10 @@ var declarations = {
       } else {
         this.alternate = null;
       }
+
       this.type = "IfStatement";
       delete this.value;
       return this;
-
     });
 
     //stmt("return", function() {
@@ -480,6 +551,8 @@ var declarations = {
 
     stmt(state, "for", function() {
       this.type = "ForStatement";
+
+      //TODO Refactor For Statements
 
       /* for( var identifier) 'in' identifier { .. } */
       /* to distinguish this if from conventional for-loop below */
