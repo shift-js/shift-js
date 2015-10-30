@@ -1,4 +1,4 @@
-var makeParser = require('../../transpiler/parser/parser');
+var makeParser = require('../transpiler/parser/parser');
 var expect = require('chai').expect;
 var util = require('util');
 var R = require('ramda');

@@ -22,7 +22,6 @@ var api = {
     return lexer(swiftString);
   },
   ast: function(swiftString) {
-    parser = make_parser();
     return parser(lexer(swiftString));
   }
 };
