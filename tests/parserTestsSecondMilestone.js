@@ -357,7 +357,7 @@ describe('Second Milestone Parser', function() {
 
       // Swift input: 'var e = 1; if (e + 1) == 2 {e = 5};'
       // AST Explorer input: 'var e = 1; if ((e + 1) == 2) {e = 5};'
-      it('should handle complex conditionals without an outer parenthetical', function() {
+      xit('should handle complex conditionals without an outer parenthetical', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "e" },
@@ -4980,7 +4980,6 @@ describe('Second Milestone Parser', function() {
           { type: 'TERMINATOR',                  value: '\\n' },
           { type: 'TERMINATOR',                  value: '\\n' },
           { type: 'TERMINATOR',                  value: 'EOF' }
-
         ];
         output = {
           "type": "Program",

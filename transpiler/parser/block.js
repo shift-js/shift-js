@@ -11,12 +11,6 @@ var block = function(state) {
 
   /* Logic as to whether statement node needs a parent node wrapper */
   if(Array.isArray(stdReturnVal)) {
-    //for(var d=0; d<stdReturnVal.length; d++) {
-    //  var currentNode = stdReturnVal[d];
-    //  if(currentNode.type === "IfStatement") {
-    //    blockStmtChildNode = stdReturnVal[d];
-    //  }
-    //}
     blockStmtChildNode = stdReturnVal;
   } else if(stdReturnVal.type === "IfStatement") {
     blockStmtChildNode = stdReturnVal;

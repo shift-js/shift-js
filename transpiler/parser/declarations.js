@@ -416,20 +416,42 @@ var declarations = {
       if(state.token.value === "var") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
-      if(state.token.value === "\\n") {
-        state = advance(state);
+      //if(state.token.value === "\\n") {
+      //  state = advance(state);
+      //}
+      while(true) {
+        if(state.token.value === "\\n") {
+          state = advance(state);
+        }
+        else {
+          break;
+        }
       }
       return a.length === 0 ? null : a.length === 1 ? a[0] : a;
     });
 
     stmt(state, "if", function() {
 
-      if(state.tokens[state.index].value === "(") {
+      if(state.token.value === "(") {
+      /*if(state.tokens[state.index].value === "(") {*/
         state = advance(state, "(");
         this.test = expression(state, 0);
+        if(this.test.type === "ExpressionStatement") {
+          this.test = this.test.expression;
+        }
         state = advance(state, ")");
       } else {
         this.test = expression(state, 0, true);
+        if(this.test.type === "ExpressionStatement") {
+          this.test = this.test.expression;
+        }
+      }
+      if(state.token.value !== "{") {
+        //TODO handle ..[==][2].. before "{"
+        //left side  : this.test
+        //operator   : ==
+        //right side : expression()?
+        state.token.nud(this.test);
       }
       this.consequent = block(state);
       if (state.token.id === "else") {
