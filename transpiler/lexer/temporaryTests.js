@@ -1,11 +1,12 @@
-it('should handle functions that use default inputs and string interpolation ', function () {
-          input = String.raw`func printName(firstName firstName:String="Joe",middleName:String="Andrew",surname:String="Blow") {
-                                print("\(firstName) \(middleName) \(surname)")
+it('should handle functions that use default numeric and string inputs and interpolation ', function () {
+          input = String.raw`func printName(firstName firstName:String="Joe",age:Int=18,surname:String="Blow") {
+                                print("\(firstName) \(age) \(surname)")
                             }
-                            printName(firstName: "John", middleName: "Juan", surname: "Smith")
+                            printName(firstName: "John", age: 27, surname: "Smith")
                             printName(firstName: "John")
                             printName()
-                            printName(surname: "Smith", middleName: "Julius", firstName: "John")`;
+                            printName(surname: "Smith", age: 0, firstName: "John")`;
+
           output = [
             { type: "DECLARATION_KEYWORD",        value: "func"},
             { type: "IDENTIFIER",                 value: "printName" },
@@ -17,11 +18,11 @@ it('should handle functions that use default inputs and string interpolation ', 
             { type: 'OPERATOR',                   value: '=' },
             { type: "STRING",                     value: "Joe" },
             { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "middleName" },
+            { type: "IDENTIFIER",                 value: "age" },
             { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_STRING",                value: "String" },
+            { type: "TYPE_NUMBER",                value: "Int" },
             { type: 'OPERATOR',                   value: '=' },
-            { type: "STRING",                     value: "Andrew" },
+            { type: "NUMBER",                     value: "18" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "surname" },
             { type: "PUNCTUATION",                value: ":" },
@@ -40,7 +41,7 @@ it('should handle functions that use default inputs and string interpolation ', 
             { type: "STRING_INTERPOLATION_END",   value: ")" },
             { type: "STRING",                     value: " " },
             { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "middleName" },
+            { type: "IDENTIFIER",                 value: "age" },
             { type: "STRING_INTERPOLATION_END",   value: ")" },
             { type: "STRING",                     value: " " },
             { type: "STRING_INTERPOLATION_START", value: "\\(" },
@@ -59,9 +60,9 @@ it('should handle functions that use default inputs and string interpolation ', 
             { type: "PUNCTUATION",                value: ":" },
             { type: "STRING",                     value: "John" },
             { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "middleName" },
+            { type: "IDENTIFIER",                 value: "age" },
             { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Juan" },
+            { type: "NUMBER",                     value: "27" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "surname" },
             { type: "PUNCTUATION",                value: ":" },
@@ -88,9 +89,9 @@ it('should handle functions that use default inputs and string interpolation ', 
             { type: "PUNCTUATION",                value: ":" },
             { type: "STRING",                     value: "Smith" },
             { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "middleName" },
+            { type: "IDENTIFIER",                 value: "age" },
             { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Julius" },
+            { type: "NUMBER",                     value: "0" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "firstName" },
             { type: "PUNCTUATION",                value: ":" },
