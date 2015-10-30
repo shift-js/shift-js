@@ -6814,7 +6814,7 @@ describe('Lexer', function() {
                               var results = [String]()
                               for i in range {
                                   if i % 3 == 0 {
-                                      if i % 3 == 0 {
+                                      if i % 5 == 0 {
                                           results.append("FizzBuzz")
                                       } else {
                                           results.append("Fizz")
