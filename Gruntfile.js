@@ -90,6 +90,11 @@ module.exports = function(grunt) {
     'mochaTest:parser'
   ]);
 
+  grunt.registerTask('testGenerator', [
+    // 'jshint',
+    'mochaTest:generator'
+  ]);
+
   grunt.registerTask('rebase', [
     'shell:rebase'
   ]);
