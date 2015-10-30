@@ -6433,6 +6433,62 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        it('should handle using subscript syntax to change a range of values at once, even if the replacement set of values has a different length than the range', function () {
+          input = String.raw `var arr = [1,2,3,4,5,6,7]
+                              arr[0...3] = [0]
+                              arr[0..<9] = [5,6,7]`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "2" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "3" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "4" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "5" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "6" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "7" },
+            { type: "ARRAY_END",                  value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "CLOSED_RANGE",               value: "..." },
+            { type: "NUMBER",                     value: "3" },
+            { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "ARRAY_END",                  value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "HALF-OPEN_RANGE",            value: "..<" },
+            { type: "NUMBER",                     value: "9" },
+            { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "5" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "6" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "7" },
+            { type: "ARRAY_END",                  value: "]" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
       });
 
     });
