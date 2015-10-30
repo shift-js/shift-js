@@ -5830,6 +5830,75 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      it('should handle type conversion of strings, ints, floats, doubles', function () {
+        input = String.raw `var one = 1
+                            var oneToString = String(one)
+                            var oneBackToInt = Int(oneToString)
+                            var twoTwo = "2.2"
+                            var twoTwoToFloat = Float(twoTwo)
+                            var twoTwoToDouble = Double(twoTwo)
+                            var twoTwoBackToString = String(twoTwoToFloat)`;
+        output = [
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "one" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "NUMBER",                        value: "1" },
+         { type: "TERMINATOR",                    value: "\\n"},
+         
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "oneToString" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "TYPE_STRING",                   value: "String"},
+         { type: "INVOCATION_START",              value: "(" }, 
+         { type: "IDENTIFIER",                    value: "one" },   
+         { type: "INVOCATION_END",                value: ")" }, 
+         { type: "TERMINATOR",                    value: "\\n"},
+         
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "oneBackToInt" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "TYPE_NUMBER",                   value: "Int"},
+         { type: "INVOCATION_START",              value: "(" }, 
+         { type: "IDENTIFIER",                    value: "oneToString" },   
+         { type: "INVOCATION_END",                value: ")" }, 
+         { type: "TERMINATOR",                    value: "\\n"},
+           
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "twoTwo" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "STRING",                        value: "2.2" },
+         { type: "TERMINATOR",                    value: "\\n"}, 
+         
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "twoTwoToFloat" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "TYPE_NUMBER",                   value: "Float"},
+         { type: "INVOCATION_START",              value: "(" }, 
+         { type: "IDENTIFIER",                    value: "twoTwo" },   
+         { type: "INVOCATION_END",                value: ")" }, 
+         { type: "TERMINATOR",                    value: "\\n"}, 
+         
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "twoTwoToDouble" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "TYPE_NUMBER",                   value: "Double"},
+         { type: "INVOCATION_START",              value: "(" }, 
+         { type: "IDENTIFIER",                    value: "twoTwo" },   
+         { type: "INVOCATION_END",                value: ")" }, 
+         { type: "TERMINATOR",                    value: "\\n"},
+         
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "twoTwoBackToString" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "TYPE_STRING",                   value: "String"},
+         { type: "INVOCATION_START",              value: "(" }, 
+         { type: "IDENTIFIER",                    value: "twoTwoToFloat" },   
+         { type: "INVOCATION_END",                value: ")" }, 
+         { type: "TERMINATOR",                    value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
       describe('Range Operations', function () {
         
         it('should handle closed ranges', function () {
