@@ -26,7 +26,8 @@ module.exports = {
   
   METHOD_ARGUMENT_NAME: {
     'at': 'METHOD_ARGUMENT_NAME',
-    'atIndex': 'METHOD_ARGUMENT_NAME'
+    'atIndex': 'METHOD_ARGUMENT_NAME',
+    'repeatedValue': 'METHOD_ARGUMENT_NAME'
   },
   
   TYPE_PROPERTY: {
