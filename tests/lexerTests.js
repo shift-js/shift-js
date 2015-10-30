@@ -6662,7 +6662,6 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
-
       });
 
     });
