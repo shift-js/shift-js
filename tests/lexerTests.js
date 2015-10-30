@@ -6480,7 +6480,7 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
-        it('should handle using subscript syntax to change a range of values at once, even if the replacement set of values has a different length than the range', function () {
+        it('should handle subscript syntax ranges to change many array values where replacement array has different length than range', function () {
           input = String.raw `var arr = [1,2,3,4,5,6,7]
                               arr[0...3] = [0]
                               arr[0..<9] = [5,6,7]`;
@@ -6569,6 +6569,53 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                   value: "d" },
             { type: "DOT_SYNTAX",                   value: "." },
             { type: "TYPE_PROPERTY",                value: "count" }, 
+            { type: "TERMINATOR",                   value: "EOF" }
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should the dictionary update value method', function () {
+          input = String.raw `var d = ["array1": [1,2,3], "array2": [4,5,6]]
+                              d.updateValue([1], forKey: "array1")`;
+          output = [
+            { type: "DECLARATION_KEYWORD",          value: "var" },
+            { type: "IDENTIFIER",                   value: "d" },
+            { type: "OPERATOR",                     value: "=" },
+            { type: "DICTIONARY_START",             value: "[" },
+            { type: "STRING",                       value: "array1" },
+            { type: "PUNCTUATION",                  value: ":" },
+            { type: "ARRAY_START",                  value: "[" },
+            { type: "NUMBER",                       value: "1" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "NUMBER",                       value: "2" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "NUMBER",                       value: "3" },
+            { type: "ARRAY_END",                    value: "]" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "STRING",                       value: "array2" },
+            { type: "PUNCTUATION",                  value: ":" },
+            { type: "ARRAY_START",                  value: "[" },
+            { type: "NUMBER",                       value: "4" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "NUMBER",                       value: "5" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "NUMBER",                       value: "6" },
+            { type: "ARRAY_END",                    value: "]" },
+            { type: "DICTIONARY_END",               value: "]" },
+            { type: "TERMINATOR",                   value: "\\n"},
+
+            { type: "IDENTIFIER",                   value: "d" },
+            { type: "DOT_SYNTAX",                   value: "." },
+            { type: "NATIVE_METHOD",                value: "updateValue" }, 
+            { type: "INVOCATION_START",             value: "(" },
+            { type: "ARRAY_START",                  value: "[" },
+            { type: "NUMBER",                       value: "1" },
+            { type: "ARRAY_END",                    value: "]" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "METHOD_ARGUMENT_NAME",         value: "forKey" },
+            { type: "PUNCTUATION",                  value: ":" },
+            { type: "STRING",                       value: "array1" },
+            { type: "INVOCATION_END",               value: ")" },
             { type: "TERMINATOR",                   value: "EOF" }
           ];
           expect(lexer(input)).to.deep.equal(output);
