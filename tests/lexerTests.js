@@ -2959,7 +2959,7 @@ describe('Lexer', function() {
       describe('Functions', function() {
 
         it('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
-          input = String.raw`func someFunction(var a: Int) -> Int {
+          input = String.raw`func someFunction(a: Int) -> Int {
                                 a = a + 1;
                                 return a;
                             }
@@ -2968,7 +2968,6 @@ describe('Lexer', function() {
             { type: "DECLARATION_KEYWORD",  value: "func"},
             { type: "IDENTIFIER",           value: "someFunction" },
             { type: "PARAMS_START",         value: "(" },
-            { type: "DECLARATION_KEYWORD",  value: "var"},
             { type: "IDENTIFIER",           value: "a" },
             { type: "PUNCTUATION",          value: ":" }, 
             { type: "TYPE_NUMBER",          value: "Int" }, 
@@ -3592,11 +3591,11 @@ describe('Lexer', function() {
             { type: "RETURN_ARROW",               value: "->" },
             
             { type: "TUPLE_START",                value: "("},
-            { type: "TUPLE_ELEMENT_NAME",               value: "plusFive" },
+            { type: "TUPLE_ELEMENT_NAME",         value: "plusFive" },
             { type: "PUNCTUATION",                value: ":" }, 
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PUNCTUATION",                value: "," }, 
-            { type: "TUPLE_ELEMENT_NAME",               value: "timesFive" },
+            { type: "TUPLE_ELEMENT_NAME",         value: "timesFive" },
             { type: "PUNCTUATION",                value: ":" }, 
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "TUPLE_END",                  value: ")"},
@@ -3877,9 +3876,7 @@ describe('Lexer', function() {
                      
             { type: "NUMBER",                         value: "1" },
             { type: "HALF-OPEN_RANGE",                value: "..<" },
-            //TODO get native methods working
-            { type: "NUMBER",                         value: "2" },
-            // { type: "NODUCKINGCLUE",               value: "array.count" },     
+            { type: "NUMBER",                         value: "2" },    
 
             { type: "SUBSTRING_LOOKUP_END",           value: "]" },
             { type: "PUNCTUATION",                    value: "{" },
@@ -4293,6 +4290,55 @@ describe('Lexer', function() {
                               printInput("Hello, \(returnWorld())!")`;
           output = [
 
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should handle functions with an integer input and no returned output', function () {
+          input = String.raw`func printManyTimes(a: Int) {
+                                  for i in 1...a {
+                                      print("a");
+                                  }
+                              }
+                              printManyTimes(1)`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "func"},
+            { type: "IDENTIFIER",                 value: "printManyTimes" },
+            { type: "PARAMS_START",               value: "(" },
+            { type: "IDENTIFIER",                 value: "a" },
+            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "TYPE_NUMBER",                value: "Int" }, 
+            { type: "PARAMS_END",                 value: ")" }, 
+            { type: "STATEMENTS_START",           value: "{" },  
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "STATEMENT_KEYWORD",          value: "for" },
+            { type: "IDENTIFIER",                 value: "i" },
+            { type: "STATEMENT_KEYWORD",          value: "in" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "CLOSED_RANGE",               value: "..." },
+            { type: "IDENTIFIER",                 value: "a" },
+            { type: "PUNCTUATION",                value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "NATIVE_METHOD",              value: "print"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "STRING",                     value: "a" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "PUNCTUATION",                value: ";"},
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "PUNCTUATION",                value: "}" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "STATEMENTS_END",             value: "}"},
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "printManyTimes" },
+            { type: "INVOCATION_START",           value: "(" }, 
+            { type: "NUMBER",                     value: "1" },    
+            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "TERMINATOR",                 value: "EOF"},
           ];
           expect(lexer(input)).to.deep.equal(output);
         });
