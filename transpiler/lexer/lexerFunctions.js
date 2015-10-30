@@ -257,7 +257,7 @@ module.exports = {
   },
 
   // helper function to check for identifiers
-  checkForIdentifier: function(chunk, tokens, lastToken, variable_names, insideFunction) {
+  checkForIdentifier: function(chunk, tokens, lastToken, variable_names) {
     if (variable_names[chunk]) {
       if (tokens) {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
@@ -269,7 +269,7 @@ module.exports = {
         // special conditions to handle for-in loops that iterate over dictionaries
       (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||
       (lastToken.value === ',' && tokens[tokens.length - 3].value) === '(' &&
-      tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1]['insideParams'] === true)) {
+      tokens[tokens.length - 4].value === 'for') {
       if (tokens) {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }

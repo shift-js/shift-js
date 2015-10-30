@@ -143,7 +143,6 @@ module.exports = function(code) {
       last.status = false;
       insideInvocation.pop();
       advanceAndClear(1);
-      lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
 
@@ -254,7 +253,7 @@ module.exports = function(code) {
         }) ||
         lexerFunctions.checkFor('OPERATOR', chunk, tokens) ||
         lexerFunctions.checkFor('TERMINATOR', chunk, tokens) ||
-        lexerFunctions.checkForIdentifier(chunk, tokens, lastToken, VARIABLE_NAMES, insideFunction) ||
+        lexerFunctions.checkForIdentifier(chunk, tokens, lastToken, VARIABLE_NAMES) ||
         lexerFunctions.checkForLiteral(chunk, tokens);
       }
 

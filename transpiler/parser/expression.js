@@ -60,6 +60,7 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
    * Logic to handle the recursive case
    */
   while (rbp < state.token.lbp) {
+    var overwrittenMemberExpression = left;
     t = state.token;
     state = advance(state);
     left = t.led(left);//assignments
@@ -92,6 +93,11 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
   else if (left.operator === "=") {
     var expStmt = {};
     expStmt.type = "ExpressionStatement";
+
+    if(left.left.object && left.left.property) {
+      left.left.type = "MemberExpression";
+      delete left.left.name;
+    }
     expStmt.expression = left;
     left = expStmt;
     left.assignment = true;
@@ -106,6 +112,11 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
   } else if (left.operator === "===") {
     //TODO
   }
+  //else if (left.type === "AssignmentExpression") {
+  //  //left.left = overwrittenMemberExpression;
+  //  left.left.type = "MemberExpression";
+  //  delete left.left.name;
+  //}
 
   return left;
 };

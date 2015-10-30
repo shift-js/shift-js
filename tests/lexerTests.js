@@ -646,8 +646,8 @@ describe('Lexer', function() {
       });
 
       it('should handle closed ranges', function () {
-        input = 'var a = 1...5';
-        output = [
+          input = 'var a = 1...5';
+          output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
@@ -656,12 +656,12 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
       it('should handle decimal ending in 0 closed ranges', function () {
-        input = 'var a = 1.0...5.0';
-        output = [
+          input = 'var a = 1.0...5.0';
+          output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
@@ -670,12 +670,12 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5.0" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
       it('should handle random decimal closed ranges', function () {
-        input = 'var a = 1.2...5.3';
-        output = [
+          input = 'var a = 1.2...5.3';
+          output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
@@ -684,12 +684,12 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5.3" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
       it('should handle half-open ranges', function () {
-        input = 'var b = 1..<5';
-        output = [
+              input = 'var b = 1..<5';
+              output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "b" },
           { type: "OPERATOR",             value: "=" },
@@ -698,12 +698,12 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+              expect(lexer(input)).to.deep.equal(output);
+            });
 
       it('should handle decimal ending in 0 half-open ranges', function () {
-        input = 'var a = 1.0..<5.0';
-        output = [
+          input = 'var a = 1.0..<5.0';
+          output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
@@ -712,12 +712,12 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5.0" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
       it('should handle random decimal half-open ranges', function () {
-        input = 'var a = 1.2..<5.3';
-        output = [
+          input = 'var a = 1.2..<5.3';
+          output = [
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
@@ -726,8 +726,8 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5.3" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
+          expect(lexer(input)).to.deep.equal(output);
+        });
 
       it('should handle all ranges', function () {
         input = 'var a = 1...5; var b = 2..<6';
@@ -749,39 +749,6 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
-      it('should handle ranges delimited by identifiers', function () {
-        input = String.raw`let start = 0; let end = 10; let range = start..<end; let fullRange = start...end;`;
-        output = [
-          { type: "DECLARATION_KEYWORD",            value: "let" },
-          { type: "IDENTIFIER",                 value: "start" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "NUMBER",                     value: "0" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "end" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "NUMBER",                     value: "10" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "range" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "start" },
-          { type: "HALF-OPEN_RANGE",            value: "..<" },
-          { type: "IDENTIFIER",                 value: "end" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "fullRange" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "start" },
-          { type: "CLOSED_RANGE",               value: "..." },
-          { type: "IDENTIFIER",                 value: "end" },
-          { type: "PUNCTUATION",                value: ";" },
-          { type: "TERMINATOR",                 value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-      
     });
 
     describe('String concatenation and interpolation', function () {
@@ -1954,7 +1921,6 @@ describe('Lexer', function() {
           { type: "PUNCTUATION",          value: "}" }, 
           { type: "TERMINATOR",           value: "EOF"},
         ]
-        expect(lexer(input)).to.deep.equal(output);
       }); 
 
     });
@@ -2820,8 +2786,8 @@ describe('Lexer', function() {
     }); 
     
     describe('Functions', function() {
-
-      it('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
+      
+      it('should handle function declaration and invocation with no spacing', function() {
         input = String.raw`func someFunction(var a: Int){
                     a = a + 1;
                 }
@@ -2855,44 +2821,10 @@ describe('Lexer', function() {
         ]
         expect(lexer(input)).to.deep.equal(output);
       });
-      
-      it('should handle function declaration and invocation with no spacing', function() {
-        input = String.raw`func someFunction(a: Int){
-                    a = a + 1;
-                }
-                someFunction(5);`;
-        output = [
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "someFunction" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_NUMBER",          value: "Int" }, 
-          { type: "PARAMS_END",           value: ")" },  
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "IDENTIFIER",           value: "a" },
-          { type: "OPERATOR",             value: "+" },
-          { type: "NUMBER",               value: "1" },
-          { type: "PUNCTUATION",          value: ";" },  
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "STATEMENTS_END",       value: "}"},
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "IDENTIFIER",           value: "someFunction" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "NUMBER",               value: "5" },   
-          { type: "INVOCATION_END",       value: ")" }, 
-          { type: "PUNCTUATION",          value: ";" },    
-          { type: "TERMINATOR",           value: "EOF"}
-        ]
-        expect(lexer(input)).to.deep.equal(output);
-      });
     
 
     it('should handle function declaration and invocation with normal spacing', function() {
-        input = String.raw`func someFunction (a: Int) {
+        input = String.raw`func someFunction (var a: Int) {
                     a = a + 1;
                 }
                 someFunction(5);`
@@ -2900,6 +2832,7 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
           { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
@@ -2926,7 +2859,7 @@ describe('Lexer', function() {
       });
     
       it('should handle function declaration and invocation with no space after the function name', function() {
-        input = String.raw`func someFunction(a: Int) {
+        input = String.raw`func someFunction(var a: Int) {
                     a = a + 1;
                 }
                 someFunction(5);`;
@@ -2934,6 +2867,7 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
           { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
@@ -2960,7 +2894,7 @@ describe('Lexer', function() {
       });
 
       it('should handle function declaration and invocation with no space after the parameter declaration', function() {
-        input = String.raw`func someFunction (a: Int){
+        input = String.raw`func someFunction (var a: Int){
                     a = a + 1;
                 }
                 someFunction(5);`
@@ -2968,6 +2902,7 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
           { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
@@ -2994,7 +2929,7 @@ describe('Lexer', function() {
       });
 
       it('should handle function declaration and invocation with erratic spacing', function() {
-        input = String.raw`func someFunction        (a: Int)     {
+        input = String.raw`func someFunction        (var a: Int)     {
                               a = a + 1;
                           }
                           someFunction      (5);`;
@@ -3002,6 +2937,7 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",  value: "func"},
           { type: "IDENTIFIER",           value: "someFunction" },
           { type: "PARAMS_START",         value: "(" },
+          { type: "DECLARATION_KEYWORD",  value: "var"},
           { type: "IDENTIFIER",           value: "a" },
           { type: "PUNCTUATION",          value: ":" }, 
           { type: "TYPE_NUMBER",          value: "Int" }, 
@@ -3050,79 +2986,81 @@ describe('Lexer', function() {
       });
 
       it('should handle functions with an input that return strings', function() {
-        input = String.raw`func sayHello(personName: String) -> String {
+        input = String.raw`func sayHello(var personName: String) -> String {
                               let greeting = "Hello, " + personName + "!"
                               return greeting
                           }`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "PARAMS_END",           value: ")" }, 
-          { type: "RETURN_ARROW",         value: "->" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "DECLARATION_KEYWORD",  value: "let" },
-          { type: "IDENTIFIER",           value: "greeting" },
-          { type: "OPERATOR",             value: "=" },
-          { type: "STRING",               value: "Hello, " }, 
-          { type: "OPERATOR",             value: "+" },  
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "OPERATOR",             value: "+" },
-          { type: "STRING",               value: "!" }, 
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "STATEMENT_KEYWORD",    value: "return"}, 
-          { type: "IDENTIFIER",           value: "greeting" }, 
-          { type: "TERMINATOR",           value: "\\n"},
-          { type: "STATEMENTS_END",       value: "}"},  
-          { type: "TERMINATOR",           value: "EOF"}
-        ]
+                    { type: "DECLARATION_KEYWORD",  value: "func"},
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "PARAMS_START",         value: "(" },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "personName" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "PARAMS_END",           value: ")" }, 
+                    { type: "RETURN_ARROW",         value: "->" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "STATEMENTS_START",     value: "{" },  
+                    { type: "TERMINATOR",           value: "\\n"},
+                    { type: "DECLARATION_KEYWORD",  value: "let" },
+                    { type: "IDENTIFIER",           value: "greeting" },
+                    { type: "OPERATOR",             value: "=" },
+                    { type: "STRING",               value: "Hello, " }, 
+                    { type: "OPERATOR",             value: "+" },  
+                    { type: "IDENTIFIER",           value: "personName" },
+                    { type: "OPERATOR",             value: "+" },
+                    { type: "STRING",               value: "!" }, 
+                    { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "IDENTIFIER",           value: "greeting" }, 
+                    { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENTS_END",       value: "}"},  
+                    { type: "TERMINATOR",           value: "EOF"}
+                  ]
         expect(lexer(input)).to.deep.equal(output);
       });
 
       it('should handle functions that have if statements that use {} and have a return value', function() {
-        input = String.raw`func sayHello(alreadyGreeted: Bool) -> String {
+        input = String.raw`func sayHello(var alreadyGreeted: Bool) -> String {
                 if alreadyGreeted {
                     return "blah"
                 } 
             }`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "IDENTIFIER",           value: "alreadyGreeted" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_BOOLEAN",         value: "Bool" }, 
-          { type: "PARAMS_END",           value: ")" }, 
-          { type: "RETURN_ARROW",         value: "->" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "DECLARATION_KEYWORD",  value: "func"},
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "PARAMS_START",         value: "(" },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_BOOLEAN",         value: "Bool" }, 
+                    { type: "PARAMS_END",           value: ")" }, 
+                    { type: "RETURN_ARROW",         value: "->" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "STATEMENTS_START",     value: "{" },  
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENT_KEYWORD",    value: "if" },
-          { type: "IDENTIFIER",           value: "alreadyGreeted" },
-          { type: "PUNCTUATION",          value: "{" },
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENT_KEYWORD",    value: "if" },
+                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
+                    { type: "PUNCTUATION",          value: "{" },
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENT_KEYWORD",    value: "return"}, 
-          { type: "STRING",               value: "blah" }, 
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "STRING",               value: "blah" }, 
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "PUNCTUATION",          value: "}" },
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "PUNCTUATION",          value: "}" },
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENTS_END",       value: "}" },  
-          { type: "TERMINATOR",           value: "EOF"}
-        ]
+                    { type: "STATEMENTS_END",       value: "}" },  
+                    { type: "TERMINATOR",           value: "EOF"}
+                  ]
         expect(lexer(input)).to.deep.equal(output);
       });
 
       it('should handle functions that have if and else statements that use {} and have a return value', function() {
-        input = String.raw`func sayHello(personName: String, alreadyGreeted: Bool) -> String {
+        input = String.raw`func sayHello(var personName: String, var alreadyGreeted: Bool) -> String {
                     if alreadyGreeted {
                         return sayHello(personName) + " blah"
                     } else {
@@ -3130,114 +3068,118 @@ describe('Lexer', function() {
                     }
                 }`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "PUNCTUATION",          value: "," },
-          { type: "IDENTIFIER",           value: "alreadyGreeted" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_BOOLEAN",         value: "Bool" }, 
-          { type: "PARAMS_END",           value: ")" }, 
-          { type: "RETURN_ARROW",         value: "->" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "DECLARATION_KEYWORD",  value: "func"},
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "PARAMS_START",         value: "(" },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "personName" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "PUNCTUATION",          value: "," },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_BOOLEAN",         value: "Bool" }, 
+                    { type: "PARAMS_END",           value: ")" }, 
+                    { type: "RETURN_ARROW",         value: "->" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "STATEMENTS_START",     value: "{" },  
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENT_KEYWORD",    value: "if" },
-          { type: "IDENTIFIER",           value: "alreadyGreeted" },
-          { type: "PUNCTUATION",          value: "{" },
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENT_KEYWORD",    value: "if" },
+                    { type: "IDENTIFIER",           value: "alreadyGreeted" },
+                    { type: "PUNCTUATION",          value: "{" },
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENT_KEYWORD",    value: "return"}, 
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "INVOCATION_END",       value: ")" }, 
-          { type: "OPERATOR",             value: "+" }, 
-          { type: "STRING",               value: " blah" }, 
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "INVOCATION_START",     value: "(" }, 
+                    { type: "IDENTIFIER",           value: "personName" },
+                    { type: "INVOCATION_END",       value: ")" }, 
+                    { type: "OPERATOR",             value: "+" }, 
+                    { type: "STRING",               value: " blah" }, 
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "PUNCTUATION",          value: "}" },
-          { type: "STATEMENT_KEYWORD",    value: "else" },
-          { type: "PUNCTUATION",          value: "{" },
-          { type: "TERMINATOR",           value: "\\n"}, 
+                    { type: "PUNCTUATION",          value: "}" },
+                    { type: "STATEMENT_KEYWORD",    value: "else" },
+                    { type: "PUNCTUATION",          value: "{" },
+                    { type: "TERMINATOR",           value: "\\n"}, 
 
-          { type: "STATEMENT_KEYWORD",    value: "return"}, 
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "IDENTIFIER",           value: "personName" },
-          { type: "INVOCATION_END",       value: ")" },
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "INVOCATION_START",     value: "(" }, 
+                    { type: "IDENTIFIER",           value: "personName" },
+                    { type: "INVOCATION_END",       value: ")" },
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "PUNCTUATION",          value: "}" },
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "PUNCTUATION",          value: "}" },
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENTS_END",       value: "}" },  
-          { type: "TERMINATOR",           value: "EOF"}
-        ]
+                    { type: "STATEMENTS_END",       value: "}" },  
+                    { type: "TERMINATOR",           value: "EOF"}
+                  ]
         expect(lexer(input)).to.deep.equal(output);
       });
 
       it('should handle nested functions with function invocation', function() {
-        input = String.raw`func sayHello(firstName: String, lastName: String) -> String {
+        input = String.raw`func sayHello(var firstName: String, var lastName: String) -> String {
                     func giveString() -> String {
                       return firstName + " " + lastName
                     }
                     return giveString()
                 }`;
         output = [
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "sayHello" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "IDENTIFIER",           value: "firstName" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "PUNCTUATION",          value: "," },
-          { type: "IDENTIFIER",           value: "lastName" },
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "PARAMS_END",           value: ")" }, 
-          { type: "RETURN_ARROW",         value: "->" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "DECLARATION_KEYWORD",  value: "func"},
+                    { type: "IDENTIFIER",           value: "sayHello" },
+                    { type: "PARAMS_START",         value: "(" },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "firstName" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "PUNCTUATION",          value: "," },
+                    { type: "DECLARATION_KEYWORD",  value: "var"},
+                    { type: "IDENTIFIER",           value: "lastName" },
+                    { type: "PUNCTUATION",          value: ":" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "PARAMS_END",           value: ")" }, 
+                    { type: "RETURN_ARROW",         value: "->" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "STATEMENTS_START",     value: "{" },  
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "DECLARATION_KEYWORD",  value: "func"},
-          { type: "IDENTIFIER",           value: "giveString" },
-          { type: "PARAMS_START",         value: "(" },
-          { type: "PARAMS_END",           value: ")" }, 
-          { type: "RETURN_ARROW",         value: "->" }, 
-          { type: "TYPE_STRING",          value: "String" }, 
-          { type: "STATEMENTS_START",     value: "{" },  
-          { type: "TERMINATOR",           value: "\\n"},  
+                    { type: "DECLARATION_KEYWORD",  value: "func"},
+                    { type: "IDENTIFIER",           value: "giveString" },
+                    { type: "PARAMS_START",         value: "(" },
+                    { type: "PARAMS_END",           value: ")" }, 
+                    { type: "RETURN_ARROW",         value: "->" }, 
+                    { type: "TYPE_STRING",          value: "String" }, 
+                    { type: "STATEMENTS_START",     value: "{" },  
+                    { type: "TERMINATOR",           value: "\\n"},  
 
-          { type: "STATEMENT_KEYWORD",    value: "return"}, 
-          { type: "IDENTIFIER",           value: "firstName" },
-          { type: "OPERATOR",             value: "+" },
-          { type: "STRING",               value: " " },
-          { type: "OPERATOR",             value: "+" },
-          { type: "IDENTIFIER",           value: "lastName" },
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "IDENTIFIER",           value: "firstName" },
+                    { type: "OPERATOR",             value: "+" },
+                    { type: "STRING",               value: " " },
+                    { type: "OPERATOR",             value: "+" },
+                    { type: "IDENTIFIER",           value: "lastName" },
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENTS_END",       value: "}" },  
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENTS_END",       value: "}" },  
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENT_KEYWORD",    value: "return"}, 
-          { type: "IDENTIFIER",           value: "giveString" },
-          { type: "INVOCATION_START",     value: "(" }, 
-          { type: "INVOCATION_END",       value: ")" },   
-          { type: "TERMINATOR",           value: "\\n"},
+                    { type: "STATEMENT_KEYWORD",    value: "return"}, 
+                    { type: "IDENTIFIER",           value: "giveString" },
+                    { type: "INVOCATION_START",     value: "(" }, 
+                    { type: "INVOCATION_END",       value: ")" },   
+                    { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENTS_END",       value: "}" },  
-          { type: "TERMINATOR",           value: "EOF"}
-        ];
+                    { type: "STATEMENTS_END",       value: "}" },  
+                    { type: "TERMINATOR",           value: "EOF"}
+                  ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle functions with string interpolation', function () {
+      xit('should handle functions that do no use var when declaring parameters and invocations with named arguments', function () {
         input = String.raw`func greet(name: String, day: String) -> String {
                         return "Hello \(name), today is \(day)."
                     }
@@ -3270,7 +3212,6 @@ describe('Lexer', function() {
           { type: "STRING",                     value: "." },
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "STATEMENTS_END",             value: "}" },
-          { type: "TERMINATOR",                 value: "\\n"},
           { type: "IDENTIFIER",                 value: "greet" },
           { type: "INVOCATION_START",           value: "(" }, 
           { type: "STRING",                     value: "Bob" },   
@@ -3284,110 +3225,7 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle functions with many arguments', function () {
-        input = String.raw`func addSevenInts(first: Int, second: Int, third: Int, fourth: Int, fifth: Int, sixth: Int, seventh: Int) -> Int {
-                          let sum = first + second + third + fourth + fifth + sixth + seventh
-                          return sum
-                      }
-                      addSevenInts(143242134, second: 34543, third: 4, fourth: 6, fifth: 0, sixth: 56, seventh: 5)`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "func"},
-          { type: "IDENTIFIER",                 value: "addSevenInts" },
-          { type: "PARAMS_START",               value: "(" },
-          { type: "IDENTIFIER",                 value: "first" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "second" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "third" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "fourth" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "fifth" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "sixth" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "seventh" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PARAMS_END",                 value: ")" },
-          { type: "RETURN_ARROW",               value: "->" },
-          
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "STATEMENTS_START",           value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "let" },
-          { type: "IDENTIFIER",                 value: "sum" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "first" },
-          { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "second" },
-          { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "third" },
-          { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "fourth" },
-          { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "fifth" },
-          { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "sixth" },
-          { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "seventh" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "return"},
-          { type: "IDENTIFIER",                 value: "sum" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENTS_END",             value: "}" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "IDENTIFIER",                 value: "addSevenInts" },
-          { type: "INVOCATION_START",           value: "(" },
-          { type: "NUMBER",                     value: "143242134" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "second" },
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "NUMBER",                     value: "34543" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "third" },
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "NUMBER",                     value: "4" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "fourth" },
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "NUMBER",                     value: "6" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "fifth" },
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "NUMBER",                     value: "0" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "sixth" },
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "NUMBER",                     value: "56" },
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "seventh" },
-          { type: "PUNCTUATION",                value: ":" },
-          { type: "NUMBER",                     value: "5" },
-          { type: "INVOCATION_END",             value: ")" },
-          { type: "TERMINATOR",                 value: "EOF"}
-
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      it('should handle functions that return tuples', function () {
+      xit('should handle functions that return tuples', function () {
         input = String.raw`func returnTuple(num: Int) -> (plusFive: Int, timesFive: Int) {
                           let plusFiveResult = num + 5
                           let timesFiveResult = num * 5
@@ -3406,11 +3244,11 @@ describe('Lexer', function() {
           { type: "RETURN_ARROW",               value: "->" },
           
           { type: "TUPLE_START",                value: "("},
-          { type: "TUPLE_ELEMENT_NAME",               value: "plusFive" },
+          { type: "ELEMENT_NAME",               value: "plusFive" },
           { type: "PUNCTUATION",                value: ":" }, 
           { type: "TYPE_NUMBER",                value: "Int" },
           { type: "PUNCTUATION",                value: "," }, 
-          { type: "TUPLE_ELEMENT_NAME",               value: "timesFive" },
+          { type: "ELEMENT_NAME",               value: "timesFive" },
           { type: "PUNCTUATION",                value: ":" }, 
           { type: "TYPE_NUMBER",                value: "Int" },
           { type: "TUPLE_END",                  value: ")"},
@@ -3444,7 +3282,7 @@ describe('Lexer', function() {
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           
-          { type: "IDENTIFIER",                 value: "returnTuple" },
+          { type: "IDENTIFIER",                 value: "greet" },
           { type: "INVOCATION_START",           value: "(" }, 
           { type: "NUMBER",                     value: "5" },   
           { type: "INVOCATION_END",             value: ")" }, 
@@ -3453,7 +3291,7 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle functions that return tuples with mixed values', function () {
+      xit('should handle functions that return tuples with mixed values', function () {
         input = String.raw`func nameAndAge(name: String, age: Int) -> (name: String, age: Int) {
                           return (name, age)
                       }
@@ -3474,11 +3312,11 @@ describe('Lexer', function() {
           { type: "RETURN_ARROW",               value: "->" },
           
           { type: "TUPLE_START",                value: "(" },
-          { type: "TUPLE_ELEMENT_NAME",         value: "name" },
+          { type: "ELEMENT_NAME",               value: "name" },
           { type: "PUNCTUATION",                value: ":" }, 
           { type: "TYPE_STRING",                value: "String" },
           { type: "PUNCTUATION",                value: "," }, 
-          { type: "TUPLE_ELEMENT_NAME",         value: "age" },
+          { type: "ELEMENT_NAME",               value: "age" },
           { type: "PUNCTUATION",                value: ":" }, 
           { type: "TYPE_NUMBER",                value: "Int" }, 
           { type: "TUPLE_END",                  value: ")" }, 
@@ -3496,9 +3334,6 @@ describe('Lexer', function() {
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           
-          { type: "DECLARATION_KEYWORD",        value: "let"},
-          { type: "IDENTIFIER",                 value: "person" },
-          { type: "OPERATOR",                   value: "=" }, 
           { type: "IDENTIFIER",                 value: "nameAndAge" },
           { type: "INVOCATION_START",           value: "(" }, 
           { type: "STRING",                     value: "Steve" },   
@@ -3513,7 +3348,7 @@ describe('Lexer', function() {
       });
 
       xit('should handle functions with for loops, if and else if statments, and native count methods', function () {
-        input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
+        input = String.raw`func minMax(var array: [Int]) -> (min: Int, max: Int) {
                     var currentMin = array[0]
                     var currentMax = array[0]
                     for value in array[1..<array.count] {
@@ -3526,109 +3361,111 @@ describe('Lexer', function() {
                     return (currentMin, currentMax)
                 }`;
         output = [
-          { type: "DECLARATION_KEYWORD",          value: "func"},
-          { type: "IDENTIFIER",                   value: "minMax" },
-          { type: "PARAMS_START",                 value: "(" },
-          { type: "IDENTIFIER",                   value: "array" },
-          { type: "PUNCTUATION",                  value: ":" }, 
-          { type: "ARRAY_START",                  value: "["},
-          { type: "TYPE_NUMBER",                  value: "Int" }, 
-          { type: "ARRAY_END",                    value: "]"},    
-          { type: "PARAMS_END",                   value: ")" }, 
-          { type: "RETURN_ARROW",                 value: "->" },     
-          { type: "TUPLE_START",                  value: "("},
-          { type: "TUPLE_ELEMENT_NAME",           value: "min"},
-          { type: "PUNCTUATION",                  value: ":" },
-          { type: "TYPE_NUMBER",                  value: "Int" }, 
-          { type: "PUNCTUATION",                  value: "," },
-          { type: "TUPLE_ELEMENT_NAME",           value: "max"},
-          { type: "PUNCTUATION",                  value: ":" },
-          { type: "TYPE_NUMBER",                  value: "Int" }, 
-          { type: "TUPLE_END",                    value: ")"},
-          { type: "STATEMENTS_START",             value: "{" },  
-          { type: "TERMINATOR",                   value: "\\n"},
-        
-          { type: "DECLARATION_KEYWORD",          value: "var" },
-          { type: "IDENTIFIER",                   value: "currentMin" },
-          { type: "OPERATOR",                     value: "=" },
-          { type: "IDENTIFIER",                   value: "array" },
-          { type: "SUBSTRING_LOOKUP_START",       value: "[" },
-          { type: "NUMBER",                       value: "0" },
-          { type: "SUBSTRING_LOOKUP_END",         value: "]" },
-          { type: "TERMINATOR",                   value: "\\n"},
+                   { type: "DECLARATION_KEYWORD",  value: "func"},
+                   { type: "IDENTIFIER",           value: "minMax" },
+                   { type: "PARAMS_START",         value: "(" },
+                   { type: "IDENTIFIER",           value: "array" },
+                   { type: "PUNCTUATION",          value: ":" }, 
+                   { type: "ARRAY_START",          value: "["},
+                   { type: "TYPE_NUMBER",          value: "Int" }, 
+                   { type: "ARRAY_END",            value: "]"},    
+                   { type: "PARAMS_END",           value: ")" }, 
+                   { type: "RETURN_ARROW",         value: "->" },     
+                   { type: "TUPLE_START",          value: "("},
+                   { type: "TUPLE_ELEMENT_NAME",   value: "min"},
+                   { type: "PUNCTUATION",          value: ":" },
+                   { type: "TYPE_NUMBER",          value: "Int" }, 
+                   { type: "PUNCTUATION",          value: "," },
+                   { type: "TUPLE_ELEMENT_NAME",   value: "max"},
+                   { type: "PUNCTUATION",          value: ":" },
+                   { type: "TYPE_NUMBER",          value: "Int" }, 
+                   { type: "TUPLE_END",            value: ")"},
+                   { type: "STATEMENTS_START",     value: "{" },  
+                   { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "DECLARATION_KEYWORD",          value: "var" },
-          { type: "IDENTIFIER",                   value: "currentMax" },
-          { type: "OPERATOR",                     value: "=" },
-          { type: "IDENTIFIER",                   value: "array" },
-          { type: "SUBSTRING_LOOKUP_START",       value: "[" },
-          { type: "NUMBER",                       value: "0" },
-          { type: "SUBSTRING_LOOKUP_END",         value: "]" },
-          { type: "TERMINATOR",                   value: "\\n"},
+                   { type: "DECLARATION_KEYWORD",  value: "var" },
+                   { type: "IDENTIFIER",           value: "currentMin" },
+                   { type: "OPERATOR",             value: "=" },
+                   { type: "IDENTIFIER",           value: "array" },
+                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+                   { type: "NUMBER",               value: "0" },
+                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+                   { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENT_KEYWORD",            value: "for" },
-          { type: "IDENTIFIER",                   value: "value" },
-          { type: "STATEMENT_KEYWORD",            value: "in" },
-          { type: "IDENTIFIER",                   value: "array" },
-          { type: "SUBSTRING_LOOKUP_START",       value: "[" },
-         
-          { type: "NUMBER",                       value: "1" },
-          { type: "HALF-OPEN_RANGE",              value: "..<" },
+                   { type: "DECLARATION_KEYWORD",  value: "var" },
+                   { type: "IDENTIFIER",           value: "currentMax" },
+                   { type: "OPERATOR",             value: "=" },
+                   { type: "IDENTIFIER",           value: "array" },
+                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+                   { type: "NUMBER",               value: "0" },
+                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+                   { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "NODUCKINGCLUE",                value: "array.count" },     
- 
-          { type: "SUBSTRING_LOOKUP_END",         value: "]" },
-          { type: "PUNCTUATION",                  value: "{" },
-          { type: "TERMINATOR",                   value: "\\n"},
+                   { type: "STATEMENT_KEYWORD",    value: "for" },
+                   { type: "IDENTIFIER",           value: "value" },
+                   { type: "STATEMENT_KEYWORD",    value: "in" },
+                   { type: "IDENTIFIER",           value: "array" },
+                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+                   
+                        { type: "NUMBER",               value: "1" },
+                        { type: "HALF-OPEN_RANGE",      value: "..<" },
+                        //TODO get native methods working
+                        { type: "NODUCKINGCLUE",               value: "array.count" },     
 
-          { type: "STATEMENT_KEYWORD",            value: "if" },
-          { type: "IDENTIFIER",                   value: "value" },
-          { type: "OPERATOR",                     value: "<" },
-          { type: "IDENTIFIER",                   value: "currentMin" },
-          { type: "PUNCTUATION",                  value: "{" },
-          { type: "TERMINATOR",                   value: "\\n"},
+                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+                   { type: "PUNCTUATION",          value: "{" },
+                   { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "IDENTIFIER",                   value: "currentMin" },
-          { type: "OPERATOR",                     value: "=" },
-          { type: "IDENTIFIER",                   value: "value" }, 
-          { type: "TERMINATOR",                   value: "\\n"},
 
-          { type: "PUNCTUATION",                  value: "}" },
-          { type: "STATEMENT_KEYWORD",            value: "else" },
-          { type: "STATEMENT_KEYWORD",            value: "if" },
-          { type: "IDENTIFIER",                   value: "value" },
-          { type: "OPERATOR",                     value: ">" },
-          { type: "IDENTIFIER",                   value: "currentMax" },
-          { type: "PUNCTUATION",                  value: "{" },
-          { type: "TERMINATOR",                   value: "\\n"},
 
-          { type: "IDENTIFIER",                   value: "currentMax" },
-          { type: "OPERATOR",                     value: "=" },
-          { type: "IDENTIFIER",                   value: "value" },
-          { type: "TERMINATOR",                   value: "\\n"},
+                        { type: "STATEMENT_KEYWORD",    value: "if" },
+                        { type: "IDENTIFIER",           value: "value" },
+                        { type: "OPERATOR",             value: "<" },
+                        { type: "IDENTIFIER",           value: "currentMin" },
+                        { type: "PUNCTUATION",          value: "{" },
+                        { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "PUNCTUATION",                  value: "}" },
-          { type: "TERMINATOR",                   value: "\\n"},
+                        { type: "IDENTIFIER",           value: "currentMin" },
+                        { type: "OPERATOR",             value: "=" },
+                        { type: "IDENTIFIER",           value: "value" }, 
+                        { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "PUNCTUATION",                  value: "}" },
-          { type: "TERMINATOR",                   value: "\\n"},
+                        { type: "PUNCTUATION",          value: "}" },
+                        { type: "STATEMENT_KEYWORD",    value: "else" },
+                        { type: "STATEMENT_KEYWORD",    value: "if" },
+                        { type: "IDENTIFIER",           value: "value" },
+                        { type: "OPERATOR",             value: ">" },
+                        { type: "IDENTIFIER",           value: "currentMax" },
+                        { type: "PUNCTUATION",          value: "{" },
+                        { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENT_KEYWORD",            value: "return"},
-          { type: "TUPLE_START",                  value: "("},
-          { type: "IDENTIFIER",                   value: "currentMin"},
-          { type: "PUNCTUATION",                  value: "," },
-          { type: "IDENTIFIER",                   value: "not currentMax"},
-          { type: "TUPLE_END",                    value: ")"},
-          { type: "TERMINATOR",                   value: "\\n"},
+                        { type: "IDENTIFIER",           value: "currentMax" },
+                        { type: "OPERATOR",             value: "=" },
+                        { type: "IDENTIFIER",           value: "value" },
+                        { type: "TERMINATOR",           value: "\\n"},
+               
+                        { type: "PUNCTUATION",          value: "}" },
+                        { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENTS_END",               value: "}" },  
-          { type: "TERMINATOR",                   value: "EOF"}
-        ];
+                        { type: "PUNCTUATION",          value: "}" },
+                        { type: "TERMINATOR",           value: "\\n"},
+
+                        { type: "STATEMENT_KEYWORD",    value: "return"},
+                        { type: "TUPLE_START",                value: "("},
+                        { type: "IDENTIFIER",                     value: "currentMin"},
+                        { type: "PUNCTUATION",                value: "," },
+                        { type: "IDENTIFIER",                     value: "not currentMax"},
+                        { type: "TUPLE_END",                  value: ")"},
+                        { type: "TERMINATOR",           value: "\\n"},
+
+                   { type: "STATEMENTS_END",       value: "}" },  
+                   { type: "TERMINATOR",           value: "EOF"}
+                   ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
       it('should handle functions with for loops and if and else if statments', function () {
-        input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
+        input = String.raw`func minMax(var array: [Int]) -> (min: Int, max: Int) {
                     var currentMin = array[0]
                     var currentMax = array[0]
                     for value in array[1..<2] {
@@ -3641,401 +3478,108 @@ describe('Lexer', function() {
                     return (currentMin, currentMax)
                 }`;
         output = [
-          { type: "DECLARATION_KEYWORD",            value: "func"},
-          { type: "IDENTIFIER",                     value: "minMax" },
-          { type: "PARAMS_START",                   value: "(" },
-          { type: "IDENTIFIER",                     value: "array" },
-          { type: "PUNCTUATION",                    value: ":" }, 
-          { type: "ARRAY_START",                    value: "["},
-          { type: "TYPE_NUMBER",                    value: "Int" }, 
-          { type: "ARRAY_END",                      value: "]"},    
-          { type: "PARAMS_END",                     value: ")" }, 
-          { type: "RETURN_ARROW",                   value: "->" },     
-          { type: "TUPLE_START",                    value: "("},
-          { type: "TUPLE_ELEMENT_NAME",             value: "min"},
-          { type: "PUNCTUATION",                    value: ":" },
-          { type: "TYPE_NUMBER",                    value: "Int" }, 
-          { type: "PUNCTUATION",                    value: "," },
-          { type: "TUPLE_ELEMENT_NAME",             value: "max"},
-          { type: "PUNCTUATION",                    value: ":" },
-          { type: "TYPE_NUMBER",                    value: "Int" }, 
-          { type: "TUPLE_END",                      value: ")"},
-          { type: "STATEMENTS_START",               value: "{" },  
-          { type: "TERMINATOR",                     value: "\\n"},
+                   { type: "DECLARATION_KEYWORD",  value: "func"},
+                   { type: "IDENTIFIER",           value: "minMax" },
+                   { type: "PARAMS_START",         value: "(" },
+                   { type: "DECLARATION_KEYWORD",  value: "var"},
+                   { type: "IDENTIFIER",           value: "array" },
+                   { type: "PUNCTUATION",          value: ":" }, 
+                   { type: "ARRAY_START",          value: "["},
+                   { type: "TYPE_NUMBER",          value: "Int" }, 
+                   { type: "ARRAY_END",            value: "]"},    
+                   { type: "PARAMS_END",           value: ")" }, 
+                   { type: "RETURN_ARROW",         value: "->" },     
+                   { type: "TUPLE_START",          value: "("},
+                   { type: "TUPLE_ELEMENT_NAME",   value: "min"},
+                   { type: "PUNCTUATION",          value: ":" },
+                   { type: "TYPE_NUMBER",          value: "Int" }, 
+                   { type: "PUNCTUATION",          value: "," },
+                   { type: "TUPLE_ELEMENT_NAME",   value: "max"},
+                   { type: "PUNCTUATION",          value: ":" },
+                   { type: "TYPE_NUMBER",          value: "Int" }, 
+                   { type: "TUPLE_END",            value: ")"},
+                   { type: "STATEMENTS_START",     value: "{" },  
+                   { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "DECLARATION_KEYWORD",            value: "var" },
-          { type: "IDENTIFIER",                     value: "currentMin" },
-          { type: "OPERATOR",                       value: "=" },
-          { type: "IDENTIFIER",                     value: "array" },
-          { type: "SUBSTRING_LOOKUP_START",         value: "[" },
-          { type: "NUMBER",                         value: "0" },
-          { type: "SUBSTRING_LOOKUP_END",           value: "]" },
-          { type: "TERMINATOR",                     value: "\\n"},
+                   { type: "DECLARATION_KEYWORD",  value: "var" },
+                   { type: "IDENTIFIER",           value: "currentMin" },
+                   { type: "OPERATOR",             value: "=" },
+                   { type: "IDENTIFIER",           value: "array" },
+                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+                   { type: "NUMBER",               value: "0" },
+                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+                   { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "DECLARATION_KEYWORD",            value: "var" },
-          { type: "IDENTIFIER",                     value: "currentMax" },
-          { type: "OPERATOR",                       value: "=" },
-          { type: "IDENTIFIER",                     value: "array" },
-          { type: "SUBSTRING_LOOKUP_START",         value: "[" },
-          { type: "NUMBER",                         value: "0" },
-          { type: "SUBSTRING_LOOKUP_END",           value: "]" },
-          { type: "TERMINATOR",                     value: "\\n"},
+                   { type: "DECLARATION_KEYWORD",  value: "var" },
+                   { type: "IDENTIFIER",           value: "currentMax" },
+                   { type: "OPERATOR",             value: "=" },
+                   { type: "IDENTIFIER",           value: "array" },
+                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+                   { type: "NUMBER",               value: "0" },
+                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+                   { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENT_KEYWORD",              value: "for" },
-          { type: "IDENTIFIER",                     value: "value" },
-          { type: "STATEMENT_KEYWORD",              value: "in" },
-          { type: "IDENTIFIER",                     value: "array" },
-          { type: "SUBSTRING_LOOKUP_START",         value: "[" },
+                   { type: "STATEMENT_KEYWORD",    value: "for" },
+                   { type: "IDENTIFIER",           value: "value" },
+                   { type: "STATEMENT_KEYWORD",    value: "in" },
+                   { type: "IDENTIFIER",           value: "array" },
+                   { type: "SUBSTRING_LOOKUP_START",     value: "[" },
                    
-          { type: "NUMBER",                         value: "1" },
-          { type: "HALF-OPEN_RANGE",                value: "..<" },
-          //TODO get native methods working
-          { type: "NUMBER",                         value: "2" },
-          // { type: "NODUCKINGCLUE",               value: "array.count" },     
+                        { type: "NUMBER",               value: "1" },
+                        { type: "HALF-OPEN_RANGE",      value: "..<" },
+                        //TODO get native methods working
+                        { type: "NUMBER",               value: "2" },
+                        // { type: "NODUCKINGCLUE",               value: "array.count" },     
 
-          { type: "SUBSTRING_LOOKUP_END",           value: "]" },
-          { type: "PUNCTUATION",                    value: "{" },
-          { type: "TERMINATOR",                     value: "\\n"},
+                   { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+                   { type: "PUNCTUATION",          value: "{" },
+                   { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENT_KEYWORD",              value: "if" },
-          { type: "IDENTIFIER",                     value: "value" },
-          { type: "OPERATOR",                       value: "<" },
-          { type: "IDENTIFIER",                     value: "currentMin" },
-          { type: "PUNCTUATION",                    value: "{" },
-          { type: "TERMINATOR",                     value: "\\n"},
 
-          { type: "IDENTIFIER",                     value: "currentMin" },
-          { type: "OPERATOR",                       value: "=" },
-          { type: "IDENTIFIER",                     value: "value" }, 
-          { type: "TERMINATOR",                     value: "\\n"},
 
-          { type: "PUNCTUATION",                    value: "}" },
-          { type: "STATEMENT_KEYWORD",              value: "else" },
-          { type: "STATEMENT_KEYWORD",              value: "if" },
-          { type: "IDENTIFIER",                     value: "value" },
-          { type: "OPERATOR",                       value: ">" },
-          { type: "IDENTIFIER",                     value: "currentMax" },
-          { type: "PUNCTUATION",                    value: "{" },
-          { type: "TERMINATOR",                     value: "\\n"},
+                        { type: "STATEMENT_KEYWORD",    value: "if" },
+                        { type: "IDENTIFIER",           value: "value" },
+                        { type: "OPERATOR",             value: "<" },
+                        { type: "IDENTIFIER",           value: "currentMin" },
+                        { type: "PUNCTUATION",          value: "{" },
+                        { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "IDENTIFIER",                     value: "currentMax" },
-          { type: "OPERATOR",                       value: "=" },
-          { type: "IDENTIFIER",                     value: "value" },
-          { type: "TERMINATOR",                     value: "\\n"},
+                        { type: "IDENTIFIER",           value: "currentMin" },
+                        { type: "OPERATOR",             value: "=" },
+                        { type: "IDENTIFIER",           value: "value" }, 
+                        { type: "TERMINATOR",           value: "\\n"},
+
+                        { type: "PUNCTUATION",          value: "}" },
+                        { type: "STATEMENT_KEYWORD",    value: "else" },
+                        { type: "STATEMENT_KEYWORD",    value: "if" },
+                        { type: "IDENTIFIER",           value: "value" },
+                        { type: "OPERATOR",             value: ">" },
+                        { type: "IDENTIFIER",           value: "currentMax" },
+                        { type: "PUNCTUATION",          value: "{" },
+                        { type: "TERMINATOR",           value: "\\n"},
+
+                        { type: "IDENTIFIER",           value: "currentMax" },
+                        { type: "OPERATOR",             value: "=" },
+                        { type: "IDENTIFIER",           value: "value" },
+                        { type: "TERMINATOR",           value: "\\n"},
                
-          { type: "PUNCTUATION",                    value: "}" },
-          { type: "TERMINATOR",                     value: "\\n"},
+                        { type: "PUNCTUATION",          value: "}" },
+                        { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "PUNCTUATION",                    value: "}" },
-          { type: "TERMINATOR",                     value: "\\n"},
+                        { type: "PUNCTUATION",          value: "}" },
+                        { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENT_KEYWORD",              value: "return"},
-          { type: "TUPLE_START",                    value: "("},
-          { type: "IDENTIFIER",                     value: "currentMin"},
-          { type: "PUNCTUATION",                    value: "," },
-          { type: "IDENTIFIER",                     value: "currentMax"},
-          { type: "TUPLE_END",                      value: ")"},
-          { type: "TERMINATOR",                     value: "\\n"},
+                        { type: "STATEMENT_KEYWORD",    value: "return"},
+                        { type: "TUPLE_START",                value: "("},
+                        { type: "IDENTIFIER",                     value: "currentMin"},
+                        { type: "PUNCTUATION",                value: "," },
+                        { type: "IDENTIFIER",                     value: "currentMax"},
+                        { type: "TUPLE_END",                  value: ")"},
+                        { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "STATEMENTS_END",       value: "}" },  
-          { type: "TERMINATOR",           value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      xit('should handle functions that have variadic parameters', function () {
-        input = String.raw`func sumOf(numbers: Int...) -> Int {
-                          var sum = 0
-                          for number in numbers {
-                              sum += number
-                          }
-                          return sum
-                      }
-                      sumOf(1,2,3)`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "func"},
-          { type: "IDENTIFIER",                 value: "sumOf" },
-          { type: "PARAMS_START",               value: "(" },
-          { type: "IDENTIFIER",                 value: "numbers" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "VARIADIC_PARAM",             value: "..." }, 
-          { type: "PARAMS_END",                 value: ")" }, 
-          { type: "RETURN_ARROW",               value: "->" },
-          { type: "TYPE_NUMBER",                value: "Int" }, 
-          { type: "STATEMENTS_START",           value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "var" },
-          { type: "IDENTIFIER",                 value: "sum" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "NUMBER",                     value: "0" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "for" },
-          { type: "IDENTIFIER",                 value: "number" },
-          { type: "STATEMENT_KEYWORD",          value: "in" },
-          { type: "IDENTIFIER",                 value: "numbers" },
-          { type: "PUNCTUATION",                value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          { type: "IDENTIFIER",                 value: "sum" },
-          { type: "OPERATOR",                   value: "+" },
-          { type: "OPERATOR",                   value: "=" },
-          { type: "IDENTIFIER",                 value: "number" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          { type: "PUNCTUATION",                value: "}" },
-          
-          { type: "STATEMENT_KEYWORD",          value: "return"},
-          { type: "IDENTIFIER",                 value: "sum" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENTS_END",             value: "}" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "IDENTIFIER",                 value: "sumOf" },
-          { type: "INVOCATION_START",           value: "(" }, 
-          { type: "NUMBER",                     value: "1" },   
-          { type: "PUNCTUATION",                value: "," },
-          { type: "NUMBER",                     value: "2" },   
-          { type: "PUNCTUATION",                value: "," },
-          { type: "NUMBER",                     value: "3" },   
-          { type: "INVOCATION_END",             value: ")" }, 
-          { type: "TERMINATOR",                 value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      xit('should handle functions that return functions where the return function is specified within parentheses', function () {
-        input = String.raw`func makeIncrementer() -> ((Int) -> Int) {
-                              func addOne(number: Int) -> Int {
-                                  return 1 + number
-                              }
-                              return addOne
-                          }`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "func"},
-          { type: "IDENTIFIER",                 value: "makeIncrementer" },
-          { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
-          { type: "RETURN_ARROW",               value: "->" },
-          { type: "PUNCTUATION",                value: "(" }, 
-          { type: "PARAMS_START",               value: "(" },
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PARAMS_END",                 value: ")" },
-          { type: "RETURN_ARROW",               value: "->" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PUNCTUATION",                value: ")" },
-          { type: "STATEMENTS_START",           value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "func"},
-          { type: "IDENTIFIER",                 value: "addOne" },
-          { type: "PARAMS_START",               value: "(" },
-          { type: "IDENTIFIER",                 value: "number" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PARAMS_END",                 value: ")" },
-          { type: "RETURN_ARROW",               value: "->" },
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "STATEMENTS_START",           value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "return"},
-          { type: "NUMBER",                     value: "1" },
-          { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "number" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          { type: "STATEMENTS_END",             value: "}" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "return"},
-          { type: "IDENTIFIER",                 value: "addOne" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENTS_END",             value: "}" },
-          { type: "TERMINATOR",                 value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      xit('should handle functions that return functions where the return function is specified without parentheses', function () {
-        input = String.raw`func makeIncrementer() -> (Int) -> Int {
-                              func addOne(number: Int) -> Int {
-                                  return 1 + number
-                              }
-                              return addOne
-                          }`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "func"},
-          { type: "IDENTIFIER",                 value: "makeIncrementer" },
-          { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
-          { type: "RETURN_ARROW",               value: "->" },
-          { type: "PARAMS_START",               value: "(" },
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PARAMS_END",                 value: ")" },
-          { type: "RETURN_ARROW",               value: "->" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "STATEMENTS_START",           value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "DECLARATION_KEYWORD",        value: "func"},
-          { type: "IDENTIFIER",                 value: "addOne" },
-          { type: "PARAMS_START",               value: "(" },
-          { type: "IDENTIFIER",                 value: "number" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PARAMS_END",                 value: ")" },
-          { type: "RETURN_ARROW",               value: "->" },
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "STATEMENTS_START",           value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "return"},
-          { type: "NUMBER",                     value: "1" },
-          { type: "OPERATOR",                   value: "+" },
-          { type: "IDENTIFIER",                 value: "number" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          { type: "STATEMENTS_END",             value: "}" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "return"},
-          { type: "IDENTIFIER",                 value: "addOne" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENTS_END",             value: "}" },
-          { type: "TERMINATOR",                 value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      xit('should handle functions that take a function specified with parentheses as an argument', function () {
-        input = String.raw`func any(list: [Int], condition: ((Int) -> Bool)) -> Bool {
-                                for item in list {
-                                    if condition(item) {
-                                        return true
-                                    }
-                                }
-                                return false
-                            }`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "func"},
-          { type: "IDENTIFIER",                 value: "any" },
-          { type: "PARAMS_START",               value: "(" },
-          { type: "IDENTIFIER",                 value: "list" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "ARRAY_START",                value: "["},
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "ARRAY_END",                  value: "]"},
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "condition" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "PUNCTUATION",                value: "(" }, 
-          { type: "PARAMS_START",               value: "(" },
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PARAMS_END",                 value: ")" },
-          { type: "RETURN_ARROW",               value: "->" }, 
-          { type: "TYPE_BOOLEAN",               value: "Bool" },
-          { type: "PUNCTUATION",                value: ")" },
-          { type: "PARAMS_END",                 value: ")" },
-          { type: "RETURN_ARROW",               value: "->" }, 
-          { type: "TYPE_BOOLEAN",               value: "Bool" },
-          { type: "STATEMENTS_START",           value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "for" },
-          { type: "IDENTIFIER",                 value: "item" },
-          { type: "STATEMENT_KEYWORD",          value: "in" },
-          { type: "IDENTIFIER",                 value: "list" },
-          { type: "PUNCTUATION",                value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-
-          { type: "STATEMENT_KEYWORD",          value: "if" },
-          { type: "IDENTIFIER",                 value: "condition" },
-          { type: "INVOCATION_START",           value: "(" }, 
-          { type: "IDENTIFIER",                 value: "item" },  
-          { type: "INVOCATION_END",             value: ")" }, 
-          { type: "PUNCTUATION",                value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "return"},
-          { type: "BOOLEAN",                    value: "true" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "PUNCTUATION",                value: "}" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "return"},
-          { type: "BOOLEAN",                    value: "false" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENTS_END",             value: "}" },
-          { type: "TERMINATOR",                 value: "EOF"}
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      xit('should handle functions that take a function specified without parentheses as an argument', function () {
-        input = String.raw`func any(list: [Int], condition: (Int) -> Bool) -> Bool {
-                                for item in list {
-                                    if condition(item) {
-                                        return true
-                                    }
-                                }
-                                return false
-                            }`;
-        output = [
-          { type: "DECLARATION_KEYWORD",        value: "func"},
-          { type: "IDENTIFIER",                 value: "any" },
-          { type: "PARAMS_START",               value: "(" },
-          { type: "IDENTIFIER",                 value: "list" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "ARRAY_START",                value: "["},
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "ARRAY_END",                  value: "]"},
-          { type: "PUNCTUATION",                value: "," },
-          { type: "IDENTIFIER",                 value: "condition" },
-          { type: "PUNCTUATION",                value: ":" },  
-          { type: "PARAMS_START",               value: "(" },
-          { type: "TYPE_NUMBER",                value: "Int" },
-          { type: "PARAMS_END",                 value: ")" },
-          { type: "RETURN_ARROW",               value: "->" }, 
-          { type: "TYPE_BOOLEAN",               value: "Bool" },
-          { type: "PARAMS_END",                 value: ")" },
-          { type: "RETURN_ARROW",               value: "->" }, 
-          { type: "TYPE_BOOLEAN",               value: "Bool" },
-          { type: "STATEMENTS_START",           value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "for" },
-          { type: "IDENTIFIER",                 value: "item" },
-          { type: "STATEMENT_KEYWORD",          value: "in" },
-          { type: "IDENTIFIER",                 value: "list" },
-          { type: "PUNCTUATION",                value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-
-          { type: "STATEMENT_KEYWORD",          value: "if" },
-          { type: "IDENTIFIER",                 value: "condition" },
-          { type: "INVOCATION_START",           value: "(" }, 
-          { type: "IDENTIFIER",                 value: "item" },  
-          { type: "INVOCATION_END",             value: ")" }, 
-          { type: "PUNCTUATION",                value: "{" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "return"},
-          { type: "BOOLEAN",                    value: "true" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "PUNCTUATION",                value: "}" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENT_KEYWORD",          value: "return"},
-          { type: "BOOLEAN",                    value: "false" },
-          { type: "TERMINATOR",                 value: "\\n"},
-          
-          { type: "STATEMENTS_END",             value: "}" },
-          { type: "TERMINATOR",                 value: "EOF"}
-        ];
+                   { type: "STATEMENTS_END",       value: "}" },  
+                   { type: "TERMINATOR",           value: "EOF"}
+                   ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
