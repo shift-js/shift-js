@@ -3233,6 +3233,29 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
+    it('should handle native absolute value method', function () {
+      input = String.raw `var negOne = -1
+                            var one = abs(negOne)`;
+      output = [
+         { type: 'DECLARATION_KEYWORD',          value: 'var' },
+         { type: 'IDENTIFIER',                   value: 'negOne' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: 'OPERATOR',                     value: '-' },
+         { type: 'NUMBER',                       value: '1' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+         
+         { type: 'DECLARATION_KEYWORD',          value: 'var' },
+         { type: 'IDENTIFIER',                   value: 'one' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: "NATIVE_METHOD",                value: "abs"},
+         { type: "INVOCATION_START",             value: "(" },
+         { type: "IDENTIFIER",                   value: "negOne" },
+         { type: "INVOCATION_END",               value: ")" },   
+         { type: 'TERMINATOR',                   value: 'EOF' } 
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
     describe('Range Operations', function () {
 
       it('should handle closed ranges', function () {
@@ -3755,6 +3778,31 @@ describe('Lexer: Third Milestone', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      
+      it('should handle string uppercase and lowercase properties', function () {
+        input = String.raw `var s = "String"
+                              s.uppercaseString
+                              s.lowercaseString`;
+        output = [
+           { type: 'DECLARATION_KEYWORD',          value: 'var' },
+           { type: 'IDENTIFIER',                   value: 's' },
+           { type: 'OPERATOR',                     value: '=' },
+           { type: 'STRING',                       value: 'String' },
+           { type: 'TERMINATOR',                   value: '\\n' },
+           
+           { type: 'IDENTIFIER',                   value: 's' },
+           { type: "DOT_SYNTAX",                   value: "." },
+           { type: "TYPE_PROPERTY",                value: "uppercaseString" },
+           { type: 'TERMINATOR',                   value: '\\n' },
+
+           { type: 'IDENTIFIER',                   value: 's' },
+           { type: "DOT_SYNTAX",                   value: "." },
+           { type: "TYPE_PROPERTY",                value: "lowercaseString" },
+           { type: 'TERMINATOR',                   value: 'EOF' } 
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
     });
 
     describe('Collection Properties and Methods', function () {
@@ -3859,6 +3907,7 @@ describe('Lexer: Third Milestone', function() {
                             var arrTwo = [6,7,8,9,10]
                             arr.insertContentsOf(arrTwo, at: 5)
                             var one = arr.removeFirst()
+                            arr.popLast()
                             arr.removeAll()`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
@@ -3943,6 +3992,13 @@ describe('Lexer: Third Milestone', function() {
           { type: "IDENTIFIER",                 value: "arr" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "NATIVE_METHOD",              value: "removeFirst"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "IDENTIFIER",                 value: "arr" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "popLast"},
           { type: "INVOCATION_START",           value: "(" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
@@ -4141,288 +4197,290 @@ describe('Lexer: Third Milestone', function() {
 
     });
 
-    describe('Basic tests', function () {
-
-      it('should handle FizzBuzz example with ranges, nested control flow, and native method invocations', function () {
-        input = String.raw `let range = 1...100
-                            var results = [String]()
-                            for i in range {
-                                if i % 3 == 0 {
-                                    if i % 5 == 0 {
-                                        results.append("FizzBuzz")
-                                    } else {
-                                        results.append("Fizz")
-                                    }
-                                } else if i % 5 == 0 {
-                                    results.append("Buzz")
-                                } else {
-                                    results.append(String(i))
-                                }
-                            }
-                            print(results)`;
-        output = [
-         { type: 'DECLARATION_KEYWORD',     value: 'let' },
-         { type: 'IDENTIFIER',              value: 'range' },
-         { type: 'OPERATOR',                value: '=' },
-         { type: 'NUMBER',                  value: '1' },
-         { type: 'CLOSED_RANGE',            value: '...' },
-         { type: 'NUMBER',                  value: '100' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'DECLARATION_KEYWORD',     value: 'var' },
-         { type: 'IDENTIFIER',              value: 'results' },
-         { type: 'OPERATOR',                value: '=' },
-         { type: 'ARRAY_START',             value: '[' },
-         { type: 'TYPE_STRING',             value: 'String' },
-         { type: 'ARRAY_END',               value: ']' },
-         { type: 'INVOCATION_START',        value: '(' },
-         { type: 'INVOCATION_END',          value: ')' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'STATEMENT_KEYWORD',       value: 'for' },
-         { type: 'IDENTIFIER',              value: 'i' },
-         { type: 'STATEMENT_KEYWORD',       value: 'in' },
-         { type: 'IDENTIFIER',              value: 'range' },
-         { type: 'PUNCTUATION',             value: '{' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'STATEMENT_KEYWORD',       value: 'if' },
-         { type: 'IDENTIFIER',              value: 'i' },
-         { type: 'OPERATOR',                value: '%' },
-         { type: 'NUMBER',                  value: '3' },
-         { type: 'OPERATOR',                value: '=' },
-         { type: 'OPERATOR',                value: '=' },
-         { type: 'NUMBER',                  value: '0' },
-         { type: 'PUNCTUATION',             value: '{' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'STATEMENT_KEYWORD',       value: 'if' },
-         { type: 'IDENTIFIER',              value: 'i' },
-         { type: 'OPERATOR',                value: '%' },
-         { type: 'NUMBER',                  value: '5' },
-         { type: 'OPERATOR',                value: '=' },
-         { type: 'OPERATOR',                value: '=' },
-         { type: 'NUMBER',                  value: '0' },
-         { type: 'PUNCTUATION',             value: '{' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'IDENTIFIER',              value: 'results' },
-         { type: 'DOT_SYNTAX',              value: '.' },
-         { type: 'NATIVE_METHOD',           value: 'append' },
-         { type: 'INVOCATION_START',        value: '(' },
-         { type: 'STRING',                  value: 'FizzBuzz' },
-         { type: 'INVOCATION_END',          value: ')' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'PUNCTUATION',             value: '}' },
-         { type: 'STATEMENT_KEYWORD',       value: 'else' },
-         { type: 'PUNCTUATION',             value: '{' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'IDENTIFIER',              value: 'results' },
-         { type: 'DOT_SYNTAX',              value: '.' },
-         { type: 'NATIVE_METHOD',           value: 'append' },
-         { type: 'INVOCATION_START',        value: '(' },
-         { type: 'STRING',                  value: 'Fizz' },
-         { type: 'INVOCATION_END',          value: ')' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'PUNCTUATION',             value: '}' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'PUNCTUATION',             value: '}' },
-         { type: 'STATEMENT_KEYWORD',       value: 'else' },
-         { type: 'STATEMENT_KEYWORD',       value: 'if' },
-         { type: 'IDENTIFIER',              value: 'i' },
-         { type: 'OPERATOR',                value: '%' },
-         { type: 'NUMBER',                  value: '5' },
-         { type: 'OPERATOR',                value: '=' },
-         { type: 'OPERATOR',                value: '=' },
-         { type: 'NUMBER',                  value: '0' },
-         { type: 'PUNCTUATION',             value: '{' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'IDENTIFIER',              value: 'results' },
-         { type: 'DOT_SYNTAX',              value: '.' },
-         { type: 'NATIVE_METHOD',           value: 'append' },
-         { type: 'INVOCATION_START',        value: '(' },
-         { type: 'STRING',                  value: 'Buzz' },
-         { type: 'INVOCATION_END',          value: ')' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'PUNCTUATION',             value: '}' },
-         { type: 'STATEMENT_KEYWORD',       value: 'else' },
-         { type: 'PUNCTUATION',             value: '{' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'IDENTIFIER',              value: 'results' },
-         { type: 'DOT_SYNTAX',              value: '.' },
-         { type: 'NATIVE_METHOD',           value: 'append' },
-         { type: 'INVOCATION_START',        value: '(' },
-         { type: 'TYPE_STRING',             value: 'String' },
-         { type: 'INVOCATION_START',        value: '(' },
-         { type: 'IDENTIFIER',              value: 'i' },
-         { type: 'INVOCATION_END',          value: ')' },
-         { type: 'INVOCATION_END',          value: ')' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'PUNCTUATION',             value: '}' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'PUNCTUATION',             value: '}' },
-         { type: 'TERMINATOR',              value: '\\n' },
-
-         { type: 'NATIVE_METHOD',           value: 'print' },
-         { type: 'INVOCATION_START',        value: '(' },
-         { type: 'IDENTIFIER',              value: 'results' },
-         { type: 'INVOCATION_END',          value: ')' },
-         { type: 'TERMINATOR',              value: 'EOF' }
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-      it('should handle FizzBuzz as a function with ranges, nested control flow, and native method invocations', function () {
-        input = String.raw `func fizzBuzz(start: Int, end: Int) {
-                                let range = start...end
-                                for i in range {
-                                    var output = ""
-                                    if i % 3 == 0 {
-                                        output += "Fizz"
-                                    }
-                                    if i % 5 == 0 {
-                                        output += "Buzz"
-                                    }
-                                    if output.isEmpty {
-                                        print(i)
-                                    } else {
-                                        print(output)
-                                    }
-                                }
-                            }
-
-                            fizzBuzz(1, end: 100)`;
-        output = [
-           { type: 'DECLARATION_KEYWORD',          value: 'func' },
-           { type: 'IDENTIFIER',                   value: 'fizzBuzz' },
-           { type: 'PARAMS_START',                 value: '(' },
-           { type: 'IDENTIFIER',                   value: 'start' },
-           { type: 'PUNCTUATION',                  value: ':' },
-           { type: 'TYPE_NUMBER',                  value: 'Int' },
-           { type: 'PUNCTUATION',                  value: ',' },
-           { type: 'IDENTIFIER',                   value: 'end' },
-           { type: 'PUNCTUATION',                  value: ':' },
-           { type: 'TYPE_NUMBER',                  value: 'Int' },
-           { type: 'PARAMS_END',                   value: ')' },
-           { type: 'STATEMENTS_START',             value: '{' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'DECLARATION_KEYWORD',          value: 'let' },
-           { type: 'IDENTIFIER',                   value: 'range' },
-           { type: 'OPERATOR',                     value: '=' },
-           { type: 'IDENTIFIER',                   value: 'start' },
-           { type: 'CLOSED_RANGE',                 value: '...' },
-           { type: 'IDENTIFIER',                   value: 'end' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'STATEMENT_KEYWORD',            value: 'for' },
-           { type: 'IDENTIFIER',                   value: 'i' },
-           { type: 'STATEMENT_KEYWORD',            value: 'in' },
-           { type: 'IDENTIFIER',                   value: 'range' },
-           { type: 'PUNCTUATION',                  value: '{' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'DECLARATION_KEYWORD',          value: 'var' },
-           { type: 'IDENTIFIER',                   value: 'output' },
-           { type: 'OPERATOR',                     value: '=' },
-           { type: 'STRING',                       value: '' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'STATEMENT_KEYWORD',            value: 'if' },
-           { type: 'IDENTIFIER',                   value: 'i' },
-           { type: 'OPERATOR',                     value: '%' },
-           { type: 'NUMBER',                       value: '3' },
-           { type: 'OPERATOR',                     value: '=' },
-           { type: 'OPERATOR',                     value: '=' },
-           { type: 'NUMBER',                       value: '0' },
-           { type: 'PUNCTUATION',                  value: '{' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'IDENTIFIER',                   value: 'output' },
-           { type: 'OPERATOR',                     value: '+' },
-           { type: 'OPERATOR',                     value: '=' },
-           { type: 'STRING',                       value: 'Fizz' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'PUNCTUATION',                  value: '}' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'STATEMENT_KEYWORD',            value: 'if' },
-           { type: 'IDENTIFIER',                   value: 'i' },
-           { type: 'OPERATOR',                     value: '%' },
-           { type: 'NUMBER',                       value: '5' },
-           { type: 'OPERATOR',                     value: '=' },
-           { type: 'OPERATOR',                     value: '=' },
-           { type: 'NUMBER',                       value: '0' },
-           { type: 'PUNCTUATION',                  value: '{' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'IDENTIFIER',                   value: 'output' },
-           { type: 'OPERATOR',                     value: '+' },
-           { type: 'OPERATOR',                     value: '=' },
-           { type: 'STRING',                       value: 'Buzz' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'PUNCTUATION',                  value: '}' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'STATEMENT_KEYWORD',            value: 'if' },
-           { type: 'IDENTIFIER',                   value: 'output' },
-           { type: 'DOT_SYNTAX',                   value: '.' },
-           { type: 'TYPE_PROPERTY',                value: 'isEmpty' },
-           { type: 'PUNCTUATION',                  value: '{' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'NATIVE_METHOD',                value: 'print' },
-           { type: 'INVOCATION_START',             value: '(' },
-           { type: 'IDENTIFIER',                   value: 'i' },
-           { type: 'INVOCATION_END',               value: ')' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'PUNCTUATION',                  value: '}' },
-           { type: 'STATEMENT_KEYWORD',            value: 'else' },
-           { type: 'PUNCTUATION',                  value: '{' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'NATIVE_METHOD',                value: 'print' },
-           { type: 'INVOCATION_START',             value: '(' },
-           { type: 'IDENTIFIER',                   value: 'output' },
-           { type: 'INVOCATION_END',               value: ')' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'PUNCTUATION',                  value: '}' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'PUNCTUATION',                  value: '}' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'STATEMENTS_END',               value: '}' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-           { type: 'TERMINATOR',                   value: '\\n' },
-
-           { type: 'IDENTIFIER',                   value: 'fizzBuzz' },
-           { type: 'INVOCATION_START',             value: '(' },
-           { type: 'NUMBER',                       value: '1' },
-           { type: 'PUNCTUATION',                  value: ',' },
-           { type: 'IDENTIFIER',                   value: 'end' },
-           { type: 'PUNCTUATION',                  value: ':' },
-           { type: 'NUMBER',                       value: '100' },
-           { type: 'INVOCATION_END',               value: ')' },
-           { type: 'TERMINATOR',                   value: 'EOF' }
-        ];
-        expect(lexer(input)).to.deep.equal(output);
-      });
-
-
-    });
   });
+
+  describe('Fizz Buzz Examples', function () {
+
+    it('should handle FizzBuzz example with ranges, nested control flow, and native method invocations', function () {
+      input = String.raw `let range = 1...100
+                          var results = [String]()
+                          for i in range {
+                              if i % 3 == 0 {
+                                  if i % 5 == 0 {
+                                      results.append("FizzBuzz")
+                                  } else {
+                                      results.append("Fizz")
+                                  }
+                              } else if i % 5 == 0 {
+                                  results.append("Buzz")
+                              } else {
+                                  results.append(String(i))
+                              }
+                          }
+                          print(results)`;
+      output = [
+       { type: 'DECLARATION_KEYWORD',     value: 'let' },
+       { type: 'IDENTIFIER',              value: 'range' },
+       { type: 'OPERATOR',                value: '=' },
+       { type: 'NUMBER',                  value: '1' },
+       { type: 'CLOSED_RANGE',            value: '...' },
+       { type: 'NUMBER',                  value: '100' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'DECLARATION_KEYWORD',     value: 'var' },
+       { type: 'IDENTIFIER',              value: 'results' },
+       { type: 'OPERATOR',                value: '=' },
+       { type: 'ARRAY_START',             value: '[' },
+       { type: 'TYPE_STRING',             value: 'String' },
+       { type: 'ARRAY_END',               value: ']' },
+       { type: 'INVOCATION_START',        value: '(' },
+       { type: 'INVOCATION_END',          value: ')' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'STATEMENT_KEYWORD',       value: 'for' },
+       { type: 'IDENTIFIER',              value: 'i' },
+       { type: 'STATEMENT_KEYWORD',       value: 'in' },
+       { type: 'IDENTIFIER',              value: 'range' },
+       { type: 'PUNCTUATION',             value: '{' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'STATEMENT_KEYWORD',       value: 'if' },
+       { type: 'IDENTIFIER',              value: 'i' },
+       { type: 'OPERATOR',                value: '%' },
+       { type: 'NUMBER',                  value: '3' },
+       { type: 'OPERATOR',                value: '=' },
+       { type: 'OPERATOR',                value: '=' },
+       { type: 'NUMBER',                  value: '0' },
+       { type: 'PUNCTUATION',             value: '{' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'STATEMENT_KEYWORD',       value: 'if' },
+       { type: 'IDENTIFIER',              value: 'i' },
+       { type: 'OPERATOR',                value: '%' },
+       { type: 'NUMBER',                  value: '5' },
+       { type: 'OPERATOR',                value: '=' },
+       { type: 'OPERATOR',                value: '=' },
+       { type: 'NUMBER',                  value: '0' },
+       { type: 'PUNCTUATION',             value: '{' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'IDENTIFIER',              value: 'results' },
+       { type: 'DOT_SYNTAX',              value: '.' },
+       { type: 'NATIVE_METHOD',           value: 'append' },
+       { type: 'INVOCATION_START',        value: '(' },
+       { type: 'STRING',                  value: 'FizzBuzz' },
+       { type: 'INVOCATION_END',          value: ')' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'PUNCTUATION',             value: '}' },
+       { type: 'STATEMENT_KEYWORD',       value: 'else' },
+       { type: 'PUNCTUATION',             value: '{' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'IDENTIFIER',              value: 'results' },
+       { type: 'DOT_SYNTAX',              value: '.' },
+       { type: 'NATIVE_METHOD',           value: 'append' },
+       { type: 'INVOCATION_START',        value: '(' },
+       { type: 'STRING',                  value: 'Fizz' },
+       { type: 'INVOCATION_END',          value: ')' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'PUNCTUATION',             value: '}' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'PUNCTUATION',             value: '}' },
+       { type: 'STATEMENT_KEYWORD',       value: 'else' },
+       { type: 'STATEMENT_KEYWORD',       value: 'if' },
+       { type: 'IDENTIFIER',              value: 'i' },
+       { type: 'OPERATOR',                value: '%' },
+       { type: 'NUMBER',                  value: '5' },
+       { type: 'OPERATOR',                value: '=' },
+       { type: 'OPERATOR',                value: '=' },
+       { type: 'NUMBER',                  value: '0' },
+       { type: 'PUNCTUATION',             value: '{' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'IDENTIFIER',              value: 'results' },
+       { type: 'DOT_SYNTAX',              value: '.' },
+       { type: 'NATIVE_METHOD',           value: 'append' },
+       { type: 'INVOCATION_START',        value: '(' },
+       { type: 'STRING',                  value: 'Buzz' },
+       { type: 'INVOCATION_END',          value: ')' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'PUNCTUATION',             value: '}' },
+       { type: 'STATEMENT_KEYWORD',       value: 'else' },
+       { type: 'PUNCTUATION',             value: '{' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'IDENTIFIER',              value: 'results' },
+       { type: 'DOT_SYNTAX',              value: '.' },
+       { type: 'NATIVE_METHOD',           value: 'append' },
+       { type: 'INVOCATION_START',        value: '(' },
+       { type: 'TYPE_STRING',             value: 'String' },
+       { type: 'INVOCATION_START',        value: '(' },
+       { type: 'IDENTIFIER',              value: 'i' },
+       { type: 'INVOCATION_END',          value: ')' },
+       { type: 'INVOCATION_END',          value: ')' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'PUNCTUATION',             value: '}' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'PUNCTUATION',             value: '}' },
+       { type: 'TERMINATOR',              value: '\\n' },
+
+       { type: 'NATIVE_METHOD',           value: 'print' },
+       { type: 'INVOCATION_START',        value: '(' },
+       { type: 'IDENTIFIER',              value: 'results' },
+       { type: 'INVOCATION_END',          value: ')' },
+       { type: 'TERMINATOR',              value: 'EOF' }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle FizzBuzz as a function with ranges, nested control flow, and native method invocations', function () {
+      input = String.raw `func fizzBuzz(start: Int, end: Int) {
+                              let range = start...end
+                              for i in range {
+                                  var output = ""
+                                  if i % 3 == 0 {
+                                      output += "Fizz"
+                                  }
+                                  if i % 5 == 0 {
+                                      output += "Buzz"
+                                  }
+                                  if output.isEmpty {
+                                      print(i)
+                                  } else {
+                                      print(output)
+                                  }
+                              }
+                          }
+
+                          fizzBuzz(1, end: 100)`;
+      output = [
+         { type: 'DECLARATION_KEYWORD',          value: 'func' },
+         { type: 'IDENTIFIER',                   value: 'fizzBuzz' },
+         { type: 'PARAMS_START',                 value: '(' },
+         { type: 'IDENTIFIER',                   value: 'start' },
+         { type: 'PUNCTUATION',                  value: ':' },
+         { type: 'TYPE_NUMBER',                  value: 'Int' },
+         { type: 'PUNCTUATION',                  value: ',' },
+         { type: 'IDENTIFIER',                   value: 'end' },
+         { type: 'PUNCTUATION',                  value: ':' },
+         { type: 'TYPE_NUMBER',                  value: 'Int' },
+         { type: 'PARAMS_END',                   value: ')' },
+         { type: 'STATEMENTS_START',             value: '{' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'DECLARATION_KEYWORD',          value: 'let' },
+         { type: 'IDENTIFIER',                   value: 'range' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: 'IDENTIFIER',                   value: 'start' },
+         { type: 'CLOSED_RANGE',                 value: '...' },
+         { type: 'IDENTIFIER',                   value: 'end' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'STATEMENT_KEYWORD',            value: 'for' },
+         { type: 'IDENTIFIER',                   value: 'i' },
+         { type: 'STATEMENT_KEYWORD',            value: 'in' },
+         { type: 'IDENTIFIER',                   value: 'range' },
+         { type: 'PUNCTUATION',                  value: '{' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'DECLARATION_KEYWORD',          value: 'var' },
+         { type: 'IDENTIFIER',                   value: 'output' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: 'STRING',                       value: '' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'STATEMENT_KEYWORD',            value: 'if' },
+         { type: 'IDENTIFIER',                   value: 'i' },
+         { type: 'OPERATOR',                     value: '%' },
+         { type: 'NUMBER',                       value: '3' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: 'NUMBER',                       value: '0' },
+         { type: 'PUNCTUATION',                  value: '{' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'IDENTIFIER',                   value: 'output' },
+         { type: 'OPERATOR',                     value: '+' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: 'STRING',                       value: 'Fizz' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'PUNCTUATION',                  value: '}' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'STATEMENT_KEYWORD',            value: 'if' },
+         { type: 'IDENTIFIER',                   value: 'i' },
+         { type: 'OPERATOR',                     value: '%' },
+         { type: 'NUMBER',                       value: '5' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: 'NUMBER',                       value: '0' },
+         { type: 'PUNCTUATION',                  value: '{' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'IDENTIFIER',                   value: 'output' },
+         { type: 'OPERATOR',                     value: '+' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: 'STRING',                       value: 'Buzz' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'PUNCTUATION',                  value: '}' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'STATEMENT_KEYWORD',            value: 'if' },
+         { type: 'IDENTIFIER',                   value: 'output' },
+         { type: 'DOT_SYNTAX',                   value: '.' },
+         { type: 'TYPE_PROPERTY',                value: 'isEmpty' },
+         { type: 'PUNCTUATION',                  value: '{' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'NATIVE_METHOD',                value: 'print' },
+         { type: 'INVOCATION_START',             value: '(' },
+         { type: 'IDENTIFIER',                   value: 'i' },
+         { type: 'INVOCATION_END',               value: ')' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'PUNCTUATION',                  value: '}' },
+         { type: 'STATEMENT_KEYWORD',            value: 'else' },
+         { type: 'PUNCTUATION',                  value: '{' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'NATIVE_METHOD',                value: 'print' },
+         { type: 'INVOCATION_START',             value: '(' },
+         { type: 'IDENTIFIER',                   value: 'output' },
+         { type: 'INVOCATION_END',               value: ')' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'PUNCTUATION',                  value: '}' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'PUNCTUATION',                  value: '}' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'STATEMENTS_END',               value: '}' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+
+         { type: 'IDENTIFIER',                   value: 'fizzBuzz' },
+         { type: 'INVOCATION_START',             value: '(' },
+         { type: 'NUMBER',                       value: '1' },
+         { type: 'PUNCTUATION',                  value: ',' },
+         { type: 'IDENTIFIER',                   value: 'end' },
+         { type: 'PUNCTUATION',                  value: ':' },
+         { type: 'NUMBER',                       value: '100' },
+         { type: 'INVOCATION_END',               value: ')' },
+         { type: 'TERMINATOR',                   value: 'EOF' }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+
+  });
+
 });
