@@ -1134,6 +1134,80 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      it('should handle translation of dictionary keys', function () {
+        input = String.raw `var firstNum = 1
+                            var secondNum = 2
+                            var firstDict = [firstNum: ["one", "two"], secondNum: ["three", "four"]]
+                            var secondDict = [-3+4: [1,2], (2*3)-4: [3,4]]`;
+        output = [
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "firstNum" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "NUMBER",                        value: "1" },
+         { type: "TERMINATOR",                    value: "\\n"},
+         
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "secondNum" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "NUMBER",                        value: "2" },
+         { type: "TERMINATOR",                    value: "\\n"},
+         
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "firstDict" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "DICTIONARY_START",              value: "[" },
+         { type: "IDENTIFIER",                    value: "firstNum" },
+         { type: "PUNCTUATION",                   value: ":" },
+         { type: "ARRAY_START",                   value: "[" },
+         { type: "STRING",                        value: "one" },
+         { type: "PUNCTUATION",                   value: "," },
+         { type: "STRING",                        value: "two" },
+         { type: "ARRAY_END",                     value: "]" },
+         { type: "PUNCTUATION",                   value: "," },
+         { type: "IDENTIFIER",                    value: "secondNum" },
+         { type: "PUNCTUATION",                   value: ":" },
+         { type: "ARRAY_START",                   value: "[" },
+         { type: "STRING",                        value: "three" },
+         { type: "PUNCTUATION",                   value: "," },
+         { type: "STRING",                        value: "four" },
+         { type: "ARRAY_END",                     value: "]" },
+         { type: "DICTIONARY_END",                value: "]" },
+         { type: "TERMINATOR",                    value: "\\n"},
+         
+         { type: "DECLARATION_KEYWORD",           value: "var" },
+         { type: "IDENTIFIER",                    value: "secondDict" },
+         { type: "OPERATOR",                      value: "=" },
+         { type: "DICTIONARY_START",              value: "[" },
+         { type: "OPERATOR",                      value: "-" },
+         { type: "NUMBER",                        value: "3" },
+         { type: "OPERATOR",                      value: "+" },
+         { type: "NUMBER",                        value: "4" },
+         { type: "PUNCTUATION",                   value: ":" },
+         { type: "ARRAY_START",                   value: "[" },
+         { type: "NUMBER",                        value: "1" },
+         { type: "PUNCTUATION",                   value: "," },
+         { type: "NUMBER",                        value: "2" },
+         { type: "ARRAY_END",                     value: "]" },
+         { type: "PUNCTUATION",                   value: "," },
+         { type: "PUNCTUATION",                   value: "(" },
+         { type: "NUMBER",                        value: "2" },
+         { type: "OPERATOR",                      value: "*" },
+         { type: "NUMBER",                        value: "3" },
+         { type: "PUNCTUATION",                   value: ")" },
+         { type: "OPERATOR",                      value: "-" },
+         { type: "NUMBER",                        value: "4" },
+         { type: "PUNCTUATION",                   value: ":" },
+         { type: "ARRAY_START",                   value: "[" },
+         { type: "NUMBER",                        value: "3" },
+         { type: "PUNCTUATION",                   value: "," },
+         { type: "NUMBER",                        value: "4" },
+         { type: "ARRAY_END",                     value: "]" },
+         { type: "DICTIONARY_END",                value: "]" },
+         { type: "TERMINATOR",                    value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
       it('should handle multi-nested lists', function () {
         input = String.raw`var w = [1: [[1: "two"], [3: "four"]], 2: [["one": 2], ["three": 4]]];`;
         output = [
