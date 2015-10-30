@@ -4397,4 +4397,3 @@ describe('Generator: Third Milestone', function() {
       });
     });
 });
-
