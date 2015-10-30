@@ -11,8 +11,10 @@ module.exports = {
   // },
 
   NATIVE_METHOD: {
+    'abs': 'NATIVE_METHOD',
     'advancedBy': 'NATIVE_METHOD',
     'append': 'NATIVE_METHOD',
+    'distanceTo': 'NATIVE_METHOD',
     'hasPrefix': 'NATIVE_METHOD',
     'hasSuffix': 'NATIVE_METHOD',
     'insert': 'NATIVE_METHOD',
@@ -39,9 +41,12 @@ module.exports = {
   TYPE_PROPERTY: {
     'characters': 'TYPE_PROPERTY',
     'count': 'TYPE_PROPERTY',
+    'description': 'TYPE_PROPERTY',
     'endIndex': 'TYPE_PROPERTY',
+    'lowercaseString': 'TYPE_PROPERTY',
     'isEmpty': 'TYPE_PROPERTY',
     'startIndex': 'TYPE_PROPERTY',
+    'uppercaseString': 'TYPE_PROPERTY',
   },
 
   RANGES: {
