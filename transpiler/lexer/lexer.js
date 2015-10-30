@@ -304,11 +304,15 @@ module.exports = function(code) {
     }
     
     // collection initializer syntax handling
-    if (tokens.length && currCol === '(' && nextCol === ')' &&
+    if (tokens.length && currCol === '(' && 
       (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
-      lexerFunctions.checkFor('FUNCTION_INVOCATION', nextCol, tokens);
-      advanceAndClear(2);
+      var tmp = {};
+      tmp.name = lastToken.value;
+      tmp.status = true;
+      tmp.parens = 0;
+      insideInvocation.push(tmp);
+      advanceAndClear(1);
       continue;
     }
     
