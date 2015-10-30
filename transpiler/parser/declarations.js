@@ -432,9 +432,25 @@ var declarations = {
 
     stmt(state, "if", function() {
 
-      if(state.token.value === "(") {
-      /*if(state.tokens[state.index].value === "(") {*/
-        state = advance(state, "(");
+      /* Determine whether the conditional for this
+         if statement is surrounded by parentheses */
+      var parenthetical = false;
+      var allTokens = state.tokens.slice();
+      var indexOfNextToken = state.index;
+      var startIndexOfNextBlock = 0;
+
+      for(var t=indexOfNextToken; t<allTokens.length; t++) {
+        if(allTokens[t].value === "{") {
+          startIndexOfNextBlock = t;
+          break;
+        }
+      }
+      if(startIndexOfNextBlock > 0 && allTokens[startIndexOfNextBlock - 1].value === ")") {
+        parenthetical = true;
+      }
+
+      if(parenthetical) {
+        state = advance(state, "(");//This parens isn't actual wrapping the conditional.
         this.test = expression(state, 0);
         if(this.test.type === "ExpressionStatement") {
           this.test = this.test.expression;
@@ -446,14 +462,10 @@ var declarations = {
           this.test = this.test.expression;
         }
       }
-      if(state.token.value !== "{") {
-        //TODO handle ..[==][2].. before "{"
-        //left side  : this.test
-        //operator   : ==
-        //right side : expression()?
-        state.token.nud(this.test);
-      }
+
       this.consequent = block(state);
+
+      /* block directly followed by else or else if statement? */
       if (state.token.id === "else") {
         state.scope.reserve(state.token);
         state = advance(state, "else");
@@ -461,10 +473,10 @@ var declarations = {
       } else {
         this.alternate = null;
       }
+
       this.type = "IfStatement";
       delete this.value;
       return this;
-
     });
 
     //stmt("return", function() {
