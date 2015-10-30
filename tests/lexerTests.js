@@ -6865,7 +6865,7 @@ describe('Lexer', function() {
            { type: 'STATEMENT_KEYWORD',       value: 'if' },
            { type: 'IDENTIFIER',              value: 'i' },
            { type: 'OPERATOR',                value: '%' },
-           { type: 'NUMBER',                  value: '3' },
+           { type: 'NUMBER',                  value: '5' },
            { type: 'OPERATOR',                value: '=' },
            { type: 'OPERATOR',                value: '=' },
            { type: 'NUMBER',                  value: '0' },
