@@ -6327,6 +6327,112 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        it('should handle the array insertion and removal methods', function () {
+          input = String.raw `var arr = [1,2,4,8,5,7]
+                              arr.insert(3, atIndex: 2)
+                              var eight = arr.removeAtIndex(4)
+                              arr.removeLast()
+                              var arrTwo = [6,7,8,9,10]
+                              arr.insertContentsOf(arrTwo, at: 5)
+                              var one = arr.removeFirst()
+                              arr.removeAll()`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "2" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "4" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "8" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "5" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "7" },
+            { type: "ARRAY_END",                  value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "insert"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "3" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "METHOD_ARGUMENT_NAME",       value: "atIndex" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "NUMBER",                     value: "2" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "eight" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "removeAtIndex"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "4" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "removeLast"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "arrTwo" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "6" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "7" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "8" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "9" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "10" },
+            { type: "ARRAY_END",                  value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "insertContentsOf"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "arrTwo" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "METHOD_ARGUMENT_NAME",       value: "at" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "NUMBER",                     value: "5" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "one" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "removeFirst"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "removeAll"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
       });
 
     });
