@@ -3884,6 +3884,7 @@ describe('Lexer: Third Milestone', function() {
                             var arrTwo = [6,7,8,9,10]
                             arr.insertContentsOf(arrTwo, at: 5)
                             var one = arr.removeFirst()
+                            arr.popLast()
                             arr.removeAll()`;
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
@@ -3968,6 +3969,13 @@ describe('Lexer: Third Milestone', function() {
           { type: "IDENTIFIER",                 value: "arr" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "NATIVE_METHOD",              value: "removeFirst"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
+          
+          { type: "IDENTIFIER",                 value: "arr" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "popLast"},
           { type: "INVOCATION_START",           value: "(" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
