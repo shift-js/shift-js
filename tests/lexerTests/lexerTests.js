@@ -1,6 +1,6 @@
-var lexicalTypes    = require('./../transpiler/lexer/lexicalTypes');
-var lexerFunctions  = require('./../transpiler/lexer/lexerFunctions');
-var lexer           = require('./../transpiler/lexer/lexer');
+var lexicalTypes    = require('../../transpiler/lexer/lexicalTypes');
+var lexerFunctions  = require('../../transpiler/lexer/lexerFunctions');
+var lexer           = require('../../transpiler/lexer/lexer');
 var expect          = require('chai').expect;
 
 
@@ -35,7 +35,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle variable names with underscores', function () {
         input = String.raw`var my_var = 5`;
         output = [
@@ -47,7 +47,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle lines that end with a semicolon', function () {
         input = String.raw`var myVar = 5;`;
         output = [
@@ -60,7 +60,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle variable declarations with erratic spacing', function () {
         input = String.raw`var myVar                   =                       5          ;`;
         output = [
@@ -109,7 +109,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should variables declared with type annotations', function () {
         input = String.raw`var name: String = "Joe"; var age: Int = 45;`;
 
@@ -150,7 +150,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle multiple related variables of the same type on a single line, separated by commas', function () {
         input = String.raw`var firstBase, secondBase, thirdBase: String`;
 
@@ -214,7 +214,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle initializer syntax for arrays', function () {
         input = String.raw`var empty = [String]();`;
         output = [
@@ -224,14 +224,14 @@ describe('Lexer', function() {
           { type: "ARRAY_START",                value: "["},
           { type: "TYPE_STRING",                value: "String"},
           { type: "ARRAY_END",                  value: "]"},
-          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "INVOCATION_START",           value: "(" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "PUNCTUATION",                value: ";"},
           { type: "TERMINATOR",                 value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle initializer syntax for dictionaries', function () {
         input = String.raw`var empty = [String:UInt16]();`;
         output = [
@@ -243,7 +243,7 @@ describe('Lexer', function() {
           { type: "PUNCTUATION",                value: ":"},
           { type: "TYPE_NUMBER",                value: "UInt16"},
           { type: "DICTIONARY_END",             value: "]"},
-          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "INVOCATION_START",           value: "(" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "PUNCTUATION",                value: ";"},
           { type: "TERMINATOR",                 value: "EOF" }
@@ -287,7 +287,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle appending items to an array with the addition assignment operator', function () {
         input = String.raw`var arr = [Int](); arr += [1,2,3];`;
         output = [
@@ -297,7 +297,7 @@ describe('Lexer', function() {
           { type: "ARRAY_START",                value: "["},
           { type: "TYPE_NUMBER",                value: "Int"},
           { type: "ARRAY_END",                  value: "]"},
-          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "INVOCATION_START",           value: "(" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "PUNCTUATION",                value: ";" },
           { type: "IDENTIFIER",                 value: "arr" },
@@ -355,7 +355,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle tuples with element names', function () {
         input = String.raw`let http200Status = (statusCode: 200, description: "OK");`;
         output = [
@@ -389,7 +389,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle tuples with mixed index numbers and element names, and value lookups using both', function () {
         input = String.raw`var tup = ("one", two: 2); var one = tup.0; var two = tup.1; var twoRedux = tup.two;`;
         output = [
@@ -404,25 +404,25 @@ describe('Lexer', function() {
           { type: "NUMBER",                         value: "2"},
           { type: "TUPLE_END",                      value: ")"},
           { type: "PUNCTUATION",                    value: ";" },
- 
+
           { type: "DECLARATION_KEYWORD",            value: "var" },
-          { type: "IDENTIFIER",                     value: "one" },    
+          { type: "IDENTIFIER",                     value: "one" },
           { type: "OPERATOR",                       value: "=" },
           { type: "IDENTIFIER",                     value: "tup" },
           { type: "DOT_SYNTAX",                     value: "." },
           { type: "NUMBER",                         value: "0"},
           { type: "PUNCTUATION",                    value: ";" },
-           
+
           { type: "DECLARATION_KEYWORD",            value: "var" },
-          { type: "IDENTIFIER",                     value: "two" },    
+          { type: "IDENTIFIER",                     value: "two" },
           { type: "OPERATOR",                       value: "=" },
           { type: "IDENTIFIER",                     value: "tup" },
           { type: "DOT_SYNTAX",                     value: "." },
           { type: "NUMBER",                         value: "1"},
           { type: "PUNCTUATION",                    value: ";" },
-           
+
           { type: "DECLARATION_KEYWORD",            value: "var" },
-          { type: "IDENTIFIER",                     value: "twoRedux" },    
+          { type: "IDENTIFIER",                     value: "twoRedux" },
           { type: "OPERATOR",                       value: "=" },
           { type: "IDENTIFIER",                     value: "tup" },
           { type: "DOT_SYNTAX",                     value: "." },
@@ -456,7 +456,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-  
+
       it('should handle subscript lookups on arrays', function () {
         input = String.raw`var d = [1, 2]; var one = d[0];`;
         output = [
@@ -476,12 +476,12 @@ describe('Lexer', function() {
           { type: "SUBSTRING_LOOKUP_START",     value: "[" },
           { type: "NUMBER",                     value: "0" },
           { type: "SUBSTRING_LOOKUP_END",       value: "]" },
-          { type: "PUNCTUATION",                value: ";" },    
+          { type: "PUNCTUATION",                value: ";" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-  
+
       it('should handle subscript lookups on dictionaries', function () {
         input = String.raw`var d = ["one": 1, "two": 2]; var one = d["one"];`;
 
@@ -506,7 +506,7 @@ describe('Lexer', function() {
           { type: "SUBSTRING_LOOKUP_START",     value: "[" },
           { type: "STRING",                     value: "one" },
           { type: "SUBSTRING_LOOKUP_END",       value: "]" },
-          { type: "PUNCTUATION",                value: ";" },    
+          { type: "PUNCTUATION",                value: ";" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -593,7 +593,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle complex comparisons', function () {
         input = String.raw`var l = 6 != 7 || 6 == 7 || 6 > 7 || 6 < 7 || 6 >= 7 || 6 <= 7;`;
         output = [
@@ -810,17 +810,17 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "6" },
           { type: "OPERATOR",             value: "=" },
           { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "7" },  
+          { type: "NUMBER",               value: "7" },
           { type: "OPERATOR",             value: "?" },
-          { type: "BOOLEAN",              value: "true" }, 
-          { type: "PUNCTUATION",          value: ":" }, 
-          { type: "BOOLEAN",              value: "false" },   
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "BOOLEAN",              value: "true" },
+          { type: "PUNCTUATION",          value: ":" },
+          { type: "BOOLEAN",              value: "false" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle ternary operators that include identifiers', function () {
         input = String.raw`let h = false; let i = h ? 1 : 2;`;
         output = [
@@ -834,15 +834,15 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "h" },
           { type: "OPERATOR",             value: "?" },
-          { type: "NUMBER",               value: "1" },  
+          { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ":" },
-          { type: "NUMBER",               value: "2" },  
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "NUMBER",               value: "2" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
     });
 
     describe('String concatenation and interpolation', function () {
@@ -924,7 +924,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle interpolation containing operations on identifiers', function () {
         input = String.raw`let a = 3; let b = 5; let sum = "the sum of a and b is \(a + b).";`;
         output = [
@@ -1070,7 +1070,7 @@ describe('Lexer', function() {
           { type: "ARRAY_END",                  value: "]" },
           { type: "PUNCTUATION",                value: ";" },
           { type: "TERMINATOR",                 value: "EOF" }
-        ];      
+        ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
@@ -1145,13 +1145,13 @@ describe('Lexer', function() {
          { type: "OPERATOR",                      value: "=" },
          { type: "NUMBER",                        value: "1" },
          { type: "TERMINATOR",                    value: "\\n"},
-         
+
          { type: "DECLARATION_KEYWORD",           value: "var" },
          { type: "IDENTIFIER",                    value: "secondNum" },
          { type: "OPERATOR",                      value: "=" },
          { type: "NUMBER",                        value: "2" },
          { type: "TERMINATOR",                    value: "\\n"},
-         
+
          { type: "DECLARATION_KEYWORD",           value: "var" },
          { type: "IDENTIFIER",                    value: "firstDict" },
          { type: "OPERATOR",                      value: "=" },
@@ -1173,7 +1173,7 @@ describe('Lexer', function() {
          { type: "ARRAY_END",                     value: "]" },
          { type: "DICTIONARY_END",                value: "]" },
          { type: "TERMINATOR",                    value: "\\n"},
-         
+
          { type: "DECLARATION_KEYWORD",           value: "var" },
          { type: "IDENTIFIER",                    value: "secondDict" },
          { type: "OPERATOR",                      value: "=" },
@@ -1256,7 +1256,7 @@ describe('Lexer', function() {
   });
 
   describe('Second milestone', function() {
-    
+
     describe('Single-Line If statements', function() {
 
       it('should handle single-line if statements', function() {
@@ -1275,8 +1275,8 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
           { type: "IDENTIFIER",           value: "a" },
-          { type: "PUNCTUATION",          value: "}" }, 
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -1295,14 +1295,14 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "5" },
           { type: "OPERATOR",             value: "<" },
           { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "6" },  
+          { type: "NUMBER",               value: "6" },
           { type: "PUNCTUATION",          value: ")" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "b" },
           { type: "OPERATOR",             value: "+" },
           { type: "OPERATOR",             value: "+" },
-          { type: "PUNCTUATION",          value: "}" }, 
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -1321,15 +1321,15 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "c" },
           { type: "OPERATOR",             value: "=" },
           { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "1" },  
+          { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ")" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "c" },
           { type: "OPERATOR",             value: "*" },
           { type: "OPERATOR",             value: "=" },
           { type: "NUMBER",               value: "5" },
-          { type: "PUNCTUATION",          value: "}" }, 
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -1347,13 +1347,13 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "d" },
           { type: "OPERATOR",             value: "!" },
           { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "2" },  
+          { type: "NUMBER",               value: "2" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "d" },
           { type: "OPERATOR",             value: "+" },
           { type: "OPERATOR",             value: "+" },
-          { type: "PUNCTUATION",          value: "}" }, 
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -1371,17 +1371,17 @@ describe('Lexer', function() {
           { type: "PUNCTUATION",          value: "(" },
           { type: "IDENTIFIER",           value: "e" },
           { type: "OPERATOR",             value: "+" },
-          { type: "NUMBER",               value: "1" },  
+          { type: "NUMBER",               value: "1" },
           { type: "PUNCTUATION",          value: ")" },
           { type: "OPERATOR",             value: "=" },
           { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "2" },  
+          { type: "NUMBER",               value: "2" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "e" },
           { type: "OPERATOR",             value: "=" },
           { type: "NUMBER",               value: "5" },
-          { type: "PUNCTUATION",          value: "}" }, 
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "PUNCTUATION",          value: "}" },
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -1401,20 +1401,20 @@ describe('Lexer', function() {
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "f" },
           { type: "OPERATOR",             value: "=" },
-          { type: "BOOLEAN",              value: "true" },  
+          { type: "BOOLEAN",              value: "true" },
           { type: "PUNCTUATION",          value: "}" },
           { type: "STATEMENT_KEYWORD",    value: "else" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "f" },
           { type: "OPERATOR",             value: "=" },
-          { type: "BOOLEAN",              value: "false" },  
+          { type: "BOOLEAN",              value: "false" },
           { type: "PUNCTUATION",          value: "}" },
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-   
+
       it('should handle single-line if/else-if/else statements with parentheticals', function() {
         input = String.raw`var a = 1; if (1 > 2) {++a} else if (1 < 2) {--a} else {a = 42}`;
         output = [
@@ -1508,17 +1508,17 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "10" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "STATEMENT_KEYWORD",    value: "while" },
-          { type: "PUNCTUATION",          value: "(" }, 
+          { type: "PUNCTUATION",          value: "(" },
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: ">" },
           { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "0" },  
-          { type: "PUNCTUATION",          value: ")" }, 
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ")" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -1536,12 +1536,12 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: ">" },
           { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "0" },    
+          { type: "NUMBER",               value: "0" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -1560,14 +1560,14 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "STATEMENT_KEYWORD",    value: "while" },
-          { type: "PUNCTUATION",          value: "(" }, 
+          { type: "PUNCTUATION",          value: "(" },
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: ">" },
           { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "0" },    
-          { type: "PUNCTUATION",          value: ")" }, 
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ")" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -1586,12 +1586,12 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "STATEMENT_KEYWORD",    value: "while" },
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: ">" },
           { type: "OPERATOR",             value: "=" },
-          { type: "NUMBER",               value: "0" },    
+          { type: "NUMBER",               value: "0" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -1610,7 +1610,7 @@ describe('Lexer', function() {
           { type: "NUMBER",               value: "0" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "STATEMENT_KEYWORD",    value: "for" },
-          { type: "PUNCTUATION",          value: "(" }, 
+          { type: "PUNCTUATION",          value: "(" },
           { type: "DECLARATION_KEYWORD",  value: "var" },
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: "=" },
@@ -1623,7 +1623,7 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
-          { type: "PUNCTUATION",          value: ")" }, 
+          { type: "PUNCTUATION",          value: ")" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "+" },
@@ -1697,7 +1697,7 @@ describe('Lexer', function() {
           { type: "STATEMENT_KEYWORD",    value: "for" },
           { type: "IDENTIFIER",           value: "n" },
           { type: "STATEMENT_KEYWORD",    value: "in" },
-          { type: "IDENTIFIER",           value: "numbers" }, 
+          { type: "IDENTIFIER",           value: "numbers" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "c" },
           { type: "OPERATOR",             value: "+" },
@@ -1739,7 +1739,7 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "n" },
           { type: "PUNCTUATION",          value: ")" },
           { type: "STATEMENT_KEYWORD",    value: "in" },
-          { type: "IDENTIFIER",           value: "numbers" }, 
+          { type: "IDENTIFIER",           value: "numbers" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "IDENTIFIER",           value: "c" },
           { type: "OPERATOR",             value: "+" },
@@ -1774,7 +1774,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle complex multi-line variable assignment without semi-colons', function() {
         input = String.raw`var e = ["Eggs", "Milk", "Bacon"]
                  var f = ["one": 1, "two": 2, "three": 3]
@@ -1828,7 +1828,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       })
-      
+
       it('should handle simple multi-line variable assignment with type annotations', function() {
         input = String.raw`var name: String = "Joe"
                 let num: Int = 5;
@@ -1878,7 +1878,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle successive single-line comments', function() {
         input = String.raw`// function body goes here
         // firstParameterName and secondParameterName refer to
@@ -1897,8 +1897,8 @@ describe('Lexer', function() {
           { type: "TERMINATOR", value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
-      });   
-      
+      });
+
       it('should handle multi-line comments', function() {
         input = String.raw`/*
         Comment 1
@@ -1917,8 +1917,8 @@ describe('Lexer', function() {
           { type: "TERMINATOR", value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
-      }); 
-      
+      });
+
     });
 
     describe('Multi-line if statements', function() {
@@ -1951,12 +1951,12 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "+" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "\\n"},
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "TERMINATOR",           value: "EOF"},
         ]
         expect(lexer(input)).to.deep.equal(output);
       });
-    
+
 
       it('should handle simple multi-line if statements with complex conditions', function() {
         input = String.raw`var diceRoll = 6;
@@ -1972,7 +1972,7 @@ describe('Lexer', function() {
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENT_KEYWORD",    value: "if" },
           { type: "OPERATOR",             value: "+" },
-          { type: "OPERATOR",             value: "+" },  
+          { type: "OPERATOR",             value: "+" },
           { type: "IDENTIFIER",           value: "diceRoll" },
           { type: "OPERATOR",             value: "=" },
           { type: "OPERATOR",             value: "=" },
@@ -1983,7 +1983,7 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "=" },
           { type: "NUMBER",               value: "1" },
           { type: "TERMINATOR",           value: "\\n"},
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "TERMINATOR",           value: "EOF"},
         ]
         expect(lexer(input)).to.deep.equal(output);
@@ -2043,7 +2043,7 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "z" },
           { type: "OPERATOR",             value: "=" },
           { type: "BOOLEAN",              value: "true" },
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "\\n"},
 
           { type: "PUNCTUATION",          value: "}" },
@@ -2058,7 +2058,7 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "STRING",               value: "<3 JS" },
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "\\n"},
 
           { type: "PUNCTUATION",          value: "}" },
@@ -2069,7 +2069,7 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "STRING",               value: "never get here" },
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "\\n"},
 
           { type: "PUNCTUATION",          value: "}" },
@@ -2083,14 +2083,14 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "STRING",               value: "x is false" },
-          { type: "PUNCTUATION",          value: ";" }, 
+          { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "\\n"},
 
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "TERMINATOR",           value: "EOF"},
         ]
         expect(lexer(input)).to.deep.equal(output);
-      }); 
+      });
 
     });
 
@@ -2131,7 +2131,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
       it('should handle multi-line nested for loops', function() {
         input = String.raw`var arrays = [[1,2,3], [4,5,6], [7,8,9]]
                  var total = 0
@@ -2225,7 +2225,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
     });
     describe('Multi-line for-in loops', function() {
       it('should handle simple multi-line for-in loops', function() {
@@ -2258,7 +2258,7 @@ describe('Lexer', function() {
           { type: "STATEMENT_KEYWORD",    value: "for" },
           { type: "IDENTIFIER",           value: "n" },
           { type: "STATEMENT_KEYWORD",    value: "in" },
-          { type: "IDENTIFIER",           value: "numbers" }, 
+          { type: "IDENTIFIER",           value: "numbers" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "IDENTIFIER",           value: "c" },
@@ -2385,13 +2385,13 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                  value: "numbers" },
           { type: 'PUNCTUATION',                 value: ')' },
           { type: "STATEMENT_KEYWORD",           value: "in" },
-          { type: "IDENTIFIER",                  value: "interestingNumbers" }, 
+          { type: "IDENTIFIER",                  value: "interestingNumbers" },
           { type: "PUNCTUATION",                 value: "{" },
           { type: "TERMINATOR",                  value: "\\n"},
           { type: "STATEMENT_KEYWORD",           value: "for" },
           { type: "IDENTIFIER",                  value: "number" },
           { type: "STATEMENT_KEYWORD",           value: "in" },
-          { type: "IDENTIFIER",                  value: "numbers" }, 
+          { type: "IDENTIFIER",                  value: "numbers" },
           { type: "PUNCTUATION",                 value: "{" },
           { type: "TERMINATOR",                  value: "\\n"},
           { type: "STATEMENT_KEYWORD",           value: "if" },
@@ -2415,11 +2415,11 @@ describe('Lexer', function() {
       });
 
     });
-    
+
     describe('Multi-Line While/Repeat-While loops', function() {
-      
+
       it('should handle multi-line while loops without a parenthetical', function() {
-        input = String.raw`var i = 10; 
+        input = String.raw`var i = 10;
                 while i >= 0 {
                   i--
                 }`;
@@ -2441,14 +2441,14 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
           { type: "TERMINATOR",           value: "\\n"},
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
       it('should handle multi-line while loops with a parenthetical', function() {
-        input = String.raw`var i = 10; 
+        input = String.raw`var i = 10;
                 while (i >= 0) {
                   i--
                 }`;
@@ -2472,11 +2472,11 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
           { type: "TERMINATOR",           value: "\\n"},
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
-      });  
+      });
 
       it('should handle multi-line repeat-while loops with a parenthetical', function() {
         input = String.raw`var i = 10;
@@ -2497,13 +2497,13 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
           { type: "TERMINATOR",           value: "\\n"},
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "STATEMENT_KEYWORD",    value: "while" },
-          { type: "PUNCTUATION",          value: "(" }, 
+          { type: "PUNCTUATION",          value: "(" },
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: ">" },
-          { type: "NUMBER",               value: "0" },    
-          { type: "PUNCTUATION",          value: ")" }, 
+          { type: "NUMBER",               value: "0" },
+          { type: "PUNCTUATION",          value: ")" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
@@ -2528,20 +2528,20 @@ describe('Lexer', function() {
           { type: "OPERATOR",             value: "-" },
           { type: "OPERATOR",             value: "-" },
           { type: "TERMINATOR",           value: "\\n"},
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "STATEMENT_KEYWORD",    value: "while" },
           { type: "IDENTIFIER",           value: "i" },
           { type: "OPERATOR",             value: ">" },
-          { type: "NUMBER",               value: "0" },    
+          { type: "NUMBER",               value: "0" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-      
+
     });
-    
+
     describe('Switch Statements', function() {
-      
+
       it('should handle multi-line switch statements', function() {
         input = String.raw`var x = 2
                 var y = "";
@@ -2550,9 +2550,9 @@ describe('Lexer', function() {
                     y += "positive";
                   case -1,-2,-3:
                     y += "negative";
-                  case 0: 
+                  case 0:
                     y += "zero";
-                  default: 
+                  default:
                     y += "dunno";
                 }`;
         output = [
@@ -2568,14 +2568,14 @@ describe('Lexer', function() {
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENT_KEYWORD",    value: "switch" },
-          { type: "IDENTIFIER",           value: "x" }, 
+          { type: "IDENTIFIER",           value: "x" },
           { type: "PUNCTUATION",          value: "{" },
           { type: "TERMINATOR",           value: "\\n"},
           { type: "STATEMENT_KEYWORD",    value: "case" },
           { type: "NUMBER",               value: "1" },
-          { type: "PUNCTUATION",          value: "," },  
+          { type: "PUNCTUATION",          value: "," },
           { type: "NUMBER",               value: "2" },
-          { type: "PUNCTUATION",          value: "," }, 
+          { type: "PUNCTUATION",          value: "," },
           { type: "NUMBER",               value: "3" },
           { type: "PUNCTUATION",          value: ":" },
           { type: "TERMINATOR",           value: "\\n"},
@@ -2588,10 +2588,10 @@ describe('Lexer', function() {
           { type: "STATEMENT_KEYWORD",    value: "case" },
           { type: "OPERATOR",             value: "-" },
           { type: "NUMBER",               value: "1" },
-          { type: "PUNCTUATION",          value: "," }, 
-          { type: "OPERATOR",             value: "-" }, 
+          { type: "PUNCTUATION",          value: "," },
+          { type: "OPERATOR",             value: "-" },
           { type: "NUMBER",               value: "2" },
-          { type: "PUNCTUATION",          value: "," }, 
+          { type: "PUNCTUATION",          value: "," },
           { type: "OPERATOR",             value: "-" },
           { type: "NUMBER",               value: "3" },
           { type: "PUNCTUATION",          value: ":" },
@@ -2621,13 +2621,13 @@ describe('Lexer', function() {
           { type: "STRING",               value: "dunno" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "\\n"},
-          { type: "PUNCTUATION",          value: "}" }, 
+          { type: "PUNCTUATION",          value: "}" },
           { type: "TERMINATOR",           value: "EOF"},
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
     });
-    
+
     describe('Complex Control Flow', function () {
 
       it('shold handle nested if-else statements within a loop', function () {
@@ -2767,7 +2767,7 @@ describe('Lexer', function() {
           { type: 'TERMINATOR',                  value: '\\n' },
           { type: 'PUNCTUATION',                 value: '}' },
           { type: 'TERMINATOR',                  value: '\\n' },
-          { type: 'TERMINATOR',                  value: 'EOF' } 
+          { type: 'TERMINATOR',                  value: 'EOF' }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -2775,7 +2775,7 @@ describe('Lexer', function() {
       it('should handle complex control flow with erratic spacing and inconsistent use of semicolons and parenthesis', function () {
         input = String.raw`
 
-                    
+
 
                     var gameInProgress = false;
 
@@ -2792,19 +2792,19 @@ describe('Lexer', function() {
                                 score += 6
                             } else if typeOfScore == "PAT" {
                                 if PAT == "TD" {
-                                    
+
                                     score += 2;
                                 } else {
                                     score += 1;
-                                    
-                            
+
+
                                                                        }
                             } else if (typeOfScore == "FG") {
                                 score += 3
                             }
-                        
+
                         else {
-                            
+
                                 score += 2
                     }
                             typeOfScore = ""
@@ -2946,16 +2946,16 @@ describe('Lexer', function() {
           { type: 'PUNCTUATION',                 value: '}' },
           { type: 'TERMINATOR',                  value: '\\n' },
           { type: 'TERMINATOR',                  value: '\\n' },
-          { type: 'TERMINATOR',                  value: 'EOF' } 
+          { type: 'TERMINATOR',                  value: 'EOF' }
 
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
-    }); 
-    
+    });
+
     describe('Third Milestone', function() {
-      
+
       describe('Functions', function() {
 
         it('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
@@ -2969,12 +2969,12 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "someFunction" },
             { type: "PARAMS_START",         value: "(" },
             { type: "IDENTIFIER",           value: "a" },
-            { type: "PUNCTUATION",          value: ":" }, 
-            { type: "TYPE_NUMBER",          value: "Int" }, 
-            { type: "PARAMS_END",           value: ")" }, 
-            { type: "RETURN_ARROW",         value: "->" },  
-            { type: "TYPE_NUMBER",          value: "Int" }, 
-            { type: "STATEMENTS_START",     value: "{" },  
+            { type: "PUNCTUATION",          value: ":" },
+            { type: "TYPE_NUMBER",          value: "Int" },
+            { type: "PARAMS_END",           value: ")" },
+            { type: "RETURN_ARROW",         value: "->" },
+            { type: "TYPE_NUMBER",          value: "Int" },
+            { type: "STATEMENTS_START",     value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "IDENTIFIER",           value: "a" },
             { type: "OPERATOR",             value: "=" },
@@ -2990,15 +2990,15 @@ describe('Lexer', function() {
             { type: "STATEMENTS_END",       value: "}"},
             { type: "TERMINATOR",           value: "\\n"},
             { type: "IDENTIFIER",           value: "someFunction" },
-            { type: "INVOCATION_START",     value: "(" }, 
-            { type: "NUMBER",               value: "5" },   
-            { type: "INVOCATION_END",       value: ")" }, 
-            { type: "PUNCTUATION",          value: ";" },    
+            { type: "INVOCATION_START",     value: "(" },
+            { type: "NUMBER",               value: "5" },
+            { type: "INVOCATION_END",       value: ")" },
+            { type: "PUNCTUATION",          value: ";" },
             { type: "TERMINATOR",           value: "EOF"}
           ]
           expect(lexer(input)).to.deep.equal(output);
         });
-        
+
         it('should handle function declaration and invocation with no spacing', function() {
           input = String.raw`func someFunction(a: Int)->Int{
                                   let a = a + 1;
@@ -3010,12 +3010,12 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "someFunction" },
             { type: "PARAMS_START",         value: "(" },
             { type: "IDENTIFIER",           value: "a" },
-            { type: "PUNCTUATION",          value: ":" }, 
-            { type: "TYPE_NUMBER",          value: "Int" }, 
-            { type: "PARAMS_END",           value: ")" }, 
-            { type: "RETURN_ARROW",         value: "->" },  
-            { type: "TYPE_NUMBER",          value: "Int" }, 
-            { type: "STATEMENTS_START",     value: "{" },  
+            { type: "PUNCTUATION",          value: ":" },
+            { type: "TYPE_NUMBER",          value: "Int" },
+            { type: "PARAMS_END",           value: ")" },
+            { type: "RETURN_ARROW",         value: "->" },
+            { type: "TYPE_NUMBER",          value: "Int" },
+            { type: "STATEMENTS_START",     value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "DECLARATION_KEYWORD",  value: "let"},
             { type: "IDENTIFIER",           value: "a" },
@@ -3023,7 +3023,7 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "a" },
             { type: "OPERATOR",             value: "+" },
             { type: "NUMBER",               value: "1" },
-            { type: "PUNCTUATION",          value: ";" },  
+            { type: "PUNCTUATION",          value: ";" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "STATEMENT_KEYWORD",    value: "return"},
             { type: "IDENTIFIER",           value: "a" },
@@ -3031,15 +3031,15 @@ describe('Lexer', function() {
             { type: "STATEMENTS_END",       value: "}"},
             { type: "TERMINATOR",           value: "\\n"},
             { type: "IDENTIFIER",           value: "someFunction" },
-            { type: "INVOCATION_START",     value: "(" }, 
-            { type: "NUMBER",               value: "5" },   
-            { type: "INVOCATION_END",       value: ")" }, 
-            { type: "PUNCTUATION",          value: ";" },    
+            { type: "INVOCATION_START",     value: "(" },
+            { type: "NUMBER",               value: "5" },
+            { type: "INVOCATION_END",       value: ")" },
+            { type: "PUNCTUATION",          value: ";" },
             { type: "TERMINATOR",           value: "EOF"}
           ]
           expect(lexer(input)).to.deep.equal(output);
         });
-      
+
 
       it('should handle function declaration and invocation with spaces between each part of the declaration', function() {
           input = String.raw`func someFunction (a: Int) -> Int {
@@ -3052,12 +3052,12 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "someFunction" },
             { type: "PARAMS_START",         value: "(" },
             { type: "IDENTIFIER",           value: "a" },
-            { type: "PUNCTUATION",          value: ":" }, 
-            { type: "TYPE_NUMBER",          value: "Int" }, 
-            { type: "PARAMS_END",           value: ")" }, 
-            { type: "RETURN_ARROW",         value: "->" },  
-            { type: "TYPE_NUMBER",          value: "Int" }, 
-            { type: "STATEMENTS_START",     value: "{" },  
+            { type: "PUNCTUATION",          value: ":" },
+            { type: "TYPE_NUMBER",          value: "Int" },
+            { type: "PARAMS_END",           value: ")" },
+            { type: "RETURN_ARROW",         value: "->" },
+            { type: "TYPE_NUMBER",          value: "Int" },
+            { type: "STATEMENTS_START",     value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "DECLARATION_KEYWORD",  value: "let"},
             { type: "IDENTIFIER",           value: "a" },
@@ -3065,7 +3065,7 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "a" },
             { type: "OPERATOR",             value: "+" },
             { type: "NUMBER",               value: "1" },
-            { type: "PUNCTUATION",          value: ";" },  
+            { type: "PUNCTUATION",          value: ";" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "STATEMENT_KEYWORD",    value: "return"},
             { type: "IDENTIFIER",           value: "a" },
@@ -3073,15 +3073,15 @@ describe('Lexer', function() {
             { type: "STATEMENTS_END",       value: "}"},
             { type: "TERMINATOR",           value: "\\n"},
             { type: "IDENTIFIER",           value: "someFunction" },
-            { type: "INVOCATION_START",     value: "(" }, 
-            { type: "NUMBER",               value: "5" },   
-            { type: "INVOCATION_END",       value: ")" }, 
-            { type: "PUNCTUATION",          value: ";" },    
+            { type: "INVOCATION_START",     value: "(" },
+            { type: "NUMBER",               value: "5" },
+            { type: "INVOCATION_END",       value: ")" },
+            { type: "PUNCTUATION",          value: ";" },
             { type: "TERMINATOR",           value: "EOF"}
           ]
           expect(lexer(input)).to.deep.equal(output);
         });
-      
+
         it('should handle function declaration and invocation with no space after the function name', function() {
           input = String.raw`func someFunction(a: Int) -> Int {
                                   let a = a + 1;
@@ -3093,12 +3093,12 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "someFunction" },
             { type: "PARAMS_START",         value: "(" },
             { type: "IDENTIFIER",           value: "a" },
-            { type: "PUNCTUATION",          value: ":" }, 
-            { type: "TYPE_NUMBER",          value: "Int" }, 
-            { type: "PARAMS_END",           value: ")" }, 
-            { type: "RETURN_ARROW",         value: "->" },  
-            { type: "TYPE_NUMBER",          value: "Int" }, 
-            { type: "STATEMENTS_START",     value: "{" },  
+            { type: "PUNCTUATION",          value: ":" },
+            { type: "TYPE_NUMBER",          value: "Int" },
+            { type: "PARAMS_END",           value: ")" },
+            { type: "RETURN_ARROW",         value: "->" },
+            { type: "TYPE_NUMBER",          value: "Int" },
+            { type: "STATEMENTS_START",     value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "DECLARATION_KEYWORD",  value: "let"},
             { type: "IDENTIFIER",           value: "a" },
@@ -3106,7 +3106,7 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "a" },
             { type: "OPERATOR",             value: "+" },
             { type: "NUMBER",               value: "1" },
-            { type: "PUNCTUATION",          value: ";" },  
+            { type: "PUNCTUATION",          value: ";" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "STATEMENT_KEYWORD",    value: "return"},
             { type: "IDENTIFIER",           value: "a" },
@@ -3114,10 +3114,10 @@ describe('Lexer', function() {
             { type: "STATEMENTS_END",       value: "}"},
             { type: "TERMINATOR",           value: "\\n"},
             { type: "IDENTIFIER",           value: "someFunction" },
-            { type: "INVOCATION_START",     value: "(" }, 
-            { type: "NUMBER",               value: "5" },   
-            { type: "INVOCATION_END",       value: ")" }, 
-            { type: "PUNCTUATION",          value: ";" },    
+            { type: "INVOCATION_START",     value: "(" },
+            { type: "NUMBER",               value: "5" },
+            { type: "INVOCATION_END",       value: ")" },
+            { type: "PUNCTUATION",          value: ";" },
             { type: "TERMINATOR",           value: "EOF"}
           ]
           expect(lexer(input)).to.deep.equal(output);
@@ -3134,12 +3134,12 @@ describe('Lexer', function() {
            { type: "IDENTIFIER",           value: "someFunction" },
            { type: "PARAMS_START",         value: "(" },
            { type: "IDENTIFIER",           value: "a" },
-           { type: "PUNCTUATION",          value: ":" }, 
-           { type: "TYPE_NUMBER",          value: "Int" }, 
-           { type: "PARAMS_END",           value: ")" }, 
-           { type: "RETURN_ARROW",         value: "->" },  
-           { type: "TYPE_NUMBER",          value: "Int" }, 
-           { type: "STATEMENTS_START",     value: "{" },  
+           { type: "PUNCTUATION",          value: ":" },
+           { type: "TYPE_NUMBER",          value: "Int" },
+           { type: "PARAMS_END",           value: ")" },
+           { type: "RETURN_ARROW",         value: "->" },
+           { type: "TYPE_NUMBER",          value: "Int" },
+           { type: "STATEMENTS_START",     value: "{" },
            { type: "TERMINATOR",           value: "\\n"},
            { type: "DECLARATION_KEYWORD",  value: "let"},
            { type: "IDENTIFIER",           value: "a" },
@@ -3147,7 +3147,7 @@ describe('Lexer', function() {
            { type: "IDENTIFIER",           value: "a" },
            { type: "OPERATOR",             value: "+" },
            { type: "NUMBER",               value: "1" },
-           { type: "PUNCTUATION",          value: ";" },  
+           { type: "PUNCTUATION",          value: ";" },
            { type: "TERMINATOR",           value: "\\n"},
            { type: "STATEMENT_KEYWORD",    value: "return"},
            { type: "IDENTIFIER",           value: "a" },
@@ -3155,10 +3155,10 @@ describe('Lexer', function() {
            { type: "STATEMENTS_END",       value: "}"},
            { type: "TERMINATOR",           value: "\\n"},
            { type: "IDENTIFIER",           value: "someFunction" },
-           { type: "INVOCATION_START",     value: "(" }, 
-           { type: "NUMBER",               value: "5" },   
-           { type: "INVOCATION_END",       value: ")" }, 
-           { type: "PUNCTUATION",          value: ";" },    
+           { type: "INVOCATION_START",     value: "(" },
+           { type: "NUMBER",               value: "5" },
+           { type: "INVOCATION_END",       value: ")" },
+           { type: "PUNCTUATION",          value: ";" },
            { type: "TERMINATOR",           value: "EOF"}
           ]
           expect(lexer(input)).to.deep.equal(output);
@@ -3175,12 +3175,12 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "someFunction" },
             { type: "PARAMS_START",         value: "(" },
             { type: "IDENTIFIER",           value: "a" },
-            { type: "PUNCTUATION",          value: ":" }, 
-            { type: "TYPE_NUMBER",          value: "Int" }, 
-            { type: "PARAMS_END",           value: ")" }, 
-            { type: "RETURN_ARROW",         value: "->" },  
-            { type: "TYPE_NUMBER",          value: "Int" }, 
-            { type: "STATEMENTS_START",     value: "{" },  
+            { type: "PUNCTUATION",          value: ":" },
+            { type: "TYPE_NUMBER",          value: "Int" },
+            { type: "PARAMS_END",           value: ")" },
+            { type: "RETURN_ARROW",         value: "->" },
+            { type: "TYPE_NUMBER",          value: "Int" },
+            { type: "STATEMENTS_START",     value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "DECLARATION_KEYWORD",  value: "let"},
             { type: "IDENTIFIER",           value: "a" },
@@ -3188,7 +3188,7 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "a" },
             { type: "OPERATOR",             value: "+" },
             { type: "NUMBER",               value: "1" },
-            { type: "PUNCTUATION",          value: ";" },  
+            { type: "PUNCTUATION",          value: ";" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "STATEMENT_KEYWORD",    value: "return"},
             { type: "IDENTIFIER",           value: "a" },
@@ -3196,10 +3196,10 @@ describe('Lexer', function() {
             { type: "STATEMENTS_END",       value: "}"},
             { type: "TERMINATOR",           value: "\\n"},
             { type: "IDENTIFIER",           value: "someFunction" },
-            { type: "INVOCATION_START",     value: "(" }, 
-            { type: "NUMBER",               value: "5" },   
-            { type: "INVOCATION_END",       value: ")" }, 
-            { type: "PUNCTUATION",          value: ";" },    
+            { type: "INVOCATION_START",     value: "(" },
+            { type: "NUMBER",               value: "5" },
+            { type: "INVOCATION_END",       value: ")" },
+            { type: "PUNCTUATION",          value: ";" },
             { type: "TERMINATOR",           value: "EOF"}
           ]
           expect(lexer(input)).to.deep.equal(output);
@@ -3213,15 +3213,15 @@ describe('Lexer', function() {
             { type: "DECLARATION_KEYWORD",  value: "func"},
             { type: "IDENTIFIER",           value: "sayHelloWorld" },
             { type: "PARAMS_START",         value: "(" },
-            { type: "PARAMS_END",           value: ")" }, 
-            { type: "RETURN_ARROW",         value: "->" }, 
-            { type: "TYPE_STRING",          value: "String" }, 
-            { type: "STATEMENTS_START",     value: "{" },  
+            { type: "PARAMS_END",           value: ")" },
+            { type: "RETURN_ARROW",         value: "->" },
+            { type: "TYPE_STRING",          value: "String" },
+            { type: "STATEMENTS_START",     value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
-            { type: "STATEMENT_KEYWORD",    value: "return"}, 
-            { type: "STRING",               value: "hello, world" }, 
+            { type: "STATEMENT_KEYWORD",    value: "return"},
+            { type: "STRING",               value: "hello, world" },
             { type: "TERMINATOR",           value: "\\n"},
-            { type: "STATEMENTS_END",       value: "}"},  
+            { type: "STATEMENTS_END",       value: "}"},
             { type: "TERMINATOR",           value: "EOF"}
           ]
           expect(lexer(input)).to.deep.equal(output);
@@ -3237,26 +3237,26 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "sayHello" },
             { type: "PARAMS_START",         value: "(" },
             { type: "IDENTIFIER",           value: "personName" },
-            { type: "PUNCTUATION",          value: ":" }, 
-            { type: "TYPE_STRING",          value: "String" }, 
-            { type: "PARAMS_END",           value: ")" }, 
-            { type: "RETURN_ARROW",         value: "->" }, 
-            { type: "TYPE_STRING",          value: "String" }, 
-            { type: "STATEMENTS_START",     value: "{" },  
+            { type: "PUNCTUATION",          value: ":" },
+            { type: "TYPE_STRING",          value: "String" },
+            { type: "PARAMS_END",           value: ")" },
+            { type: "RETURN_ARROW",         value: "->" },
+            { type: "TYPE_STRING",          value: "String" },
+            { type: "STATEMENTS_START",     value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "DECLARATION_KEYWORD",  value: "let" },
             { type: "IDENTIFIER",           value: "greeting" },
             { type: "OPERATOR",             value: "=" },
-            { type: "STRING",               value: "Hello, " }, 
-            { type: "OPERATOR",             value: "+" },  
+            { type: "STRING",               value: "Hello, " },
+            { type: "OPERATOR",             value: "+" },
             { type: "IDENTIFIER",           value: "personName" },
             { type: "OPERATOR",             value: "+" },
-            { type: "STRING",               value: "!" }, 
+            { type: "STRING",               value: "!" },
             { type: "TERMINATOR",           value: "\\n"},
-            { type: "STATEMENT_KEYWORD",    value: "return"}, 
-            { type: "IDENTIFIER",           value: "greeting" }, 
+            { type: "STATEMENT_KEYWORD",    value: "return"},
+            { type: "IDENTIFIER",           value: "greeting" },
             { type: "TERMINATOR",           value: "\\n"},
-            { type: "STATEMENTS_END",       value: "}"},  
+            { type: "STATEMENTS_END",       value: "}"},
             { type: "TERMINATOR",           value: "EOF"}
           ]
           expect(lexer(input)).to.deep.equal(output);
@@ -3277,12 +3277,12 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "sayHello" },
             { type: "PARAMS_START",         value: "(" },
             { type: "IDENTIFIER",           value: "alreadyGreeted" },
-            { type: "PUNCTUATION",          value: ":" }, 
-            { type: "TYPE_BOOLEAN",         value: "Bool" }, 
-            { type: "PARAMS_END",           value: ")" }, 
-            { type: "RETURN_ARROW",         value: "->" }, 
-            { type: "TYPE_STRING",          value: "String" }, 
-            { type: "STATEMENTS_START",     value: "{" },  
+            { type: "PUNCTUATION",          value: ":" },
+            { type: "TYPE_BOOLEAN",         value: "Bool" },
+            { type: "PARAMS_END",           value: ")" },
+            { type: "RETURN_ARROW",         value: "->" },
+            { type: "TYPE_STRING",          value: "String" },
+            { type: "STATEMENTS_START",     value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
 
             { type: "STATEMENT_KEYWORD",    value: "if" },
@@ -3290,30 +3290,30 @@ describe('Lexer', function() {
             { type: "PUNCTUATION",          value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
 
-            { type: "STATEMENT_KEYWORD",    value: "return"}, 
-            { type: "STRING",               value: "blah" }, 
+            { type: "STATEMENT_KEYWORD",    value: "return"},
+            { type: "STRING",               value: "blah" },
             { type: "TERMINATOR",           value: "\\n"},
 
             { type: "PUNCTUATION",          value: "}" },
             { type: "STATEMENT_KEYWORD",    value: "else" },
             { type: "PUNCTUATION",          value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
-            
-            { type: "STATEMENT_KEYWORD",    value: "return"}, 
-            { type: "STRING",               value: "hello" }, 
+
+            { type: "STATEMENT_KEYWORD",    value: "return"},
+            { type: "STRING",               value: "hello" },
             { type: "TERMINATOR",           value: "\\n"},
-            
+
             { type: "PUNCTUATION",          value: "}" },
             { type: "TERMINATOR",           value: "\\n"},
 
-            { type: "STATEMENTS_END",       value: "}" },  
+            { type: "STATEMENTS_END",       value: "}" },
             { type: "TERMINATOR",           value: "\\n"},
             { type: "TERMINATOR",           value: "\\n"},
-            
+
             { type: "IDENTIFIER",           value: "sayHello" },
             { type: "INVOCATION_START",     value: "(" },
-            { type: "BOOLEAN",              value: "true" },  
-            { type: "INVOCATION_END",       value: ")" }, 
+            { type: "BOOLEAN",              value: "true" },
+            { type: "INVOCATION_END",       value: ")" },
             { type: "TERMINATOR",           value: "EOF"}
           ]
           expect(lexer(input)).to.deep.equal(output);
@@ -3331,28 +3331,28 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "sayHello" },
             { type: "PARAMS_START",         value: "(" },
             { type: "IDENTIFIER",           value: "firstName" },
-            { type: "PUNCTUATION",          value: ":" }, 
-            { type: "TYPE_STRING",          value: "String" }, 
+            { type: "PUNCTUATION",          value: ":" },
+            { type: "TYPE_STRING",          value: "String" },
             { type: "PUNCTUATION",          value: "," },
             { type: "IDENTIFIER",           value: "lastName" },
-            { type: "PUNCTUATION",          value: ":" }, 
-            { type: "TYPE_STRING",          value: "String" }, 
-            { type: "PARAMS_END",           value: ")" }, 
-            { type: "RETURN_ARROW",         value: "->" }, 
-            { type: "TYPE_STRING",          value: "String" }, 
-            { type: "STATEMENTS_START",     value: "{" },  
+            { type: "PUNCTUATION",          value: ":" },
+            { type: "TYPE_STRING",          value: "String" },
+            { type: "PARAMS_END",           value: ")" },
+            { type: "RETURN_ARROW",         value: "->" },
+            { type: "TYPE_STRING",          value: "String" },
+            { type: "STATEMENTS_START",     value: "{" },
             { type: "TERMINATOR",           value: "\\n"},
 
             { type: "DECLARATION_KEYWORD",  value: "func"},
             { type: "IDENTIFIER",           value: "giveString" },
             { type: "PARAMS_START",         value: "(" },
-            { type: "PARAMS_END",           value: ")" }, 
-            { type: "RETURN_ARROW",         value: "->" }, 
-            { type: "TYPE_STRING",          value: "String" }, 
-            { type: "STATEMENTS_START",     value: "{" },  
-            { type: "TERMINATOR",           value: "\\n"},  
+            { type: "PARAMS_END",           value: ")" },
+            { type: "RETURN_ARROW",         value: "->" },
+            { type: "TYPE_STRING",          value: "String" },
+            { type: "STATEMENTS_START",     value: "{" },
+            { type: "TERMINATOR",           value: "\\n"},
 
-            { type: "STATEMENT_KEYWORD",    value: "return"}, 
+            { type: "STATEMENT_KEYWORD",    value: "return"},
             { type: "IDENTIFIER",           value: "firstName" },
             { type: "OPERATOR",             value: "+" },
             { type: "STRING",               value: " " },
@@ -3360,16 +3360,16 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",           value: "lastName" },
             { type: "TERMINATOR",           value: "\\n"},
 
-            { type: "STATEMENTS_END",       value: "}" },  
+            { type: "STATEMENTS_END",       value: "}" },
             { type: "TERMINATOR",           value: "\\n"},
 
-            { type: "STATEMENT_KEYWORD",    value: "return"}, 
+            { type: "STATEMENT_KEYWORD",    value: "return"},
             { type: "IDENTIFIER",           value: "giveString" },
-            { type: "INVOCATION_START",     value: "(" }, 
-            { type: "INVOCATION_END",       value: ")" },   
+            { type: "INVOCATION_START",     value: "(" },
+            { type: "INVOCATION_END",       value: ")" },
             { type: "TERMINATOR",           value: "\\n"},
 
-            { type: "STATEMENTS_END",       value: "}" },  
+            { type: "STATEMENTS_END",       value: "}" },
             { type: "TERMINATOR",           value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -3385,16 +3385,16 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "greet" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "name" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_STRING",                value: "String" }, 
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "day" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_STRING",                value: "String" }, 
-            { type: "PARAMS_END",                 value: ")" }, 
-            { type: "RETURN_ARROW",               value: "->" }, 
-            { type: "TYPE_STRING",                value: "String" }, 
-            { type: "STATEMENTS_START",           value: "{" },  
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String" },
+            { type: "PARAMS_END",                 value: ")" },
+            { type: "RETURN_ARROW",               value: "->" },
+            { type: "TYPE_STRING",                value: "String" },
+            { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "STRING",                     value: "Hello " },
@@ -3410,13 +3410,13 @@ describe('Lexer', function() {
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
             { type: "IDENTIFIER",                 value: "greet" },
-            { type: "INVOCATION_START",           value: "(" }, 
-            { type: "STRING",                     value: "Bob" },   
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "STRING",                     value: "Bob" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "day" },
             { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Tuesday" },   
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "STRING",                     value: "Tuesday" },
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -3433,39 +3433,39 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "addSevenInts" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "first" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "second" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "third" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "fourth" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "fifth" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "sixth" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "seventh" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PARAMS_END",                 value: ")" },
             { type: "RETURN_ARROW",               value: "->" },
-            
+
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "sum" },
             { type: "OPERATOR",                   value: "=" },
@@ -3483,14 +3483,14 @@ describe('Lexer', function() {
             { type: "OPERATOR",                   value: "+" },
             { type: "IDENTIFIER",                 value: "seventh" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "IDENTIFIER",                 value: "sum" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "addSevenInts" },
             { type: "INVOCATION_START",           value: "(" },
             { type: "NUMBER",                     value: "143242134" },
@@ -3536,37 +3536,37 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "addOne" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "input" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_NUMBER",                value: "Int" }, 
-            { type: "PARAMS_END",                 value: ")" }, 
-            { type: "RETURN_ARROW",               value: "->" },  
-            { type: "TYPE_NUMBER",                value: "Int" }, 
-            { type: "STATEMENTS_START",           value: "{" },  
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "PARAMS_END",                 value: ")" },
+            { type: "RETURN_ARROW",               value: "->" },
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "IDENTIFIER",                 value: "input" },
             { type: "OPERATOR",                   value: "+" },
             { type: "NUMBER",                     value: "1" },
             { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "STATEMENTS_END",             value: "}" },  
+            { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "addOne" },
             { type: "INVOCATION_START",           value: "(" },
             { type: "PUNCTUATION",                value: "(" },
-            { type: "PUNCTUATION",                value: "(" }, 
-            { type: "NUMBER",                     value: "17" },   
+            { type: "PUNCTUATION",                value: "(" },
+            { type: "NUMBER",                     value: "17" },
             { type: "OPERATOR",                   value: "*" },
-            { type: "NUMBER",                     value: "4" },   
-            { type: "PUNCTUATION",                value: ")" }, 
+            { type: "NUMBER",                     value: "4" },
+            { type: "PUNCTUATION",                value: ")" },
             { type: "OPERATOR",                   value: "-" },
-            { type: "NUMBER",                     value: "3" },   
-            { type: "PUNCTUATION",                value: ")" }, 
+            { type: "NUMBER",                     value: "3" },
+            { type: "PUNCTUATION",                value: ")" },
             { type: "OPERATOR",                   value: "*" },
-            { type: "NUMBER",                     value: "5" },   
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "NUMBER",                     value: "5" },
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -3584,24 +3584,24 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "returnTuple" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "num" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_NUMBER",                value: "Int" }, 
-            { type: "PARAMS_END",                 value: ")" }, 
-            
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "PARAMS_END",                 value: ")" },
+
             { type: "RETURN_ARROW",               value: "->" },
-            
+
             { type: "TUPLE_START",                value: "("},
             { type: "TUPLE_ELEMENT_NAME",         value: "plusFive" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
-            { type: "PUNCTUATION",                value: "," }, 
+            { type: "PUNCTUATION",                value: "," },
             { type: "TUPLE_ELEMENT_NAME",         value: "timesFive" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "TUPLE_END",                  value: ")"},
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "plusFiveResult" },
             { type: "OPERATOR",                   value: "=" },
@@ -3609,7 +3609,7 @@ describe('Lexer', function() {
             { type: "OPERATOR",                   value: "+" },
             { type: "NUMBER",                     value: "5" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "timesFiveResult" },
             { type: "OPERATOR",                   value: "=" },
@@ -3617,22 +3617,22 @@ describe('Lexer', function() {
             { type: "OPERATOR",                   value: "*" },
             { type: "NUMBER",                     value: "5" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "TUPLE_START",                value: "("},
             { type: "IDENTIFIER",                 value: "plusFiveResult" },
-            { type: "PUNCTUATION",                value: "," }, 
+            { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "timesFiveResult" },
             { type: "TUPLE_END",                  value: ")"},
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "returnTuple" },
-            { type: "INVOCATION_START",           value: "(" }, 
-            { type: "NUMBER",                     value: "5" },   
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "5" },
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -3648,50 +3648,50 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "nameAndAge" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "name" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_STRING",                value: "String" },
-            { type: "PUNCTUATION",                value: "," }, 
-            { type: "IDENTIFIER",                 value: "age" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_NUMBER",                value: "Int" }, 
-            { type: "PARAMS_END",                 value: ")" }, 
-            
-            { type: "RETURN_ARROW",               value: "->" },
-            
-            { type: "TUPLE_START",                value: "(" },
-            { type: "TUPLE_ELEMENT_NAME",         value: "name" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_STRING",                value: "String" },
-            { type: "PUNCTUATION",                value: "," }, 
-            { type: "TUPLE_ELEMENT_NAME",         value: "age" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_NUMBER",                value: "Int" }, 
-            { type: "TUPLE_END",                  value: ")" }, 
-            { type: "STATEMENTS_START",           value: "{" },
-            { type: "TERMINATOR",                 value: "\\n"},
-            
-            { type: "STATEMENT_KEYWORD",          value: "return"},
-            { type: "TUPLE_START",                value: "("},
-            { type: "IDENTIFIER",                 value: "name" },
-            { type: "PUNCTUATION",                value: "," }, 
-            { type: "IDENTIFIER",                 value: "age" },
-            { type: "TUPLE_END",                  value: ")"},
-            { type: "TERMINATOR",                 value: "\\n"},
-            
-            { type: "STATEMENTS_END",             value: "}" },
-            { type: "TERMINATOR",                 value: "\\n"},
-            
-            { type: "DECLARATION_KEYWORD",        value: "let"},
-            { type: "IDENTIFIER",                 value: "person" },
-            { type: "OPERATOR",                   value: "=" }, 
-            { type: "IDENTIFIER",                 value: "nameAndAge" },
-            { type: "INVOCATION_START",           value: "(" }, 
-            { type: "STRING",                     value: "Steve" },   
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "age" },
             { type: "PUNCTUATION",                value: ":" },
-            { type: "NUMBER",                     value: "45" },   
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "PARAMS_END",                 value: ")" },
+
+            { type: "RETURN_ARROW",               value: "->" },
+
+            { type: "TUPLE_START",                value: "(" },
+            { type: "TUPLE_ELEMENT_NAME",         value: "name" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "TUPLE_ELEMENT_NAME",         value: "age" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "TUPLE_END",                  value: ")" },
+            { type: "STATEMENTS_START",           value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "STATEMENT_KEYWORD",          value: "return"},
+            { type: "TUPLE_START",                value: "("},
+            { type: "IDENTIFIER",                 value: "name" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "IDENTIFIER",                 value: "age" },
+            { type: "TUPLE_END",                  value: ")"},
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "STATEMENTS_END",             value: "}" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "DECLARATION_KEYWORD",        value: "let"},
+            { type: "IDENTIFIER",                 value: "person" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "nameAndAge" },
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "STRING",                     value: "Steve" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "IDENTIFIER",                 value: "age" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "NUMBER",                     value: "45" },
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -3715,24 +3715,24 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                   value: "minMax" },
             { type: "PARAMS_START",                 value: "(" },
             { type: "IDENTIFIER",                   value: "array" },
-            { type: "PUNCTUATION",                  value: ":" }, 
+            { type: "PUNCTUATION",                  value: ":" },
             { type: "ARRAY_START",                  value: "["},
-            { type: "TYPE_NUMBER",                  value: "Int" }, 
-            { type: "ARRAY_END",                    value: "]"},    
-            { type: "PARAMS_END",                   value: ")" }, 
-            { type: "RETURN_ARROW",                 value: "->" },     
+            { type: "TYPE_NUMBER",                  value: "Int" },
+            { type: "ARRAY_END",                    value: "]"},
+            { type: "PARAMS_END",                   value: ")" },
+            { type: "RETURN_ARROW",                 value: "->" },
             { type: "TUPLE_START",                  value: "("},
             { type: "TUPLE_ELEMENT_NAME",           value: "min"},
             { type: "PUNCTUATION",                  value: ":" },
-            { type: "TYPE_NUMBER",                  value: "Int" }, 
+            { type: "TYPE_NUMBER",                  value: "Int" },
             { type: "PUNCTUATION",                  value: "," },
             { type: "TUPLE_ELEMENT_NAME",           value: "max"},
             { type: "PUNCTUATION",                  value: ":" },
-            { type: "TYPE_NUMBER",                  value: "Int" }, 
+            { type: "TYPE_NUMBER",                  value: "Int" },
             { type: "TUPLE_END",                    value: ")"},
-            { type: "STATEMENTS_START",             value: "{" },  
+            { type: "STATEMENTS_START",             value: "{" },
             { type: "TERMINATOR",                   value: "\\n"},
-          
+
             { type: "DECLARATION_KEYWORD",          value: "var" },
             { type: "IDENTIFIER",                   value: "currentMin" },
             { type: "OPERATOR",                     value: "=" },
@@ -3756,14 +3756,14 @@ describe('Lexer', function() {
             { type: "STATEMENT_KEYWORD",            value: "in" },
             { type: "IDENTIFIER",                   value: "array" },
             { type: "SUBSTRING_LOOKUP_START",       value: "[" },
-           
+
             { type: "NUMBER",                       value: "1" },
             { type: "HALF-OPEN_RANGE",              value: "..<" },
 
             { type: "IDENTIFIER",                   value: "array" },
             { type: "DOT_SYNTAX",                   value: "." },
-            { type: "TYPE_PROPERTY",                value: "count" },     
-   
+            { type: "TYPE_PROPERTY",                value: "count" },
+
             { type: "SUBSTRING_LOOKUP_END",         value: "]" },
             { type: "PUNCTUATION",                  value: "{" },
             { type: "TERMINATOR",                   value: "\\n"},
@@ -3777,7 +3777,7 @@ describe('Lexer', function() {
 
             { type: "IDENTIFIER",                   value: "currentMin" },
             { type: "OPERATOR",                     value: "=" },
-            { type: "IDENTIFIER",                   value: "value" }, 
+            { type: "IDENTIFIER",                   value: "value" },
             { type: "TERMINATOR",                   value: "\\n"},
 
             { type: "PUNCTUATION",                  value: "}" },
@@ -3808,7 +3808,7 @@ describe('Lexer', function() {
             { type: "TUPLE_END",                    value: ")"},
             { type: "TERMINATOR",                   value: "\\n"},
 
-            { type: "STATEMENTS_END",               value: "}" },  
+            { type: "STATEMENTS_END",               value: "}" },
             { type: "TERMINATOR",                   value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -3832,22 +3832,22 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                     value: "minMax" },
             { type: "PARAMS_START",                   value: "(" },
             { type: "IDENTIFIER",                     value: "array" },
-            { type: "PUNCTUATION",                    value: ":" }, 
+            { type: "PUNCTUATION",                    value: ":" },
             { type: "ARRAY_START",                    value: "["},
-            { type: "TYPE_NUMBER",                    value: "Int" }, 
-            { type: "ARRAY_END",                      value: "]"},    
-            { type: "PARAMS_END",                     value: ")" }, 
-            { type: "RETURN_ARROW",                   value: "->" },     
+            { type: "TYPE_NUMBER",                    value: "Int" },
+            { type: "ARRAY_END",                      value: "]"},
+            { type: "PARAMS_END",                     value: ")" },
+            { type: "RETURN_ARROW",                   value: "->" },
             { type: "TUPLE_START",                    value: "("},
             { type: "TUPLE_ELEMENT_NAME",             value: "min"},
             { type: "PUNCTUATION",                    value: ":" },
-            { type: "TYPE_NUMBER",                    value: "Int" }, 
+            { type: "TYPE_NUMBER",                    value: "Int" },
             { type: "PUNCTUATION",                    value: "," },
             { type: "TUPLE_ELEMENT_NAME",             value: "max"},
             { type: "PUNCTUATION",                    value: ":" },
-            { type: "TYPE_NUMBER",                    value: "Int" }, 
+            { type: "TYPE_NUMBER",                    value: "Int" },
             { type: "TUPLE_END",                      value: ")"},
-            { type: "STATEMENTS_START",               value: "{" },  
+            { type: "STATEMENTS_START",               value: "{" },
             { type: "TERMINATOR",                     value: "\\n"},
 
             { type: "DECLARATION_KEYWORD",            value: "var" },
@@ -3873,10 +3873,10 @@ describe('Lexer', function() {
             { type: "STATEMENT_KEYWORD",              value: "in" },
             { type: "IDENTIFIER",                     value: "array" },
             { type: "SUBSTRING_LOOKUP_START",         value: "[" },
-                     
+
             { type: "NUMBER",                         value: "1" },
             { type: "HALF-OPEN_RANGE",                value: "..<" },
-            { type: "NUMBER",                         value: "2" },    
+            { type: "NUMBER",                         value: "2" },
 
             { type: "SUBSTRING_LOOKUP_END",           value: "]" },
             { type: "PUNCTUATION",                    value: "{" },
@@ -3891,7 +3891,7 @@ describe('Lexer', function() {
 
             { type: "IDENTIFIER",                     value: "currentMin" },
             { type: "OPERATOR",                       value: "=" },
-            { type: "IDENTIFIER",                     value: "value" }, 
+            { type: "IDENTIFIER",                     value: "value" },
             { type: "TERMINATOR",                     value: "\\n"},
 
             { type: "PUNCTUATION",                    value: "}" },
@@ -3907,7 +3907,7 @@ describe('Lexer', function() {
             { type: "OPERATOR",                       value: "=" },
             { type: "IDENTIFIER",                     value: "value" },
             { type: "TERMINATOR",                     value: "\\n"},
-                 
+
             { type: "PUNCTUATION",                    value: "}" },
             { type: "TERMINATOR",                     value: "\\n"},
 
@@ -3922,7 +3922,7 @@ describe('Lexer', function() {
             { type: "TUPLE_END",                      value: ")"},
             { type: "TERMINATOR",                     value: "\\n"},
 
-            { type: "STATEMENTS_END",       value: "}" },  
+            { type: "STATEMENTS_END",       value: "}" },
             { type: "TERMINATOR",           value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -3942,28 +3942,28 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "sumOf" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "numbers" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
-            { type: "VARIADIC_PARAM",             value: "..." }, 
-            { type: "PARAMS_END",                 value: ")" }, 
+            { type: "VARIADIC_PARAM",             value: "..." },
+            { type: "PARAMS_END",                 value: ")" },
             { type: "RETURN_ARROW",               value: "->" },
-            { type: "TYPE_NUMBER",                value: "Int" }, 
+            { type: "TYPE_NUMBER",                value: "Int" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "sum" },
             { type: "OPERATOR",                   value: "=" },
             { type: "NUMBER",                     value: "0" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "for" },
             { type: "IDENTIFIER",                 value: "number" },
             { type: "STATEMENT_KEYWORD",          value: "in" },
             { type: "IDENTIFIER",                 value: "numbers" },
             { type: "PUNCTUATION",                value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "sum" },
             { type: "OPERATOR",                   value: "+" },
             { type: "OPERATOR",                   value: "=" },
@@ -3976,18 +3976,18 @@ describe('Lexer', function() {
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "IDENTIFIER",                 value: "sum" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "sumOf" },
-            { type: "INVOCATION_START",           value: "(" }, 
-            { type: "NUMBER",                     value: "1" },   
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "1" },
             { type: "PUNCTUATION",                value: "," },
-            { type: "NUMBER",                     value: "2" },   
+            { type: "NUMBER",                     value: "2" },
             { type: "PUNCTUATION",                value: "," },
-            { type: "NUMBER",                     value: "3" },   
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "NUMBER",                     value: "3" },
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -4007,34 +4007,34 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "sumOf" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "start" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "OPERATOR",                   value: "=" },
             { type: "NUMBER",                     value: "0" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "numbers" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
-            { type: "VARIADIC_PARAM",             value: "..." }, 
-            { type: "PARAMS_END",                 value: ")" }, 
+            { type: "VARIADIC_PARAM",             value: "..." },
+            { type: "PARAMS_END",                 value: ")" },
             { type: "RETURN_ARROW",               value: "->" },
-            { type: "TYPE_NUMBER",                value: "Int" }, 
+            { type: "TYPE_NUMBER",                value: "Int" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "sum" },
             { type: "OPERATOR",                   value: "=" },
             { type: "IDENTIFIER",                 value: "start" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "for" },
             { type: "IDENTIFIER",                 value: "number" },
             { type: "STATEMENT_KEYWORD",          value: "in" },
             { type: "IDENTIFIER",                 value: "numbers" },
             { type: "PUNCTUATION",                value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "sum" },
             { type: "OPERATOR",                   value: "+" },
             { type: "OPERATOR",                   value: "=" },
@@ -4047,20 +4047,20 @@ describe('Lexer', function() {
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "IDENTIFIER",                 value: "sum" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "sumOf" },
-            { type: "INVOCATION_START",           value: "(" }, 
+            { type: "INVOCATION_START",           value: "(" },
             { type: "IDENTIFIER",                 value: "start" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "NUMBER",                     value: "1" },   
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "NUMBER",                     value: "1" },
             { type: "PUNCTUATION",                value: "," },
-            { type: "NUMBER",                     value: "2" },   
+            { type: "NUMBER",                     value: "2" },
             { type: "PUNCTUATION",                value: "," },
-            { type: "NUMBER",                     value: "3" },   
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "NUMBER",                     value: "3" },
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -4077,30 +4077,30 @@ describe('Lexer', function() {
             { type: "DECLARATION_KEYWORD",        value: "func"},
             { type: "IDENTIFIER",                 value: "makeIncrementer" },
             { type: "PARAMS_START",               value: "(" },
-            { type: "PARAMS_END",                 value: ")" }, 
+            { type: "PARAMS_END",                 value: ")" },
             { type: "RETURN_ARROW",               value: "->" },
-            { type: "PUNCTUATION",                value: "(" }, 
+            { type: "PUNCTUATION",                value: "(" },
             { type: "PARAMS_START",               value: "(" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PARAMS_END",                 value: ")" },
-            { type: "RETURN_ARROW",               value: "->" }, 
+            { type: "RETURN_ARROW",               value: "->" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PUNCTUATION",                value: ")" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "func"},
             { type: "IDENTIFIER",                 value: "addOne" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "number" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PARAMS_END",                 value: ")" },
             { type: "RETURN_ARROW",               value: "->" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "NUMBER",                     value: "1" },
             { type: "OPERATOR",                   value: "+" },
@@ -4108,11 +4108,11 @@ describe('Lexer', function() {
             { type: "TERMINATOR",                 value: "\\n"},
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "IDENTIFIER",                 value: "addOne" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
@@ -4130,28 +4130,28 @@ describe('Lexer', function() {
             { type: "DECLARATION_KEYWORD",        value: "func"},
             { type: "IDENTIFIER",                 value: "makeIncrementer" },
             { type: "PARAMS_START",               value: "(" },
-            { type: "PARAMS_END",                 value: ")" }, 
+            { type: "PARAMS_END",                 value: ")" },
             { type: "RETURN_ARROW",               value: "->" },
             { type: "PARAMS_START",               value: "(" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PARAMS_END",                 value: ")" },
-            { type: "RETURN_ARROW",               value: "->" }, 
+            { type: "RETURN_ARROW",               value: "->" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "func"},
             { type: "IDENTIFIER",                 value: "addOne" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "number" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PARAMS_END",                 value: ")" },
             { type: "RETURN_ARROW",               value: "->" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "NUMBER",                     value: "1" },
             { type: "OPERATOR",                   value: "+" },
@@ -4160,11 +4160,11 @@ describe('Lexer', function() {
 
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "IDENTIFIER",                 value: "addOne" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
@@ -4185,26 +4185,26 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "any" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "list" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "ARRAY_START",                value: "["},
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "ARRAY_END",                  value: "]"},
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "condition" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "PUNCTUATION",                value: "(" }, 
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "PUNCTUATION",                value: "(" },
             { type: "PARAMS_START",               value: "(" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PARAMS_END",                 value: ")" },
-            { type: "RETURN_ARROW",               value: "->" }, 
+            { type: "RETURN_ARROW",               value: "->" },
             { type: "TYPE_BOOLEAN",               value: "Bool" },
             { type: "PUNCTUATION",                value: ")" },
             { type: "PARAMS_END",                 value: ")" },
-            { type: "RETURN_ARROW",               value: "->" }, 
+            { type: "RETURN_ARROW",               value: "->" },
             { type: "TYPE_BOOLEAN",               value: "Bool" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "for" },
             { type: "IDENTIFIER",                 value: "item" },
             { type: "STATEMENT_KEYWORD",          value: "in" },
@@ -4214,26 +4214,26 @@ describe('Lexer', function() {
 
             { type: "STATEMENT_KEYWORD",          value: "if" },
             { type: "IDENTIFIER",                 value: "condition" },
-            { type: "INVOCATION_START",           value: "(" }, 
-            { type: "IDENTIFIER",                 value: "item" },  
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "item" },
+            { type: "INVOCATION_END",             value: ")" },
             { type: "PUNCTUATION",                value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "BOOLEAN",                    value: "true" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "PUNCTUATION",                value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
 
             { type: "PUNCTUATION",                value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "BOOLEAN",                    value: "false" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
@@ -4254,24 +4254,24 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "any" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "list" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "ARRAY_START",                value: "["},
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "ARRAY_END",                  value: "]"},
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "condition" },
-            { type: "PUNCTUATION",                value: ":" },  
+            { type: "PUNCTUATION",                value: ":" },
             { type: "PARAMS_START",               value: "(" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PARAMS_END",                 value: ")" },
-            { type: "RETURN_ARROW",               value: "->" }, 
+            { type: "RETURN_ARROW",               value: "->" },
             { type: "TYPE_BOOLEAN",               value: "Bool" },
             { type: "PARAMS_END",                 value: ")" },
-            { type: "RETURN_ARROW",               value: "->" }, 
+            { type: "RETURN_ARROW",               value: "->" },
             { type: "TYPE_BOOLEAN",               value: "Bool" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "for" },
             { type: "IDENTIFIER",                 value: "item" },
             { type: "STATEMENT_KEYWORD",          value: "in" },
@@ -4281,26 +4281,26 @@ describe('Lexer', function() {
 
             { type: "STATEMENT_KEYWORD",          value: "if" },
             { type: "IDENTIFIER",                 value: "condition" },
-            { type: "INVOCATION_START",           value: "(" }, 
-            { type: "IDENTIFIER",                 value: "item" },  
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "item" },
+            { type: "INVOCATION_END",             value: ")" },
             { type: "PUNCTUATION",                value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "BOOLEAN",                    value: "true" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "PUNCTUATION",                value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
 
             { type: "PUNCTUATION",                value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "BOOLEAN",                    value: "false" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
@@ -4317,37 +4317,37 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "addOne" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "input" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_NUMBER",                value: "Int" }, 
-            { type: "PARAMS_END",                 value: ")" }, 
-            { type: "RETURN_ARROW",               value: "->" },  
-            { type: "TYPE_NUMBER",                value: "Int" }, 
-            { type: "STATEMENTS_START",           value: "{" },  
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "PARAMS_END",                 value: ")" },
+            { type: "RETURN_ARROW",               value: "->" },
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "return"},
             { type: "IDENTIFIER",                 value: "input" },
             { type: "OPERATOR",                   value: "+" },
             { type: "NUMBER",                     value: "1" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENTS_END",             value: "}"},
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "addOne" },
-            { type: "INVOCATION_START",           value: "(" }, 
-            { type: "PUNCTUATION",                value: "(" },  
-            { type: "PUNCTUATION",                value: "(" },  
-            { type: "NUMBER",                     value: "5" },   
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "PUNCTUATION",                value: "(" },
+            { type: "PUNCTUATION",                value: "(" },
+            { type: "NUMBER",                     value: "5" },
             { type: "OPERATOR",                   value: "+" },
-            { type: "NUMBER",                     value: "4" },   
-            { type: "PUNCTUATION",                value: ")" },  
+            { type: "NUMBER",                     value: "4" },
+            { type: "PUNCTUATION",                value: ")" },
             { type: "OPERATOR",                   value: "+" },
-            { type: "NUMBER",                     value: "1" },   
-            { type: "PUNCTUATION",                value: ")" },  
+            { type: "NUMBER",                     value: "1" },
+            { type: "PUNCTUATION",                value: ")" },
             { type: "OPERATOR",                   value: "+" },
-            { type: "NUMBER",                     value: "7" },   
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "NUMBER",                     value: "7" },
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "EOF"},
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -4381,16 +4381,16 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "printFirstName" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_STRING",                value: "String" },
-            { type: "PARAMS_END",                 value: ")" }, 
+            { type: "PARAMS_END",                 value: ")" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
 
             { type: "NATIVE_METHOD",              value: "println"},
-            { type: "INVOCATION_START",           value: "(" }, 
+            { type: "INVOCATION_START",           value: "(" },
             { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
 
             { type: "STATEMENTS_END",             value: "}" },
@@ -4401,45 +4401,45 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "printFirstName" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_STRING",                value: "String" },            
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_STRING",                value: "String" },  
-            { type: "PARAMS_END",                 value: ")" }, 
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String" },
+            { type: "PARAMS_END",                 value: ")" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
 
             { type: "NATIVE_METHOD",              value: "println"},
-            { type: "INVOCATION_START",           value: "(" }, 
+            { type: "INVOCATION_START",           value: "(" },
             { type: "STRING",                     value: "" },
             { type: "STRING_INTERPOLATION_START", value: "\\(" },
             { type: "IDENTIFIER",                 value: "firstName" },
             { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: " " }, 
+            { type: "STRING",                     value: " " },
             { type: "STRING_INTERPOLATION_START", value: "\\(" },
             { type: "IDENTIFIER",                 value: "surname" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" }, 
+            { type: "STRING_INTERPOLATION_END",   value: ")" },
             { type: "STRING",                     value: "" },
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
 
             { type: "STATEMENTS_END",             value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
 
             { type: "IDENTIFIER",                 value: "printFirstName" },
-            { type: "INVOCATION_START",           value: "(" }, 
+            { type: "INVOCATION_START",           value: "(" },
             { type: "STRING",                     value: "Joe" },
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
 
             { type: "IDENTIFIER",                 value: "printFirstName" },
-            { type: "INVOCATION_START",           value: "(" }, 
+            { type: "INVOCATION_START",           value: "(" },
             { type: "STRING",                     value: "Joe" },
             { type: "PUNCTUATION",                value: "," },
             { type: "STRING",                     value: "Blow" },
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "EOF"}
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -4457,12 +4457,12 @@ describe('Lexer', function() {
             { type: "IDENTIFIER",                 value: "printManyTimes" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "a" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_NUMBER",                value: "Int" }, 
-            { type: "PARAMS_END",                 value: ")" }, 
-            { type: "STATEMENTS_START",           value: "{" },  
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "PARAMS_END",                 value: ")" },
+            { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "for" },
             { type: "IDENTIFIER",                 value: "i" },
             { type: "STATEMENT_KEYWORD",          value: "in" },
@@ -4481,14 +4481,14 @@ describe('Lexer', function() {
 
             { type: "PUNCTUATION",                value: "}" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENTS_END",             value: "}"},
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "printManyTimes" },
-            { type: "INVOCATION_START",           value: "(" }, 
-            { type: "NUMBER",                     value: "1" },    
-            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "EOF"},
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -4499,7 +4499,7 @@ describe('Lexer', function() {
     });
 
     describe('Classes and Stuctures', function () {
-      
+
       it('should handle basic definitions of classes and structs', function () {
         input = String.raw`class VideoMode {
                               var interlaced = false
@@ -4514,39 +4514,39 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "VideoMode" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "interlaced" },
           { type: "OPERATOR",                   value: "=" },
           { type: "BOOLEAN",                    value: "false" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "frameRate" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0.0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "struct" },
           { type: "IDENTIFIER",                 value: "Resolution" },
           { type: "STRUCT_DEFINITION_START",    value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "width" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "height" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STRUCT_DEFINITION_END",      value: "}" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
@@ -4571,39 +4571,39 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "VideoMode" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "interlaced" },
           { type: "OPERATOR",                   value: "=" },
           { type: "BOOLEAN",                    value: "false" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "frameRate" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0.0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "struct" },
           { type: "IDENTIFIER",                 value: "Resolution" },
           { type: "STRUCT_DEFINITION_START",    value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "width" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "height" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STRUCT_DEFINITION_END",      value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "TERMINATOR",                 value: "\\n"},
@@ -4612,16 +4612,16 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "someVideoMode" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "VideoMode" },
-          { type: "INITIALIZATION_START",       value: "(" }, 
-          { type: "INITIALIZATION_END",         value: ")" }, 
-          { type: "TERMINATOR",                 value: "\\n"}, 
+          { type: "INITIALIZATION_START",       value: "(" },
+          { type: "INITIALIZATION_END",         value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "someResolution" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "Resolution" },
-          { type: "INITIALIZATION_START",       value: "(" }, 
-          { type: "INITIALIZATION_END",         value: ")" }, 
+          { type: "INITIALIZATION_START",       value: "(" },
+          { type: "INITIALIZATION_END",         value: ")" },
           { type: "PUNCTUATION",                value: ";" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
@@ -4640,7 +4640,7 @@ describe('Lexer', function() {
 
                             let someVideoMode = VideoMode()
                             let someResolution = Resolution();
-                            
+
                             let someFrameRate = someVideoMode.frameRate;
                             let someWidth = someResolution.width`;
         output = [
@@ -4648,39 +4648,39 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "VideoMode" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "interlaced" },
           { type: "OPERATOR",                   value: "=" },
           { type: "BOOLEAN",                    value: "false" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "frameRate" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0.0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "struct" },
           { type: "IDENTIFIER",                 value: "Resolution" },
           { type: "STRUCT_DEFINITION_START",    value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "width" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "height" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STRUCT_DEFINITION_END",      value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "TERMINATOR",                 value: "\\n"},
@@ -4689,20 +4689,20 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "someVideoMode" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "VideoMode" },
-          { type: "INITIALIZATION_START",        value: "(" }, 
-          { type: "INITIALIZATION_END",          value: ")" }, 
-          { type: "TERMINATOR",                 value: "\\n"}, 
+          { type: "INITIALIZATION_START",        value: "(" },
+          { type: "INITIALIZATION_END",          value: ")" },
+          { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "someResolution" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "Resolution" },
-          { type: "INITIALIZATION_START",       value: "(" }, 
-          { type: "INITIALIZATION_END",         value: ")" }, 
+          { type: "INITIALIZATION_START",       value: "(" },
+          { type: "INITIALIZATION_END",         value: ")" },
           { type: "PUNCTUATION",                value: ";" },
-          { type: "TERMINATOR",                 value: "\\n"}, 
-          { type: "TERMINATOR",                 value: "\\n"}, 
-          
+          { type: "TERMINATOR",                 value: "\\n"},
+          { type: "TERMINATOR",                 value: "\\n"},
+
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "someFrameRate" },
           { type: "OPERATOR",                   value: "=" },
@@ -4711,7 +4711,7 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "frameRate" },
           { type: "PUNCTUATION",                value: ";" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "someWidth" },
           { type: "OPERATOR",                   value: "=" },
@@ -4735,28 +4735,28 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "Resolution" },
           { type: "STRUCT_DEFINITION_START",    value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "width" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "height" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STRUCT_DEFINITION_END",      value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "someResolution" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "Resolution" },
-          { type: "INITIALIZATION_START",       value: "(" }, 
+          { type: "INITIALIZATION_START",       value: "(" },
           { type: "IDENTIFIER",                 value: "width" },
           { type: "PUNCTUATION",                value: ":" },
           { type: "NUMBER",                     value: "640" },
@@ -4764,7 +4764,7 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "height" },
           { type: "PUNCTUATION",                value: ":" },
           { type: "NUMBER",                     value: "480" },
-          { type: "INITIALIZATION_END",         value: ")" }, 
+          { type: "INITIALIZATION_END",         value: ")" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -4784,36 +4784,36 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "480" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "struct" },
           { type: "IDENTIFIER",                 value: "Resolution" },
           { type: "STRUCT_DEFINITION_START",    value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "width" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "height" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STRUCT_DEFINITION_END",      value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "someResolution" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "Resolution" },
-          { type: "INITIALIZATION_START",       value: "(" }, 
+          { type: "INITIALIZATION_START",       value: "(" },
           { type: "IDENTIFIER",                 value: "width" },
           { type: "PUNCTUATION",                value: ":" },
-          
+
           { type: "PUNCTUATION",                value: "(" },
           { type: "PUNCTUATION",                value: "(" },
           { type: "NUMBER",                     value: "50" },
@@ -4830,7 +4830,7 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "height" },
           { type: "PUNCTUATION",                value: ":" },
           { type: "IDENTIFIER",                 value: "resolutionHeight" },
-          { type: "INITIALIZATION_END",         value: ")" }, 
+          { type: "INITIALIZATION_END",         value: ")" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -4862,28 +4862,28 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "FixedLengthRange" },
           { type: "STRUCT_DEFINITION_START",    value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "firstValue" },
           { type: "PUNCTUATION",                value: ":" },
           { type: "TYPE_NUMBER",                value: "Int"},
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "length" },
           { type: "PUNCTUATION",                value: ":" },
           { type: "TYPE_NUMBER",                value: "Int"},
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STRUCT_DEFINITION_END",      value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "rangeOfOneHundred" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "FixedLengthRange" },
-          { type: "INITIALIZATION_START",       value: "(" }, 
+          { type: "INITIALIZATION_START",       value: "(" },
           { type: "IDENTIFIER",                 value: "firstValue" },
           { type: "PUNCTUATION",                value: ":" },
           { type: "NUMBER",                     value: "1" },
@@ -4891,7 +4891,7 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "length" },
           { type: "PUNCTUATION",                value: ":" },
           { type: "NUMBER",                     value: "100" },
-          { type: "INITIALIZATION_END",         value: ")" }, 
+          { type: "INITIALIZATION_END",         value: ")" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -4902,8 +4902,8 @@ describe('Lexer', function() {
                         var a = 1
                         var b = "hai, world"
                         let c = true
-                        /* Comment 1 
-                        
+                        /* Comment 1
+
                         */ var d = 1 // Comment 2
                         var e = ["Eggs", "Milk", "Bacon"];
                         var f = ["one": 1, "two": 2, "three": 3]
@@ -4917,27 +4917,27 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "Medley" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "a" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "1" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "b" },
           { type: "OPERATOR",                   value: "=" },
           { type: "STRING",                     value: "hai, world" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "c" },
           { type: "OPERATOR",                   value: "=" },
           { type: "BOOLEAN",                    value: "true" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "MULTI_LINE_COMMENT_START",   value: "/*"},
-          { type: "COMMENT",                    value: " Comment 1 "},
+          { type: "COMMENT",                    value: " Comment 1"},
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "MULTI_LINE_COMMENT_END",     value: "*/"},
@@ -4948,7 +4948,7 @@ describe('Lexer', function() {
           { type: "COMMENT_START",              value: "//"},
           { type: "COMMENT",                    value: " Comment 2"},
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "e" },
           { type: "OPERATOR",                   value: "=" },
@@ -4961,7 +4961,7 @@ describe('Lexer', function() {
           { type: "ARRAY_END",                  value: "]" },
           { type: "PUNCTUATION",                value: ";" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "f" },
           { type: "OPERATOR",                   value: "=" },
@@ -4979,7 +4979,7 @@ describe('Lexer', function() {
           { type: "NUMBER",                     value: "3" },
           { type: "DICTIONARY_END",             value: "]" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "http200Status" },
           { type: "OPERATOR",                   value: "=" },
@@ -4993,7 +4993,7 @@ describe('Lexer', function() {
           { type: "STRING",                     value: "OK"},
           { type: "TUPLE_END",                  value: ")"},
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "g" },
           { type: "OPERATOR",                   value: "=" },
@@ -5012,7 +5012,7 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "*" },
           { type: "NUMBER",                     value: "55" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "let" },
           { type: "IDENTIFIER",                 value: "h" },
           { type: "OPERATOR",                   value: "=" },
@@ -5021,7 +5021,7 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "9" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "i" },
           { type: "OPERATOR",                   value: "=" },
@@ -5033,7 +5033,7 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "+" },
           { type: "STRING",                     value: "!" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
@@ -5061,79 +5061,79 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "Counter" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "increment" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "+" },
           { type: "IDENTIFIER",                 value: "total" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "incrementBy" },
           { type: "PARAMS_START",               value: "(" },
           { type: "IDENTIFIER",                 value: "amount" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },  
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "amount" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "reset" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           {type: "DECLARATION_KEYWORD",         value: "var" },
           { type: "IDENTIFIER",                 value: "someCounter" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "Counter" },
-          { type: "INITIALIZATION_START",       value: "(" }, 
+          { type: "INITIALIZATION_START",       value: "(" },
           { type: "INITIALIZATION_END",         value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "IDENTIFIER",                 value: "someCounter" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "IDENTIFIER",                 value: "incrementBy" },
-          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "INVOCATION_START",           value: "(" },
           { type: "NUMBER",                     value: "5" },
-          { type: "INVOCATION_END",             value: ")" }, 
+          { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -5160,42 +5160,42 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "Counter" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "increment" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "+" },
           { type: "IDENTIFIER",                 value: "total" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "incrementBy" },
           { type: "PARAMS_START",               value: "(" },
           { type: "IDENTIFIER",                 value: "amount" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },  
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "TYPE_NUMBER",                value: "Int" },
           { type: "PUNCTUATION",                value: "," },
           { type: "IDENTIFIER",                 value: "numberOfTimes" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },  
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "+" },
           { type: "OPERATOR",                   value: "=" },
@@ -5203,48 +5203,48 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "*" },
           { type: "IDENTIFIER",                 value: "numberOfTimes" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "reset" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "IDENTIFIER",                 value: "total" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           {type: "DECLARATION_KEYWORD",         value: "var" },
           { type: "IDENTIFIER",                 value: "someCounter" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "Counter" },
-          { type: "INITIALIZATION_START",       value: "(" }, 
+          { type: "INITIALIZATION_START",       value: "(" },
           { type: "INITIALIZATION_END",         value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "IDENTIFIER",                 value: "someCounter" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "IDENTIFIER",                 value: "incrementBy" },
-          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "INVOCATION_START",           value: "(" },
           { type: "NUMBER",                     value: "50" },
           { type: "PUNCTUATION",                value: "," },
           { type: "IDENTIFIER",                 value: "numberOfTimes" },
           { type: "PUNCTUATION",                value: ":" },
           { type: "NUMBER",                     value: "10" },
-          { type: "INVOCATION_END",             value: ")" }, 
+          { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "IDENTIFIER",                 value: "someCounter" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "IDENTIFIER",                 value: "total" },
@@ -5284,7 +5284,7 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "increment" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5302,9 +5302,9 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "incrementBy" },
           { type: "PARAMS_START",               value: "(" },
           { type: "IDENTIFIER",                 value: "amount" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },  
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5322,7 +5322,7 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "reset" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5343,16 +5343,16 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "someCounter" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "Counter" },
-          { type: "INITIALIZATION_START",       value: "(" }, 
+          { type: "INITIALIZATION_START",       value: "(" },
           { type: "INITIALIZATION_END",         value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "IDENTIFIER",                 value: "someCounter" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "IDENTIFIER",                 value: "incrementBy" },
-          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "INVOCATION_START",           value: "(" },
           { type: "NUMBER",                     value: "5" },
-          { type: "INVOCATION_END",             value: ")" }, 
+          { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
@@ -5387,7 +5387,7 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "increment" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5404,9 +5404,9 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "incrementBy" },
           { type: "PARAMS_START",               value: "(" },
           { type: "IDENTIFIER",                 value: "amount" },
-          { type: "PUNCTUATION",                value: ":" }, 
-          { type: "TYPE_NUMBER",                value: "Int" },  
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PUNCTUATION",                value: ":" },
+          { type: "TYPE_NUMBER",                value: "Int" },
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5423,7 +5423,7 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "reset" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5464,7 +5464,7 @@ describe('Lexer', function() {
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "increment" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5506,51 +5506,51 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "ParentClass" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "static"},
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "returnTen" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "RETURN_ARROW",               value: "->" },
-          { type: "TYPE_NUMBER",                value: "Int" },  
+          { type: "TYPE_NUMBER",                value: "Int" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENT_KEYWORD",          value: "return"},
           { type: "NUMBER",                     value: "10" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "class"},
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "returnString" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "RETURN_ARROW",               value: "->" },
-          { type: "TYPE_STRING",                value: "String" },  
+          { type: "TYPE_STRING",                value: "String" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENT_KEYWORD",          value: "return"},
           { type: "STRING",                     value: "my string" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "IDENTIFIER",                 value: "ParentClass" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "IDENTIFIER",                 value: "returnTen" },
           { type: "INVOCATION_START",           value: "(" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "IDENTIFIER",                 value: "ParentClass" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "IDENTIFIER",                 value: "returnString" },
@@ -5584,23 +5584,23 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "SuperClass" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "a" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "b" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "1" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "incrementA" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5611,58 +5611,58 @@ describe('Lexer', function() {
 
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "static"},
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "returnTen" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "RETURN_ARROW",               value: "->" },
-          { type: "TYPE_NUMBER",                value: "Int" },  
+          { type: "TYPE_NUMBER",                value: "Int" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENT_KEYWORD",          value: "return"},
           { type: "NUMBER",                     value: "10" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "class"},
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "returnString" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "RETURN_ARROW",               value: "->" },
-          { type: "TYPE_STRING",                value: "String" },  
+          { type: "TYPE_STRING",                value: "String" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENT_KEYWORD",          value: "return"},
           { type: "STRING",                     value: "my string" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "class" },
           { type: "IDENTIFIER",                 value: "SubClass" },
           { type: "INHERITANCE_OPERATOR",       value: ":" },
           { type: "IDENTIFIER",                 value: "SuperClass" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "c" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "2" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
@@ -5694,23 +5694,23 @@ describe('Lexer', function() {
           { type: "IDENTIFIER",                 value: "SuperClass" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "a" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "0" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "b" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "1" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "incrementA" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5721,57 +5721,57 @@ describe('Lexer', function() {
 
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "static"},
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "returnTen" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "RETURN_ARROW",               value: "->" },
-          { type: "TYPE_NUMBER",                value: "Int" },  
+          { type: "TYPE_NUMBER",                value: "Int" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENT_KEYWORD",          value: "return"},
           { type: "NUMBER",                     value: "10" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CONTEXT_SPECIFIC_KEYWORD",   value: "final"},
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "returnString" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "RETURN_ARROW",               value: "->" },
-          { type: "TYPE_STRING",                value: "String" },  
+          { type: "TYPE_STRING",                value: "String" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "STATEMENT_KEYWORD",          value: "return"},
           { type: "STRING",                     value: "my string" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "class" },
           { type: "IDENTIFIER",                 value: "SubClass" },
           { type: "INHERITANCE_OPERATOR",       value: ":" },
           { type: "IDENTIFIER",                 value: "SuperClass" },
           { type: "CLASS_DEFINITION_START",     value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CONTEXT_SPECIFIC_KEYWORD",   value: "override"},
           { type: "DECLARATION_KEYWORD",        value: "func"},
           { type: "IDENTIFIER",                 value: "incrementA" },
           { type: "PARAMS_START",               value: "(" },
-          { type: "PARAMS_END",                 value: ")" }, 
+          { type: "PARAMS_END",                 value: ")" },
           { type: "STATEMENTS_START",           value: "{" },
           { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5782,7 +5782,7 @@ describe('Lexer', function() {
 
           { type: "STATEMENTS_END",             value: "}" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "CLASS_DEFINITION_END",       value: "}" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
@@ -5791,7 +5791,7 @@ describe('Lexer', function() {
 
       it('should handle class declaration, initialization, property value lookups, and method calls with erratic spacing and inconsistent use of semi-colons', function () {
         input = String.raw`       class    SuperClass            {    var a = 0
-                               
+
                            var     b = 1   ;
                                func incrementA(){
                                    ++a
@@ -5811,7 +5811,7 @@ describe('Lexer', function() {
                            }
 
                             var  someSuper            = SuperClass  ()
-                                   
+
                                    someSuper.a         ;someSuper.returnString() ;
                                   `;
         output = [
@@ -5824,18 +5824,18 @@ describe('Lexer', function() {
            { type: "NUMBER",                     value: "0" },
            { type: "TERMINATOR",                 value: "\\n"},
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "DECLARATION_KEYWORD",        value: "var" },
            { type: "IDENTIFIER",                 value: "b" },
            { type: "OPERATOR",                   value: "=" },
            { type: "NUMBER",                     value: "1" },
            { type: "PUNCTUATION",                value: ";" },
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "DECLARATION_KEYWORD",        value: "func"},
            { type: "IDENTIFIER",                 value: "incrementA" },
            { type: "PARAMS_START",               value: "(" },
-           { type: "PARAMS_END",                 value: ")" }, 
+           { type: "PARAMS_END",                 value: ")" },
            { type: "STATEMENTS_START",           value: "{" },
            { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5846,57 +5846,57 @@ describe('Lexer', function() {
 
            { type: "STATEMENTS_END",             value: "}" },
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "DECLARATION_KEYWORD",        value: "static"},
            { type: "DECLARATION_KEYWORD",        value: "func"},
            { type: "IDENTIFIER",                 value: "returnTen" },
            { type: "PARAMS_START",               value: "(" },
-           { type: "PARAMS_END",                 value: ")" }, 
+           { type: "PARAMS_END",                 value: ")" },
            { type: "RETURN_ARROW",               value: "->" },
-           { type: "TYPE_NUMBER",                value: "Int" },  
+           { type: "TYPE_NUMBER",                value: "Int" },
            { type: "STATEMENTS_START",           value: "{" },
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "STATEMENT_KEYWORD",          value: "return"},
            { type: "NUMBER",                     value: "10" },
            { type: "TERMINATOR",                 value: "\\n"},
 
            { type: "STATEMENTS_END",             value: "}" },
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "CONTEXT_SPECIFIC_KEYWORD",   value: "final"},
            { type: "DECLARATION_KEYWORD",        value: "func"},
            { type: "IDENTIFIER",                 value: "returnString" },
            { type: "PARAMS_START",               value: "(" },
-           { type: "PARAMS_END",                 value: ")" }, 
+           { type: "PARAMS_END",                 value: ")" },
            { type: "RETURN_ARROW",               value: "->" },
-           { type: "TYPE_STRING",                value: "String" },  
+           { type: "TYPE_STRING",                value: "String" },
            { type: "STATEMENTS_START",           value: "{" },
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "STATEMENT_KEYWORD",          value: "return"},
            { type: "STRING",                     value: "my string" },
            { type: "TERMINATOR",                 value: "\\n"},
 
            { type: "STATEMENTS_END",             value: "}" },
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "CLASS_DEFINITION_END",       value: "}" },
            { type: "TERMINATOR",                 value: "\\n"},
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "DECLARATION_KEYWORD",        value: "class" },
            { type: "IDENTIFIER",                 value: "SubClass" },
            { type: "INHERITANCE_OPERATOR",       value: ":" },
            { type: "IDENTIFIER",                 value: "SuperClass" },
            { type: "CLASS_DEFINITION_START",     value: "{" },
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "CONTEXT_SPECIFIC_KEYWORD",   value: "override"},
            { type: "DECLARATION_KEYWORD",        value: "func"},
            { type: "IDENTIFIER",                 value: "incrementA" },
            { type: "PARAMS_START",               value: "(" },
-           { type: "PARAMS_END",                 value: ")" }, 
+           { type: "PARAMS_END",                 value: ")" },
            { type: "STATEMENTS_START",           value: "{" },
            { type: "TERMINATOR",                 value: "\\n"},
 
@@ -5908,23 +5908,23 @@ describe('Lexer', function() {
 
            { type: "STATEMENTS_END",             value: "}" },
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "CLASS_DEFINITION_END",       value: "}" },
            { type: "TERMINATOR",                 value: "\\n"},
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "DECLARATION_KEYWORD",        value: "var" },
            { type: "IDENTIFIER",                 value: "someSuper" },
            { type: "OPERATOR",                   value: "=" },
            { type: "IDENTIFIER",                 value: "SuperClass" },
-           { type: "INITIALIZATION_START",       value: "(" }, 
+           { type: "INITIALIZATION_START",       value: "(" },
            { type: "INITIALIZATION_END",         value: ")" },
            { type: "TERMINATOR",                 value: "\\n"},
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "IDENTIFIER",                 value: "someSuper" },
            { type: "DOT_SYNTAX",                 value: "." },
-           { type: "IDENTIFIER",                 value: "a" }, 
+           { type: "IDENTIFIER",                 value: "a" },
            { type: "PUNCTUATION",                value: ";" },
            { type: "IDENTIFIER",                 value: "someSuper" },
            { type: "DOT_SYNTAX",                 value: "." },
@@ -5933,13 +5933,13 @@ describe('Lexer', function() {
            { type: "INVOCATION_END",             value: ")" },
            { type: "PUNCTUATION",                value: ";" },
            { type: "TERMINATOR",                 value: "\\n"},
-           
+
            { type: "TERMINATOR",                 value: "EOF"}
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
-    }); 
+    });
 
     describe('Native Methods and Type Properties', function () {
 
@@ -5958,7 +5958,7 @@ describe('Lexer', function() {
           { type: "OPERATOR",                   value: "=" },
           { type: "STRING",                     value: "Joe" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "arr" },
           { type: "OPERATOR",                   value: "=" },
@@ -5968,7 +5968,7 @@ describe('Lexer', function() {
           { type: "NUMBER",                     value: "2" },
           { type: "ARRAY_END",                  value: "]" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "tup" },
           { type: "OPERATOR",                   value: "=" },
@@ -5978,23 +5978,23 @@ describe('Lexer', function() {
           { type: "NUMBER",                     value: "2" },
           { type: "TUPLE_END",                  value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "NATIVE_METHOD",              value: "print"},
           { type: "INVOCATION_START",           value: "(" },
           { type: "IDENTIFIER",                 value: "name" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "NATIVE_METHOD",              value: "print"},
           { type: "INVOCATION_START",           value: "(" },
           { type: "STRING",                     value: "Hello, " },
           { type: "STRING_INTERPOLATION_START", value: "\\(" },
           { type: "IDENTIFIER",                 value: "name" },
           { type: "STRING_INTERPOLATION_END",   value: ")" },
-          { type: "STRING",                     value: "" },  
+          { type: "STRING",                     value: "" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "NATIVE_METHOD",              value: "print"},
           { type: "INVOCATION_START",           value: "(" },
           { type: "NUMBER",                     value: "5" },
@@ -6015,7 +6015,7 @@ describe('Lexer', function() {
           { type: "SUBSTRING_LOOKUP_END",       value: "]" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "NATIVE_METHOD",              value: "print"},
           { type: "INVOCATION_START",           value: "(" },
           { type: "IDENTIFIER",                 value: "tup" },
@@ -6041,63 +6041,63 @@ describe('Lexer', function() {
          { type: "OPERATOR",                      value: "=" },
          { type: "NUMBER",                        value: "1" },
          { type: "TERMINATOR",                    value: "\\n"},
-         
+
          { type: "DECLARATION_KEYWORD",           value: "var" },
          { type: "IDENTIFIER",                    value: "oneToString" },
          { type: "OPERATOR",                      value: "=" },
          { type: "TYPE_STRING",                   value: "String"},
-         { type: "INVOCATION_START",              value: "(" }, 
-         { type: "IDENTIFIER",                    value: "one" },   
-         { type: "INVOCATION_END",                value: ")" }, 
+         { type: "INVOCATION_START",              value: "(" },
+         { type: "IDENTIFIER",                    value: "one" },
+         { type: "INVOCATION_END",                value: ")" },
          { type: "TERMINATOR",                    value: "\\n"},
-         
+
          { type: "DECLARATION_KEYWORD",           value: "var" },
          { type: "IDENTIFIER",                    value: "oneBackToInt" },
          { type: "OPERATOR",                      value: "=" },
          { type: "TYPE_NUMBER",                   value: "Int"},
-         { type: "INVOCATION_START",              value: "(" }, 
-         { type: "IDENTIFIER",                    value: "oneToString" },   
-         { type: "INVOCATION_END",                value: ")" }, 
+         { type: "INVOCATION_START",              value: "(" },
+         { type: "IDENTIFIER",                    value: "oneToString" },
+         { type: "INVOCATION_END",                value: ")" },
          { type: "TERMINATOR",                    value: "\\n"},
-           
+
          { type: "DECLARATION_KEYWORD",           value: "var" },
          { type: "IDENTIFIER",                    value: "twoTwo" },
          { type: "OPERATOR",                      value: "=" },
          { type: "STRING",                        value: "2.2" },
-         { type: "TERMINATOR",                    value: "\\n"}, 
-         
+         { type: "TERMINATOR",                    value: "\\n"},
+
          { type: "DECLARATION_KEYWORD",           value: "var" },
          { type: "IDENTIFIER",                    value: "twoTwoToFloat" },
          { type: "OPERATOR",                      value: "=" },
          { type: "TYPE_NUMBER",                   value: "Float"},
-         { type: "INVOCATION_START",              value: "(" }, 
-         { type: "IDENTIFIER",                    value: "twoTwo" },   
-         { type: "INVOCATION_END",                value: ")" }, 
-         { type: "TERMINATOR",                    value: "\\n"}, 
-         
+         { type: "INVOCATION_START",              value: "(" },
+         { type: "IDENTIFIER",                    value: "twoTwo" },
+         { type: "INVOCATION_END",                value: ")" },
+         { type: "TERMINATOR",                    value: "\\n"},
+
          { type: "DECLARATION_KEYWORD",           value: "var" },
          { type: "IDENTIFIER",                    value: "twoTwoToDouble" },
          { type: "OPERATOR",                      value: "=" },
          { type: "TYPE_NUMBER",                   value: "Double"},
-         { type: "INVOCATION_START",              value: "(" }, 
-         { type: "IDENTIFIER",                    value: "twoTwo" },   
-         { type: "INVOCATION_END",                value: ")" }, 
+         { type: "INVOCATION_START",              value: "(" },
+         { type: "IDENTIFIER",                    value: "twoTwo" },
+         { type: "INVOCATION_END",                value: ")" },
          { type: "TERMINATOR",                    value: "\\n"},
-         
+
          { type: "DECLARATION_KEYWORD",           value: "var" },
          { type: "IDENTIFIER",                    value: "twoTwoBackToString" },
          { type: "OPERATOR",                      value: "=" },
          { type: "TYPE_STRING",                   value: "String"},
-         { type: "INVOCATION_START",              value: "(" }, 
-         { type: "IDENTIFIER",                    value: "twoTwoToFloat" },   
-         { type: "INVOCATION_END",                value: ")" }, 
+         { type: "INVOCATION_START",              value: "(" },
+         { type: "IDENTIFIER",                    value: "twoTwoToFloat" },
+         { type: "INVOCATION_END",                value: ")" },
          { type: "TERMINATOR",                    value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
 
       describe('Range Operations', function () {
-        
+
         it('should handle closed ranges', function () {
           input = String.raw`var a = 1...5`;
           output = [
@@ -6202,7 +6202,7 @@ describe('Lexer', function() {
           ];
           expect(lexer(input)).to.deep.equal(output);
         });
-        
+
         it('should handle ranges delimited by identifiers', function () {
           input = String.raw`let start = 0; let end = 10; let range = start..<end; let fullRange = start...end;`;
           output = [
@@ -6250,7 +6250,7 @@ describe('Lexer', function() {
             { type: "OPERATOR",                   value: "=" },
             { type: "STRING",                     value: "my string, 123!" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "STATEMENT_KEYWORD",          value: "for" },
             { type: "IDENTIFIER",                 value: "c" },
             { type: "STATEMENT_KEYWORD",          value: "in" },
@@ -6259,13 +6259,13 @@ describe('Lexer', function() {
             { type: "TYPE_PROPERTY",              value: "characters" },
             { type: "PUNCTUATION",                value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "NATIVE_METHOD",              value: "print"},
             { type: "INVOCATION_START",           value: "(" },
             { type: "IDENTIFIER",                 value: "c" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "PUNCTUATION",                value: "}" },
             { type: "TERMINATOR",                 value: "EOF"},
           ];
@@ -6281,7 +6281,7 @@ describe('Lexer', function() {
             { type: "OPERATOR",                   value: "=" },
             { type: "STRING",                     value: "my string, 123!" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "let" },
             { type: "IDENTIFIER",                 value: "fifteen" },
             { type: "OPERATOR",                   value: "=" },
@@ -6326,7 +6326,7 @@ describe('Lexer', function() {
             { type: "OPERATOR",                   value: "=" },
             { type: "STRING",                     value: "my string, 123!" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "addChar" },
             { type: "PUNCTUATION",                value: ":" },
@@ -6334,7 +6334,7 @@ describe('Lexer', function() {
             { type: "OPERATOR",                   value: "=" },
             { type: "STRING",                     value: "!" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "s" },
             { type: "DOT_SYNTAX",                 value: "." },
             { type: "NATIVE_METHOD",              value: "append"},
@@ -6371,7 +6371,7 @@ describe('Lexer', function() {
             { type: "DOT_SYNTAX",                 value: "." },
             { type: "TYPE_PROPERTY",              value: "startIndex" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "one" },
             { type: "OPERATOR",                   value: "=" },
@@ -6396,7 +6396,7 @@ describe('Lexer', function() {
             { type: "NUMBER",                     value: "2" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "m" },
             { type: "OPERATOR",                   value: "=" },
@@ -6407,7 +6407,7 @@ describe('Lexer', function() {
             { type: "TYPE_PROPERTY",              value: "startIndex" },
             { type: "SUBSTRING_LOOKUP_END",       value: "]" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "y" },
             { type: "OPERATOR",                   value: "=" },
@@ -6423,7 +6423,7 @@ describe('Lexer', function() {
             { type: "INVOCATION_END",             value: ")" },
             { type: "SUBSTRING_LOOKUP_END",       value: "]" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "fifteen" },
             { type: "OPERATOR",                   value: "=" },
@@ -6431,7 +6431,7 @@ describe('Lexer', function() {
             { type: "DOT_SYNTAX",                 value: "." },
             { type: "TYPE_PROPERTY",              value: "endIndex" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "fourteen" },
             { type: "OPERATOR",                   value: "=" },
@@ -6443,7 +6443,7 @@ describe('Lexer', function() {
             { type: "INVOCATION_START",           value: "(" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "bang" },
             { type: "OPERATOR",                   value: "=" },
@@ -6458,7 +6458,7 @@ describe('Lexer', function() {
             { type: "INVOCATION_END",             value: ")" },
             { type: "SUBSTRING_LOOKUP_END",       value: "]" },
             // { type: "TERMINATOR",                 value: "\\n"},
-            
+
             // { type: "NATIVE_METHOD",              value: "print"},
             // { type: "INVOCATION_START",           value: "(" },
             // { type: "STRING",                     value: "the letter s: " },
@@ -6475,7 +6475,7 @@ describe('Lexer', function() {
             // { type: "INVOCATION_END",             value: ")" },
             // { type: "SUBSTRING_LOOKUP_END",       value: "]" },
             // { type: "STRING_INTERPOLATION_END",   value: ")" },
-            // { type: "STRING",                     value: "" },  
+            // { type: "STRING",                     value: "" },
             // { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "EOF"},
           ];
@@ -6516,7 +6516,7 @@ describe('Lexer', function() {
             { type: "TYPE_PROPERTY",              value: "endIndex" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "greeting" },
             { type: "DOT_SYNTAX",                 value: "." },
             { type: "NATIVE_METHOD",              value: "insertContentsOf"},
@@ -6563,7 +6563,7 @@ describe('Lexer', function() {
             { type: "NUMBER",                     value: "6" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "greeting" },
             { type: "DOT_SYNTAX",                 value: "." },
             { type: "NATIVE_METHOD",              value: "removeRange"},
@@ -6597,7 +6597,7 @@ describe('Lexer', function() {
             { type: "INVOCATION_END",             value: ")" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "famousDriver" },
             { type: "OPERATOR",                   value: "=" },
@@ -6679,7 +6679,7 @@ describe('Lexer', function() {
             { type: "ARRAY_START",                value: "["},
             { type: "TYPE_NUMBER",                value: "Int"},
             { type: "ARRAY_END",                  value: "]"},
-            { type: "INVOCATION_START",           value: "(" }, 
+            { type: "INVOCATION_START",           value: "(" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
 
@@ -6753,7 +6753,7 @@ describe('Lexer', function() {
             { type: "NUMBER",                     value: "2" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "eight" },
             { type: "OPERATOR",                   value: "=" },
@@ -6764,14 +6764,14 @@ describe('Lexer', function() {
             { type: "NUMBER",                     value: "4" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "arr" },
             { type: "DOT_SYNTAX",                 value: "." },
             { type: "NATIVE_METHOD",              value: "removeLast"},
             { type: "INVOCATION_START",           value: "(" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "arrTwo" },
             { type: "OPERATOR",                   value: "=" },
@@ -6787,7 +6787,7 @@ describe('Lexer', function() {
             { type: "NUMBER",                     value: "10" },
             { type: "ARRAY_END",                  value: "]" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "arr" },
             { type: "DOT_SYNTAX",                 value: "." },
             { type: "NATIVE_METHOD",              value: "insertContentsOf"},
@@ -6799,7 +6799,7 @@ describe('Lexer', function() {
             { type: "NUMBER",                     value: "5" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "one" },
             { type: "OPERATOR",                   value: "=" },
@@ -6809,7 +6809,7 @@ describe('Lexer', function() {
             { type: "INVOCATION_START",           value: "(" },
             { type: "INVOCATION_END",             value: ")" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "arr" },
             { type: "DOT_SYNTAX",                 value: "." },
             { type: "NATIVE_METHOD",              value: "removeAll"},
@@ -6856,7 +6856,7 @@ describe('Lexer', function() {
             { type: "NUMBER",                     value: "0" },
             { type: "ARRAY_END",                  value: "]" },
             { type: "TERMINATOR",                 value: "\\n"},
-            
+
             { type: "IDENTIFIER",                 value: "arr" },
             { type: "SUBSTRING_LOOKUP_START",     value: "[" },
             { type: "NUMBER",                     value: "0" },
@@ -6908,7 +6908,7 @@ describe('Lexer', function() {
 
             { type: "IDENTIFIER",                   value: "d" },
             { type: "DOT_SYNTAX",                   value: "." },
-            { type: "TYPE_PROPERTY",                value: "count" }, 
+            { type: "TYPE_PROPERTY",                value: "count" },
             { type: "TERMINATOR",                   value: "EOF" }
           ];
           expect(lexer(input)).to.deep.equal(output);
@@ -6946,7 +6946,7 @@ describe('Lexer', function() {
 
             { type: "IDENTIFIER",                   value: "d" },
             { type: "DOT_SYNTAX",                   value: "." },
-            { type: "NATIVE_METHOD",                value: "updateValue" }, 
+            { type: "NATIVE_METHOD",                value: "updateValue" },
             { type: "INVOCATION_START",             value: "(" },
             { type: "ARRAY_START",                  value: "[" },
             { type: "NUMBER",                       value: "1" },
@@ -6993,7 +6993,7 @@ describe('Lexer', function() {
 
             { type: "IDENTIFIER",                   value: "d" },
             { type: "DOT_SYNTAX",                   value: "." },
-            { type: "NATIVE_METHOD",                value: "removeValueForKey" }, 
+            { type: "NATIVE_METHOD",                value: "removeValueForKey" },
             { type: "INVOCATION_START",             value: "(" },
             { type: "STRING",                       value: "array1" },
             { type: "INVOCATION_END",               value: ")" },
@@ -7031,7 +7031,7 @@ describe('Lexer', function() {
            { type: 'CLOSED_RANGE',            value: '...' },
            { type: 'NUMBER',                  value: '100' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'DECLARATION_KEYWORD',     value: 'var' },
            { type: 'IDENTIFIER',              value: 'results' },
            { type: 'OPERATOR',                value: '=' },
@@ -7041,14 +7041,14 @@ describe('Lexer', function() {
            { type: 'INVOCATION_START',        value: '(' },
            { type: 'INVOCATION_END',          value: ')' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'STATEMENT_KEYWORD',       value: 'for' },
            { type: 'IDENTIFIER',              value: 'i' },
            { type: 'STATEMENT_KEYWORD',       value: 'in' },
            { type: 'IDENTIFIER',              value: 'range' },
            { type: 'PUNCTUATION',             value: '{' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'STATEMENT_KEYWORD',       value: 'if' },
            { type: 'IDENTIFIER',              value: 'i' },
            { type: 'OPERATOR',                value: '%' },
@@ -7058,7 +7058,7 @@ describe('Lexer', function() {
            { type: 'NUMBER',                  value: '0' },
            { type: 'PUNCTUATION',             value: '{' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'STATEMENT_KEYWORD',       value: 'if' },
            { type: 'IDENTIFIER',              value: 'i' },
            { type: 'OPERATOR',                value: '%' },
@@ -7068,7 +7068,7 @@ describe('Lexer', function() {
            { type: 'NUMBER',                  value: '0' },
            { type: 'PUNCTUATION',             value: '{' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'IDENTIFIER',              value: 'results' },
            { type: 'DOT_SYNTAX',              value: '.' },
            { type: 'NATIVE_METHOD',           value: 'append' },
@@ -7076,12 +7076,12 @@ describe('Lexer', function() {
            { type: 'STRING',                  value: 'FizzBuzz' },
            { type: 'INVOCATION_END',          value: ')' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'PUNCTUATION',             value: '}' },
            { type: 'STATEMENT_KEYWORD',       value: 'else' },
            { type: 'PUNCTUATION',             value: '{' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'IDENTIFIER',              value: 'results' },
            { type: 'DOT_SYNTAX',              value: '.' },
            { type: 'NATIVE_METHOD',           value: 'append' },
@@ -7089,10 +7089,10 @@ describe('Lexer', function() {
            { type: 'STRING',                  value: 'Fizz' },
            { type: 'INVOCATION_END',          value: ')' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'PUNCTUATION',             value: '}' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'PUNCTUATION',             value: '}' },
            { type: 'STATEMENT_KEYWORD',       value: 'else' },
            { type: 'STATEMENT_KEYWORD',       value: 'if' },
@@ -7104,7 +7104,7 @@ describe('Lexer', function() {
            { type: 'NUMBER',                  value: '0' },
            { type: 'PUNCTUATION',             value: '{' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'IDENTIFIER',              value: 'results' },
            { type: 'DOT_SYNTAX',              value: '.' },
            { type: 'NATIVE_METHOD',           value: 'append' },
@@ -7112,12 +7112,12 @@ describe('Lexer', function() {
            { type: 'STRING',                  value: 'Buzz' },
            { type: 'INVOCATION_END',          value: ')' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'PUNCTUATION',             value: '}' },
            { type: 'STATEMENT_KEYWORD',       value: 'else' },
            { type: 'PUNCTUATION',             value: '{' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'IDENTIFIER',              value: 'results' },
            { type: 'DOT_SYNTAX',              value: '.' },
            { type: 'NATIVE_METHOD',           value: 'append' },
@@ -7128,18 +7128,18 @@ describe('Lexer', function() {
            { type: 'INVOCATION_END',          value: ')' },
            { type: 'INVOCATION_END',          value: ')' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'PUNCTUATION',             value: '}' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'PUNCTUATION',             value: '}' },
            { type: 'TERMINATOR',              value: '\\n' },
-           
+
            { type: 'NATIVE_METHOD',           value: 'print' },
            { type: 'INVOCATION_START',        value: '(' },
            { type: 'IDENTIFIER',              value: 'results' },
            { type: 'INVOCATION_END',          value: ')' },
-           { type: 'TERMINATOR',              value: 'EOF' } 
+           { type: 'TERMINATOR',              value: 'EOF' }
           ];
           expect(lexer(input)).to.deep.equal(output);
         });
@@ -7178,7 +7178,7 @@ describe('Lexer', function() {
              { type: 'PARAMS_END',                   value: ')' },
              { type: 'STATEMENTS_START',             value: '{' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'DECLARATION_KEYWORD',          value: 'let' },
              { type: 'IDENTIFIER',                   value: 'range' },
              { type: 'OPERATOR',                     value: '=' },
@@ -7186,20 +7186,20 @@ describe('Lexer', function() {
              { type: 'CLOSED_RANGE',                 value: '...' },
              { type: 'IDENTIFIER',                   value: 'end' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'STATEMENT_KEYWORD',            value: 'for' },
              { type: 'IDENTIFIER',                   value: 'i' },
              { type: 'STATEMENT_KEYWORD',            value: 'in' },
              { type: 'IDENTIFIER',                   value: 'range' },
              { type: 'PUNCTUATION',                  value: '{' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'DECLARATION_KEYWORD',          value: 'var' },
              { type: 'IDENTIFIER',                   value: 'output' },
              { type: 'OPERATOR',                     value: '=' },
              { type: 'STRING',                       value: '' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'STATEMENT_KEYWORD',            value: 'if' },
              { type: 'IDENTIFIER',                   value: 'i' },
              { type: 'OPERATOR',                     value: '%' },
@@ -7209,16 +7209,16 @@ describe('Lexer', function() {
              { type: 'NUMBER',                       value: '0' },
              { type: 'PUNCTUATION',                  value: '{' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'IDENTIFIER',                   value: 'output' },
              { type: 'OPERATOR',                     value: '+' },
              { type: 'OPERATOR',                     value: '=' },
              { type: 'STRING',                       value: 'Fizz' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'PUNCTUATION',                  value: '}' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'STATEMENT_KEYWORD',            value: 'if' },
              { type: 'IDENTIFIER',                   value: 'i' },
              { type: 'OPERATOR',                     value: '%' },
@@ -7228,50 +7228,50 @@ describe('Lexer', function() {
              { type: 'NUMBER',                       value: '0' },
              { type: 'PUNCTUATION',                  value: '{' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'IDENTIFIER',                   value: 'output' },
              { type: 'OPERATOR',                     value: '+' },
              { type: 'OPERATOR',                     value: '=' },
              { type: 'STRING',                       value: 'Buzz' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'PUNCTUATION',                  value: '}' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'STATEMENT_KEYWORD',            value: 'if' },
              { type: 'IDENTIFIER',                   value: 'output' },
              { type: 'DOT_SYNTAX',                   value: '.' },
              { type: 'TYPE_PROPERTY',                value: 'isEmpty' },
              { type: 'PUNCTUATION',                  value: '{' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'NATIVE_METHOD',                value: 'print' },
              { type: 'INVOCATION_START',             value: '(' },
              { type: 'IDENTIFIER',                   value: 'i' },
              { type: 'INVOCATION_END',               value: ')' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'PUNCTUATION',                  value: '}' },
              { type: 'STATEMENT_KEYWORD',            value: 'else' },
              { type: 'PUNCTUATION',                  value: '{' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'NATIVE_METHOD',                value: 'print' },
              { type: 'INVOCATION_START',             value: '(' },
              { type: 'IDENTIFIER',                   value: 'output' },
              { type: 'INVOCATION_END',               value: ')' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'PUNCTUATION',                  value: '}' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'PUNCTUATION',                  value: '}' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'STATEMENTS_END',               value: '}' },
              { type: 'TERMINATOR',                   value: '\\n' },
              { type: 'TERMINATOR',                   value: '\\n' },
-             
+
              { type: 'IDENTIFIER',                   value: 'fizzBuzz' },
              { type: 'INVOCATION_START',             value: '(' },
              { type: 'NUMBER',                       value: '1' },
@@ -7280,7 +7280,7 @@ describe('Lexer', function() {
              { type: 'PUNCTUATION',                  value: ':' },
              { type: 'NUMBER',                       value: '100' },
              { type: 'INVOCATION_END',               value: ')' },
-             { type: 'TERMINATOR',                   value: 'EOF' } 
+             { type: 'TERMINATOR',                   value: 'EOF' }
           ];
           expect(lexer(input)).to.deep.equal(output);
         });
