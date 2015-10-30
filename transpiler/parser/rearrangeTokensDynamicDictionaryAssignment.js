@@ -1,5 +1,6 @@
 var util = require('util');
-var rearrangeDynamicDictionaryAssignmentTokens = function(tokensArray) {
+
+var rearrangeTokensDynamicDictionaryAssignment = function(tokensArray) {
 
   var start = 0;
   var end = 0;
@@ -159,4 +160,4 @@ var rearrangeDynamicDictionaryAssignmentTokens = function(tokensArray) {
   return finalOutputArray;
 };
 
-module.exports = rearrangeDynamicDictionaryAssignmentTokens;
+module.exports = rearrangeTokensDynamicDictionaryAssignment;

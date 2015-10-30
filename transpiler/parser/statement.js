@@ -2,6 +2,16 @@ var advance = require('./advance');
 var expression = require('./expression');
 
 var statement = function(state) {
+
+  while(true) {
+    if(state.token.value === "\\n") {
+      state = advance(state);
+    }
+    else {
+      break;
+    }
+  }
+
   var n = state.token, v;
 
   if (n.std) {

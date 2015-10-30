@@ -60,7 +60,7 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
    * Logic to handle the recursive case
    */
   while (rbp < state.token.lbp) {
-    var overwrittenMemberExpression = left;
+    var overwrittenMemberExpression = left;//TODO delete
     t = state.token;
     state = advance(state);
     left = t.led(left);//assignments

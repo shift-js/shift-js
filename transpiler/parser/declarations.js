@@ -203,6 +203,16 @@ var declarations = {
 
     prefix(state, "{", function() {
       var a = [], n, v;
+
+      while(true) {
+        if(state.token.value === "\\n") {
+          state = advance(state);
+        }
+        else {
+          break;
+        }
+      }
+
       var tmpLookAhead = state.tokens[state.index];
       if(tmpLookAhead.type === "DICTIONARY_END") {
         state = advance(state);
@@ -247,11 +257,12 @@ var declarations = {
         }
         return this;
       }
-
+      /* Get all things in dictionary */
       if ((state.token.id !== "]" &&  state.token.id !== ")") && tmpLookAhead.value !== ",") {
         while (true) {
           n = state.token;
-          if (n.type !== "IDENTIFIER" && n.type !== "name" && n.type !== "literal" && n.type !== "TUPLE_ELEMENT_NAME") {
+          /* if  */
+          if (n.type !== "IDENTIFIER" && n.type !== "literal" && n.type !== "TUPLE_ELEMENT_NAME") {
             state.token.error("Bad property name.");
           }
           state = advance(state);
@@ -296,12 +307,35 @@ var declarations = {
           if (state.token.id !== ",") {
             break;
           }
+
+          while(true) {
+            if(state.token.value === "\\n") {
+              state = advance(state);
+            }
+            else {
+              break;
+            }
+          }
+
           state = advance(state, ",");
+
+          while(true) {
+            if(state.token.value === "\\n") {
+              state = advance(state);
+            }
+            else {
+              break;
+            }
+          }
+
+          if(state.token.type === "DICTIONARY_END") {
+            break;
+          }
         }
       }
 
       try {
-        state = advance(state, "]");
+        state = advance(state, "]");//TODO just one here
       } catch(e) {
         state = advance(state, ")");
       }
@@ -393,6 +427,7 @@ var declarations = {
         } else if(state.token.type === "TERMINATOR") {
           state = advance(state);
         }
+        //TODO maybe check for newlines here
 
         if(state.token.id === ";") {
           state = advance(state);
@@ -408,6 +443,8 @@ var declarations = {
       if([";", "var", "if", "while", "repeat", "for", "++", "--"].hasItem(state.token.value)) {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       } else if(state.token.type === "IDENTIFIER") {
+        return a.length === 0 ? null : a.length === 1 ? a[0] : a;
+      } else if(state.token.value === "\\n") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
 

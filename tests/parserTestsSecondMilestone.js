@@ -3426,7 +3426,24 @@ describe('Second Milestone Parser', function() {
       //                       }
       //                   }
       //               }`;
-      xit('should handle for-in loops that iterate over items in a dictionary', function () {
+      /**
+      //AST Explorer input:
+      var interestingNumbers = {
+        "Prime":[2, 3, 5, 7, 11, 13],
+        "Fibonacci":[1, 1, 2, 3, 5, 8],
+        "Square":[1, 4, 9, 16, 25]
+      };
+      var largest = 0;
+      for(var kind in interestingNumbers) {
+        var numbers = interestingNumbers[kind];
+        for(var number in numbers) {
+          if(number > largest) {
+            largest = number;
+          }
+        }
+      }
+      */
+      it('should handle for-in loops that iterate over items in a dictionary', function () {
         input = [
           { type: 'DECLARATION_KEYWORD',         value: 'let' },
           { type: 'IDENTIFIER',                  value: 'interestingNumbers' },
@@ -3522,7 +3539,299 @@ describe('Second Milestone Parser', function() {
           { type: "PUNCTUATION",                 value: "}" },
           { type: "TERMINATOR",                  value: "EOF"},
         ];
-        output = "FILL_ME_IN";
+        output = {
+          "type": "Program",
+          "body": [
+            {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "interestingNumbers"
+                  },
+                  "init": {
+                    "type": "ObjectExpression",
+                    "properties": [
+                      {
+                        "type": "Property",
+                        "key": {
+                          "type": "Literal",
+                          "value": "Prime",
+                          "raw": "\"Prime\""
+                        },
+                        "computed": false,
+                        "value": {
+                          "type": "ArrayExpression",
+                          "elements": [
+                            {
+                              "type": "Literal",
+                              "value": 2,
+                              "raw": "2"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 3,
+                              "raw": "3"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 5,
+                              "raw": "5"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 7,
+                              "raw": "7"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 11,
+                              "raw": "11"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 13,
+                              "raw": "13"
+                            }
+                          ]
+                        },
+                        "kind": "init",
+                        "method": false,
+                        "shorthand": false
+                      },
+                      {
+                        "type": "Property",
+                        "key": {
+                          "type": "Literal",
+                          "value": "Fibonacci",
+                          "raw": "\"Fibonacci\""
+                        },
+                        "computed": false,
+                        "value": {
+                          "type": "ArrayExpression",
+                          "elements": [
+                            {
+                              "type": "Literal",
+                              "value": 1,
+                              "raw": "1"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 1,
+                              "raw": "1"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 2,
+                              "raw": "2"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 3,
+                              "raw": "3"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 5,
+                              "raw": "5"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 8,
+                              "raw": "8"
+                            }
+                          ]
+                        },
+                        "kind": "init",
+                        "method": false,
+                        "shorthand": false
+                      },
+                      {
+                        "type": "Property",
+                        "key": {
+                          "type": "Literal",
+                          "value": "Square",
+                          "raw": "\"Square\""
+                        },
+                        "computed": false,
+                        "value": {
+                          "type": "ArrayExpression",
+                          "elements": [
+                            {
+                              "type": "Literal",
+                              "value": 1,
+                              "raw": "1"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 4,
+                              "raw": "4"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 9,
+                              "raw": "9"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 16,
+                              "raw": "16"
+                            },
+                            {
+                              "type": "Literal",
+                              "value": 25,
+                              "raw": "25"
+                            }
+                          ]
+                        },
+                        "kind": "init",
+                        "method": false,
+                        "shorthand": false
+                      }
+                    ]
+                  }
+                }
+              ],
+              "kind": "var"
+            },
+            {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "largest"
+                  },
+                  "init": {
+                    "type": "Literal",
+                    "value": 0,
+                    "raw": "0"
+                  }
+                }
+              ],
+              "kind": "var"
+            },
+            {
+              "type": "ForInStatement",
+              "left": {
+                "type": "VariableDeclaration",
+                "declarations": [
+                  {
+                    "type": "VariableDeclarator",
+                    "id": {
+                      "type": "Identifier",
+                      "name": "kind"
+                    },
+                    "init": null
+                  }
+                ],
+                "kind": "var"
+              },
+              "right": {
+                "type": "Identifier",
+                "name": "interestingNumbers"
+              },
+              "body": {
+                "type": "BlockStatement",
+                "body": [
+                  {
+                    "type": "VariableDeclaration",
+                    "declarations": [
+                      {
+                        "type": "VariableDeclarator",
+                        "id": {
+                          "type": "Identifier",
+                          "name": "numbers"
+                        },
+                        "init": {
+                          "type": "MemberExpression",
+                          "computed": true,
+                          "object": {
+                            "type": "Identifier",
+                            "name": "interestingNumbers"
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "kind"
+                          }
+                        }
+                      }
+                    ],
+                    "kind": "var"
+                  },
+                  {
+                    "type": "ForInStatement",
+                    "left": {
+                      "type": "VariableDeclaration",
+                      "declarations": [
+                        {
+                          "type": "VariableDeclarator",
+                          "id": {
+                            "type": "Identifier",
+                            "name": "number"
+                          },
+                          "init": null
+                        }
+                      ],
+                      "kind": "var"
+                    },
+                    "right": {
+                      "type": "Identifier",
+                      "name": "numbers"
+                    },
+                    "body": {
+                      "type": "BlockStatement",
+                      "body": [
+                        {
+                          "type": "IfStatement",
+                          "test": {
+                            "type": "BinaryExpression",
+                            "operator": ">",
+                            "left": {
+                              "type": "Identifier",
+                              "name": "number"
+                            },
+                            "right": {
+                              "type": "Identifier",
+                              "name": "largest"
+                            }
+                          },
+                          "consequent": {
+                            "type": "BlockStatement",
+                            "body": [
+                              {
+                                "type": "ExpressionStatement",
+                                "expression": {
+                                  "type": "AssignmentExpression",
+                                  "operator": "=",
+                                  "left": {
+                                    "type": "Identifier",
+                                    "name": "largest"
+                                  },
+                                  "right": {
+                                    "type": "Identifier",
+                                    "name": "number"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          "alternate": null
+                        }
+                      ]
+                    },
+                    "each": false
+                  }
+                ]
+              },
+              "each": false
+            }
+          ],
+          "sourceType": "module"
+        };
         expect(R.equals(parser(input), output)).to.equal(true);
       });
     });
