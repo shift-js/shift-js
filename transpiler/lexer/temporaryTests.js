@@ -1,13 +1,11 @@
 it('should handle functions that use inputs, native methods, and string interpolation ', function () {
-          input = String.raw`func printFirstName(firstName:String,surname:String?) {
-                                    if let unwrappedSurname = surname {
-                                        print("\(firstName) \(unwrappedSurname)")
-                                    } else {
-                                        print(firstName)
-                                    }
-                                }
-                                printFirstName("Joe", surname: nil)
-                                printFirstName("Joe", surname: "Blow")`;
+          input = String.raw`func printName(firstName firstName:String="Joe",middleName:String="Andrew",surname:String="Blow") {
+                                print("\(firstName) \(middleName) \(surname)")
+                            }
+                            printName(firstName: "John", middleName: "Juan", surname: "Smith")    
+                            printName(firstName: "John")   
+                            printName()        
+                            printName(surname: "Smith", middleName: "Julius", firstName: "John")`;
           output = [
             { type: "DECLARATION_KEYWORD",        value: "func"},
             { type: "IDENTIFIER",                 value: "printFirstName" },
