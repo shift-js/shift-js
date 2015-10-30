@@ -13,148 +13,12 @@ var expected = {
           "type": "VariableDeclarator",
           "id": {
             "type": "Identifier",
-            "name": "interestingNumbers"
+            "name": "gameInProgress"
           },
           "init": {
-            "type": "ObjectExpression",
-            "properties": [
-              {
-                "type": "Property",
-                "key": {
-                  "type": "Literal",
-                  "value": "Prime",
-                  "raw": "\"Prime\""
-                },
-                "computed": false,
-                "value": {
-                  "type": "ArrayExpression",
-                  "elements": [
-                    {
-                      "type": "Literal",
-                      "value": 2,
-                      "raw": "2"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 3,
-                      "raw": "3"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 5,
-                      "raw": "5"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 7,
-                      "raw": "7"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 11,
-                      "raw": "11"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 13,
-                      "raw": "13"
-                    }
-                  ]
-                },
-                "kind": "init",
-                "method": false,
-                "shorthand": false
-              },
-              {
-                "type": "Property",
-                "key": {
-                  "type": "Literal",
-                  "value": "Fibonacci",
-                  "raw": "\"Fibonacci\""
-                },
-                "computed": false,
-                "value": {
-                  "type": "ArrayExpression",
-                  "elements": [
-                    {
-                      "type": "Literal",
-                      "value": 1,
-                      "raw": "1"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 1,
-                      "raw": "1"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 2,
-                      "raw": "2"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 3,
-                      "raw": "3"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 5,
-                      "raw": "5"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 8,
-                      "raw": "8"
-                    }
-                  ]
-                },
-                "kind": "init",
-                "method": false,
-                "shorthand": false
-              },
-              {
-                "type": "Property",
-                "key": {
-                  "type": "Literal",
-                  "value": "Square",
-                  "raw": "\"Square\""
-                },
-                "computed": false,
-                "value": {
-                  "type": "ArrayExpression",
-                  "elements": [
-                    {
-                      "type": "Literal",
-                      "value": 1,
-                      "raw": "1"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 4,
-                      "raw": "4"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 9,
-                      "raw": "9"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 16,
-                      "raw": "16"
-                    },
-                    {
-                      "type": "Literal",
-                      "value": 25,
-                      "raw": "25"
-                    }
-                  ]
-                },
-                "kind": "init",
-                "method": false,
-                "shorthand": false
-              }
-            ]
+            "type": "Literal",
+            "value": false,
+            "raw": "false"
           }
         }
       ],
@@ -167,7 +31,7 @@ var expected = {
           "type": "VariableDeclarator",
           "id": {
             "type": "Identifier",
-            "name": "largest"
+            "name": "score"
           },
           "init": {
             "type": "Literal",
@@ -179,88 +43,81 @@ var expected = {
       "kind": "var"
     },
     {
-      "type": "ForInStatement",
-      "left": {
-        "type": "VariableDeclaration",
-        "declarations": [
-          {
-            "type": "VariableDeclarator",
-            "id": {
-              "type": "Identifier",
-              "name": "kind"
-            },
-            "init": null
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "typeOfScore"
+          },
+          "init": {
+            "type": "Literal",
+            "value": "",
+            "raw": "\"\""
           }
-        ],
-        "kind": "var"
-      },
-      "right": {
+        }
+      ],
+      "kind": "var"
+    },
+    {
+      "type": "VariableDeclaration",
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "id": {
+            "type": "Identifier",
+            "name": "PAT"
+          },
+          "init": {
+            "type": "Literal",
+            "value": "",
+            "raw": "\"\""
+          }
+        }
+      ],
+      "kind": "var"
+    },
+    {
+      "type": "WhileStatement",
+      "test": {
         "type": "Identifier",
-        "name": "interestingNumbers"
+        "name": "gameInProgress"
       },
       "body": {
         "type": "BlockStatement",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "numbers"
-                },
-                "init": {
-                  "type": "MemberExpression",
-                  "computed": true,
-                  "object": {
-                    "type": "Identifier",
-                    "name": "interestingNumbers"
-                  },
-                  "property": {
-                    "type": "Identifier",
-                    "name": "kind"
-                  }
-                }
+            "type": "IfStatement",
+            "test": {
+              "type": "BinaryExpression",
+              "operator": "!=",
+              "left": {
+                "type": "Identifier",
+                "name": "typeOfScore"
+              },
+              "right": {
+                "type": "Literal",
+                "value": "",
+                "raw": "\"\""
               }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "ForInStatement",
-            "left": {
-              "type": "VariableDeclaration",
-              "declarations": [
-                {
-                  "type": "VariableDeclarator",
-                  "id": {
-                    "type": "Identifier",
-                    "name": "number"
-                  },
-                  "init": null
-                }
-              ],
-              "kind": "var"
             },
-            "right": {
-              "type": "Identifier",
-              "name": "numbers"
-            },
-            "body": {
+            "consequent": {
               "type": "BlockStatement",
               "body": [
                 {
                   "type": "IfStatement",
                   "test": {
                     "type": "BinaryExpression",
-                    "operator": ">",
+                    "operator": "==",
                     "left": {
                       "type": "Identifier",
-                      "name": "number"
+                      "name": "typeOfScore"
                     },
                     "right": {
-                      "type": "Identifier",
-                      "name": "largest"
+                      "type": "Literal",
+                      "value": "TD",
+                      "raw": "\"TD\""
                     }
                   },
                   "consequent": {
@@ -270,126 +127,319 @@ var expected = {
                         "type": "ExpressionStatement",
                         "expression": {
                           "type": "AssignmentExpression",
-                          "operator": "=",
+                          "operator": "+=",
                           "left": {
                             "type": "Identifier",
-                            "name": "largest"
+                            "name": "score"
                           },
                           "right": {
-                            "type": "Identifier",
-                            "name": "number"
+                            "type": "Literal",
+                            "value": 6,
+                            "raw": "6"
                           }
                         }
                       }
                     ]
                   },
-                  "alternate": null
+                  "alternate": {
+                    "type": "IfStatement",
+                    "test": {
+                      "type": "BinaryExpression",
+                      "operator": "==",
+                      "left": {
+                        "type": "Identifier",
+                        "name": "typeOfScore"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": "PAT",
+                        "raw": "\"PAT\""
+                      }
+                    },
+                    "consequent": {
+                      "type": "BlockStatement",
+                      "body": [
+                        {
+                          "type": "IfStatement",
+                          "test": {
+                            "type": "BinaryExpression",
+                            "operator": "==",
+                            "left": {
+                              "type": "Identifier",
+                              "name": "PAT"
+                            },
+                            "right": {
+                              "type": "Literal",
+                              "value": "TD",
+                              "raw": "\"TD\""
+                            }
+                          },
+                          "consequent": {
+                            "type": "BlockStatement",
+                            "body": [
+                              {
+                                "type": "ExpressionStatement",
+                                "expression": {
+                                  "type": "AssignmentExpression",
+                                  "operator": "+=",
+                                  "left": {
+                                    "type": "Identifier",
+                                    "name": "score"
+                                  },
+                                  "right": {
+                                    "type": "Literal",
+                                    "value": 2,
+                                    "raw": "2"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          "alternate": {
+                            "type": "BlockStatement",
+                            "body": [
+                              {
+                                "type": "ExpressionStatement",
+                                "expression": {
+                                  "type": "AssignmentExpression",
+                                  "operator": "+=",
+                                  "left": {
+                                    "type": "Identifier",
+                                    "name": "score"
+                                  },
+                                  "right": {
+                                    "type": "Literal",
+                                    "value": 1,
+                                    "raw": "1"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "alternate": {
+                      "type": "IfStatement",
+                      "test": {
+                        "type": "BinaryExpression",
+                        "operator": "==",
+                        "left": {
+                          "type": "Identifier",
+                          "name": "typeOfScore"
+                        },
+                        "right": {
+                          "type": "Literal",
+                          "value": "FG",
+                          "raw": "\"FG\""
+                        }
+                      },
+                      "consequent": {
+                        "type": "BlockStatement",
+                        "body": [
+                          {
+                            "type": "ExpressionStatement",
+                            "expression": {
+                              "type": "AssignmentExpression",
+                              "operator": "+=",
+                              "left": {
+                                "type": "Identifier",
+                                "name": "score"
+                              },
+                              "right": {
+                                "type": "Literal",
+                                "value": 3,
+                                "raw": "3"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "alternate": {
+                        "type": "BlockStatement",
+                        "body": [
+                          {
+                            "type": "ExpressionStatement",
+                            "expression": {
+                              "type": "AssignmentExpression",
+                              "operator": "+=",
+                              "left": {
+                                "type": "Identifier",
+                                "name": "score"
+                              },
+                              "right": {
+                                "type": "Literal",
+                                "value": 2,
+                                "raw": "2"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "typeOfScore"
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": "",
+                      "raw": "\"\""
+                    }
+                  }
                 }
               ]
             },
-            "each": false
+            "alternate": null
           }
         ]
-      },
-      "each": false
+      }
     }
   ],
   "sourceType": "module"
 };
 var tokenStream = [
-  { type: 'DECLARATION_KEYWORD',         value: 'let' },
-  { type: 'IDENTIFIER',                  value: 'interestingNumbers' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'DECLARATION_KEYWORD',         value: 'var' },
+  { type: 'IDENTIFIER',                  value: 'gameInProgress' },
   { type: 'OPERATOR',                    value: '=' },
-  { type: 'DICTIONARY_START',            value: '[' },
+  { type: 'BOOLEAN',                     value: 'false' },
+  { type: 'PUNCTUATION',                 value: ';' },
   { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'STRING',                      value: 'Prime' },
-  { type: 'PUNCTUATION',                 value: ':' },
-  { type: 'ARRAY_START',                 value: '[' },
-  { type: 'NUMBER',                      value: '2' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '3' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '5' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '7' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '11' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '13' },
-  { type: 'ARRAY_END',                   value: ']' },
-  { type: 'PUNCTUATION',                 value: ',' },
   { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'STRING',                      value: 'Fibonacci' },
-  { type: 'PUNCTUATION',                 value: ':' },
-  { type: 'ARRAY_START',                 value: '[' },
-  { type: 'NUMBER',                      value: '1' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '1' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '2' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '3' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '5' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '8' },
-  { type: 'ARRAY_END',                   value: ']' },
-  { type: 'PUNCTUATION',                 value: ',' },
+  { type: 'DECLARATION_KEYWORD',         value: 'var' },
+  { type: 'IDENTIFIER',                  value: 'score' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'NUMBER',                      value: '0' },
   { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'STRING',                      value: 'Square' },
-  { type: 'PUNCTUATION',                 value: ':' },
-  { type: 'ARRAY_START',                 value: '[' },
-  { type: 'NUMBER',                      value: '1' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '4' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '9' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '16' },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: 'NUMBER',                      value: '25' },
-  { type: 'ARRAY_END',                   value: ']' },
-  { type: 'PUNCTUATION',                 value: ',' },
   { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'DICTIONARY_END',              value: ']' },
+  { type: 'DECLARATION_KEYWORD',         value: 'var' },
+  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'STRING',                      value: '' },
+  { type: 'PUNCTUATION',                 value: ';' },
   { type: 'TERMINATOR',                  value: '\\n' },
-  { type: "DECLARATION_KEYWORD",         value: "var" },
-  { type: "IDENTIFIER",                  value: "largest" },
-  { type: "OPERATOR",                    value: "=" },
-  { type: "NUMBER",                      value: "0" },
+  { type: 'DECLARATION_KEYWORD',         value: 'var' },
+  { type: 'IDENTIFIER',                  value: 'PAT' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'STRING',                      value: '' },
+  { type: 'PUNCTUATION',                 value: ';' },
   { type: 'TERMINATOR',                  value: '\\n' },
-  { type: "STATEMENT_KEYWORD",           value: "for" },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'STATEMENT_KEYWORD',           value: 'while' },
+  { type: 'IDENTIFIER',                  value: 'gameInProgress' },
+  { type: 'PUNCTUATION',                 value: '{' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'STATEMENT_KEYWORD',           value: 'if' },
   { type: 'PUNCTUATION',                 value: '(' },
-  { type: "IDENTIFIER",                  value: "kind" },
-  { type: 'PUNCTUATION',                 value: ',' },
-  { type: "IDENTIFIER",                  value: "numbers" },
+  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+  { type: 'OPERATOR',                    value: '!' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'STRING',                      value: '' },
   { type: 'PUNCTUATION',                 value: ')' },
-  { type: "STATEMENT_KEYWORD",           value: "in" },
-  { type: "IDENTIFIER",                  value: "interestingNumbers" },
-  { type: "PUNCTUATION",                 value: "{" },
-  { type: "TERMINATOR",                  value: "\\n"},
-  { type: "STATEMENT_KEYWORD",           value: "for" },
-  { type: "IDENTIFIER",                  value: "number" },
-  { type: "STATEMENT_KEYWORD",           value: "in" },
-  { type: "IDENTIFIER",                  value: "numbers" },
-  { type: "PUNCTUATION",                 value: "{" },
-  { type: "TERMINATOR",                  value: "\\n"},
-  { type: "STATEMENT_KEYWORD",           value: "if" },
-  { type: "IDENTIFIER",                  value: "number" },
-  { type: "OPERATOR",                    value: ">" },
-  { type: "IDENTIFIER",                  value: "largest" },
-  { type: "PUNCTUATION",                 value: "{" },
-  { type: "TERMINATOR",                  value: "\\n"},
-  { type: "IDENTIFIER",                  value: "largest" },
-  { type: "OPERATOR",                    value: "=" },
-  { type: "IDENTIFIER",                  value: "number" },
-  { type: "TERMINATOR",                  value: "\\n"},
-  { type: "PUNCTUATION",                 value: "}" },
-  { type: "TERMINATOR",                  value: "\\n"},
-  { type: "PUNCTUATION",                 value: "}" },
-  { type: "TERMINATOR",                  value: "\\n"},
-  { type: "PUNCTUATION",                 value: "}" },
-  { type: "TERMINATOR",                  value: "EOF"},
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'PUNCTUATION',                 value: '{' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'STATEMENT_KEYWORD',           value: 'if' },
+  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'STRING',                      value: 'TD' },
+  { type: 'PUNCTUATION',                 value: '{' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'IDENTIFIER',                  value: 'score' },
+  { type: 'OPERATOR',                    value: '+' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'NUMBER',                      value: '6' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'PUNCTUATION',                 value: '}' },
+  { type: 'STATEMENT_KEYWORD',           value: 'else' },
+  { type: 'STATEMENT_KEYWORD',           value: 'if' },
+  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'STRING',                      value: 'PAT' },
+  { type: 'PUNCTUATION',                 value: '{' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'STATEMENT_KEYWORD',           value: 'if' },
+  { type: 'IDENTIFIER',                  value: 'PAT' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'STRING',                      value: 'TD' },
+  { type: 'PUNCTUATION',                 value: '{' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'IDENTIFIER',                  value: 'score' },
+  { type: 'OPERATOR',                    value: '+' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'NUMBER',                      value: '2' },
+  { type: 'PUNCTUATION',                 value: ';' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'PUNCTUATION',                 value: '}' },
+  { type: 'STATEMENT_KEYWORD',           value: 'else' },
+  { type: 'PUNCTUATION',                 value: '{' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'IDENTIFIER',                  value: 'score' },
+  { type: 'OPERATOR',                    value: '+' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'NUMBER',                      value: '1' },
+  { type: 'PUNCTUATION',                 value: ';' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'PUNCTUATION',                 value: '}' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'PUNCTUATION',                 value: '}' },
+  { type: 'STATEMENT_KEYWORD',           value: 'else' },
+  { type: 'STATEMENT_KEYWORD',           value: 'if' },
+  { type: 'PUNCTUATION',                 value: '(' },
+  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'STRING',                      value: 'FG' },
+  { type: 'PUNCTUATION',                 value: ')' },
+  { type: 'PUNCTUATION',                 value: '{' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'IDENTIFIER',                  value: 'score' },
+  { type: 'OPERATOR',                    value: '+' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'NUMBER',                      value: '3' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'PUNCTUATION',                 value: '}' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'STATEMENT_KEYWORD',           value: 'else' },
+  { type: 'PUNCTUATION',                 value: '{' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'IDENTIFIER',                  value: 'score' },
+  { type: 'OPERATOR',                    value: '+' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'NUMBER',                      value: '2' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'PUNCTUATION',                 value: '}' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
+  { type: 'OPERATOR',                    value: '=' },
+  { type: 'STRING',                      value: '' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'PUNCTUATION',                 value: '}' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'PUNCTUATION',                 value: '}' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: '\\n' },
+  { type: 'TERMINATOR',                  value: 'EOF' }
 ];
 var parser = makeParse();
 
