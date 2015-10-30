@@ -1418,10 +1418,10 @@ describe('Lexer: Third Milestone', function() {
 
     it('should handle functions that use inputs, native methods, and string interpolation ', function () {
       input = String.raw`func printFirstName(firstName:String) {
-                            println(firstName)
+                            print(firstName)
                         }
                         func printFirstName(firstName:String,surname:String) {
-                            println("\(firstName) \(surname)")
+                            print("\(firstName) \(surname)")
                         }
                         printFirstName("Joe")
                         printFirstName("Joe", "Blow")`;
@@ -1436,7 +1436,7 @@ describe('Lexer: Third Milestone', function() {
         { type: "STATEMENTS_START",           value: "{" },
         { type: "TERMINATOR",                 value: "\\n"},
 
-        { type: "NATIVE_METHOD",              value: "println"},
+        { type: "NATIVE_METHOD",              value: "print"},
         { type: "INVOCATION_START",           value: "(" },
         { type: "IDENTIFIER",                 value: "firstName" },
         { type: "INVOCATION_END",             value: ")" },
@@ -1460,7 +1460,7 @@ describe('Lexer: Third Milestone', function() {
         { type: "STATEMENTS_START",           value: "{" },
         { type: "TERMINATOR",                 value: "\\n"},
 
-        { type: "NATIVE_METHOD",              value: "println"},
+        { type: "NATIVE_METHOD",              value: "print"},
         { type: "INVOCATION_START",           value: "(" },
         { type: "STRING",                     value: "" },
         { type: "STRING_INTERPOLATION_START", value: "\\(" },

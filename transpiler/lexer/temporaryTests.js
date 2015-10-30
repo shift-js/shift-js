@@ -1,9 +1,9 @@
 it('should handle functions that use inputs, native methods, and string interpolation ', function () {
           input = String.raw`func printFirstName(firstName:String,surname:String?) {
                                     if let unwrappedSurname = surname {
-                                        println("\(firstName) \(unwrappedSurname)")
+                                        print("\(firstName) \(unwrappedSurname)")
                                     } else {
-                                        println(firstName)
+                                        print(firstName)
                                     }
                                     
                                 }
