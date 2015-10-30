@@ -17,6 +17,7 @@ module.exports = {
     'contains': 'NATIVE_METHOD',
     'distanceTo': 'NATIVE_METHOD',
     'dropFirst': 'NATIVE_METHOD',
+    'dropLast': 'NATIVE_METHOD',
     'hasPrefix': 'NATIVE_METHOD',
     'hasSuffix': 'NATIVE_METHOD',
     'insert': 'NATIVE_METHOD',
