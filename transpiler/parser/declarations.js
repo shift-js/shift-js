@@ -552,6 +552,8 @@ var declarations = {
     stmt(state, "for", function() {
       this.type = "ForStatement";
 
+      //TODO Refactor For Statements
+
       /* for( var identifier) 'in' identifier { .. } */
       /* to distinguish this if from conventional for-loop below */
       if(state.tokens[state.index-1].value === "(" && state.tokens[state.index+2].value === ")") {
