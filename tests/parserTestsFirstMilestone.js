@@ -2761,12 +2761,12 @@ describe('Parser', function() {
       // Test xx - Swift input: 'let firstNum = 1; let secNum = 2; var dict = [firstNum: [[1,2], [3,4]], secNum: [["one", "two"], ["three", "four"]]];'
       // AST Explorer input:
       /*
-      var firstNum = 1;
-      var secNum = 2;
-      var dict = {};
-      dict[firstNum] = [[1,2], [3,4]];
-      dict[secNum] = [["one", "two"], ["three", "four"]];
-      */
+       var firstNum = 1;
+       var secNum = 2;
+       var dict = {};
+       dict[firstNum] = [[1,2], [3,4]];
+       dict[secNum] = [["one", "two"], ["three", "four"]];
+       */
       it('should handle basic dynamic key assignment in dictionary creation', function() {
         input = [
           { type: "DECLARATION_KEYWORD",  value: "var" },

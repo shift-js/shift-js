@@ -47,5 +47,3 @@ module.exports = {
     "MULTI_LINE_COMMENT_END"
   ]
 };
-
-

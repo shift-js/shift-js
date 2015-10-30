@@ -3427,14 +3427,14 @@ describe('Second Milestone Parser', function() {
       //                   }
       //               }`;
       /**
-      //AST Explorer input:
-      var interestingNumbers = {
+       //AST Explorer input:
+       var interestingNumbers = {
         "Prime":[2, 3, 5, 7, 11, 13],
         "Fibonacci":[1, 1, 2, 3, 5, 8],
         "Square":[1, 4, 9, 16, 25]
       };
-      var largest = 0;
-      for(var kind in interestingNumbers) {
+       var largest = 0;
+       for(var kind in interestingNumbers) {
         var numbers = interestingNumbers[kind];
         for(var number in numbers) {
           if(number > largest) {
@@ -3442,7 +3442,7 @@ describe('Second Milestone Parser', function() {
           }
         }
       }
-      */
+       */
       it('should handle for-in loops that iterate over items in a dictionary', function () {
         input = [
           { type: 'DECLARATION_KEYWORD',         value: 'let' },

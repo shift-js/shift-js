@@ -470,7 +470,7 @@ var declarations = {
     stmt(state, "if", function() {
 
       /* Determine whether the conditional for this
-         if statement is surrounded by parentheses */
+       if statement is surrounded by parentheses */
       var parenthetical = false;
       var allTokens = state.tokens.slice();
       var indexOfNextToken = state.index;
