@@ -16,7 +16,7 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/lexerTests/*'
+          'test/lexerTests/*'
         ]
       },
       parser: {
@@ -24,7 +24,7 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/parserTests/*',
+          'test/parserTests/*',
         ]
       },
       generator: {
@@ -32,7 +32,7 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/generatorTests/*',
+          'test/generatorTests/*',
         ]
       },
       test: {
@@ -40,9 +40,9 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/lexerTests/*',
-          'tests/parserTests/*',
-          'tests/generatorTests/*'
+          'test/lexerTests/*',
+          'test/parserTests/*',
+          'test/generatorTests/*'
         ]
       }
 
