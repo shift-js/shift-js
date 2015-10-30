@@ -35,6 +35,14 @@ module.exports = function(grunt) {
           'tests/generatorTests/*',
         ]
       },
+     endToEnd: {
+        options: {
+          reporter: 'spec'
+        },
+        src: [
+          'tests/endToEndTests/*',
+        ]
+      },
       test: {
         options: {
           reporter: 'spec'
@@ -42,7 +50,8 @@ module.exports = function(grunt) {
         src: [
           'tests/lexerTests/*',
           'tests/parserTests/*',
-          'tests/generatorTests/*'
+          'tests/generatorTests/*',
+          'tests/endToEndTests/*'
         ]
       }
 
@@ -93,6 +102,11 @@ module.exports = function(grunt) {
   grunt.registerTask('testGenerator', [
     // 'jshint',
     'mochaTest:generator'
+  ]);
+
+  grunt.registerTask('testEndToEnd', [
+    // 'jshint',
+    'mochaTest:endToEnd'
   ]);
 
   grunt.registerTask('rebase', [
