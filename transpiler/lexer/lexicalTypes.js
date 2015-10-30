@@ -34,6 +34,7 @@ module.exports = {
     'characters': 'TYPE_PROPERTY',
     'count': 'TYPE_PROPERTY',
     'endIndex': 'TYPE_PROPERTY',
+    'isEmpty': 'TYPE_PROPERTY',
     'startIndex': 'TYPE_PROPERTY',
   },
 

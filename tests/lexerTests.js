@@ -5880,6 +5880,27 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        it('should handle the string isEmpty property', function () {
+          input = String.raw `var s: String = ""
+                              s.isEmpty`;
+
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String"},
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "isEmpty"},
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
         it('should handle the String append method', function () {
           input = String.raw `var s = "my string, 123!"
                               var addChar: Character = "!"
