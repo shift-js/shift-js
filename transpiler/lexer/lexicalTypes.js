@@ -24,6 +24,7 @@ module.exports = {
     'removeFirst': 'NATIVE_METHOD',
     'removeLast': 'NATIVE_METHOD',
     'removeRange': 'NATIVE_METHOD',
+    'removeValueForKey': 'NATIVE_METHOD',
     'successor': 'NATIVE_METHOD',
     'updateValue': 'NATIVE_METHOD',
   },

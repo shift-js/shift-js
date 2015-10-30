@@ -6621,6 +6621,47 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        it('should the dictionary remove value for key method', function () {
+          input = String.raw `var d = ["array1": [1,2,3], "array2": [4,5,6]]
+                              d.removeValueForKey("array1")`;
+          output = [
+            { type: "DECLARATION_KEYWORD",          value: "var" },
+            { type: "IDENTIFIER",                   value: "d" },
+            { type: "OPERATOR",                     value: "=" },
+            { type: "DICTIONARY_START",             value: "[" },
+            { type: "STRING",                       value: "array1" },
+            { type: "PUNCTUATION",                  value: ":" },
+            { type: "ARRAY_START",                  value: "[" },
+            { type: "NUMBER",                       value: "1" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "NUMBER",                       value: "2" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "NUMBER",                       value: "3" },
+            { type: "ARRAY_END",                    value: "]" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "STRING",                       value: "array2" },
+            { type: "PUNCTUATION",                  value: ":" },
+            { type: "ARRAY_START",                  value: "[" },
+            { type: "NUMBER",                       value: "4" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "NUMBER",                       value: "5" },
+            { type: "PUNCTUATION",                  value: "," },
+            { type: "NUMBER",                       value: "6" },
+            { type: "ARRAY_END",                    value: "]" },
+            { type: "DICTIONARY_END",               value: "]" },
+            { type: "TERMINATOR",                   value: "\\n"},
+
+            { type: "IDENTIFIER",                   value: "d" },
+            { type: "DOT_SYNTAX",                   value: "." },
+            { type: "NATIVE_METHOD",                value: "removeValueForKey" }, 
+            { type: "INVOCATION_START",             value: "(" },
+            { type: "STRING",                       value: "array1" },
+            { type: "INVOCATION_END",               value: ")" },
+            { type: "TERMINATOR",                   value: "EOF" }
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
 
       });
 
