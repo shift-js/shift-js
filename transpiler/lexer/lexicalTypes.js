@@ -20,6 +20,9 @@ module.exports = {
     'predecessor': 'NATIVE_METHOD',
     'print': 'NATIVE_METHOD',
     'removeAtIndex': 'NATIVE_METHOD',
+    'removeAll': 'NATIVE_METHOD',
+    'removeFirst': 'NATIVE_METHOD',
+    'removeLast': 'NATIVE_METHOD',
     'removeRange': 'NATIVE_METHOD',
     'successor': 'NATIVE_METHOD',
   },
@@ -34,6 +37,7 @@ module.exports = {
     'characters': 'TYPE_PROPERTY',
     'count': 'TYPE_PROPERTY',
     'endIndex': 'TYPE_PROPERTY',
+    'isEmpty': 'TYPE_PROPERTY',
     'startIndex': 'TYPE_PROPERTY',
   },
 

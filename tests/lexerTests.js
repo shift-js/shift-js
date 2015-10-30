@@ -287,6 +287,34 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+      
+      it('should handle appending items to an array with the addition assignment operator', function () {
+        input = String.raw`var arr = [Int](); arr += [1,2,3];`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "arr" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "ARRAY_START",                value: "["},
+          { type: "TYPE_NUMBER",                value: "Int"},
+          { type: "ARRAY_END",                  value: "]"},
+          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "IDENTIFIER",                 value: "arr" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "ARRAY_START",                value: "["},
+          { type: "NUMBER",                     value: "1" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "NUMBER",                     value: "2" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "NUMBER",                     value: "3" },
+          { type: "ARRAY_END",                  value: "]"},
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "TERMINATOR",                 value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle dictionaries', function () {
         input = String.raw`var f = ["one": 1, "two": 2, "three": 3]`;
@@ -5880,6 +5908,27 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        it('should handle the string isEmpty property', function () {
+          input = String.raw `var s: String = ""
+                              s.isEmpty`;
+
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String"},
+            { type: "OPERATOR",                   value: "=" },
+            { type: "STRING",                     value: "" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "s" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "isEmpty"},
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
         it('should handle the String append method', function () {
           input = String.raw `var s = "my string, 123!"
                               var addChar: Character = "!"
@@ -6233,9 +6282,30 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        it('should handle the array isEmpty property', function () {
+          input = String.raw `var arr = [Int]()
+                              arr.isEmpty`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "["},
+            { type: "TYPE_NUMBER",                value: "Int"},
+            { type: "ARRAY_END",                  value: "]"},
+            { type: "INVOCATION_START",           value: "(" }, 
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "isEmpty"},
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
         it('should handle array initialization with a default value', function () {
           input = String.raw `var arrOfThreeZeros = [Int](count: 3, repeatedValue: 0)`;
-
           output = [
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "arrOfThreeZeros" },
@@ -6252,6 +6322,168 @@ describe('Lexer', function() {
             { type: "PUNCTUATION",                value: ":" },
             { type: "NUMBER",                     value: "0" },
             { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should handle the array insertion and removal methods', function () {
+          input = String.raw `var arr = [1,2,4,8,5,7]
+                              arr.insert(3, atIndex: 2)
+                              var eight = arr.removeAtIndex(4)
+                              arr.removeLast()
+                              var arrTwo = [6,7,8,9,10]
+                              arr.insertContentsOf(arrTwo, at: 5)
+                              var one = arr.removeFirst()
+                              arr.removeAll()`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "2" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "4" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "8" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "5" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "7" },
+            { type: "ARRAY_END",                  value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "insert"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "3" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "METHOD_ARGUMENT_NAME",       value: "atIndex" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "NUMBER",                     value: "2" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "eight" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "removeAtIndex"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "4" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "removeLast"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "arrTwo" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "6" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "7" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "8" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "9" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "10" },
+            { type: "ARRAY_END",                  value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "insertContentsOf"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "IDENTIFIER",                 value: "arrTwo" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "METHOD_ARGUMENT_NAME",       value: "at" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "NUMBER",                     value: "5" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "one" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "removeFirst"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "NATIVE_METHOD",              value: "removeAll"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should handle using subscript syntax to change a range of values at once, even if the replacement set of values has a different length than the range', function () {
+          input = String.raw `var arr = [1,2,3,4,5,6,7]
+                              arr[0...3] = [0]
+                              arr[0..<9] = [5,6,7]`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "2" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "3" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "4" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "5" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "6" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "7" },
+            { type: "ARRAY_END",                  value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "CLOSED_RANGE",               value: "..." },
+            { type: "NUMBER",                     value: "3" },
+            { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "ARRAY_END",                  value: "]" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+            { type: "NUMBER",                     value: "0" },
+            { type: "HALF-OPEN_RANGE",            value: "..<" },
+            { type: "NUMBER",                     value: "9" },
+            { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "[" },
+            { type: "NUMBER",                     value: "5" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "6" },
+            { type: "PUNCTUATION",                value: "," },
+            { type: "NUMBER",                     value: "7" },
+            { type: "ARRAY_END",                  value: "]" },
             { type: "TERMINATOR",                 value: "EOF"},
           ];
           expect(lexer(input)).to.deep.equal(output);
