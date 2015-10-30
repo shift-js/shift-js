@@ -3755,6 +3755,31 @@ describe('Lexer: Third Milestone', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      
+      it('should handle string uppercase and lowercase properties', function () {
+        input = String.raw `var s = "String"
+                              s.uppercaseString
+                              s.lowercaseString`;
+        output = [
+           { type: 'DECLARATION_KEYWORD',          value: 'var' },
+           { type: 'IDENTIFIER',                   value: 's' },
+           { type: 'OPERATOR',                     value: '=' },
+           { type: 'STRING',                       value: 'String' },
+           { type: 'TERMINATOR',                   value: '\\n' },
+           
+           { type: 'IDENTIFIER',                   value: 's' },
+           { type: "DOT_SYNTAX",                   value: "." },
+           { type: "TYPE_PROPERTY",                value: "uppercaseString" },
+           { type: 'TERMINATOR',                   value: '\\n' },
+
+           { type: 'IDENTIFIER',                   value: 's' },
+           { type: "DOT_SYNTAX",                   value: "." },
+           { type: "TYPE_PROPERTY",                value: "lowercaseString" },
+           { type: 'TERMINATOR',                   value: 'EOF' } 
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
     });
 
     describe('Collection Properties and Methods', function () {
