@@ -4163,6 +4163,52 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        it('should handle functions with mathematical operations and parentheses in their invocation', function () {
+          input = String.raw `func addOne(input: Int) -> Int {
+                                  return input + 1
+                              }
+                              addOne(((5 + 4) + 1) + 7)`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "func"},
+            { type: "IDENTIFIER",                 value: "addOne" },
+            { type: "PARAMS_START",               value: "(" },
+            { type: "IDENTIFIER",                 value: "input" },
+            { type: "PUNCTUATION",                value: ":" }, 
+            { type: "TYPE_NUMBER",                value: "Int" }, 
+            { type: "PARAMS_END",                 value: ")" }, 
+            { type: "RETURN_ARROW",               value: "->" },  
+            { type: "TYPE_NUMBER",                value: "Int" }, 
+            { type: "STATEMENTS_START",           value: "{" },  
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "STATEMENT_KEYWORD",          value: "return"},
+            { type: "IDENTIFIER",                 value: "input" },
+            { type: "OPERATOR",                   value: "+" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "STATEMENTS_END",             value: "}"},
+            { type: "TERMINATOR",                 value: "\\n"},
+            
+            { type: "IDENTIFIER",                 value: "addOne" },
+            { type: "INVOCATION_START",           value: "(" }, 
+            { type: "PUNCTUATION",                value: "(" },  
+            { type: "PUNCTUATION",                value: "(" },  
+            { type: "NUMBER",                     value: "5" },   
+            { type: "OPERATOR",                   value: "+" },
+            { type: "NUMBER",                     value: "4" },   
+            { type: "PUNCTUATION",                value: ")" },  
+            { type: "OPERATOR",                   value: "+" },
+            { type: "NUMBER",                     value: "1" },   
+            { type: "PUNCTUATION",                value: ")" },  
+            { type: "OPERATOR",                   value: "+" },
+            { type: "NUMBER",                     value: "7" },   
+            { type: "INVOCATION_END",             value: ")" }, 
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
         xit('should handle functions whose invocation contains string interpolation that contains a function invocation', function () {
           input = String.raw`func returnWorld() -> String {
                                   return "World"
@@ -4235,6 +4281,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+
 
       it('should handle basic initialization of classes and structs', function () {
         input = String.raw`class VideoMode {
