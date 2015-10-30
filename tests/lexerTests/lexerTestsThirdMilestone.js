@@ -4740,8 +4740,8 @@ describe('Lexer: Third Milestone', function() {
 
       it('should handle the contains method', function () {
         input = String.raw `var arr = [1,2,3,4,5]
-                              var yes = arr.contains(4)
-                              var no = arr.contains(6)`;
+                            var yes = arr.contains(4)
+                            var no = arr.contains(6)`;
         output = [
           { type: "DECLARATION_KEYWORD",          value: "var" },
           { type: "IDENTIFIER",                   value: "arr" },
@@ -4778,6 +4778,51 @@ describe('Lexer: Third Milestone', function() {
           { type: "NATIVE_METHOD",                value: "contains" },
           { type: "INVOCATION_START",             value: "(" },
           { type: "NUMBER",                       value: "6" },
+          { type: "INVOCATION_END",               value: ")" },       
+          { type: "TERMINATOR",                   value: "EOF" }   
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle the drop first method', function () {
+        input = String.raw `var arr = [1,2,3,4,5]
+                              var lessFirst = arr.dropFirst()
+                              var lessFirstThree = arr.dropFirst(3)`;
+        output = [
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "ARRAY_START",                  value: "[" },
+          { type: "NUMBER",                       value: "1" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "2" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "3" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "4" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "5" },
+          { type: "ARRAY_END",                    value: "]" },
+          { type: "TERMINATOR",                   value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "lessFirst" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "DOT_SYNTAX",                   value: "." },
+          { type: "NATIVE_METHOD",                value: "dropFirst" },
+          { type: "INVOCATION_START",             value: "(" },
+          { type: "INVOCATION_END",               value: ")" },
+          { type: "TERMINATOR",                   value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "lessFirstThree" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "DOT_SYNTAX",                   value: "." },
+          { type: "NATIVE_METHOD",                value: "dropFirst" },
+          { type: "INVOCATION_START",             value: "(" },
+          { type: "NUMBER",                       value: "3" },
           { type: "INVOCATION_END",               value: ")" },       
           { type: "TERMINATOR",                   value: "EOF" }   
         ];
