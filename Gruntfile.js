@@ -16,7 +16,7 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'test/lexerTests/*'
+          'tests/lexerTests.js'
         ]
       },
       parser: {
@@ -24,15 +24,9 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'test/parserTests/*',
-        ]
-      },
-      generator: {
-        options: {
-          reporter: 'spec'
-        },
-        src: [
-          'test/generatorTests/*',
+          'tests/parserTestsFirstMilestone.js',
+          'tests/parserTestsSecondMilestone.js',
+          'tests/parserTestsThirdMilestone.js'
         ]
       },
       test: {
@@ -40,9 +34,10 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'test/lexerTests/*',
-          'test/parserTests/*',
-          'test/generatorTests/*'
+          'tests/lexerTests.js',
+          'tests/parserTestsFirstMilestone.js',
+          'tests/parserTestsSecondMilestone.js',
+          'tests/parserTestsThirdMilestone.js'
         ]
       }
 
@@ -59,7 +54,7 @@ module.exports = function(grunt) {
         ]
       }
     },
-
+    
     shell: {
       rebase: {
         command: 'git pull --rebase origin develop'
@@ -89,12 +84,7 @@ module.exports = function(grunt) {
     // 'jshint',
     'mochaTest:parser'
   ]);
-
-  grunt.registerTask('testGenerator', [
-    // 'jshint',
-    'mochaTest:generator'
-  ]);
-
+  
   grunt.registerTask('rebase', [
     'shell:rebase'
   ]);
