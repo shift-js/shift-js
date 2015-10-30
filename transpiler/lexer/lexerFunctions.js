@@ -27,7 +27,7 @@ module.exports = {
   },
 
   handleFunctionInvocation: function(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) {
-    if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
+    if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] &&
       tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD')) {
       module.exports.checkFor('FUNCTION_INVOCATION', chunk, tokens);
       var tmp = {};
@@ -37,8 +37,8 @@ module.exports = {
       insideInvocation.push(tmp);
       return "cb1";
     }
-    
-    if (insideInvocation.length && (insideInvocation[insideInvocation.length - 1]).status && chunk === ')' && 
+
+    if (insideInvocation.length && (insideInvocation[insideInvocation.length - 1]).status && chunk === ')' &&
       (insideInvocation[insideInvocation.length - 1]).parens === 0) {
       module.exports.checkFor('FUNCTION_INVOCATION', chunk, tokens);
       var last = insideInvocation[insideInvocation.length - 1]; //may be unnecessary
@@ -60,7 +60,7 @@ module.exports = {
       last.parens--;
       return "cb1";
     }
-    
+
     return false;
   },
 
@@ -301,36 +301,27 @@ module.exports = {
   },
 
   // helper function to check for identifiers
-<<<<<<< 44f5eedf207b023471616e05c93e25d9d8424615
   checkForIdentifier: function(chunk, tokens, lastToken, VARIABLE_NAMES, insideFunction, insideClass, insideStruct, CLASS_NAMES, STRUCT_NAMES) {
     if (VARIABLE_NAMES[chunk]) {
-=======
-  checkForIdentifier: function(chunk, tokens, lastToken, variable_names) {
-    if (variable_names[chunk]) {
->>>>>>> Dictionaries of arrays complete
       if (tokens) {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }
       return true;
     } else if (lastToken && (lastToken.type === 'DECLARATION_KEYWORD' ||
       lastToken.value === 'for' ||
-      
-      // special condition for multiple variables of the same type declared on a single line
+
+        // special condition for multiple variables of the same type declared on a single line
       (lastToken.value === ',' && VARIABLE_NAMES[tokens[tokens.length -2].value]) ||
 
         // special conditions to handle for-in loops that iterate over dictionaries
       (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||
       (lastToken.value === ',' && tokens[tokens.length - 3].value) === '(' &&
-<<<<<<< 44f5eedf207b023471616e05c93e25d9d8424615
       tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1]['insideParams'] === true))) {
-=======
-      tokens[tokens.length - 4].value === 'for') {
->>>>>>> Dictionaries of arrays complete
       if (tokens) {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }
       VARIABLE_NAMES[chunk] = true;
-      
+
       // special conditions to handle identifiers for classes and structs
       if (tokens[tokens.length - 2].value === 'class') {
         var temp = {};
@@ -346,7 +337,7 @@ module.exports = {
         insideStruct.push(temp);
         STRUCT_NAMES[chunk] = true;
       }
-      
+
       return true;
     }
     return false;
