@@ -3233,6 +3233,29 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
+    it('should handle native absolute value method', function () {
+      input = String.raw `var negOne = -1
+                            var one = abs(negOne)`;
+      output = [
+         { type: 'DECLARATION_KEYWORD',          value: 'var' },
+         { type: 'IDENTIFIER',                   value: 'negOne' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: 'OPERATOR',                     value: '-' },
+         { type: 'NUMBER',                       value: '1' },
+         { type: 'TERMINATOR',                   value: '\\n' },
+         
+         { type: 'DECLARATION_KEYWORD',          value: 'var' },
+         { type: 'IDENTIFIER',                   value: 'one' },
+         { type: 'OPERATOR',                     value: '=' },
+         { type: "NATIVE_METHOD",                value: "abs"},
+         { type: "INVOCATION_START",             value: "(" },
+         { type: "IDENTIFIER",                   value: "negOne" },
+         { type: "INVOCATION_END",               value: ")" },   
+         { type: 'TERMINATOR',                   value: 'EOF' } 
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
     describe('Range Operations', function () {
 
       it('should handle closed ranges', function () {
