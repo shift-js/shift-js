@@ -19,7 +19,6 @@ module.exports = {
     'insertContentsOf': 'NATIVE_METHOD',
     'predecessor': 'NATIVE_METHOD',
     'print': 'NATIVE_METHOD',
-    'println': 'NATIVE_METHOD',
     'removeAtIndex': 'NATIVE_METHOD',
     'removeAll': 'NATIVE_METHOD',
     'removeFirst': 'NATIVE_METHOD',
