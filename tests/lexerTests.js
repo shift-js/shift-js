@@ -6254,9 +6254,30 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        it('should handle the array isEmpty property', function () {
+          input = String.raw `var arr = [Int]()
+                              arr.isEmpty`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "var" },
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "OPERATOR",                   value: "=" },
+            { type: "ARRAY_START",                value: "["},
+            { type: "TYPE_NUMBER",                value: "Int"},
+            { type: "ARRAY_END",                  value: "]"},
+            { type: "INVOCATION_START",           value: "(" }, 
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "arr" },
+            { type: "DOT_SYNTAX",                 value: "." },
+            { type: "TYPE_PROPERTY",              value: "isEmpty"},
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
         it('should handle array initialization with a default value', function () {
           input = String.raw `var arrOfThreeZeros = [Int](count: 3, repeatedValue: 0)`;
-
           output = [
             { type: "DECLARATION_KEYWORD",        value: "var" },
             { type: "IDENTIFIER",                 value: "arrOfThreeZeros" },
