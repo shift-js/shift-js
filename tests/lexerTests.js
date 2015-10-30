@@ -1,6 +1,6 @@
-var lexicalTypes    = require('../../transpiler/lexer/lexicalTypes');
-var lexerFunctions  = require('../../transpiler/lexer/lexerFunctions');
-var lexer           = require('../../transpiler/lexer/lexer');
+var lexicalTypes    = require('./../transpiler/lexer/lexicalTypes');
+var lexerFunctions  = require('./../transpiler/lexer/lexerFunctions');
+var lexer           = require('./../transpiler/lexer/lexer');
 var expect          = require('chai').expect;
 
 
@@ -1130,6 +1130,80 @@ describe('Lexer', function() {
           { type: "DICTIONARY_END",             value: "]" },
           { type: "PUNCTUATION",                value: ";" },
           { type: "TERMINATOR",                 value: "EOF" }
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle translation of dictionary keys', function () {
+        input = String.raw `var firstNum = 1
+        var secondNum = 2
+        var firstDict = [firstNum: ["one", "two"], secondNum: ["three", "four"]]
+        var secondDict = [-3+4: [1,2], (2*3)-4: [3,4]]`;
+        output = [
+          { type: "DECLARATION_KEYWORD",           value: "var" },
+          { type: "IDENTIFIER",                    value: "firstNum" },
+          { type: "OPERATOR",                      value: "=" },
+          { type: "NUMBER",                        value: "1" },
+          { type: "TERMINATOR",                    value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",           value: "var" },
+          { type: "IDENTIFIER",                    value: "secondNum" },
+          { type: "OPERATOR",                      value: "=" },
+          { type: "NUMBER",                        value: "2" },
+          { type: "TERMINATOR",                    value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",           value: "var" },
+          { type: "IDENTIFIER",                    value: "firstDict" },
+          { type: "OPERATOR",                      value: "=" },
+          { type: "DICTIONARY_START",              value: "[" },
+          { type: "IDENTIFIER",                    value: "firstNum" },
+          { type: "PUNCTUATION",                   value: ":" },
+          { type: "ARRAY_START",                   value: "[" },
+          { type: "STRING",                        value: "one" },
+          { type: "PUNCTUATION",                   value: "," },
+          { type: "STRING",                        value: "two" },
+          { type: "ARRAY_END",                     value: "]" },
+          { type: "PUNCTUATION",                   value: "," },
+          { type: "IDENTIFIER",                    value: "secondNum" },
+          { type: "PUNCTUATION",                   value: ":" },
+          { type: "ARRAY_START",                   value: "[" },
+          { type: "STRING",                        value: "three" },
+          { type: "PUNCTUATION",                   value: "," },
+          { type: "STRING",                        value: "four" },
+          { type: "ARRAY_END",                     value: "]" },
+          { type: "DICTIONARY_END",                value: "]" },
+          { type: "TERMINATOR",                    value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",           value: "var" },
+          { type: "IDENTIFIER",                    value: "secondDict" },
+          { type: "OPERATOR",                      value: "=" },
+          { type: "DICTIONARY_START",              value: "[" },
+          { type: "OPERATOR",                      value: "-" },
+          { type: "NUMBER",                        value: "3" },
+          { type: "OPERATOR",                      value: "+" },
+          { type: "NUMBER",                        value: "4" },
+          { type: "PUNCTUATION",                   value: ":" },
+          { type: "ARRAY_START",                   value: "[" },
+          { type: "NUMBER",                        value: "1" },
+          { type: "PUNCTUATION",                   value: "," },
+          { type: "NUMBER",                        value: "2" },
+          { type: "ARRAY_END",                     value: "]" },
+          { type: "PUNCTUATION",                   value: "," },
+          { type: "PUNCTUATION",                   value: "(" },
+          { type: "NUMBER",                        value: "2" },
+          { type: "OPERATOR",                      value: "*" },
+          { type: "NUMBER",                        value: "3" },
+          { type: "PUNCTUATION",                   value: ")" },
+          { type: "OPERATOR",                      value: "-" },
+          { type: "NUMBER",                        value: "4" },
+          { type: "PUNCTUATION",                   value: ":" },
+          { type: "ARRAY_START",                   value: "[" },
+          { type: "NUMBER",                        value: "3" },
+          { type: "PUNCTUATION",                   value: "," },
+          { type: "NUMBER",                        value: "4" },
+          { type: "ARRAY_END",                     value: "]" },
+          { type: "DICTIONARY_END",                value: "]" },
+          { type: "TERMINATOR",                    value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -2701,7 +2775,7 @@ describe('Lexer', function() {
       it('should handle complex control flow with erratic spacing and inconsistent use of semicolons and parenthesis', function () {
         input = String.raw`
 
-
+                    
 
                     var gameInProgress = false;
 
@@ -2885,7 +2959,7 @@ describe('Lexer', function() {
       describe('Functions', function() {
 
         it('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
-          input = String.raw`func someFunction(var a: Int) -> Int {
+          input = String.raw`func someFunction(a: Int) -> Int {
             a = a + 1;
             return a;
           }
@@ -2894,7 +2968,6 @@ describe('Lexer', function() {
             { type: "DECLARATION_KEYWORD",  value: "func"},
             { type: "IDENTIFIER",           value: "someFunction" },
             { type: "PARAMS_START",         value: "(" },
-            { type: "DECLARATION_KEYWORD",  value: "var"},
             { type: "IDENTIFIER",           value: "a" },
             { type: "PUNCTUATION",          value: ":" },
             { type: "TYPE_NUMBER",          value: "Int" },
@@ -3518,11 +3591,11 @@ describe('Lexer', function() {
             { type: "RETURN_ARROW",               value: "->" },
 
             { type: "TUPLE_START",                value: "("},
-            { type: "TUPLE_ELEMENT_NAME",               value: "plusFive" },
+            { type: "TUPLE_ELEMENT_NAME",         value: "plusFive" },
             { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "PUNCTUATION",                value: "," },
-            { type: "TUPLE_ELEMENT_NAME",               value: "timesFive" },
+            { type: "TUPLE_ELEMENT_NAME",         value: "timesFive" },
             { type: "PUNCTUATION",                value: ":" },
             { type: "TYPE_NUMBER",                value: "Int" },
             { type: "TUPLE_END",                  value: ")"},
@@ -3803,9 +3876,7 @@ describe('Lexer', function() {
 
             { type: "NUMBER",                         value: "1" },
             { type: "HALF-OPEN_RANGE",                value: "..<" },
-            //TODO get native methods working
             { type: "NUMBER",                         value: "2" },
-            // { type: "NODUCKINGCLUE",               value: "array.count" },
 
             { type: "SUBSTRING_LOOKUP_END",           value: "]" },
             { type: "PUNCTUATION",                    value: "{" },
@@ -4163,6 +4234,52 @@ describe('Lexer', function() {
           expect(lexer(input)).to.deep.equal(output);
         });
 
+        it('should handle functions with mathematical operations and parentheses in their invocation', function () {
+          input = String.raw `func addOne(input: Int) -> Int {
+            return input + 1
+          }
+          addOne(((5 + 4) + 1) + 7)`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "func"},
+            { type: "IDENTIFIER",                 value: "addOne" },
+            { type: "PARAMS_START",               value: "(" },
+            { type: "IDENTIFIER",                 value: "input" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "PARAMS_END",                 value: ")" },
+            { type: "RETURN_ARROW",               value: "->" },
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "STATEMENTS_START",           value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "STATEMENT_KEYWORD",          value: "return"},
+            { type: "IDENTIFIER",                 value: "input" },
+            { type: "OPERATOR",                   value: "+" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "STATEMENTS_END",             value: "}"},
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "addOne" },
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "PUNCTUATION",                value: "(" },
+            { type: "PUNCTUATION",                value: "(" },
+            { type: "NUMBER",                     value: "5" },
+            { type: "OPERATOR",                   value: "+" },
+            { type: "NUMBER",                     value: "4" },
+            { type: "PUNCTUATION",                value: ")" },
+            { type: "OPERATOR",                   value: "+" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "PUNCTUATION",                value: ")" },
+            { type: "OPERATOR",                   value: "+" },
+            { type: "NUMBER",                     value: "7" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "EOF"},
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
         xit('should handle functions whose invocation contains string interpolation that contains a function invocation', function () {
           input = String.raw`func returnWorld() -> String {
             return "World"
@@ -4173,6 +4290,55 @@ describe('Lexer', function() {
           printInput("Hello, \(returnWorld())!")`;
           output = [
 
+          ];
+          expect(lexer(input)).to.deep.equal(output);
+        });
+
+        it('should handle functions with an integer input and no returned output', function () {
+          input = String.raw`func printManyTimes(a: Int) {
+            for i in 1...a {
+              print("a");
+            }
+          }
+          printManyTimes(1)`;
+          output = [
+            { type: "DECLARATION_KEYWORD",        value: "func"},
+            { type: "IDENTIFIER",                 value: "printManyTimes" },
+            { type: "PARAMS_START",               value: "(" },
+            { type: "IDENTIFIER",                 value: "a" },
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_NUMBER",                value: "Int" },
+            { type: "PARAMS_END",                 value: ")" },
+            { type: "STATEMENTS_START",           value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "STATEMENT_KEYWORD",          value: "for" },
+            { type: "IDENTIFIER",                 value: "i" },
+            { type: "STATEMENT_KEYWORD",          value: "in" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "CLOSED_RANGE",               value: "..." },
+            { type: "IDENTIFIER",                 value: "a" },
+            { type: "PUNCTUATION",                value: "{" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "NATIVE_METHOD",              value: "print"},
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "STRING",                     value: "a" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "PUNCTUATION",                value: ";"},
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "PUNCTUATION",                value: "}" },
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "STATEMENTS_END",             value: "}"},
+            { type: "TERMINATOR",                 value: "\\n"},
+
+            { type: "IDENTIFIER",                 value: "printManyTimes" },
+            { type: "INVOCATION_START",           value: "(" },
+            { type: "NUMBER",                     value: "1" },
+            { type: "INVOCATION_END",             value: ")" },
+            { type: "TERMINATOR",                 value: "EOF"},
           ];
           expect(lexer(input)).to.deep.equal(output);
         });
@@ -4235,6 +4401,7 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+
 
       it('should handle basic initialization of classes and structs', function () {
         input = String.raw`class VideoMode {
@@ -4579,7 +4746,7 @@ describe('Lexer', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      xit('should handle properties of all kinds', function () {
+      it('should handle properties of all kinds', function () {
         input = String.raw`class Medley {
           var a = 1
           var b = "hai, world"
@@ -4619,7 +4786,7 @@ describe('Lexer', function() {
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "MULTI_LINE_COMMENT_START",   value: "/*"},
-          { type: "COMMENT",                    value: " Comment 1 "},
+          { type: "COMMENT",                    value: " Comment 1"},
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "TERMINATOR",                 value: "\\n"},
           { type: "MULTI_LINE_COMMENT_END",     value: "*/"},
@@ -5709,6 +5876,75 @@ describe('Native Methods and Type Properties', function () {
     expect(lexer(input)).to.deep.equal(output);
   });
 
+  it('should handle type conversion of strings, ints, floats, doubles', function () {
+    input = String.raw `var one = 1
+    var oneToString = String(one)
+    var oneBackToInt = Int(oneToString)
+    var twoTwo = "2.2"
+    var twoTwoToFloat = Float(twoTwo)
+    var twoTwoToDouble = Double(twoTwo)
+    var twoTwoBackToString = String(twoTwoToFloat)`;
+    output = [
+      { type: "DECLARATION_KEYWORD",           value: "var" },
+      { type: "IDENTIFIER",                    value: "one" },
+      { type: "OPERATOR",                      value: "=" },
+      { type: "NUMBER",                        value: "1" },
+      { type: "TERMINATOR",                    value: "\\n"},
+
+      { type: "DECLARATION_KEYWORD",           value: "var" },
+      { type: "IDENTIFIER",                    value: "oneToString" },
+      { type: "OPERATOR",                      value: "=" },
+      { type: "TYPE_STRING",                   value: "String"},
+      { type: "INVOCATION_START",              value: "(" },
+      { type: "IDENTIFIER",                    value: "one" },
+      { type: "INVOCATION_END",                value: ")" },
+      { type: "TERMINATOR",                    value: "\\n"},
+
+      { type: "DECLARATION_KEYWORD",           value: "var" },
+      { type: "IDENTIFIER",                    value: "oneBackToInt" },
+      { type: "OPERATOR",                      value: "=" },
+      { type: "TYPE_NUMBER",                   value: "Int"},
+      { type: "INVOCATION_START",              value: "(" },
+      { type: "IDENTIFIER",                    value: "oneToString" },
+      { type: "INVOCATION_END",                value: ")" },
+      { type: "TERMINATOR",                    value: "\\n"},
+
+      { type: "DECLARATION_KEYWORD",           value: "var" },
+      { type: "IDENTIFIER",                    value: "twoTwo" },
+      { type: "OPERATOR",                      value: "=" },
+      { type: "STRING",                        value: "2.2" },
+      { type: "TERMINATOR",                    value: "\\n"},
+
+      { type: "DECLARATION_KEYWORD",           value: "var" },
+      { type: "IDENTIFIER",                    value: "twoTwoToFloat" },
+      { type: "OPERATOR",                      value: "=" },
+      { type: "TYPE_NUMBER",                   value: "Float"},
+      { type: "INVOCATION_START",              value: "(" },
+      { type: "IDENTIFIER",                    value: "twoTwo" },
+      { type: "INVOCATION_END",                value: ")" },
+      { type: "TERMINATOR",                    value: "\\n"},
+
+      { type: "DECLARATION_KEYWORD",           value: "var" },
+      { type: "IDENTIFIER",                    value: "twoTwoToDouble" },
+      { type: "OPERATOR",                      value: "=" },
+      { type: "TYPE_NUMBER",                   value: "Double"},
+      { type: "INVOCATION_START",              value: "(" },
+      { type: "IDENTIFIER",                    value: "twoTwo" },
+      { type: "INVOCATION_END",                value: ")" },
+      { type: "TERMINATOR",                    value: "\\n"},
+
+      { type: "DECLARATION_KEYWORD",           value: "var" },
+      { type: "IDENTIFIER",                    value: "twoTwoBackToString" },
+      { type: "OPERATOR",                      value: "=" },
+      { type: "TYPE_STRING",                   value: "String"},
+      { type: "INVOCATION_START",              value: "(" },
+      { type: "IDENTIFIER",                    value: "twoTwoToFloat" },
+      { type: "INVOCATION_END",                value: ")" },
+      { type: "TERMINATOR",                    value: "EOF" }
+    ];
+    expect(lexer(input)).to.deep.equal(output);
+  });
+
   describe('Range Operations', function () {
 
     it('should handle closed ranges', function () {
@@ -6433,7 +6669,7 @@ describe('Native Methods and Type Properties', function () {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle using subscript syntax to change a range of values at once, even if the replacement set of values has a different length than the range', function () {
+    it('should handle subscript syntax ranges to change many array values where replacement array has different length than range', function () {
       input = String.raw `var arr = [1,2,3,4,5,6,7]
       arr[0...3] = [0]
       arr[0..<9] = [5,6,7]`;
@@ -6488,6 +6724,416 @@ describe('Native Methods and Type Properties', function () {
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
+
+    it('should the dictionary count property', function () {
+      input = String.raw `var d = ["array1": [1,2,3], "array2": [4,5,6]]
+      d.count`;
+      output = [
+        { type: "DECLARATION_KEYWORD",          value: "var" },
+        { type: "IDENTIFIER",                   value: "d" },
+        { type: "OPERATOR",                     value: "=" },
+        { type: "DICTIONARY_START",             value: "[" },
+        { type: "STRING",                       value: "array1" },
+        { type: "PUNCTUATION",                  value: ":" },
+        { type: "ARRAY_START",                  value: "[" },
+        { type: "NUMBER",                       value: "1" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "2" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "3" },
+        { type: "ARRAY_END",                    value: "]" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "STRING",                       value: "array2" },
+        { type: "PUNCTUATION",                  value: ":" },
+        { type: "ARRAY_START",                  value: "[" },
+        { type: "NUMBER",                       value: "4" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "5" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "6" },
+        { type: "ARRAY_END",                    value: "]" },
+        { type: "DICTIONARY_END",               value: "]" },
+        { type: "TERMINATOR",                   value: "\\n"},
+
+        { type: "IDENTIFIER",                   value: "d" },
+        { type: "DOT_SYNTAX",                   value: "." },
+        { type: "TYPE_PROPERTY",                value: "count" },
+        { type: "TERMINATOR",                   value: "EOF" }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should the dictionary update value method', function () {
+      input = String.raw `var d = ["array1": [1,2,3], "array2": [4,5,6]]
+      d.updateValue([1], forKey: "array1")`;
+      output = [
+        { type: "DECLARATION_KEYWORD",          value: "var" },
+        { type: "IDENTIFIER",                   value: "d" },
+        { type: "OPERATOR",                     value: "=" },
+        { type: "DICTIONARY_START",             value: "[" },
+        { type: "STRING",                       value: "array1" },
+        { type: "PUNCTUATION",                  value: ":" },
+        { type: "ARRAY_START",                  value: "[" },
+        { type: "NUMBER",                       value: "1" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "2" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "3" },
+        { type: "ARRAY_END",                    value: "]" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "STRING",                       value: "array2" },
+        { type: "PUNCTUATION",                  value: ":" },
+        { type: "ARRAY_START",                  value: "[" },
+        { type: "NUMBER",                       value: "4" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "5" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "6" },
+        { type: "ARRAY_END",                    value: "]" },
+        { type: "DICTIONARY_END",               value: "]" },
+        { type: "TERMINATOR",                   value: "\\n"},
+
+        { type: "IDENTIFIER",                   value: "d" },
+        { type: "DOT_SYNTAX",                   value: "." },
+        { type: "NATIVE_METHOD",                value: "updateValue" },
+        { type: "INVOCATION_START",             value: "(" },
+        { type: "ARRAY_START",                  value: "[" },
+        { type: "NUMBER",                       value: "1" },
+        { type: "ARRAY_END",                    value: "]" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "METHOD_ARGUMENT_NAME",         value: "forKey" },
+        { type: "PUNCTUATION",                  value: ":" },
+        { type: "STRING",                       value: "array1" },
+        { type: "INVOCATION_END",               value: ")" },
+        { type: "TERMINATOR",                   value: "EOF" }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should the dictionary remove value for key method', function () {
+      input = String.raw `var d = ["array1": [1,2,3], "array2": [4,5,6]]
+      d.removeValueForKey("array1")`;
+      output = [
+        { type: "DECLARATION_KEYWORD",          value: "var" },
+        { type: "IDENTIFIER",                   value: "d" },
+        { type: "OPERATOR",                     value: "=" },
+        { type: "DICTIONARY_START",             value: "[" },
+        { type: "STRING",                       value: "array1" },
+        { type: "PUNCTUATION",                  value: ":" },
+        { type: "ARRAY_START",                  value: "[" },
+        { type: "NUMBER",                       value: "1" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "2" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "3" },
+        { type: "ARRAY_END",                    value: "]" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "STRING",                       value: "array2" },
+        { type: "PUNCTUATION",                  value: ":" },
+        { type: "ARRAY_START",                  value: "[" },
+        { type: "NUMBER",                       value: "4" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "5" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "6" },
+        { type: "ARRAY_END",                    value: "]" },
+        { type: "DICTIONARY_END",               value: "]" },
+        { type: "TERMINATOR",                   value: "\\n"},
+
+        { type: "IDENTIFIER",                   value: "d" },
+        { type: "DOT_SYNTAX",                   value: "." },
+        { type: "NATIVE_METHOD",                value: "removeValueForKey" },
+        { type: "INVOCATION_START",             value: "(" },
+        { type: "STRING",                       value: "array1" },
+        { type: "INVOCATION_END",               value: ")" },
+        { type: "TERMINATOR",                   value: "EOF" }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+  });
+
+  describe('Basic tests', function () {
+
+    it('should handle FizzBuzz example with ranges, nested control flow, and native method invocations', function () {
+      input = String.raw `let range = 1...100
+      var results = [String]()
+      for i in range {
+        if i % 3 == 0 {
+          if i % 5 == 0 {
+            results.append("FizzBuzz")
+          } else {
+            results.append("Fizz")
+          }
+        } else if i % 5 == 0 {
+          results.append("Buzz")
+        } else {
+          results.append(String(i))
+        }
+      }
+      print(results)`;
+      output = [
+        { type: 'DECLARATION_KEYWORD',     value: 'let' },
+        { type: 'IDENTIFIER',              value: 'range' },
+        { type: 'OPERATOR',                value: '=' },
+        { type: 'NUMBER',                  value: '1' },
+        { type: 'CLOSED_RANGE',            value: '...' },
+        { type: 'NUMBER',                  value: '100' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'DECLARATION_KEYWORD',     value: 'var' },
+        { type: 'IDENTIFIER',              value: 'results' },
+        { type: 'OPERATOR',                value: '=' },
+        { type: 'ARRAY_START',             value: '[' },
+        { type: 'TYPE_STRING',             value: 'String' },
+        { type: 'ARRAY_END',               value: ']' },
+        { type: 'INVOCATION_START',        value: '(' },
+        { type: 'INVOCATION_END',          value: ')' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD',       value: 'for' },
+        { type: 'IDENTIFIER',              value: 'i' },
+        { type: 'STATEMENT_KEYWORD',       value: 'in' },
+        { type: 'IDENTIFIER',              value: 'range' },
+        { type: 'PUNCTUATION',             value: '{' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD',       value: 'if' },
+        { type: 'IDENTIFIER',              value: 'i' },
+        { type: 'OPERATOR',                value: '%' },
+        { type: 'NUMBER',                  value: '3' },
+        { type: 'OPERATOR',                value: '=' },
+        { type: 'OPERATOR',                value: '=' },
+        { type: 'NUMBER',                  value: '0' },
+        { type: 'PUNCTUATION',             value: '{' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD',       value: 'if' },
+        { type: 'IDENTIFIER',              value: 'i' },
+        { type: 'OPERATOR',                value: '%' },
+        { type: 'NUMBER',                  value: '5' },
+        { type: 'OPERATOR',                value: '=' },
+        { type: 'OPERATOR',                value: '=' },
+        { type: 'NUMBER',                  value: '0' },
+        { type: 'PUNCTUATION',             value: '{' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'IDENTIFIER',              value: 'results' },
+        { type: 'DOT_SYNTAX',              value: '.' },
+        { type: 'NATIVE_METHOD',           value: 'append' },
+        { type: 'INVOCATION_START',        value: '(' },
+        { type: 'STRING',                  value: 'FizzBuzz' },
+        { type: 'INVOCATION_END',          value: ')' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'PUNCTUATION',             value: '}' },
+        { type: 'STATEMENT_KEYWORD',       value: 'else' },
+        { type: 'PUNCTUATION',             value: '{' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'IDENTIFIER',              value: 'results' },
+        { type: 'DOT_SYNTAX',              value: '.' },
+        { type: 'NATIVE_METHOD',           value: 'append' },
+        { type: 'INVOCATION_START',        value: '(' },
+        { type: 'STRING',                  value: 'Fizz' },
+        { type: 'INVOCATION_END',          value: ')' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'PUNCTUATION',             value: '}' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'PUNCTUATION',             value: '}' },
+        { type: 'STATEMENT_KEYWORD',       value: 'else' },
+        { type: 'STATEMENT_KEYWORD',       value: 'if' },
+        { type: 'IDENTIFIER',              value: 'i' },
+        { type: 'OPERATOR',                value: '%' },
+        { type: 'NUMBER',                  value: '5' },
+        { type: 'OPERATOR',                value: '=' },
+        { type: 'OPERATOR',                value: '=' },
+        { type: 'NUMBER',                  value: '0' },
+        { type: 'PUNCTUATION',             value: '{' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'IDENTIFIER',              value: 'results' },
+        { type: 'DOT_SYNTAX',              value: '.' },
+        { type: 'NATIVE_METHOD',           value: 'append' },
+        { type: 'INVOCATION_START',        value: '(' },
+        { type: 'STRING',                  value: 'Buzz' },
+        { type: 'INVOCATION_END',          value: ')' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'PUNCTUATION',             value: '}' },
+        { type: 'STATEMENT_KEYWORD',       value: 'else' },
+        { type: 'PUNCTUATION',             value: '{' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'IDENTIFIER',              value: 'results' },
+        { type: 'DOT_SYNTAX',              value: '.' },
+        { type: 'NATIVE_METHOD',           value: 'append' },
+        { type: 'INVOCATION_START',        value: '(' },
+        { type: 'TYPE_STRING',             value: 'String' },
+        { type: 'INVOCATION_START',        value: '(' },
+        { type: 'IDENTIFIER',              value: 'i' },
+        { type: 'INVOCATION_END',          value: ')' },
+        { type: 'INVOCATION_END',          value: ')' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'PUNCTUATION',             value: '}' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'PUNCTUATION',             value: '}' },
+        { type: 'TERMINATOR',              value: '\\n' },
+
+        { type: 'NATIVE_METHOD',           value: 'print' },
+        { type: 'INVOCATION_START',        value: '(' },
+        { type: 'IDENTIFIER',              value: 'results' },
+        { type: 'INVOCATION_END',          value: ')' },
+        { type: 'TERMINATOR',              value: 'EOF' }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle FizzBuzz as a function with ranges, nested control flow, and native method invocations', function () {
+      input = String.raw `func fizzBuzz(start: Int, end: Int) {
+        let range = start...end
+        for i in range {
+          var output = ""
+          if i % 3 == 0 {
+            output += "Fizz"
+          }
+          if i % 5 == 0 {
+            output += "Buzz"
+          }
+          if output.isEmpty {
+            print(i)
+          } else {
+            print(output)
+          }
+        }
+      }
+
+      fizzBuzz(1, end: 100)`;
+      output = [
+        { type: 'DECLARATION_KEYWORD',          value: 'func' },
+        { type: 'IDENTIFIER',                   value: 'fizzBuzz' },
+        { type: 'PARAMS_START',                 value: '(' },
+        { type: 'IDENTIFIER',                   value: 'start' },
+        { type: 'PUNCTUATION',                  value: ':' },
+        { type: 'TYPE_NUMBER',                  value: 'Int' },
+        { type: 'PUNCTUATION',                  value: ',' },
+        { type: 'IDENTIFIER',                   value: 'end' },
+        { type: 'PUNCTUATION',                  value: ':' },
+        { type: 'TYPE_NUMBER',                  value: 'Int' },
+        { type: 'PARAMS_END',                   value: ')' },
+        { type: 'STATEMENTS_START',             value: '{' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'DECLARATION_KEYWORD',          value: 'let' },
+        { type: 'IDENTIFIER',                   value: 'range' },
+        { type: 'OPERATOR',                     value: '=' },
+        { type: 'IDENTIFIER',                   value: 'start' },
+        { type: 'CLOSED_RANGE',                 value: '...' },
+        { type: 'IDENTIFIER',                   value: 'end' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD',            value: 'for' },
+        { type: 'IDENTIFIER',                   value: 'i' },
+        { type: 'STATEMENT_KEYWORD',            value: 'in' },
+        { type: 'IDENTIFIER',                   value: 'range' },
+        { type: 'PUNCTUATION',                  value: '{' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'DECLARATION_KEYWORD',          value: 'var' },
+        { type: 'IDENTIFIER',                   value: 'output' },
+        { type: 'OPERATOR',                     value: '=' },
+        { type: 'STRING',                       value: '' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD',            value: 'if' },
+        { type: 'IDENTIFIER',                   value: 'i' },
+        { type: 'OPERATOR',                     value: '%' },
+        { type: 'NUMBER',                       value: '3' },
+        { type: 'OPERATOR',                     value: '=' },
+        { type: 'OPERATOR',                     value: '=' },
+        { type: 'NUMBER',                       value: '0' },
+        { type: 'PUNCTUATION',                  value: '{' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'IDENTIFIER',                   value: 'output' },
+        { type: 'OPERATOR',                     value: '+' },
+        { type: 'OPERATOR',                     value: '=' },
+        { type: 'STRING',                       value: 'Fizz' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'PUNCTUATION',                  value: '}' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD',            value: 'if' },
+        { type: 'IDENTIFIER',                   value: 'i' },
+        { type: 'OPERATOR',                     value: '%' },
+        { type: 'NUMBER',                       value: '5' },
+        { type: 'OPERATOR',                     value: '=' },
+        { type: 'OPERATOR',                     value: '=' },
+        { type: 'NUMBER',                       value: '0' },
+        { type: 'PUNCTUATION',                  value: '{' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'IDENTIFIER',                   value: 'output' },
+        { type: 'OPERATOR',                     value: '+' },
+        { type: 'OPERATOR',                     value: '=' },
+        { type: 'STRING',                       value: 'Buzz' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'PUNCTUATION',                  value: '}' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD',            value: 'if' },
+        { type: 'IDENTIFIER',                   value: 'output' },
+        { type: 'DOT_SYNTAX',                   value: '.' },
+        { type: 'TYPE_PROPERTY',                value: 'isEmpty' },
+        { type: 'PUNCTUATION',                  value: '{' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'NATIVE_METHOD',                value: 'print' },
+        { type: 'INVOCATION_START',             value: '(' },
+        { type: 'IDENTIFIER',                   value: 'i' },
+        { type: 'INVOCATION_END',               value: ')' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'PUNCTUATION',                  value: '}' },
+        { type: 'STATEMENT_KEYWORD',            value: 'else' },
+        { type: 'PUNCTUATION',                  value: '{' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'NATIVE_METHOD',                value: 'print' },
+        { type: 'INVOCATION_START',             value: '(' },
+        { type: 'IDENTIFIER',                   value: 'output' },
+        { type: 'INVOCATION_END',               value: ')' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'PUNCTUATION',                  value: '}' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'PUNCTUATION',                  value: '}' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'STATEMENTS_END',               value: '}' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+        { type: 'TERMINATOR',                   value: '\\n' },
+
+        { type: 'IDENTIFIER',                   value: 'fizzBuzz' },
+        { type: 'INVOCATION_START',             value: '(' },
+        { type: 'NUMBER',                       value: '1' },
+        { type: 'PUNCTUATION',                  value: ',' },
+        { type: 'IDENTIFIER',                   value: 'end' },
+        { type: 'PUNCTUATION',                  value: ':' },
+        { type: 'NUMBER',                       value: '100' },
+        { type: 'INVOCATION_END',               value: ')' },
+        { type: 'TERMINATOR',                   value: 'EOF' }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
 
   });
 
