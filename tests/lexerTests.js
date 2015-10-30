@@ -287,6 +287,34 @@ describe('Lexer', function() {
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
+      
+      it('should handle appending items to an array with the addition assignment operator', function () {
+        input = String.raw`var arr = [Int](); arr += [1,2,3];`;
+        output = [
+          { type: "DECLARATION_KEYWORD",        value: "var" },
+          { type: "IDENTIFIER",                 value: "arr" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "ARRAY_START",                value: "["},
+          { type: "TYPE_NUMBER",                value: "Int"},
+          { type: "ARRAY_END",                  value: "]"},
+          { type: "INVOCATION_START",           value: "(" }, 
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "IDENTIFIER",                 value: "arr" },
+          { type: "OPERATOR",                   value: "+" },
+          { type: "OPERATOR",                   value: "=" },
+          { type: "ARRAY_START",                value: "["},
+          { type: "NUMBER",                     value: "1" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "NUMBER",                     value: "2" },
+          { type: "PUNCTUATION",                value: "," },
+          { type: "NUMBER",                     value: "3" },
+          { type: "ARRAY_END",                  value: "]"},
+          { type: "PUNCTUATION",                value: ";" },
+          { type: "TERMINATOR",                 value: "EOF"},
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
 
       it('should handle dictionaries', function () {
         input = String.raw`var f = ["one": 1, "two": 2, "three": 3]`;
