@@ -316,7 +316,7 @@ module.exports = {
         // special conditions to handle for-in loops that iterate over dictionaries
       (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||
       (lastToken.value === ',' && tokens[tokens.length - 3].value) === '(' &&
-      tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1]['insideParams'] === true))) {
+      tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1]['insideParams'] === true && lastToken.value !== '='))) {
       if (tokens) {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }
