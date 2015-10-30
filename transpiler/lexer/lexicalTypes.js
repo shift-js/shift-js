@@ -24,12 +24,15 @@ module.exports = {
     'removeFirst': 'NATIVE_METHOD',
     'removeLast': 'NATIVE_METHOD',
     'removeRange': 'NATIVE_METHOD',
+    'removeValueForKey': 'NATIVE_METHOD',
     'successor': 'NATIVE_METHOD',
+    'updateValue': 'NATIVE_METHOD',
   },
   
   METHOD_ARGUMENT_NAME: {
     'at': 'METHOD_ARGUMENT_NAME',
     'atIndex': 'METHOD_ARGUMENT_NAME',
+    'forKey': 'METHOD_ARGUMENT_NAME',
     'repeatedValue': 'METHOD_ARGUMENT_NAME'
   },
   

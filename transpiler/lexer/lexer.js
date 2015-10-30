@@ -176,7 +176,8 @@ module.exports = function(code) {
     // } 
 
     if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
-      tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD')) {
+      tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD' || lastToken.type === 'TYPE_STRING' || 
+      lastToken.type === 'TYPE_NUMBER')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', chunk, tokens);
       var tmp = {};
       tmp.name = lastToken.value;
