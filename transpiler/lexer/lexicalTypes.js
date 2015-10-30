@@ -14,6 +14,7 @@ module.exports = {
     'abs': 'NATIVE_METHOD',
     'advancedBy': 'NATIVE_METHOD',
     'append': 'NATIVE_METHOD',
+    'contains': 'NATIVE_METHOD',
     'distanceTo': 'NATIVE_METHOD',
     'hasPrefix': 'NATIVE_METHOD',
     'hasSuffix': 'NATIVE_METHOD',
