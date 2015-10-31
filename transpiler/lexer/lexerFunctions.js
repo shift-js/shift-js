@@ -73,8 +73,8 @@ module.exports = {
   makeToken: function(lexicalType, chunk, tokens, type, value) {
     if (tokens) {
       var obj = {};
-      obj['type'] = type || lexicalTypes[lexicalType][chunk];
-      obj['value'] = value || chunk.trim();
+      obj.type = type || lexicalTypes[lexicalType][chunk];
+      obj.value = value || chunk.trim();
       tokens.push(obj);
     }
   },
@@ -316,7 +316,7 @@ module.exports = {
         // special conditions to handle for-in loops that iterate over dictionaries
       (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||
       (lastToken.value === ',' && tokens[tokens.length - 3].value) === '(' &&
-      tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1]['insideParams'] === true && lastToken.value !== '='))) {
+      tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1].insideParams === true && lastToken.value !== '='))) {
       if (tokens) {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }
@@ -344,11 +344,11 @@ module.exports = {
   },
 
   determineCollectionType: function(collectionInformation, tokens, cb) {
-    if (tokens[tokens.length - 1]['value'] === ':') {
-      tokens[collectionInformation[collectionInformation.length - 1]['location']]['type'] = 'DICTIONARY_START';
-      collectionInformation[collectionInformation.length - 1]['type'] = 'DICTIONARY_END';
+    if (tokens[tokens.length - 1].value === ':') {
+      tokens[collectionInformation[collectionInformation.length - 1].location].type = 'DICTIONARY_START';
+      collectionInformation[collectionInformation.length - 1].type = 'DICTIONARY_END';
     } else {
-      collectionInformation[collectionInformation.length - 1]['type']  = 'ARRAY_END';
+      collectionInformation[collectionInformation.length - 1].type  = 'ARRAY_END';
     }
     if (cb) {
       cb();
