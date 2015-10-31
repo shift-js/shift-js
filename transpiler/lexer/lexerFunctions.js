@@ -31,6 +31,7 @@ module.exports = {
     return false;
   },
 
+  // helper function to handle function invocation
   handleFunctionInvocation: function(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) {
     if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
       tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD')) {
@@ -95,7 +96,7 @@ module.exports = {
     return false;
   },
 
-  // checks for string, number, boolean values
+  // checks for string and boolean values
   checkForLiteral: function(chunk, tokens, cb) {
     if (chunk) {
       chunk = JSON.parse(chunk.trim());
@@ -116,13 +117,6 @@ module.exports = {
         if (cb) {cb(chunk, tokens)}
         return true;
       },
-      'number': function(chunk, tokens) {
-        if (tokens) {
-          module.exports.makeToken(undefined, chunk, tokens, 'NUMBER', JSON.stringify(chunk));
-        }
-        if (cb) {cb(chunk, tokens)}
-        return true;
-      }
     };
     if (obj[type] === undefined) {
       return false;
@@ -201,6 +195,7 @@ module.exports = {
     return false;
   },
 
+  // helper function to handle numbers, including numbers written with underscores
   handleNumber: function(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol, cb) {
     if (NUMBER.test(chunk) && !insideString.status && !insideNumber.status) {
       insideNumber.status = true;
@@ -319,9 +314,7 @@ module.exports = {
       module.exports.handleEndOfFile(nextCol, tokens);
       return true;
     }
-    
     return false;
-    
   },
   
   checkForTupleStart: function(insideTuple, chunk, tokens, lastToken,
