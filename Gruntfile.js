@@ -16,7 +16,10 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/lexerTests/*'
+          'tests/lexerTests/lexerTestsFirstMilestone.js',
+          'tests/lexerTests/lexerTestsSecondMilestone.js',
+          'tests/lexerTests/lexerTestsThirdMilestone.js',
+          'tests/lexerTests/lexerTestsFourthMilestone.js',
         ]
       },
       parser: {
@@ -24,7 +27,10 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/parserTests/*',
+          'tests/parserTests/parserTestsFirstMilestone.js',
+          'tests/parserTests/parserTestsSecondMilestone.js',
+          'tests/parserTests/parserTestsThirdMilestone.js',
+          'tests/parserTests/parserTestsFourthMilestone.js',
         ]
       },
       generator: {
@@ -32,7 +38,10 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/generatorTests/*',
+          'tests/generatorTests/generatorTestsFirstMilestone.js',
+          'tests/generatorTests/generatorTestsSecondMilestone.js',
+          'tests/generatorTests/generatorTestsThirdMilestone.js',
+          'tests/generatorTests/generatorTestsFourthMilestone.js',
         ]
       },
      endToEnd: {
@@ -40,7 +49,10 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/endToEndTests/*',
+          'tests/endToEndTests/endToEndTestsFirstMilestone.js',
+          'tests/endToEndTests/endToEndTestsSecondMilestone.js',
+          'tests/endToEndTests/endToEndTestsThirdMilestone.js',
+          'tests/endToEndTests/endToEndTestsFourthMilestone.js',
         ]
       },
       test: {
@@ -48,13 +60,24 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/lexerTests/*',
-          'tests/parserTests/*',
-          'tests/generatorTests/*',
-          'tests/endToEndTests/*'
+          'tests/lexerTests/lexerTestsFirstMilestone.js',
+          'tests/lexerTests/lexerTestsSecondMilestone.js',
+          'tests/lexerTests/lexerTestsThirdMilestone.js',
+          'tests/lexerTests/lexerTestsFourthMilestone.js',
+          'tests/parserTests/parserTestsFirstMilestone.js',
+          'tests/parserTests/parserTestsSecondMilestone.js',
+          'tests/parserTests/parserTestsThirdMilestone.js',
+          'tests/parserTests/parserTestsFourthMilestone.js',
+          'tests/generatorTests/generatorTestsFirstMilestone.js',
+          'tests/generatorTests/generatorTestsSecondMilestone.js',
+          'tests/generatorTests/generatorTestsThirdMilestone.js',
+          'tests/generatorTests/generatorTestsFourthMilestone.js',
+          'tests/endToEndTests/endToEndTestsFirstMilestone.js',
+          'tests/endToEndTests/endToEndTestsSecondMilestone.js',
+          'tests/endToEndTests/endToEndTestsThirdMilestone.js',
+          'tests/endToEndTests/endToEndTestsFourthMilestone.js',
         ]
       }
-
     },
 
     jshint: {
@@ -81,8 +104,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-shell');
-  // grunt.loadNpmTasks('grunt-contrib-uglify');
-  // grunt.loadNpmTasks('grunt-contrib-concat');
 
   grunt.registerTask('test', [
     // 'jshint',
