@@ -33,6 +33,7 @@ module.exports = {
     'removeValueForKey': 'NATIVE_METHOD',
     'replaceRange': 'NATIVE_METHOD',
     'successor': 'NATIVE_METHOD',
+    'startsWith': 'NATIVE_METHOD',
     'updateValue': 'NATIVE_METHOD',
   },
   
