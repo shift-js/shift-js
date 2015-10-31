@@ -22,6 +22,18 @@ describe('Tuple', function() {
       expect(t.findValue('three')).to.deep.equal(undefined);
     });
 
+  it('should function like an dictionary if only objects are put into it', function () {
+    t = new Tuple([{one: 1}, {two: true}, {three: "blah"}]);
+      expect(t.findValue(0)).to.deep.equal(1);
+      expect(t.findValue('one')).to.deep.equal(1);
+      expect(t.findValue(1)).to.deep.equal(true);
+      expect(t.findValue('two')).to.deep.equal(true);
+      expect(t.findValue(2)).to.deep.equal("blah");
+      expect(t.findValue('three')).to.deep.equal("blah");
+      expect(t.findValue(3)).to.deep.equal(undefined);
+      expect(t.findValue('four')).to.deep.equal(undefined);
+    });
+
   it('should not modify values if new and old value types do not match', function () {
     t = new Tuple(["blah", {two: 2}, {three: 7}]);
       expect(t.findValue(0)).to.deep.equal("blah");
