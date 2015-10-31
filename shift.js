@@ -26,9 +26,12 @@ var actionFlags = ['compile', 'tokenize', 'ast'];
 var action = 'compile';
 actionFlags.forEach(function(flag) {
   if (program[flag]) {
+    if (action !== 'compile') throw 'Cannot use multiple action flags.'
     action = flag;
   }
 });
+
+
 
 var run = function(paths) {
   return Promise.reduce(paths, function(list, filePath) {
@@ -62,7 +65,13 @@ var applyAction = function(file) {
     .then(function (data) {
       var swift = data.toString();
       var output = shift[action](swift);
-      var newFile = file.slice(0, -6) + '.js';
+      var suffix = "";
+      if (program.tokenize) {
+        suffix = "Tokens";
+      } else if (program.ast) {
+        suffix = "AST";
+      }
+      var newFile = file.slice(0, -6) + suffix + '.js';
       if (program.run) {
         vm.runInThisContext(output);
         return;
