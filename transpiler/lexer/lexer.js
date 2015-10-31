@@ -8,7 +8,7 @@ module.exports = function(code) {
   var currCol, prevCol, nextCol, nextNextCol;
   var VARIABLE_NAMES = {};
   var FUNCTION_NAMES = {};
-  var CLASS_NAMES = {}; 
+  var CLASS_NAMES = {};
   var STRUCT_NAMES = {};
   var TUPLE_ELEMENT_NAMES = {}
 
@@ -126,7 +126,7 @@ module.exports = function(code) {
       lexerFunctions.checkFor('FUNCTION_DECLARATION', "->", tokens);
       if (insideFunction[insideFunction.length - 1].insideReturnStatement === false) {
         insideFunction[insideFunction.length - 1].insideReturnStatement = true;
-      }     
+      }
       advanceAndClear(2);
       continue;
     }
@@ -148,17 +148,17 @@ module.exports = function(code) {
     //   // debugger;
     //   advanceAndClear(1);
     //   continue;
-    // } 
+    // }
 
     // if (lexerFunctions.handleFunctionInvocation(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) === "cb2") {
     //   // debugger;
     //   advanceAndClear(1);
     //   lexerFunctions.handleEndOfFile(nextCol, tokens);
     //   continue;
-    // } 
+    // }
 
-    if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
-      tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD' || lastToken.type === 'TYPE_STRING' || 
+    if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] &&
+      tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD' || lastToken.type === 'TYPE_STRING' ||
       lastToken.type === 'TYPE_NUMBER')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', chunk, tokens);
       var tmp = {};
@@ -192,7 +192,7 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-    
+
     //Function invocation end
 
     // tuple handling
@@ -236,7 +236,7 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-    
+
     if (insideFunction.length && chunk === ')' && insideFunction[insideFunction.length - 1].insideParams === true) {
       lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
       insideFunction[insideFunction.length - 1].insideParams = "ended";
@@ -283,9 +283,9 @@ module.exports = function(code) {
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
-    
+
     // collection initializer handling
-    if (tokens.length && currCol === '(' && 
+    if (tokens.length && currCol === '(' &&
       (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
       var tmp = {};
@@ -296,30 +296,30 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-    
+
     // handles colons functioning as inheritance operators
-    if (tokens.length > 2 && tokens[tokens.length - 2].value === ':' && 
+    if (tokens.length > 2 && tokens[tokens.length - 2].value === ':' &&
       CLASS_NAMES[lastToken.value] && CLASS_NAMES[tokens[tokens.length - 3].value]) {
-      tokens[tokens.length - 2].type = 'INHERITANCE_OPERATOR';      
+      tokens[tokens.length - 2].type = 'INHERITANCE_OPERATOR';
     }
-    
+
     // handles classes and structs
-    if (lexerFunctions.handleClassOrStruct(insideClass, insideStruct, 
-                        insideInitialization, chunk, tokens, lastToken, 
+    if (lexerFunctions.handleClassOrStruct(insideClass, insideStruct,
+                        insideInitialization, chunk, tokens, lastToken,
                         nextCol, CLASS_NAMES, STRUCT_NAMES)) {
       advanceAndClear(1);
       continue;
     }
-    
+
     // handles parentheses inside class and struct initialization
-    if (chunk === '(' && insideInitialization.length && 
+    if (chunk === '(' && insideInitialization.length &&
       insideInitialization[insideInitialization.length - 1].parens >= 1) {
       insideInitialization[insideInitialization.length - 1].parens++;
     }
     if (chunk === ')' && insideInitialization.length) {
       insideInitialization[insideInitialization.length - 1].parens--;
     }
-    
+
     // handles property access and method calls via dot notation
     if (currCol === '.' && !lexerFunctions.checkForWhitespace(prevCol) &&
       !lexerFunctions.checkForWhitespace(nextCol) && (
@@ -329,7 +329,7 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-    
+
     // main evaluation block
     if (!insideString.status && !insideNumber.status &&
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
@@ -344,7 +344,7 @@ module.exports = function(code) {
           insideCollection.pop();
         });
       } else if (tokens.length && lastToken.type !== 'IDENTIFIER' &&
-        lastToken.type !== 'SUBSTRING_LOOKUP_END' && currCol === '[') {
+        lastToken.type !== 'SUBSCRIPT_LOOKUP_END' && currCol === '[') {
         lexerFunctions.checkFor('COLLECTION', chunk, tokens, function(){
           insideCollection.push({type: undefined, location: tokens.length-1});})
       } else {
@@ -354,7 +354,7 @@ module.exports = function(code) {
         lexerFunctions.checkFor('TYPE_PROPERTY', chunk, tokens) ||
         lexerFunctions.checkFor('TYPE', chunk, tokens) ||
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) ||
-        lexerFunctions.checkFor('SUBSTRING_LOOKUP', chunk, tokens, function() {
+        lexerFunctions.checkFor('SUBSCRIPT_LOOKUP', chunk, tokens, function() {
           substringLookup.status = !substringLookup.status;
         }) ||
         lexerFunctions.checkFor('OPERATOR', chunk, tokens) ||

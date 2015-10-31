@@ -593,7 +593,7 @@ describe('Lexer: Third Milestone', function() {
                         print(fifteenth)
                     }
                     printAllTypes("a", second: 15.5, third: -16.66, fourth: true, fifth: -5, sixth: -6, seventh: -7, eigth: -8, nineth: -9, tenth: "blah", eleventh: 11, twelvth: 12, thirteenth: 13, fourteenth: 14, fifteenth: 15)`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'printAllTypes' },
         { type: 'PARAMS_START', value: '(' },
@@ -819,7 +819,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'PUNCTUATION', value: ':' },
         { type: 'NUMBER', value: '15' },
         { type: 'INVOCATION_END', value: ')' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -1036,34 +1036,34 @@ describe('Lexer: Third Milestone', function() {
         { type: "IDENTIFIER",                   value: "currentMin" },
         { type: "OPERATOR",                     value: "=" },
         { type: "IDENTIFIER",                   value: "array" },
-        { type: "SUBSTRING_LOOKUP_START",       value: "[" },
+        { type: "SUBSCRIPT_LOOKUP_START",       value: "[" },
         { type: "NUMBER",                       value: "0" },
-        { type: "SUBSTRING_LOOKUP_END",         value: "]" },
+        { type: "SUBSCRIPT_LOOKUP_END",         value: "]" },
         { type: "TERMINATOR",                   value: "\\n"},
 
         { type: "DECLARATION_KEYWORD",          value: "var" },
         { type: "IDENTIFIER",                   value: "currentMax" },
         { type: "OPERATOR",                     value: "=" },
         { type: "IDENTIFIER",                   value: "array" },
-        { type: "SUBSTRING_LOOKUP_START",       value: "[" },
+        { type: "SUBSCRIPT_LOOKUP_START",       value: "[" },
         { type: "NUMBER",                       value: "0" },
-        { type: "SUBSTRING_LOOKUP_END",         value: "]" },
+        { type: "SUBSCRIPT_LOOKUP_END",         value: "]" },
         { type: "TERMINATOR",                   value: "\\n"},
 
         { type: "STATEMENT_KEYWORD",            value: "for" },
         { type: "IDENTIFIER",                   value: "value" },
         { type: "STATEMENT_KEYWORD",            value: "in" },
         { type: "IDENTIFIER",                   value: "array" },
-        { type: "SUBSTRING_LOOKUP_START",       value: "[" },
+        { type: "SUBSCRIPT_LOOKUP_START",       value: "[" },
 
         { type: "NUMBER",                       value: "1" },
-        { type: "HALF-OPEN_RANGE",              value: "..<" },
+        { type: "HALF_OPEN_RANGE",              value: "..<" },
 
         { type: "IDENTIFIER",                   value: "array" },
         { type: "DOT_SYNTAX",                   value: "." },
         { type: "TYPE_PROPERTY",                value: "count" },
 
-        { type: "SUBSTRING_LOOKUP_END",         value: "]" },
+        { type: "SUBSCRIPT_LOOKUP_END",         value: "]" },
         { type: "PUNCTUATION",                  value: "{" },
         { type: "TERMINATOR",                   value: "\\n"},
 
@@ -1153,31 +1153,31 @@ describe('Lexer: Third Milestone', function() {
         { type: "IDENTIFIER",                     value: "currentMin" },
         { type: "OPERATOR",                       value: "=" },
         { type: "IDENTIFIER",                     value: "array" },
-        { type: "SUBSTRING_LOOKUP_START",         value: "[" },
+        { type: "SUBSCRIPT_LOOKUP_START",         value: "[" },
         { type: "NUMBER",                         value: "0" },
-        { type: "SUBSTRING_LOOKUP_END",           value: "]" },
+        { type: "SUBSCRIPT_LOOKUP_END",           value: "]" },
         { type: "TERMINATOR",                     value: "\\n"},
 
         { type: "DECLARATION_KEYWORD",            value: "var" },
         { type: "IDENTIFIER",                     value: "currentMax" },
         { type: "OPERATOR",                       value: "=" },
         { type: "IDENTIFIER",                     value: "array" },
-        { type: "SUBSTRING_LOOKUP_START",         value: "[" },
+        { type: "SUBSCRIPT_LOOKUP_START",         value: "[" },
         { type: "NUMBER",                         value: "0" },
-        { type: "SUBSTRING_LOOKUP_END",           value: "]" },
+        { type: "SUBSCRIPT_LOOKUP_END",           value: "]" },
         { type: "TERMINATOR",                     value: "\\n"},
 
         { type: "STATEMENT_KEYWORD",              value: "for" },
         { type: "IDENTIFIER",                     value: "value" },
         { type: "STATEMENT_KEYWORD",              value: "in" },
         { type: "IDENTIFIER",                     value: "array" },
-        { type: "SUBSTRING_LOOKUP_START",         value: "[" },
+        { type: "SUBSCRIPT_LOOKUP_START",         value: "[" },
 
         { type: "NUMBER",                         value: "1" },
-        { type: "HALF-OPEN_RANGE",                value: "..<" },
+        { type: "HALF_OPEN_RANGE",                value: "..<" },
         { type: "NUMBER",                         value: "2" },
 
-        { type: "SUBSTRING_LOOKUP_END",           value: "]" },
+        { type: "SUBSCRIPT_LOOKUP_END",           value: "]" },
         { type: "PUNCTUATION",                    value: "{" },
         { type: "TERMINATOR",                     value: "\\n"},
 
@@ -1683,7 +1683,7 @@ describe('Lexer: Third Milestone', function() {
                           }
 
                           sayHelloNoOutput(to: "Bill", from: "Ted")`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'sayHelloNoOutput' },
         { type: 'PARAMS_START', value: '(' },
@@ -1717,7 +1717,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'STATEMENTS_END', value: '}' },
         { type: 'TERMINATOR', value: '\\n' },
         { type: 'TERMINATOR', value: '\\n' },
-        
+
         { type: 'IDENTIFIER', value: 'sayHelloNoOutput' },
         { type: 'INVOCATION_START', value: '(' },
         { type: 'IDENTIFIER', value: 'to' },
@@ -1728,7 +1728,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'PUNCTUATION', value: ':' },
         { type: 'STRING', value: 'Ted' },
         { type: 'INVOCATION_END', value: ')' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -1738,7 +1738,7 @@ describe('Lexer: Third Milestone', function() {
                               return "To \(person) from \(anotherPerson)"
                           }
                           print(sayHello(to: "Bill", from: "Ted"))`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'sayHello' },
         { type: 'PARAMS_START', value: '(' },
@@ -1785,7 +1785,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'STRING', value: 'Ted' },
         { type: 'INVOCATION_END', value: ')' },
         { type: 'INVOCATION_END', value: ')' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -1794,7 +1794,7 @@ describe('Lexer: Third Milestone', function() {
       input = String.raw`func dictionary() -> [String: Int] {
                               return ["one":1,"two":2,"three":3,"four":4,"five":5]
                           }`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'dictionary' },
         { type: 'PARAMS_START', value: '(' },
@@ -1831,9 +1831,9 @@ describe('Lexer: Third Milestone', function() {
         { type: 'NUMBER', value: '5' },
         { type: 'DICTIONARY_END', value: ']' },
         { type: 'TERMINATOR', value: '\\n' },
-        
+
         { type: 'STATEMENTS_END', value: '}' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -1842,7 +1842,7 @@ describe('Lexer: Third Milestone', function() {
       input = String.raw`func array() -> [Int] {
                               return [1,2,3,4,5]
                           }`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'array' },
         { type: 'PARAMS_START', value: '(' },
@@ -1867,9 +1867,9 @@ describe('Lexer: Third Milestone', function() {
         { type: 'NUMBER', value: '5' },
         { type: 'ARRAY_END', value: ']' },
         { type: 'TERMINATOR', value: '\\n' },
-        
+
         { type: 'STATEMENTS_END', value: '}' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -1880,7 +1880,7 @@ describe('Lexer: Third Milestone', function() {
                             }
 
                             abc(["one":1,"two":2])`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'abc' },
         { type: 'PARAMS_START', value: '(' },
@@ -1904,7 +1904,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'STATEMENTS_END', value: '}' },
         { type: 'TERMINATOR', value: '\\n' },
         { type: 'TERMINATOR', value: '\\n' },
-        
+
         { type: 'IDENTIFIER', value: 'abc' },
         { type: 'INVOCATION_START', value: '(' },
         { type: 'DICTIONARY_START', value: '[' },
@@ -1917,7 +1917,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'NUMBER', value: '2' },
         { type: 'DICTIONARY_END', value: ']' },
         { type: 'INVOCATION_END', value: ')' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -2122,7 +2122,7 @@ describe('Lexer: Third Milestone', function() {
                               print(input)
                           }
                           printInput("Hello, \(returnWorld())!")`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'returnWorld' },
         { type: 'PARAMS_START', value: '(' },
@@ -2168,7 +2168,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'STRING_INTERPOLATION_END', value: ')' },
         { type: 'STRING', value: '!' },
         { type: 'INVOCATION_END', value: ')' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -2181,7 +2181,7 @@ describe('Lexer: Third Milestone', function() {
                               print(input)
                           }
                           printInput("Hello, \(returnWorld())!")`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'returnWorld' },
         { type: 'PARAMS_START', value: '(' },
@@ -2227,7 +2227,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'STRING_INTERPOLATION_END', value: ')' },
         { type: 'STRING', value: '!' },
         { type: 'INVOCATION_END', value: ')' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -2320,7 +2320,7 @@ describe('Lexer: Third Milestone', function() {
                             var mathFunction: (Int, Int) -> Int = addTwoInts
 
                             print(mathFunction(2,3))`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'addTwoInts' },
         { type: 'PARAMS_START', value: '(' },
@@ -2362,7 +2362,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'IDENTIFIER', value: 'addTwoInts' }, //Need to go backward frmo here to var keyword and modify accordingly
         { type: 'TERMINATOR', value: '\\n' },
         { type: 'TERMINATOR', value: '\\n' },
-        
+
         { type: 'NATIVE_METHOD', value: 'print' },
         { type: 'INVOCATION_START', value: '(' },
         { type: 'IDENTIFIER', value: 'mathFunction' },
@@ -2372,7 +2372,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'NUMBER', value: '3' },
         { type: 'PUNCTUATION', value: ')' },
         { type: 'INVOCATION_END', value: ')' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -2388,7 +2388,7 @@ describe('Lexer: Third Milestone', function() {
 
                         giveTwoValuesIfNumberGreaterThan5(6)
                         giveTwoValuesIfNumberGreaterThan5(4)`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER',value: 'giveTwoValuesIfNumberGreaterThan5' },
         { type: 'PARAMS_START', value: '(' },
@@ -2451,13 +2451,13 @@ describe('Lexer: Third Milestone', function() {
         { type: 'NUMBER', value: '6' },
         { type: 'INVOCATION_END', value: ')' },
         { type: 'TERMINATOR', value: '\\n' },
-        
+
         { type: 'IDENTIFIER',
           value: 'giveTwoValuesIfNumberGreaterThan5' },
         { type: 'INVOCATION_START', value: '(' },
         { type: 'NUMBER', value: '4' },
         { type: 'INVOCATION_END', value: ')' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -2469,7 +2469,7 @@ describe('Lexer: Third Milestone', function() {
                             }
 
                             ab((plusFive: 6, timesFive: 8))`;
-      output = [ 
+      output = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'ab' },
         { type: 'PARAMS_START', value: '(' },
@@ -2520,7 +2520,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'NUMBER', value: '8' },
         { type: 'TUPLE_END', value: ')' },
         { type: 'INVOCATION_END', value: ')' },
-        { type: 'TERMINATOR', value: 'EOF' } 
+        { type: 'TERMINATOR', value: 'EOF' }
         ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -2540,14 +2540,14 @@ describe('Lexer: Third Milestone', function() {
             { type: "IDENTIFIER",                 value: "printFirstName" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_STRING",                value: "String" },            
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_STRING",                value: "String" }, 
-            { type: "OPERATOR",                   value: "?"}, 
-            { type: "PARAMS_END",                 value: ")" }, 
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String" },
+            { type: "OPERATOR",                   value: "?"},
+            { type: "PARAMS_END",                 value: ")" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
 
@@ -2629,16 +2629,16 @@ describe('Lexer: Third Milestone', function() {
             { type: "IDENTIFIER",                 value: "printFirstName" },
             { type: "PARAMS_START",               value: "(" },
             { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_STRING",                value: "String" },            
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String" },
             { type: "PUNCTUATION",                value: "," },
             { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" }, 
-            { type: "TYPE_STRING",                value: "String" }, 
-            { type: "OPERATOR",                   value: "?"}, 
-            { type: "OPERATOR",                   value: "="}, 
+            { type: "PUNCTUATION",                value: ":" },
+            { type: "TYPE_STRING",                value: "String" },
+            { type: "OPERATOR",                   value: "?"},
+            { type: "OPERATOR",                   value: "="},
             { type: "EXPRESSION_OR_TYPE_KEYWORD", value: "nil" },
-            { type: "PARAMS_END",                 value: ")" }, 
+            { type: "PARAMS_END",                 value: ")" },
             { type: "STATEMENTS_START",           value: "{" },
             { type: "TERMINATOR",                 value: "\\n"},
 
@@ -4471,9 +4471,9 @@ describe('Lexer: Third Milestone', function() {
         { type: "NATIVE_METHOD",              value: "print"},
         { type: "INVOCATION_START",           value: "(" },
         { type: "IDENTIFIER",                 value: "arr" },
-        { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+        { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
         { type: "NUMBER",                     value: "1" },
-        { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+        { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
         { type: "INVOCATION_END",             value: ")" },
         { type: "TERMINATOR",                 value: "\\n"},
 
@@ -4567,15 +4567,15 @@ describe('Lexer: Third Milestone', function() {
          { type: 'OPERATOR',                     value: '-' },
          { type: 'NUMBER',                       value: '1' },
          { type: 'TERMINATOR',                   value: '\\n' },
-         
+
          { type: 'DECLARATION_KEYWORD',          value: 'var' },
          { type: 'IDENTIFIER',                   value: 'one' },
          { type: 'OPERATOR',                     value: '=' },
          { type: "NATIVE_METHOD",                value: "abs"},
          { type: "INVOCATION_START",             value: "(" },
          { type: "IDENTIFIER",                   value: "negOne" },
-         { type: "INVOCATION_END",               value: ")" },   
-         { type: 'TERMINATOR',                   value: 'EOF' } 
+         { type: "INVOCATION_END",               value: ")" },
+         { type: 'TERMINATOR',                   value: 'EOF' }
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -4631,7 +4631,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "IDENTIFIER",               value: "b" },
           { type: "OPERATOR",                 value: "=" },
           { type: "NUMBER",                   value: "1" },
-          { type: "HALF-OPEN_RANGE",          value: "..<" },
+          { type: "HALF_OPEN_RANGE",          value: "..<" },
           { type: "NUMBER",                   value: "5" },
           { type: "TERMINATOR",               value: "EOF"}
         ];
@@ -4645,7 +4645,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "IDENTIFIER",               value: "a" },
           { type: "OPERATOR",                 value: "=" },
           { type: "NUMBER",                   value: "1.0" },
-          { type: "HALF-OPEN_RANGE",          value: "..<" },
+          { type: "HALF_OPEN_RANGE",          value: "..<" },
           { type: "NUMBER",                   value: "5.0" },
           { type: "TERMINATOR",               value: "EOF"}
         ];
@@ -4659,7 +4659,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "IDENTIFIER",                value: "a" },
           { type: "OPERATOR",                  value: "=" },
           { type: "NUMBER",                    value: "1.2" },
-          { type: "HALF-OPEN_RANGE",           value: "..<" },
+          { type: "HALF_OPEN_RANGE",           value: "..<" },
           { type: "NUMBER",                    value: "5.3" },
           { type: "TERMINATOR",                value: "EOF"}
         ];
@@ -4680,7 +4680,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "IDENTIFIER",                 value: "b" },
           { type: "OPERATOR",                   value: "=" },
           { type: "NUMBER",                     value: "2" },
-          { type: "HALF-OPEN_RANGE",            value: "..<" },
+          { type: "HALF_OPEN_RANGE",            value: "..<" },
           { type: "NUMBER",                     value: "6" },
           { type: "TERMINATOR",                 value: "EOF"}
         ];
@@ -4704,7 +4704,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "IDENTIFIER",                 value: "range" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "start" },
-          { type: "HALF-OPEN_RANGE",            value: "..<" },
+          { type: "HALF_OPEN_RANGE",            value: "..<" },
           { type: "IDENTIFIER",                 value: "end" },
           { type: "PUNCTUATION",                value: ";" },
           { type: "DECLARATION_KEYWORD",        value: "let" },
@@ -4885,18 +4885,18 @@ describe('Lexer: Third Milestone', function() {
           { type: "IDENTIFIER",                 value: "m" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "s" },
-          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
           { type: "IDENTIFIER",                 value: "s" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "TYPE_PROPERTY",              value: "startIndex" },
-          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "y" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "s" },
-          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
           { type: "IDENTIFIER",                 value: "s" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "TYPE_PROPERTY",              value: "startIndex" },
@@ -4905,7 +4905,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "INVOCATION_START",           value: "(" },
           { type: "NUMBER",                     value: "1" },
           { type: "INVOCATION_END",             value: ")" },
-          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "DECLARATION_KEYWORD",        value: "var" },
@@ -4932,7 +4932,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "IDENTIFIER",                 value: "bang" },
           { type: "OPERATOR",                   value: "=" },
           { type: "IDENTIFIER",                 value: "s" },
-          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
           { type: "IDENTIFIER",                 value: "s" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "TYPE_PROPERTY",              value: "endIndex" },
@@ -4940,7 +4940,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "NATIVE_METHOD",              value: "predecessor"},
           { type: "INVOCATION_START",           value: "(" },
           { type: "INVOCATION_END",             value: ")" },
-          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
           // { type: "TERMINATOR",                 value: "\\n"},
 
           // { type: "NATIVE_METHOD",              value: "print"},
@@ -4948,7 +4948,7 @@ describe('Lexer: Third Milestone', function() {
           // { type: "STRING",                     value: "the letter s: " },
           // { type: "STRING_INTERPOLATION_START", value: "\\(" },
           // { type: "IDENTIFIER",                 value: "s" },
-          // { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          // { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
           // { type: "IDENTIFIER",                 value: "s" },
           // { type: "DOT_SYNTAX",                 value: "." },
           // { type: "TYPE_PROPERTY",              value: "startIndex" },
@@ -4957,7 +4957,7 @@ describe('Lexer: Third Milestone', function() {
           // { type: "INVOCATION_START",           value: "(" },
           // { type: "NUMBER",                     value: "3" },
           // { type: "INVOCATION_END",             value: ")" },
-          // { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          // { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
           // { type: "STRING_INTERPOLATION_END",   value: ")" },
           // { type: "STRING",                     value: "" },
           // { type: "INVOCATION_END",             value: ")" },
@@ -5102,7 +5102,7 @@ describe('Lexer: Third Milestone', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      
+
       it('should handle string uppercase and lowercase properties', function () {
         input = String.raw `var s = "String"
                               s.uppercaseString
@@ -5113,7 +5113,7 @@ describe('Lexer: Third Milestone', function() {
            { type: 'OPERATOR',                     value: '=' },
            { type: 'STRING',                       value: 'String' },
            { type: 'TERMINATOR',                   value: '\\n' },
-           
+
            { type: 'IDENTIFIER',                   value: 's' },
            { type: "DOT_SYNTAX",                   value: "." },
            { type: "TYPE_PROPERTY",                value: "uppercaseString" },
@@ -5122,7 +5122,7 @@ describe('Lexer: Third Milestone', function() {
            { type: 'IDENTIFIER',                   value: 's' },
            { type: "DOT_SYNTAX",                   value: "." },
            { type: "TYPE_PROPERTY",                value: "lowercaseString" },
-           { type: 'TERMINATOR',                   value: 'EOF' } 
+           { type: 'TERMINATOR',                   value: 'EOF' }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5319,7 +5319,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "INVOCATION_START",           value: "(" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "\\n"},
-          
+
           { type: "IDENTIFIER",                 value: "arr" },
           { type: "DOT_SYNTAX",                 value: "." },
           { type: "NATIVE_METHOD",              value: "popLast"},
@@ -5363,11 +5363,11 @@ describe('Lexer: Third Milestone', function() {
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "IDENTIFIER",                 value: "arr" },
-          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
           { type: "NUMBER",                     value: "0" },
           { type: "CLOSED_RANGE",               value: "..." },
           { type: "NUMBER",                     value: "3" },
-          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
           { type: "OPERATOR",                   value: "=" },
           { type: "ARRAY_START",                value: "[" },
           { type: "NUMBER",                     value: "0" },
@@ -5375,11 +5375,11 @@ describe('Lexer: Third Milestone', function() {
           { type: "TERMINATOR",                 value: "\\n"},
 
           { type: "IDENTIFIER",                 value: "arr" },
-          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
           { type: "NUMBER",                     value: "0" },
-          { type: "HALF-OPEN_RANGE",            value: "..<" },
+          { type: "HALF_OPEN_RANGE",            value: "..<" },
           { type: "NUMBER",                     value: "9" },
-          { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+          { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
           { type: "OPERATOR",                   value: "=" },
           { type: "ARRAY_START",                value: "[" },
           { type: "NUMBER",                     value: "5" },
@@ -5543,7 +5543,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "NUMBER",                       value: "5" },
           { type: "ARRAY_END",                    value: "]" },
           { type: "TERMINATOR",                   value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",          value: "var" },
           { type: "IDENTIFIER",                   value: "yes" },
           { type: "OPERATOR",                     value: "=" },
@@ -5563,8 +5563,8 @@ describe('Lexer: Third Milestone', function() {
           { type: "NATIVE_METHOD",                value: "contains" },
           { type: "INVOCATION_START",             value: "(" },
           { type: "NUMBER",                       value: "6" },
-          { type: "INVOCATION_END",               value: ")" },       
-          { type: "TERMINATOR",                   value: "EOF" }   
+          { type: "INVOCATION_END",               value: ")" },
+          { type: "TERMINATOR",                   value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5589,7 +5589,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "NUMBER",                       value: "5" },
           { type: "ARRAY_END",                    value: "]" },
           { type: "TERMINATOR",                   value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",          value: "var" },
           { type: "IDENTIFIER",                   value: "lessFirst" },
           { type: "OPERATOR",                     value: "=" },
@@ -5608,8 +5608,8 @@ describe('Lexer: Third Milestone', function() {
           { type: "NATIVE_METHOD",                value: "dropFirst" },
           { type: "INVOCATION_START",             value: "(" },
           { type: "NUMBER",                       value: "3" },
-          { type: "INVOCATION_END",               value: ")" },       
-          { type: "TERMINATOR",                   value: "EOF" }   
+          { type: "INVOCATION_END",               value: ")" },
+          { type: "TERMINATOR",                   value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5634,7 +5634,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "NUMBER",                       value: "5" },
           { type: "ARRAY_END",                    value: "]" },
           { type: "TERMINATOR",                   value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",          value: "var" },
           { type: "IDENTIFIER",                   value: "lessLast" },
           { type: "OPERATOR",                     value: "=" },
@@ -5653,8 +5653,8 @@ describe('Lexer: Third Milestone', function() {
           { type: "NATIVE_METHOD",                value: "dropLast" },
           { type: "INVOCATION_START",             value: "(" },
           { type: "NUMBER",                       value: "3" },
-          { type: "INVOCATION_END",               value: ")" },       
-          { type: "TERMINATOR",                   value: "EOF" }   
+          { type: "INVOCATION_END",               value: ")" },
+          { type: "TERMINATOR",                   value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5679,7 +5679,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "NUMBER",                       value: "5" },
           { type: "ARRAY_END",                    value: "]" },
           { type: "TERMINATOR",                   value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",          value: "var" },
           { type: "IDENTIFIER",                   value: "yes" },
           { type: "OPERATOR",                     value: "=" },
@@ -5709,8 +5709,8 @@ describe('Lexer: Third Milestone', function() {
           { type: "PUNCTUATION",                  value: "," },
           { type: "NUMBER",                       value: "3" },
           { type: "ARRAY_END",                    value: "]" },
-          { type: "INVOCATION_END",               value: ")" },       
-          { type: "TERMINATOR",                   value: "EOF" }   
+          { type: "INVOCATION_END",               value: ")" },
+          { type: "TERMINATOR",                   value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5735,7 +5735,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "NUMBER",                       value: "5" },
           { type: "ARRAY_END",                    value: "]" },
           { type: "TERMINATOR",                   value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",          value: "var" },
           { type: "IDENTIFIER",                   value: "one" },
           { type: "OPERATOR",                     value: "=" },
@@ -5753,8 +5753,8 @@ describe('Lexer: Third Milestone', function() {
           { type: "DOT_SYNTAX",                   value: "." },
           { type: "NATIVE_METHOD",                value: "maxElement" },
           { type: "INVOCATION_START",             value: "(" },
-          { type: "INVOCATION_END",               value: ")" },       
-          { type: "TERMINATOR",                   value: "EOF" }   
+          { type: "INVOCATION_END",               value: ")" },
+          { type: "TERMINATOR",                   value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
@@ -5779,7 +5779,7 @@ describe('Lexer: Third Milestone', function() {
           { type: "NUMBER",                       value: "5" },
           { type: "ARRAY_END",                    value: "]" },
           { type: "TERMINATOR",                   value: "\\n"},
-          
+
           { type: "DECLARATION_KEYWORD",          value: "var" },
           { type: "IDENTIFIER",                   value: "yes" },
           { type: "OPERATOR",                     value: "=" },
@@ -5817,12 +5817,12 @@ describe('Lexer: Third Milestone', function() {
           { type: "PUNCTUATION",                  value: "," },
           { type: "NUMBER",                       value: "4" },
           { type: "ARRAY_END",                    value: "]" },
-          { type: "INVOCATION_END",               value: ")" },       
-          { type: "TERMINATOR",                   value: "EOF" }   
+          { type: "INVOCATION_END",               value: ")" },
+          { type: "TERMINATOR",                   value: "EOF" }
         ];
         expect(lexer(input)).to.deep.equal(output);
       });
-       
+
 
     });
 

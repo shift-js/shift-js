@@ -1965,7 +1965,7 @@ describe('Parser', function() {
           { type: "IDENTIFIER",           value: "b" },
           { type: "OPERATOR",             value: "=" },
           { type: "NUMBER",               value: "1" },
-          { type: "HALF-OPEN_RANGE",      value: "..<" },
+          { type: "HALF_OPEN_RANGE",      value: "..<" },
           { type: "NUMBER",               value: "5" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
@@ -1981,7 +1981,7 @@ describe('Parser', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "NUMBER",               value: "1.0" },
-          { type: "HALF-OPEN_RANGE",      value: "..<" },
+          { type: "HALF_OPEN_RANGE",      value: "..<" },
           { type: "NUMBER",               value: "5.0" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
@@ -1997,7 +1997,7 @@ describe('Parser', function() {
           { type: "IDENTIFIER",           value: "a" },
           { type: "OPERATOR",             value: "=" },
           { type: "NUMBER",               value: "1.2" },
-          { type: "HALF-OPEN_RANGE",      value: "..<" },
+          { type: "HALF_OPEN_RANGE",      value: "..<" },
           { type: "NUMBER",               value: "5.3" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
@@ -2020,7 +2020,7 @@ describe('Parser', function() {
           { type: "IDENTIFIER",           value: "b" },
           { type: "OPERATOR",             value: "=" },
           { type: "NUMBER",               value: "2" },
-          { type: "HALF-OPEN_RANGE",      value: "..<" },
+          { type: "HALF_OPEN_RANGE",      value: "..<" },
           { type: "NUMBER",               value: "6" },
           { type: "TERMINATOR",           value: "EOF"}
         ];
@@ -2477,9 +2477,9 @@ describe('Parser', function() {
           { type: "IDENTIFIER",           value: "s" },
           { type: "OPERATOR",             value: "=" },
           { type: "IDENTIFIER",           value: "arr" },
-          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
           { type: "NUMBER",               value: "0" },
-          { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+          { type: "SUBSCRIPT_LOOKUP_END",     value: "]" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF" }
         ];
@@ -2666,7 +2666,7 @@ describe('Parser', function() {
 
       // Swift input: 'let arr = [1,2]; var u = [arr[0]];'
       it('should handle arrays of that contain a substring lookup', function () {
-        //TODO Works when token.type of SUBSTRING_LOOKUP is replaced with token.type PUNCTUATION
+        //TODO Works when token.type of SUBSCRIPT_LOOKUP is replaced with token.type PUNCTUATION
         //TODO Why no longer just
         input = [
           { type: "DECLARATION_KEYWORD",  value: "let" },
@@ -2683,9 +2683,9 @@ describe('Parser', function() {
           { type: "OPERATOR",             value: "=" },
           { type: "ARRAY_START",          value: "[" },
           { type: "IDENTIFIER",           value: "arr" },
-          { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+          { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
           { type: "NUMBER",               value: "0" },
-          { type: "SUBSTRING_LOOKUP_END",     value: "]" },
+          { type: "SUBSCRIPT_LOOKUP_END",     value: "]" },
           { type: "ARRAY_END",            value: "]" },
           { type: "PUNCTUATION",          value: ";" },
           { type: "TERMINATOR",           value: "EOF" }
