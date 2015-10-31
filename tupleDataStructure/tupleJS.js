@@ -45,7 +45,7 @@ function Tuple(tuple) {
     }
   }
 
-  console.dir(this.tup);
+  // console.dir(this.tup);
   
 
 };
@@ -58,8 +58,12 @@ function Tuple(tuple) {
   };
 
   Tuple.prototype.findValue = function(keyOrIndex){
-    var x = this.tup[keyOrIndex]
-    return x === undefined ? undefined : this.tup[keyOrIndex]["val"];
+    var x = this.tup[keyOrIndex];
+    if (x instanceof Object) {
+      return x;
+    } else {
+      return x === undefined ? undefined : this.tup[keyOrIndex]["val"];
+    }
   };
 
   Tuple.prototype.modifyVal = function(keyOrIndex, newVal) {
