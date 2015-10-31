@@ -22,6 +22,8 @@ module.exports = {
     'hasSuffix': 'NATIVE_METHOD',
     'insert': 'NATIVE_METHOD',
     'insertContentsOf': 'NATIVE_METHOD',
+    'maxElement': 'NATIVE_METHOD',
+    'minElement': 'NATIVE_METHOD',
     'predecessor': 'NATIVE_METHOD',
     'popLast': 'NATIVE_METHOD',
     'print': 'NATIVE_METHOD',
