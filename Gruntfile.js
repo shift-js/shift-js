@@ -11,6 +11,14 @@ module.exports = function(grunt) {
     },
 
     mochaTest: {
+      tuple: {
+        options: {
+          reporter: 'spec'
+        },
+        src: [
+          'tests/tupleTests/*'
+        ]
+      },
       lexer: {
         options: {
           reporter: 'spec'
@@ -123,6 +131,10 @@ module.exports = function(grunt) {
   grunt.registerTask('testGenerator', [
     // 'jshint',
     'mochaTest:generator'
+  ]);
+
+  grunt.registerTask('testTuple',[
+    'mochaTest:tuple'
   ]);
 
   grunt.registerTask('testEndToEnd', [
