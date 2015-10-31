@@ -12,3 +12,6 @@ transpiler/lexer/tmpFunctionInvoke.js
 .floo
 .flooignore
 .idea
+
+# Files for CLI testing
+examples/

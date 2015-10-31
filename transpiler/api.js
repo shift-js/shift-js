@@ -19,11 +19,11 @@ var api = {
     return generator(parser(lexer(swiftString)), options);
   },
   tokenize: function(swiftString) {
-    return lexer(swiftString);
+    return JSON.stringify(lexer(swiftString), null, 2);
   },
   ast: function(swiftString) {
     parser = make_parser();
-    return parser(lexer(swiftString));
+    return JSON.stringify(parser(lexer(swiftString)), null, 2);
   }
 };
 

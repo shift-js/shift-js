@@ -42,9 +42,9 @@ var rearrangeTokensDictionaryKeyValueIteration = function(tokens) {
       { type: "IDENTIFIER", value: identifierVal },
       { type: "OPERATOR", value: "=" },
       { type: "IDENTIFIER", value: identifierCol },
-      { type: "SUBSTRING_LOOKUP_START", value: "[" },
+      { type: "SUBSCRIPT_LOOKUP_START", value: "[" },
       { type: "IDENTIFIER", value: identifierKey },
-      { type: "SUBSTRING_LOOKUP_END", value: "]" },
+      { type: "SUBSCRIPT_LOOKUP_END", value: "]" },
       { type: "PUNCTUATION", value: ";" });
     tokens.splice(indicesOfTokensToRemove[0], indicesOfTokensToRemove.length);
     tokens.splice(indexToAddEndParensToken-3, 0,

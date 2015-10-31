@@ -4,6 +4,11 @@ var NUMBER = /^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i;
 
 module.exports = {
 
+  // helper function to check for whitespace
+  checkForWhitespace: function(chunk) {
+    return chunk === ' ';
+  },
+
   // default check for point at which to evaluate chunk
   checkForEvaluationPoint: function(currCol, nextCol) {
     if (
@@ -26,6 +31,7 @@ module.exports = {
     return false;
   },
 
+  // helper function to handle function invocation
   handleFunctionInvocation: function(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) {
     if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
       tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD')) {
@@ -68,8 +74,8 @@ module.exports = {
   makeToken: function(lexicalType, chunk, tokens, type, value) {
     if (tokens) {
       var obj = {};
-      obj['type'] = type || lexicalTypes[lexicalType][chunk];
-      obj['value'] = value || chunk.trim();
+      obj.type = type || lexicalTypes[lexicalType][chunk];
+      obj.value = value || chunk.trim();
       tokens.push(obj);
     }
   },
@@ -90,7 +96,7 @@ module.exports = {
     return false;
   },
 
-  // checks for string, number, boolean values
+  // checks for string and boolean values
   checkForLiteral: function(chunk, tokens, cb) {
     if (chunk) {
       chunk = JSON.parse(chunk.trim());
@@ -111,13 +117,6 @@ module.exports = {
         if (cb) {cb(chunk, tokens)}
         return true;
       },
-      'number': function(chunk, tokens) {
-        if (tokens) {
-          module.exports.makeToken(undefined, chunk, tokens, 'NUMBER', JSON.stringify(chunk));
-        }
-        if (cb) {cb(chunk, tokens)}
-        return true;
-      }
     };
     if (obj[type] === undefined) {
       return false;
@@ -196,6 +195,7 @@ module.exports = {
     return false;
   },
 
+  // helper function to handle numbers, including numbers written with underscores
   handleNumber: function(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol, cb) {
     if (NUMBER.test(chunk) && !insideString.status && !insideNumber.status) {
       insideNumber.status = true;
@@ -223,6 +223,27 @@ module.exports = {
     }
   },
 
+  // helper function to handle range operators
+  handleRange: function(insideString, insideFunction, insideComment,
+                        tokens, currCol, nextCol, nextNextCol) {
+    if (!insideString.status && !module.exports.checkIfInsideComment(insideComment)) {
+      if (currCol === '.' && nextCol === '.' && nextNextCol === '.') {
+        if (insideFunction.length && insideFunction[insideFunction.length - 1].insideParams === true) {
+          module.exports.checkFor('FUNCTION_DECLARATION', '...', tokens);
+          return true;
+        } else {
+          module.exports.checkFor('RANGE', '...', tokens);
+          return true;
+        }
+      }
+      if (currCol === '.' && nextCol === '.' && nextNextCol === '<') {
+        module.exports.checkFor('RANGE', '..<', tokens);
+        return true;
+      }
+    }
+    return false;
+  },
+
   checkForStringInterpolationStart: function(stringInterpolation, insideString,
                                              chunk, tokens, nextCol, nextNextCol) {
     if (!stringInterpolation.status && nextCol === '\\' && nextNextCol === '(') {
@@ -246,9 +267,54 @@ module.exports = {
     }
   },
 
-  // helper function to check for whitespace
-  checkForWhitespace: function(chunk) {
-    return chunk === ' ';
+
+  // handles classes and structures
+  handleClassOrStruct: function(insideClass, insideStruct, insideInitialization,
+                                chunk, tokens, lastToken, nextCol, CLASS_NAMES,
+                                STRUCT_NAMES) {
+    if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
+      chunk === '{') {
+      module.exports.checkFor('CLASS_DEFINITION', chunk, tokens);
+      insideClass[insideClass.length - 1].curly++;
+      return true;
+    }
+    if (insideClass.length && insideClass[insideClass.length - 1].curly === 1 &&
+      chunk === '}') {
+      module.exports.checkFor('CLASS_DEFINITION', chunk, tokens);
+      insideClass.pop();
+      module.exports.handleEndOfFile(nextCol, tokens);
+      return true;
+    }
+    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 0 &&
+      chunk === '{') {
+      module.exports.checkFor('STRUCT_DEFINITION', chunk, tokens);
+      insideStruct[insideStruct.length - 1].curly++;
+      return true;
+    }
+    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 1 &&
+      chunk === '}') {
+      module.exports.checkFor('STRUCT_DEFINITION', chunk, tokens);
+      insideStruct.pop();
+      module.exports.handleEndOfFile(nextCol, tokens);
+      return true;
+    }
+    if (tokens.length && (CLASS_NAMES[lastToken.value] ||
+      STRUCT_NAMES[lastToken.value]) && chunk === '(') {
+      module.exports.checkFor('INITIALIZATION', chunk, tokens)
+      var temp = {};
+      temp.status = true;
+      temp.parens = 1;
+      insideInitialization.push(temp);
+      return true;
+    }
+    if (chunk === ')' && insideInitialization.length &&
+      insideInitialization[insideInitialization.length - 1].parens === 1) {
+      module.exports.checkFor('INITIALIZATION', chunk, tokens);
+      insideInitialization.pop();
+      module.exports.handleEndOfFile(nextCol, tokens);
+      return true;
+    }
+    return false;
   },
 
   checkForTupleStart: function(insideTuple, chunk, tokens, lastToken,
@@ -316,7 +382,7 @@ module.exports = {
         // special conditions to handle for-in loops that iterate over dictionaries
       (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||
       (lastToken.value === ',' && tokens[tokens.length - 3].value) === '(' &&
-      tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1]['insideParams'] === true))) {
+      tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1].insideParams === true && lastToken.value !== '='))) {
       if (tokens) {
         module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
       }
@@ -337,26 +403,25 @@ module.exports = {
         insideStruct.push(temp);
         STRUCT_NAMES[chunk] = true;
       }
-      
       return true;
     }
     return false;
   },
 
   determineCollectionType: function(collectionInformation, tokens, cb) {
-    if (tokens[tokens.length - 1]['value'] === ':') {
-      tokens[collectionInformation[collectionInformation.length - 1]['location']]['type'] = 'DICTIONARY_START';
-      collectionInformation[collectionInformation.length - 1]['type'] = 'DICTIONARY_END';
+    if (tokens[tokens.length - 1].value === ':') {
+      tokens[collectionInformation[collectionInformation.length - 1].location].type = 'DICTIONARY_START';
+      collectionInformation[collectionInformation.length - 1].type = 'DICTIONARY_END';
     } else {
-      collectionInformation[collectionInformation.length - 1]['type']  = 'ARRAY_END';
+      collectionInformation[collectionInformation.length - 1].type  = 'ARRAY_END';
     }
     if (cb) {
       cb();
     }
   },
 
-  handleEndOfFile: function(nextCol, tokens) {
-    if (nextCol === undefined) module.exports.makeToken(undefined, undefined, tokens, 'TERMINATOR', 'EOF');
+  handleEndOfFile: function(col, tokens) {
+    if (col === undefined) module.exports.makeToken(undefined, undefined, tokens, 'TERMINATOR', 'EOF');
   }
 
 };

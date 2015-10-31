@@ -1,52 +1,19 @@
 module.exports = {
 
-  // ARRAY: {
-  //   '[': 'ARRAY_START',
-  //   ']': 'ARRAY_END'
-  // },
-
-  // DICTIONARY: {
-  //   '[': 'DICTIONARY_START',
-  //   ']': 'DICTIONARY_END'
-  // },
-
-  NATIVE_METHOD: {
-    'advancedBy': 'NATIVE_METHOD',
-    'append': 'NATIVE_METHOD',
-    'hasPrefix': 'NATIVE_METHOD',
-    'hasSuffix': 'NATIVE_METHOD',
-    'insert': 'NATIVE_METHOD',
-    'insertContentsOf': 'NATIVE_METHOD',
-    'predecessor': 'NATIVE_METHOD',
-    'print': 'NATIVE_METHOD',
-    'removeAtIndex': 'NATIVE_METHOD',
-    'removeAll': 'NATIVE_METHOD',
-    'removeFirst': 'NATIVE_METHOD',
-    'removeLast': 'NATIVE_METHOD',
-    'removeRange': 'NATIVE_METHOD',
-    'removeValueForKey': 'NATIVE_METHOD',
-    'successor': 'NATIVE_METHOD',
-    'updateValue': 'NATIVE_METHOD',
+  CLASS_DEFINITION: {
+    '{': 'CLASS_DEFINITION_START',
+    '}': 'CLASS_DEFINITION_END',
   },
 
-  METHOD_ARGUMENT_NAME: {
-    'at': 'METHOD_ARGUMENT_NAME',
-    'atIndex': 'METHOD_ARGUMENT_NAME',
-    'forKey': 'METHOD_ARGUMENT_NAME',
-    'repeatedValue': 'METHOD_ARGUMENT_NAME'
+  COLLECTION: {
+    '[': 'ARRAY_START',
+    ']': 'COLLECTION_END',
   },
 
-  TYPE_PROPERTY: {
-    'characters': 'TYPE_PROPERTY',
-    'count': 'TYPE_PROPERTY',
-    'endIndex': 'TYPE_PROPERTY',
-    'isEmpty': 'TYPE_PROPERTY',
-    'startIndex': 'TYPE_PROPERTY',
-  },
-
-  RANGES: {
-    '...': 'CLOSED_RANGE',
-    '..<': 'HALF-OPEN_RANGE',
+  COMMENT: {
+    '//': 'COMMENT_START',
+    '/*': 'MULTI_LINE_COMMENT_START',
+    '*/': 'MULTI_LINE_COMMENT_END' ,
   },
 
   FUNCTION_DECLARATION: {
@@ -55,38 +22,17 @@ module.exports = {
     '{': 'STATEMENTS_START',
     '}': 'STATEMENTS_END',
     '->': 'RETURN_ARROW',
-    '...': 'VARIADIC_PARAM'
+    '...': 'VARIADIC_PARAM',
   },
 
   FUNCTION_INVOCATION: {
     '(': 'INVOCATION_START',
-    ')': 'INVOCATION_END'
-  },
-
-  CLASS_DEFINITION: {
-    '{': 'CLASS_DEFINITION_START',
-    '}': 'CLASS_DEFINITION_END'
-  },
-
-  STRUCT_DEFINITION: {
-    '{': 'STRUCT_DEFINITION_START',
-    '}': 'STRUCT_DEFINITION_END'
+    ')': 'INVOCATION_END',
   },
 
   INITIALIZATION: {
     '(': 'INITIALIZATION_START',
-    ')': 'INITIALIZATION_END'
-  },
-
-  COLLECTION: {
-    '[': 'ARRAY_START',
-    ']': 'COLLECTION_END'
-  },
-
-  COMMENT: {
-    '//': 'COMMENT_START',
-    '/*': 'MULTI_LINE_COMMENT_START',
-    '*/': 'MULTI_LINE_COMMENT_END'
+    ')': 'INITIALIZATION_END',
   },
 
   KEYWORD: {
@@ -178,12 +124,48 @@ module.exports = {
     'Type': 'CONTEXT_SPECIFIC_KEYWORD',
     'unowned': 'CONTEXT_SPECIFIC_KEYWORD',
     'weak': 'CONTEXT_SPECIFIC_KEYWORD',
-    'willSet': 'CONTEXT_SPECIFIC_KEYWORD'
+    'willSet': 'CONTEXT_SPECIFIC_KEYWORD',
 
   },
 
-  OPERATOR: {
+  METHOD_ARGUMENT_NAME: {
+    'at': 'METHOD_ARGUMENT_NAME',
+    'atIndex': 'METHOD_ARGUMENT_NAME',
+    'forKey': 'METHOD_ARGUMENT_NAME',
+    'repeatedValue': 'METHOD_ARGUMENT_NAME',
+  },
 
+  NATIVE_METHOD: {
+    'abs': 'NATIVE_METHOD',
+    'advancedBy': 'NATIVE_METHOD',
+    'append': 'NATIVE_METHOD',
+    'contains': 'NATIVE_METHOD',
+    'distanceTo': 'NATIVE_METHOD',
+    'dropFirst': 'NATIVE_METHOD',
+    'dropLast': 'NATIVE_METHOD',
+    'elementsEqual': 'NATIVE_METHOD',
+    'hasPrefix': 'NATIVE_METHOD',
+    'hasSuffix': 'NATIVE_METHOD',
+    'insert': 'NATIVE_METHOD',
+    'insertContentsOf': 'NATIVE_METHOD',
+    'maxElement': 'NATIVE_METHOD',
+    'minElement': 'NATIVE_METHOD',
+    'predecessor': 'NATIVE_METHOD',
+    'popLast': 'NATIVE_METHOD',
+    'print': 'NATIVE_METHOD',
+    'removeAtIndex': 'NATIVE_METHOD',
+    'removeAll': 'NATIVE_METHOD',
+    'removeFirst': 'NATIVE_METHOD',
+    'removeLast': 'NATIVE_METHOD',
+    'removeRange': 'NATIVE_METHOD',
+    'removeValueForKey': 'NATIVE_METHOD',
+    'replaceRange': 'NATIVE_METHOD',
+    'successor': 'NATIVE_METHOD',
+    'startsWith': 'NATIVE_METHOD',
+    'updateValue': 'NATIVE_METHOD',
+  },
+
+  OPERATOR: {
     '/': 'OPERATOR',
     '=': 'OPERATOR',
     '-': 'OPERATOR',
@@ -197,14 +179,10 @@ module.exports = {
     '|': 'OPERATOR',
     '^': 'OPERATOR',
     '?': 'OPERATOR',
-    '~': 'OPERATOR'
-
+    '~': 'OPERATOR',
   },
 
-  // TODO end of file terminator at end of string, new line terminator, semicolon terminator
-
   PUNCTUATION: {
-
     '(': 'PUNCTUATION',
     ')': 'PUNCTUATION',
     '{': 'PUNCTUATION',
@@ -216,13 +194,16 @@ module.exports = {
     '@': 'PUNCTUATION',
     '#': 'PUNCTUATION',
     '`': 'PUNCTUATION',
-    // '?': 'PUNCTUATION' 
-
   },
 
-  SUBSTRING_LOOKUP: {
-    '[': 'SUBSTRING_LOOKUP_START',
-    ']': 'SUBSTRING_LOOKUP_END',
+  RANGE: {
+    '...': 'CLOSED_RANGE',
+    '..<': 'HALF_OPEN_RANGE',
+  },
+
+  SUBSCRIPT_LOOKUP: {
+    '[': 'SUBSCRIPT_LOOKUP_START',
+    ']': 'SUBSCRIPT_LOOKUP_END',
   },
 
   SPECIAL_STRING: {
@@ -230,11 +211,16 @@ module.exports = {
     ')': "STRING_INTERPOLATION_END",
   },
 
+  STRUCT_DEFINITION: {
+    '{': 'STRUCT_DEFINITION_START',
+    '}': 'STRUCT_DEFINITION_END',
+  },
+
   TERMINATOR: {
     'EOF': 'TERMINATOR',
     '\\n': 'TERMINATOR',
     '\\r': 'TERMINATOR',
-    '\\t': 'TAB'
+    '\\t': 'TAB',
   },
 
   TYPE: {
@@ -252,8 +238,18 @@ module.exports = {
     'UInt8': 'TYPE_NUMBER',
     'UInt16': 'TYPE_NUMBER',
     'UInt32': 'TYPE_NUMBER',
-    'UInt64': 'TYPE_NUMBER'
-  }
+    'UInt64': 'TYPE_NUMBER',
+  },
 
+  TYPE_PROPERTY: {
+    'characters': 'TYPE_PROPERTY',
+    'count': 'TYPE_PROPERTY',
+    'description': 'TYPE_PROPERTY',
+    'endIndex': 'TYPE_PROPERTY',
+    'lowercaseString': 'TYPE_PROPERTY',
+    'isEmpty': 'TYPE_PROPERTY',
+    'startIndex': 'TYPE_PROPERTY',
+    'uppercaseString': 'TYPE_PROPERTY',
+  },
 
 };

@@ -11,12 +11,23 @@ module.exports = function(grunt) {
     },
 
     mochaTest: {
+      tuple: {
+        options: {
+          reporter: 'spec'
+        },
+        src: [
+          'tests/tupleTests/*'
+        ]
+      },
       lexer: {
         options: {
           reporter: 'spec'
         },
         src: [
-          'tests/lexerTests.js'
+          'tests/lexerTests/lexerTestsFirstMilestone.js',
+          'tests/lexerTests/lexerTestsSecondMilestone.js',
+          'tests/lexerTests/lexerTestsThirdMilestone.js',
+          'tests/lexerTests/lexerTestsFourthMilestone.js',
         ]
       },
       parser: {
@@ -24,9 +35,32 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/parserTestsFirstMilestone.js',
-          'tests/parserTestsSecondMilestone.js',
-          'tests/parserTestsThirdMilestone.js'
+          'tests/parserTests/parserTestsFirstMilestone.js',
+          'tests/parserTests/parserTestsSecondMilestone.js',
+          'tests/parserTests/parserTestsThirdMilestone.js',
+          'tests/parserTests/parserTestsFourthMilestone.js',
+        ]
+      },
+      generator: {
+        options: {
+          reporter: 'spec'
+        },
+        src: [
+          'tests/generatorTests/generatorTestsFirstMilestone.js',
+          'tests/generatorTests/generatorTestsSecondMilestone.js',
+          'tests/generatorTests/generatorTestsThirdMilestone.js',
+          'tests/generatorTests/generatorTestsFourthMilestone.js',
+        ]
+      },
+     endToEnd: {
+        options: {
+          reporter: 'spec'
+        },
+        src: [
+          'tests/endToEndTests/endToEndTestsFirstMilestone.js',
+          'tests/endToEndTests/endToEndTestsSecondMilestone.js',
+          'tests/endToEndTests/endToEndTestsThirdMilestone.js',
+          'tests/endToEndTests/endToEndTestsFourthMilestone.js',
         ]
       },
       test: {
@@ -34,13 +68,24 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/lexerTests.js',
-          'tests/parserTestsFirstMilestone.js',
-          'tests/parserTestsSecondMilestone.js',
-          'tests/parserTestsThirdMilestone.js'
+          'tests/lexerTests/lexerTestsFirstMilestone.js',
+          'tests/lexerTests/lexerTestsSecondMilestone.js',
+          'tests/lexerTests/lexerTestsThirdMilestone.js',
+          'tests/lexerTests/lexerTestsFourthMilestone.js',
+          'tests/parserTests/parserTestsFirstMilestone.js',
+          'tests/parserTests/parserTestsSecondMilestone.js',
+          'tests/parserTests/parserTestsThirdMilestone.js',
+          'tests/parserTests/parserTestsFourthMilestone.js',
+          'tests/generatorTests/generatorTestsFirstMilestone.js',
+          'tests/generatorTests/generatorTestsSecondMilestone.js',
+          'tests/generatorTests/generatorTestsThirdMilestone.js',
+          'tests/generatorTests/generatorTestsFourthMilestone.js',
+          'tests/endToEndTests/endToEndTestsFirstMilestone.js',
+          'tests/endToEndTests/endToEndTestsSecondMilestone.js',
+          'tests/endToEndTests/endToEndTestsThirdMilestone.js',
+          'tests/endToEndTests/endToEndTestsFourthMilestone.js',
         ]
       }
-
     },
 
     jshint: {
@@ -54,7 +99,7 @@ module.exports = function(grunt) {
         ]
       }
     },
-    
+
     shell: {
       rebase: {
         command: 'git pull --rebase origin develop'
@@ -67,8 +112,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-shell');
-  // grunt.loadNpmTasks('grunt-contrib-uglify');
-  // grunt.loadNpmTasks('grunt-contrib-concat');
 
   grunt.registerTask('test', [
     // 'jshint',
@@ -84,7 +127,21 @@ module.exports = function(grunt) {
     // 'jshint',
     'mochaTest:parser'
   ]);
-  
+
+  grunt.registerTask('testGenerator', [
+    // 'jshint',
+    'mochaTest:generator'
+  ]);
+
+  grunt.registerTask('testTuple',[
+    'mochaTest:tuple'
+  ]);
+
+  grunt.registerTask('testEndToEnd', [
+    // 'jshint',
+    'mochaTest:endToEnd'
+  ]);
+
   grunt.registerTask('rebase', [
     'shell:rebase'
   ]);

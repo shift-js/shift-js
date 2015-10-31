@@ -26,18 +26,15 @@ module.exports = function(code) {
   var insideTuple = [];
   var insideInvocation = [];
   var insideInitialization = [];
-  // TODO - scope
 
-  // advances the position of i by specified number of positions
+  // helper functions to advance the lexer's position in the input code
+  // and clear the chunk
   var advance = function(positions) {
     i += positions;
   };
-
   var clearChunk = function() {
     chunk = '';
   };
-
-  // advances the position of i by specified number of positions and clears chunk
   var advanceAndClear = function(positions) {
     i += positions;
     clearChunk();
@@ -51,10 +48,8 @@ module.exports = function(code) {
     nextCol = code[i + 1];
     nextNextCol = code[i + 2];
     var lastToken = tokens[tokens.length - 1];
-    var lastCollectionIndex = insideCollection.length - 1;
-    var lastCollection = insideCollection[lastCollectionIndex];
-    var lastFunctionIndex = insideFunction.length - 1;
-    var lastFunction = insideFunction[lastFunctionIndex];
+    var lastCollection = insideCollection[insideCollection.length - 1];
+    var lastFunction = insideFunction[insideFunction.length - 1];
 
     // console.log(chunk);
     // console.log(currCol);
@@ -62,13 +57,13 @@ module.exports = function(code) {
     // console.log(tokens);
     // console.log(emptyLine);
 
-    // newline handling
+    // handles new lines
     if (lexerFunctions.handleNewLine(emptyLine, tokens, lastToken, currCol)) {
       advanceAndClear(1);
       continue
     }
 
-    // comment handling
+    // handles comments
     if (lexerFunctions.checkForCommentStart(insideComment, chunk, tokens,
         currCol, nextCol)) {
       advanceAndClear(2);
@@ -83,50 +78,37 @@ module.exports = function(code) {
       continue;
     }
 
-    // ignoring whitespace
-    if (chunk === ' ') {
+    // ignores chunks that are solely whitespace
+    if (lexerFunctions.checkForWhitespace(chunk)) {
       advanceAndClear(1);
       continue;
     }
 
-    // tracks state: whether inside a string
+    // tracks whether inside a string
     if (currCol === '"' && insideString.status) {
       insideString.status = false;
     } else if (currCol === '"') {
       insideString.status = true;
     }
 
-    // number handling
+    // handles numbers
     if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol) === true) {
       advanceAndClear(1);
       continue;
     } else if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol) === "skip"){
-      advance(2);
       lexerFunctions.handleEndOfFile(nextCol, tokens);
+      advance(2);
       continue;
     }
 
-    // handle ranges
-    if (!insideString.status && !lexerFunctions.checkIfInsideComment(insideComment)) {
-      if (currCol === '.' && nextCol === '.' && nextNextCol === '.') {
-        if (insideFunction.length && insideFunction[insideFunction.length - 1].insideParams === true) {
-          lexerFunctions.checkFor('FUNCTION_DECLARATION', '...', tokens);
-          advanceAndClear(3);
-          continue;
-        } else {
-          lexerFunctions.checkFor('RANGES', '...', tokens);
-          advanceAndClear(3);
-          continue;
-        }
-      }
-      if (currCol === '.' && nextCol === '.' && nextNextCol === '<') {
-        lexerFunctions.checkFor('RANGES', '..<', tokens);
-        advanceAndClear(3);
-        continue;
-      }
+    // handles ranges
+    if (lexerFunctions.handleRange(insideString, insideFunction, insideComment,
+        tokens, currCol, nextCol, nextNextCol)) {
+      advanceAndClear(3);
+      continue;
     }
 
-    // string interpolation handling
+    // handles string interpolation
     if (lexerFunctions.checkForStringInterpolationStart(stringInterpolation,
         insideString, chunk, tokens, nextCol, nextNextCol)) {
       advanceAndClear(3);
@@ -166,14 +148,14 @@ module.exports = function(code) {
     //   // debugger;
     //   advanceAndClear(1);
     //   continue;
-    // } 
+    // }
 
     // if (lexerFunctions.handleFunctionInvocation(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) === "cb2") {
     //   // debugger;
     //   advanceAndClear(1);
     //   lexerFunctions.handleEndOfFile(nextCol, tokens);
     //   continue;
-    // } 
+    // }
 
     if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] &&
       tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD' || lastToken.type === 'TYPE_STRING' ||
@@ -196,7 +178,6 @@ module.exports = function(code) {
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
-
     if (insideInvocation.length && chunk === '(' && (insideInvocation[insideInvocation.length - 1]).status) {
       lexerFunctions.checkFor('PUNCTUATION', chunk, tokens);
       var last = insideInvocation[insideInvocation.length - 1];
@@ -204,7 +185,6 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-
     if (insideInvocation.length && chunk === ')' && (insideInvocation[insideInvocation.length - 1]).status) {
       lexerFunctions.checkFor('PUNCTUATION', chunk, tokens);
       var last = insideInvocation[insideInvocation.length - 1];
@@ -264,8 +244,8 @@ module.exports = function(code) {
       continue;
     }
 
-    if (tokens.length >= 2 && tokens[tokens.length - 2]['type'] === 'PUNCTUATION' &&
-      tokens[tokens.length - 2]['value'] === '(' && lastFunction && lastFunction.insideReturnStatement === true) {
+    if (tokens.length >= 2 && tokens[tokens.length - 2].type === 'PUNCTUATION' &&
+      tokens[tokens.length - 2].value === '(' && lastFunction && lastFunction.insideReturnStatement === true) {
       tokens[tokens.length - 2].type = 'PARAMS_START';
     }
 
@@ -304,7 +284,7 @@ module.exports = function(code) {
       continue;
     }
 
-    // collection initializer syntax handling
+    // collection initializer handling
     if (tokens.length && currCol === '(' &&
       (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
@@ -317,63 +297,17 @@ module.exports = function(code) {
       continue;
     }
 
-    /////////////////////////////////////////////
-    //                                         // 
-    //      classes and structures handling    //
-    //                                         //
-    ///////////////////////////////////////////////////////////////////////////
-
-    // handles inheritance operators
+    // handles colons functioning as inheritance operators
     if (tokens.length > 2 && tokens[tokens.length - 2].value === ':' &&
       CLASS_NAMES[lastToken.value] && CLASS_NAMES[tokens[tokens.length - 3].value]) {
       tokens[tokens.length - 2].type = 'INHERITANCE_OPERATOR';
     }
-    if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
-      chunk === '{') {
-      lexerFunctions.checkFor('CLASS_DEFINITION', chunk, tokens);
-      insideClass[insideClass.length - 1].curly++;
+
+    // handles classes and structs
+    if (lexerFunctions.handleClassOrStruct(insideClass, insideStruct,
+        insideInitialization, chunk, tokens, lastToken,
+        nextCol, CLASS_NAMES, STRUCT_NAMES)) {
       advanceAndClear(1);
-      continue;
-    }
-    if (insideClass.length && insideClass[insideClass.length - 1].curly === 1 &&
-      chunk === '}') {
-      lexerFunctions.checkFor('CLASS_DEFINITION', chunk, tokens);
-      insideClass.pop();
-      advanceAndClear(1);
-      lexerFunctions.handleEndOfFile(nextCol, tokens);
-      continue;
-    }
-    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 0 &&
-      chunk === '{') {
-      lexerFunctions.checkFor('STRUCT_DEFINITION', chunk, tokens);
-      insideStruct[insideStruct.length - 1].curly++;
-      advanceAndClear(1);
-      continue;
-    }
-    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 1 &&
-      chunk === '}') {
-      lexerFunctions.checkFor('STRUCT_DEFINITION', chunk, tokens);
-      insideStruct.pop();
-      advanceAndClear(1);
-      lexerFunctions.handleEndOfFile(nextCol, tokens);
-      continue;
-    }
-    if (tokens.length && (CLASS_NAMES[lastToken.value] ||
-      STRUCT_NAMES[lastToken.value]) && chunk === '(') {
-      lexerFunctions.checkFor('INITIALIZATION', chunk, tokens)
-      var temp = {};
-      temp.status = true;
-      temp.parens = 1;
-      insideInitialization.push(temp);
-      advanceAndClear(1);
-      continue;
-    }
-    if (chunk === ')' && insideInitialization.length &&
-      insideInitialization[insideInitialization.length - 1].parens === 1) {
-      lexerFunctions.checkFor('INITIALIZATION', chunk, tokens);
-      insideInitialization.pop();
-      advanceAndClear(1);
-      lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
 
@@ -396,8 +330,6 @@ module.exports = function(code) {
       continue;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-
     // main evaluation block
     if (!insideString.status && !insideNumber.status &&
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {
@@ -412,7 +344,7 @@ module.exports = function(code) {
           insideCollection.pop();
         });
       } else if (tokens.length && lastToken.type !== 'IDENTIFIER' &&
-        lastToken.type !== 'SUBSTRING_LOOKUP_END' && currCol === '[') {
+        lastToken.type !== 'SUBSCRIPT_LOOKUP_END' && currCol === '[') {
         lexerFunctions.checkFor('COLLECTION', chunk, tokens, function(){
           insideCollection.push({type: undefined, location: tokens.length-1});})
       } else {
@@ -422,7 +354,7 @@ module.exports = function(code) {
         lexerFunctions.checkFor('TYPE_PROPERTY', chunk, tokens) ||
         lexerFunctions.checkFor('TYPE', chunk, tokens) ||
         lexerFunctions.checkFor('PUNCTUATION', chunk, tokens) ||
-        lexerFunctions.checkFor('SUBSTRING_LOOKUP', chunk, tokens, function() {
+        lexerFunctions.checkFor('SUBSCRIPT_LOOKUP', chunk, tokens, function() {
           substringLookup.status = !substringLookup.status;
         }) ||
         lexerFunctions.checkFor('OPERATOR', chunk, tokens) ||

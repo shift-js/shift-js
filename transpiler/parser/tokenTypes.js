@@ -31,6 +31,7 @@ module.exports = {
     "SUBSTRING_LOOKUP_END",
     "SUBSTRING_LOOKUP_START",
     "DOT_SYNTAX"
+
   ],
   noun : [
     "DECLARATION_KEYWORD",
