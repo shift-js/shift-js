@@ -51,6 +51,10 @@ var statement = function(state) {
   if(state.token.value === "}") {
     return v;
   }
+  if (state.token.value === ')') {
+    state = advance(state);
+  }
+
 
   if(state.token.value === "EOF") {
     return v;

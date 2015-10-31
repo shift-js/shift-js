@@ -15,6 +15,7 @@ var declarations = require('./declarations');
 var statements = require('./statements');
 var rearrangeTokensDynamicDictionaryAssignment = require('./rearrangeTokensDynamicDictionaryAssignment');
 var rearrangeTokensDictionaryKeyValueIteration = require('./rearrangeTokensDictionaryKeyValueIteration');
+var rearrangeTokensPrintToConsoleLog = require('./rearrangeTokensPrintToConsoleLog');
 
 var makeParser = function() {
 
@@ -35,7 +36,8 @@ var makeParser = function() {
   var parseTokenStream = function(inputTokens) {
     var intermediaryTokenStream = helpers.cleanUpTokenStream(inputTokens);
     var intermediary = rearrangeTokensDynamicDictionaryAssignment(intermediaryTokenStream);
-    state.tokens = rearrangeTokensDictionaryKeyValueIteration(intermediary);
+    var intermediary2 = rearrangeTokensPrintToConsoleLog(intermediary);
+    state.tokens = rearrangeTokensDictionaryKeyValueIteration(intermediary2);
     state.scope = newScope(state, originalScope);
     state = advance(state);
 

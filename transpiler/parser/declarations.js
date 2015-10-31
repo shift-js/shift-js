@@ -22,7 +22,7 @@ var declarations = {
     symbol(state, originalSymbol, "\n");
     symbol(state, originalSymbol, "\\n");
     symbol(state, originalSymbol, "(end)");
-    symbol(state, originalSymbol, "(name)");
+    symbol(state, originalSymbol, "(name)").nud = helpers.itself;
     symbol(state, originalSymbol, ":");
     symbol(state, originalSymbol, ";");
     symbol(state, originalSymbol, ")");
@@ -77,17 +77,22 @@ var declarations = {
     infix(state, "*", 60);
     infix(state, "/", 60);
     infix(state, "%", 60);
-    //infix(state, ".", 80, function(left) {
-    //  this.first = left;
-    //  if (state.token.type !== "name") {
-    //    state.token.error("Expected a property name.");
-    //  }
-    //  state.token.type = "literal";
-    //  this.second = state.token;
-    //  state.type = "binary";
-    //  state = advance(state);
-    //  return state;
-    //});
+
+    infix(state, ".", 80, function(left) {
+      this.first = left;
+      if (state.token.type !== "IDENTIFIER") {
+        state.token.error("Expected a property name.");
+      }
+      state.token.type = "Identifier";
+      this.name = state.token.value;
+      //state.type = "binary";
+      this.type = 'CallExpression';
+      this.callee = {};
+      this.callee.type = 'MemeberExpression';
+      //state.thisIsATest = expression(state, 0);
+      state = advance(state);
+      return this;
+    });
 
     infix(state, "[", 80, function(left) {
       this.type = "MemberExpression";
@@ -104,35 +109,44 @@ var declarations = {
       return this;
     });
 
-    //infix(state, "(", 80, function(left) {
-    //  var a = [];
-    //  if (left.id === "." || left.id === "[") {
-    //    this.type = "ternary";
-    //    this.first = left.first;
-    //    this.second = left.second;
-    //    this.third = a;
-    //  } else {
-    //    this.type = "binary";
-    //    this.first = left;
-    //    this.second = a;
-    //    if ((left.type !== "unary" || left.id !== "function") &&
-    //      left.type !== "name" && left.id !== "(" &&
-    //      left.id !== "&&" && left.id !== "||" && left.id !== "?") {
-    //      left.error("Expected a variable name.");
-    //    }
-    //  }
-    //  if (state.token.id !== ")") {
-    //    while (true) {
-    //      a.push(expression(state, 0));
-    //      if (state.token.id !== ",") {
-    //        break;
-    //      }
-    //      state = advance(state, ",");
-    //    }
-    //  }
-    //  state = advance(state, ")");
-    //  return this;
-    //});
+    infix(state, "(", 80, function(left) {
+      var a = [];
+      if (left.id === "." || left.id === "[") {
+        this.type = "ternary";
+        this.first = left.first;
+        this.second = left.second;
+        this.third = a;
+      } else {
+        this.type = "MemberExpression";
+        this.computed = false;
+        this.object = {};
+        this.object.type = "Identifier";
+        this.object.name = state.token.value;
+        this.property;
+        this.arguments = a;
+        //this.first = left;
+        //this.second = a;
+        delete this.value;
+        //if ((left.type !== "unary" || left.id !== "function") && left.id !== "(" &&
+        //  left.type !== 'binary' && left.id !== "&&" && left.id !== "||" && left.id !== "?") {
+        //  left.error("Expected a variable name.");
+        //}
+      }
+
+      //
+
+      if (state.token.id !== ")") {
+        while (true) {
+          a.push(expression(state, 0));
+          if (state.token.id !== ",") {
+            break;
+          }
+          state = advance(state, ",");
+        }
+      }
+      state = advance(state, ")");
+      return this;
+    });
   },
 
   prefixes: function(state) {

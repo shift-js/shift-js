@@ -45,7 +45,7 @@ module.exports = {
     "COMMENT",
     "MULTI_LINE_COMMENT_START",
     "MULTI_LINE_COMMENT_END"
-  ]
+  ]//INVOCATION_START//INVOCATION_END
 };
 
 

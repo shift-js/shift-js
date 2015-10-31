@@ -41,6 +41,7 @@ var advance = function(state, id) {
       t.error("Unknown operator.");
     }
   } else if (tokenTypes.terminator.hasItem(a) || tokenTypes.verb.hasItem(a)) {
+    console.log(v);
     o = state.symbolTable[v];
     if (!o) {
       t.error("Unknown operator.");
