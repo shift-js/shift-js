@@ -413,6 +413,28 @@ describe('Lexer: First milestone', function() {
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
+    
+    it('should handle the reassignment of tuple items via dot notation', function () {
+      input = String.raw `var randNumString = (4, "hello"); randNumString.0 = 5`;
+      output = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "randNumString" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "TUPLE_START",                value: "("},
+        { type: "NUMBER",                     value: "4"},
+        { type: "PUNCTUATION",                value: "," },
+        { type: "STRING",                     value: "hello"},
+        { type: "TUPLE_END",                  value: ")"},
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "IDENTIFIER",                 value: "randNumString" },
+        { type: "DOT_SYNTAX",                 value: "." },
+        { type: "NUMBER",                     value: "0"},
+        { type: "OPERATOR",                   value: "=" },
+        { type: "NUMBER",                     value: "5"},
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
 
     it('should handle tuples with element names', function () {
       input = String.raw`let http200Status = (statusCode: 200, description: "OK");`;
@@ -430,6 +452,32 @@ describe('Lexer: First milestone', function() {
         { type: "STRING",                     value: "OK"},
         { type: "TUPLE_END",                  value: ")"},
         { type: "PUNCTUATION",                value: ";" },
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle the reassignment of tuple items identified by element name via dot notation', function () {
+      input = String.raw`var randNumString = (num: 4, str: "hello"); randNumString.num = 5`;
+      output = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "randNumString" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "TUPLE_START",                value: "("},
+        { type: "TUPLE_ELEMENT_NAME",         value: "num"},
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "NUMBER",                     value: "4"},
+        { type: "PUNCTUATION",                value: "," },
+        { type: "TUPLE_ELEMENT_NAME",         value: "str"},
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "hello"},
+        { type: "TUPLE_END",                  value: ")"},
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "IDENTIFIER",                 value: "randNumString" },
+        { type: "DOT_SYNTAX",                 value: "." },
+        { type: "TUPLE_ELEMENT_NAME",         value: "num"},
+        { type: "OPERATOR",                   value: "=" },
+        { type: "NUMBER",                     value: "5"},
         { type: "TERMINATOR",                 value: "EOF" }
       ];
       expect(lexer(input)).to.deep.equal(output);
