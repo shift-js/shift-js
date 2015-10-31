@@ -67,7 +67,7 @@ var applyAction = function(file) {
         vm.runInThisContext(output);
         return;
       }
-      return fs.writeFileAsync(newFile, output)
+      return fs.writeFileAsync(newFile, JSON.stringify(output, null, 2))
         .then(function (err) {
           console.log(newFile + ' saved.')
           return file;
