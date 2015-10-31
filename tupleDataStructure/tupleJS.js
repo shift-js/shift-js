@@ -36,10 +36,7 @@ function Tuple(tuple) {
       } else if (typeof tuple[i] === "boolean" || typeof tuple[i] === "number" || typeof tuple[i] === "string") {
         this.tup[i] = {'val': tuple[i]};
       } else if (Array.isArray(tuple[i])) {
-        var x = new Tuple(tuple[i]);
-        console.log("blah:", x);
-        this.tup[i] = new Tuple(tuple[i]);
-        
+        this.tup[i] = (new Tuple(tuple[i]))._tupleToObject();
       } else {
         //return error if the input is incorrect
         return null;
@@ -49,20 +46,17 @@ function Tuple(tuple) {
   }
 
   console.dir(this.tup);
-  console.log(this.tup[2] instanceof Tuple);
+  
 
 };
 
-  Tuple.prototype.tupleToObject = function(tuple) {
-    if (tuple instanceof Tuple) {
-
-      return 
+  Tuple.prototype._tupleToObject = function() {
+    if (this instanceof Tuple) {
+      return this.tup;
     }
     return false;
-  }
+  };
 
-  // console.log(this.tup[2][1]);
-  // console.log(this.tup[2]["three"]);
   Tuple.prototype.findValue = function(keyOrIndex){
     var x = this.tup[keyOrIndex]
     return x === undefined ? undefined : this.tup[keyOrIndex]["val"];
