@@ -113,22 +113,7 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
     //TODO
   } else if (t.value === ".") {
     //TODO stuff
-
     state = advance(state);
-
-    //console.log("####################################");
-    //console.log('----------- START t -------------');
-    //console.log(t);
-    //console.log('----------- END t -------------');
-    //
-    //console.log('----------- START state.token -------------');
-    //console.log(state.token);
-    //console.log('----------- END state.token -------------');
-    //
-    //console.log('----------- START left -------------');
-    //console.log(left);
-    //console.log('----------- END left -------------');
-    //console.log("####################################");
   }
   //else if (left.type === "AssignmentExpression") {
   //  //left.left = overwrittenMemberExpression;

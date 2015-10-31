@@ -51,15 +51,34 @@ var statement = function(state) {
   if(state.token.value === "}") {
     return v;
   }
+
+  while (true) {
+    //state = advance(state);
+    if (![';', '\\n', ')', '.'].hasItem(state.token.value)) {
+      state = advance(state);
+    } else {
+      break;
+    }
+  }
   if (state.token.value === ')') {
     state = advance(state);
   }
 
 
+
+  if(state.token.value === "\\n") {
+    state = advance(state);
+  }
+
+
+
+
   if(state.token.value === "EOF") {
     return v;
   } else if (!v.assignment && v.id !== "(") {
+
     console.log(state.token);
+    console.log(v);
     v.error("Bad expression statement.");
   }
   //state = advance(state, ";");

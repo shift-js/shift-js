@@ -111,29 +111,28 @@ var declarations = {
 
     infix(state, "(", 80, function(left) {
       var a = [];
-      if (left.id === "." || left.id === "[") {
-        this.type = "ternary";
-        this.first = left.first;
-        this.second = left.second;
-        this.third = a;
-      } else {
-        this.type = "MemberExpression";
-        this.computed = false;
-        this.object = {};
-        this.object.type = "Identifier";
-        this.object.name = state.token.value;
-        this.property;
-        this.arguments = a;
-        //this.first = left;
-        //this.second = a;
-        delete this.value;
-        //if ((left.type !== "unary" || left.id !== "function") && left.id !== "(" &&
-        //  left.type !== 'binary' && left.id !== "&&" && left.id !== "||" && left.id !== "?") {
-        //  left.error("Expected a variable name.");
-        //}
-      }
-
-      //
+      //if (left.id === "." || left.id === "[") {
+      //  this.type = "ternary";
+      //  this.first = left.first;
+      //  this.second = left.second;
+      //  this.third = a;
+      //}
+      this.type = "MemberExpression";
+      this.computed = false;
+      this.object = {};
+      this.object.type = "Identifier";
+      this.object.name = left.first.value;
+      this.property = {}
+      this.property. type = "Identifier";
+      this.property.name = left.name;
+      //this.arguments = a;
+      //this.first = left;
+      //this.second = a;
+      delete this.value;
+      //if ((left.type !== "unary" || left.id !== "function") && left.id !== "(" &&
+      //  left.type !== 'binary' && left.id !== "&&" && left.id !== "||" && left.id !== "?") {
+      //  left.error("Expected a variable name.");
+      //}
 
       if (state.token.id !== ")") {
         while (true) {
@@ -145,7 +144,19 @@ var declarations = {
         }
       }
       state = advance(state, ")");
-      return this;
+      delete this.value;
+
+      var outputRes = {
+        type: 'ExpressionStatement',
+        expression:
+        {
+          type: 'CallExpression',
+          callee: this,
+          arguments: a
+        }
+      };
+
+      return outputRes;
     });
   },
 
@@ -163,7 +174,7 @@ var declarations = {
       return e;
     });
 
-    prefix(state, "function", function() {
+    prefix(state, "func", function() {
       var a = [];
       state.scope = newScope(state, originalScope);
       if (state.token.type === "name") {

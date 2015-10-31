@@ -24,7 +24,7 @@ var rearrangeTokensPrintToConsoleLog = function(tokens) {
     }
   }
 
-  console.log(util.inspect(tokens, {colors:true, depth:null}));
+  //console.log(util.inspect(tokens, {colors:true, depth:null}));
   return tokens;
 };
 

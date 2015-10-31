@@ -8,7 +8,7 @@ module.exports = function(code) {
   var currCol, prevCol, nextCol, nextNextCol;
   var VARIABLE_NAMES = {};
   var FUNCTION_NAMES = {};
-  var CLASS_NAMES = {}; 
+  var CLASS_NAMES = {};
   var STRUCT_NAMES = {};
   var TUPLE_ELEMENT_NAMES = {}
 
@@ -144,20 +144,20 @@ module.exports = function(code) {
       lexerFunctions.checkFor('FUNCTION_DECLARATION', "->", tokens);
       if (insideFunction[insideFunction.length - 1].insideReturnStatement === false) {
         insideFunction[insideFunction.length - 1].insideReturnStatement = true;
-      }     
+      }
       advanceAndClear(2);
       continue;
     }
 
     if (insideFunction.length && lastFunction.insideParams === true && chunk === '(') {
       lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
-        var len = tokens.length - 1;
-        while (tokens[len].type !== 'IDENTIFIER') {
-          len--;
-        }
-        FUNCTION_NAMES[tokens[len].value] = true;
-        advanceAndClear(1);
-        continue;
+      var len = tokens.length - 1;
+      while (tokens[len].type !== 'IDENTIFIER') {
+        len--;
+      }
+      FUNCTION_NAMES[tokens[len].value] = true;
+      advanceAndClear(1);
+      continue;
     }
 
     // Function Invocation Start
@@ -175,8 +175,8 @@ module.exports = function(code) {
     //   continue;
     // } 
 
-    if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
-      tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD' || lastToken.type === 'TYPE_STRING' || 
+    if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] &&
+      tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD' || lastToken.type === 'TYPE_STRING' ||
       lastToken.type === 'TYPE_NUMBER')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', chunk, tokens);
       var tmp = {};
@@ -212,7 +212,7 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-    
+
     //Function invocation end
 
     // tuple handling
@@ -256,7 +256,7 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-    
+
     if (insideFunction.length && chunk === ')' && insideFunction[insideFunction.length - 1].insideParams === true) {
       lexerFunctions.checkFor('FUNCTION_DECLARATION', chunk, tokens);
       insideFunction[insideFunction.length - 1].insideParams = "ended";
@@ -264,7 +264,7 @@ module.exports = function(code) {
       continue;
     }
 
-    if (tokens.length >= 2 && tokens[tokens.length - 2]['type'] === 'PUNCTUATION' && 
+    if (tokens.length >= 2 && tokens[tokens.length - 2]['type'] === 'PUNCTUATION' &&
       tokens[tokens.length - 2]['value'] === '(' && lastFunction && lastFunction.insideReturnStatement === true) {
       tokens[tokens.length - 2].type = 'PARAMS_START';
     }
@@ -303,9 +303,9 @@ module.exports = function(code) {
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
-    
+
     // collection initializer syntax handling
-    if (tokens.length && currCol === '(' && 
+    if (tokens.length && currCol === '(' &&
       (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
       var tmp = {};
@@ -316,7 +316,7 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-    
+
     /////////////////////////////////////////////
     //                                         // 
     //      classes and structures handling    //
@@ -324,9 +324,9 @@ module.exports = function(code) {
     ///////////////////////////////////////////////////////////////////////////
 
     // handles inheritance operators
-    if (tokens.length > 2 && tokens[tokens.length - 2].value === ':' && 
+    if (tokens.length > 2 && tokens[tokens.length - 2].value === ':' &&
       CLASS_NAMES[lastToken.value] && CLASS_NAMES[tokens[tokens.length - 3].value]) {
-      tokens[tokens.length - 2].type = 'INHERITANCE_OPERATOR';      
+      tokens[tokens.length - 2].type = 'INHERITANCE_OPERATOR';
     }
     if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
       chunk === '{') {
@@ -358,7 +358,7 @@ module.exports = function(code) {
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
-    if (tokens.length && (CLASS_NAMES[lastToken.value] || 
+    if (tokens.length && (CLASS_NAMES[lastToken.value] ||
       STRUCT_NAMES[lastToken.value]) && chunk === '(') {
       lexerFunctions.checkFor('INITIALIZATION', chunk, tokens)
       var temp = {};
@@ -368,7 +368,7 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-    if (chunk === ')' && insideInitialization.length && 
+    if (chunk === ')' && insideInitialization.length &&
       insideInitialization[insideInitialization.length - 1].parens === 1) {
       lexerFunctions.checkFor('INITIALIZATION', chunk, tokens);
       insideInitialization.pop();
@@ -376,26 +376,26 @@ module.exports = function(code) {
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
-    
+
     // handles parentheses inside class and struct initialization
-    if (chunk === '(' && insideInitialization.length && 
+    if (chunk === '(' && insideInitialization.length &&
       insideInitialization[insideInitialization.length - 1].parens >= 1) {
       insideInitialization[insideInitialization.length - 1].parens++;
     }
     if (chunk === ')' && insideInitialization.length) {
       insideInitialization[insideInitialization.length - 1].parens--;
     }
-    
+
     // handles property access and method calls via dot notation
     if (currCol === '.' && !lexerFunctions.checkForWhitespace(prevCol) &&
       !lexerFunctions.checkForWhitespace(nextCol) && (
-        lastToken.type === 'IDENTIFIER' || lastToken.value === 'self' ||
-        lastToken.type === 'TYPE_PROPERTY')) {
+      lastToken.type === 'IDENTIFIER' || lastToken.value === 'self' ||
+      lastToken.type === 'TYPE_PROPERTY')) {
       lexerFunctions.makeToken(undefined, chunk, tokens, 'DOT_SYNTAX', '.');
       advanceAndClear(1);
       continue;
     }
-    
+
     ///////////////////////////////////////////////////////////////////////////
 
     // main evaluation block

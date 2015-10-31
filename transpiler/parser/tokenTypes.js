@@ -29,7 +29,8 @@ module.exports = {
     "PUNCTUATION",
     "OPERATOR",
     "SUBSTRING_LOOKUP_END",
-    "SUBSTRING_LOOKUP_START"
+    "SUBSTRING_LOOKUP_START",
+    "DOT_SYNTAX"
   ],
   noun : [
     "DECLARATION_KEYWORD",
