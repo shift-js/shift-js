@@ -1,33 +1,68 @@
+// swift tuple example: ("blah", two: 2, (5, three: 3))
+// input into Tuple class, expected in form of an array: var myTupleInput = ["blah", {two: 2}, [5, {three: 3}]];
+// creating the tuple object: var t = new Tuple(myTupleInput);
+// internal state of the tuple:
+/*
+{
+  0: {val: "blah"},
+  1: {val: 2, key: "two"},
+  "two": {val: 2, key: 1},
+  2: {
+      0: {val: "blah"},
+      1: {val: 3, key: "three"},
+      "three": {val: 3, key: 1},
+     },
+  
+
+}
+*/
+
+//TODO:
+/*
+1.) Create special error messages
+2.) 
+*/
+
 function Tuple(tuple) {
-  //assume the tuple has the form of ["blah", {two: 2}, 5,...], for now assuming no recursive tuples
   this.tup = {};
   if (Array.isArray(tuple)) {
     for (var i = 0; i < tuple.length; i++) {
       if (typeof tuple[i] === "object" && !Array.isArray(tuple[i])) {
+        //Assuming that JS still typecasts the key of any object into a string
         var key = Object.keys(tuple[i])[0];
         var val = tuple[i][key];
         this.tup[key] = {'val': val, 'key': i};
         this.tup[i] = {'val': val, 'key': key};
-      } else if (Array.isArray(tuple[i])) {
-        return null; //temporary
-      } else {
+      } else if (typeof tuple[i] === "boolean" || typeof tuple[i] === "number" || typeof tuple[i] === "string") {
         this.tup[i] = {'val': tuple[i]};
+      } else if (Array.isArray(tuple[i])) {
+        var x = new Tuple(tuple[i]);
+        console.log("blah:", x);
+        this.tup[i] = new Tuple(tuple[i]);
+        
+      } else {
+        //return error if the input is incorrect
+        return null;
       }
+      
     }
   }
-  // console.dir(this.tup);
+
+  console.dir(this.tup);
+  console.log(this.tup[2] instanceof Tuple);
+
 };
-// swift: ("blah", two: 2, 5);
-// new Tuple(["blah", {two: 2}, 5]);
 
-// {
-//   0: {val: "blah"},
-//   1: {val: 2, key: "two"},
-//   2: {val: 5},
-//   "two": {val: 2, key: 1}
-// }
+  Tuple.prototype.tupleToObject = function(tuple) {
+    if (tuple instanceof Tuple) {
 
+      return 
+    }
+    return false;
+  }
 
+  // console.log(this.tup[2][1]);
+  // console.log(this.tup[2]["three"]);
   Tuple.prototype.findValue = function(keyOrIndex){
     var x = this.tup[keyOrIndex]
     return x === undefined ? undefined : this.tup[keyOrIndex]["val"];
@@ -89,5 +124,7 @@ function Tuple(tuple) {
     }
     return false;
   };
+
+  Tuple.prototype.constructor = Tuple;
 
 module.exports = Tuple;
