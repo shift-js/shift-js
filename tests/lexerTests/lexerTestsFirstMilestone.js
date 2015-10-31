@@ -285,6 +285,35 @@ describe('Lexer: First milestone', function() {
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
+    
+    it('should handle addition/reassignment of array items via subscript', function () {
+      input = String.raw `var arr = [2,2,3,4,5]; arr[0] = 1`;
+      output = [
+        { type: "DECLARATION_KEYWORD",          value: "var" },
+        { type: "IDENTIFIER",                   value: "arr" },
+        { type: "OPERATOR",                     value: "=" },
+        { type: "ARRAY_START",                  value: "[" },
+        { type: "NUMBER",                       value: "2" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "2" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "3" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "4" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "5" },
+        { type: "ARRAY_END",                    value: "]" },
+        { type: "PUNCTUATION",                  value: ";" },
+        { type: "IDENTIFIER",                   value: "arr" },
+        { type: "SUBSCRIPT_LOOKUP_START",       value: "[" },
+        { type: "NUMBER",                       value: "0" },
+        { type: "SUBSCRIPT_LOOKUP_END",         value: "]" },
+        { type: "OPERATOR",                     value: "=" },
+        { type: "NUMBER",                       value: "1" },
+        { type: "TERMINATOR",                   value: "EOF" }   
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
 
     it('should handle appending items to an array with the addition assignment operator', function () {
       input = String.raw`var arr = [Int](); arr += [1,2,3];`;
@@ -338,6 +367,37 @@ describe('Lexer: First milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
+    it('should handle the addition/reassignment of dictionary items via subscript', function () {
+      input = String.raw `var f = ["one": 1, "two": 2, "three": 3]; f["four"] = 4`;
+      output = [
+        { type: "DECLARATION_KEYWORD",          value: "var" },
+        { type: "IDENTIFIER",                   value: "f" },
+        { type: "OPERATOR",                     value: "=" },
+        { type: "DICTIONARY_START",             value: "[" },
+        { type: "STRING",                       value: "one" },
+        { type: "PUNCTUATION",                  value: ":" },
+        { type: "NUMBER",                       value: "1" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "STRING",                       value: "two" },
+        { type: "PUNCTUATION",                  value: ":" },
+        { type: "NUMBER",                       value: "2" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "STRING",                       value: "three" },
+        { type: "PUNCTUATION",                  value: ":" },
+        { type: "NUMBER",                       value: "3" },
+        { type: "DICTIONARY_END",               value: "]" },
+        { type: "PUNCTUATION",                  value: ";" },
+        { type: "IDENTIFIER",                   value: "f" },
+        { type: "SUBSCRIPT_LOOKUP_START",       value: "[" },
+        { type: "STRING",                       value: "four" },
+        { type: "SUBSCRIPT_LOOKUP_END",         value: "]" },
+        { type: "OPERATOR",                     value: "=" },
+        { type: "NUMBER",                       value: "4" },
+        { type: "TERMINATOR",                   value: "EOF" }   
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
     it('should handle tuples', function () {
       input = String.raw`var error = (404, "not found")`;
       output = [
@@ -349,6 +409,28 @@ describe('Lexer: First milestone', function() {
         { type: "PUNCTUATION",                value: "," },
         { type: "STRING",                     value: "not found"},
         { type: "TUPLE_END",                  value: ")"},
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+    
+    it('should handle the reassignment of tuple items via dot notation', function () {
+      input = String.raw `var randNumString = (4, "hello"); randNumString.0 = 5`;
+      output = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "randNumString" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "TUPLE_START",                value: "("},
+        { type: "NUMBER",                     value: "4"},
+        { type: "PUNCTUATION",                value: "," },
+        { type: "STRING",                     value: "hello"},
+        { type: "TUPLE_END",                  value: ")"},
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "IDENTIFIER",                 value: "randNumString" },
+        { type: "DOT_SYNTAX",                 value: "." },
+        { type: "NUMBER",                     value: "0"},
+        { type: "OPERATOR",                   value: "=" },
+        { type: "NUMBER",                     value: "5"},
         { type: "TERMINATOR",                 value: "EOF" }
       ];
       expect(lexer(input)).to.deep.equal(output);
@@ -370,6 +452,32 @@ describe('Lexer: First milestone', function() {
         { type: "STRING",                     value: "OK"},
         { type: "TUPLE_END",                  value: ")"},
         { type: "PUNCTUATION",                value: ";" },
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle the reassignment of tuple items identified by element name via dot notation', function () {
+      input = String.raw`var randNumString = (num: 4, str: "hello"); randNumString.num = 5`;
+      output = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "randNumString" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "TUPLE_START",                value: "("},
+        { type: "TUPLE_ELEMENT_NAME",         value: "num"},
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "NUMBER",                     value: "4"},
+        { type: "PUNCTUATION",                value: "," },
+        { type: "TUPLE_ELEMENT_NAME",         value: "str"},
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "hello"},
+        { type: "TUPLE_END",                  value: ")"},
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "IDENTIFIER",                 value: "randNumString" },
+        { type: "DOT_SYNTAX",                 value: "." },
+        { type: "TUPLE_ELEMENT_NAME",         value: "num"},
+        { type: "OPERATOR",                   value: "=" },
+        { type: "NUMBER",                     value: "5"},
         { type: "TERMINATOR",                 value: "EOF" }
       ];
       expect(lexer(input)).to.deep.equal(output);
