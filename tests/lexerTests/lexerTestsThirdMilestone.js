@@ -5124,6 +5124,171 @@ describe('Lexer: Third Milestone', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
+      it('should handle the starts with method', function () {
+        input = String.raw `var arr = [1,2,3,4,5]
+                              var yes = arr.startsWith([1,2,3])
+                              var no = arr.startsWith([2,3])`;
+        output = [
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "ARRAY_START",                  value: "[" },
+          { type: "NUMBER",                       value: "1" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "2" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "3" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "4" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "5" },
+          { type: "ARRAY_END",                    value: "]" },
+          { type: "TERMINATOR",                   value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "yes" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "DOT_SYNTAX",                   value: "." },
+          { type: "NATIVE_METHOD",                value: "startsWith" },
+          { type: "INVOCATION_START",             value: "(" },
+          { type: "ARRAY_START",                  value: "[" },
+          { type: "NUMBER",                       value: "1" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "2" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "3" },
+          { type: "ARRAY_END",                    value: "]" },
+          { type: "INVOCATION_END",               value: ")" },
+          { type: "TERMINATOR",                   value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "no" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "DOT_SYNTAX",                   value: "." },
+          { type: "NATIVE_METHOD",                value: "startsWith" },
+          { type: "INVOCATION_START",             value: "(" },
+          { type: "ARRAY_START",                  value: "[" },
+          { type: "NUMBER",                       value: "2" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "3" },
+          { type: "ARRAY_END",                    value: "]" },
+          { type: "INVOCATION_END",               value: ")" },       
+          { type: "TERMINATOR",                   value: "EOF" }   
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle the min and max element methods', function () {
+        input = String.raw `var arr = [1,2,3,4,5]
+                            var one = arr.minElement()
+                            var five = arr.maxElement()`;
+        output = [
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "ARRAY_START",                  value: "[" },
+          { type: "NUMBER",                       value: "1" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "2" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "3" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "4" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "5" },
+          { type: "ARRAY_END",                    value: "]" },
+          { type: "TERMINATOR",                   value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "one" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "DOT_SYNTAX",                   value: "." },
+          { type: "NATIVE_METHOD",                value: "minElement" },
+          { type: "INVOCATION_START",             value: "(" },
+          { type: "INVOCATION_END",               value: ")" },
+          { type: "TERMINATOR",                   value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "five" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "DOT_SYNTAX",                   value: "." },
+          { type: "NATIVE_METHOD",                value: "maxElement" },
+          { type: "INVOCATION_START",             value: "(" },
+          { type: "INVOCATION_END",               value: ")" },       
+          { type: "TERMINATOR",                   value: "EOF" }   
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+
+      it('should handle element equal method', function () {
+        input = String.raw `var arr = [1,2,3,4,5]
+                              var yes = arr.elementsEqual([1,2,3,4,5])
+                              var no = arr.elementsEqual([1,2,3,4])`;
+        output = [
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "ARRAY_START",                  value: "[" },
+          { type: "NUMBER",                       value: "1" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "2" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "3" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "4" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "5" },
+          { type: "ARRAY_END",                    value: "]" },
+          { type: "TERMINATOR",                   value: "\\n"},
+          
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "yes" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "DOT_SYNTAX",                   value: "." },
+          { type: "NATIVE_METHOD",                value: "elementsEqual" },
+          { type: "INVOCATION_START",             value: "(" },
+          { type: "ARRAY_START",                  value: "[" },
+          { type: "NUMBER",                       value: "1" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "2" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "3" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "4" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "5" },
+          { type: "ARRAY_END",                    value: "]" },
+          { type: "INVOCATION_END",               value: ")" },
+          { type: "TERMINATOR",                   value: "\\n"},
+
+          { type: "DECLARATION_KEYWORD",          value: "var" },
+          { type: "IDENTIFIER",                   value: "no" },
+          { type: "OPERATOR",                     value: "=" },
+          { type: "IDENTIFIER",                   value: "arr" },
+          { type: "DOT_SYNTAX",                   value: "." },
+          { type: "NATIVE_METHOD",                value: "elementsEqual" },
+          { type: "INVOCATION_START",             value: "(" },
+          { type: "ARRAY_START",                  value: "[" },
+          { type: "NUMBER",                       value: "1" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "2" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "3" },
+          { type: "PUNCTUATION",                  value: "," },
+          { type: "NUMBER",                       value: "4" },
+          { type: "ARRAY_END",                    value: "]" },
+          { type: "INVOCATION_END",               value: ")" },       
+          { type: "TERMINATOR",                   value: "EOF" }   
+        ];
+        expect(lexer(input)).to.deep.equal(output);
+      });
+       
+
     });
 
   });
