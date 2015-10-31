@@ -26,18 +26,15 @@ module.exports = function(code) {
   var insideTuple = [];
   var insideInvocation = [];
   var insideInitialization = [];
-  // TODO - scope
 
-  // advances the position of i by specified number of positions
+  // helper functions to advance the lexer's position in the input code
+  // and clear the chunk
   var advance = function(positions) {
     i += positions;
   };
-
   var clearChunk = function() {
     chunk = '';
   };
-
-  // advances the position of i by specified number of positions and clears chunk
   var advanceAndClear = function(positions) {
     i += positions;
     clearChunk();
@@ -51,10 +48,8 @@ module.exports = function(code) {
     nextCol = code[i + 1];
     nextNextCol = code[i + 2];
     var lastToken = tokens[tokens.length - 1];
-    var lastCollectionIndex = insideCollection.length - 1;
-    var lastCollection = insideCollection[lastCollectionIndex];
-    var lastFunctionIndex = insideFunction.length - 1;
-    var lastFunction = insideFunction[lastFunctionIndex];
+    var lastCollection = insideCollection[insideCollection.length - 1];
+    var lastFunction = insideFunction[insideFunction.length - 1];
 
     // console.log(chunk);
     // console.log(currCol);
@@ -62,7 +57,7 @@ module.exports = function(code) {
     // console.log(tokens);
     // console.log(emptyLine);
 
-    // handles newlines
+    // handles new lines
     if (lexerFunctions.handleNewLine(emptyLine, tokens, lastToken, currCol)) {
       advanceAndClear(1);
       continue
@@ -89,7 +84,7 @@ module.exports = function(code) {
       continue;
     }
 
-    // tracks state: whether inside a string
+    // tracks whether inside a string
     if (currCol === '"' && insideString.status) {
       insideString.status = false;
     } else if (currCol === '"') {
@@ -101,8 +96,8 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     } else if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol) === "skip"){
-      advance(2);
       lexerFunctions.handleEndOfFile(nextCol, tokens);
+      advance(2);
       continue;
     }
 
@@ -183,7 +178,6 @@ module.exports = function(code) {
       lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
-
     if (insideInvocation.length && chunk === '(' && (insideInvocation[insideInvocation.length - 1]).status) {
       lexerFunctions.checkFor('PUNCTUATION', chunk, tokens);
       var last = insideInvocation[insideInvocation.length - 1];
@@ -191,7 +185,6 @@ module.exports = function(code) {
       advanceAndClear(1);
       continue;
     }
-
     if (insideInvocation.length && chunk === ')' && (insideInvocation[insideInvocation.length - 1]).status) {
       lexerFunctions.checkFor('PUNCTUATION', chunk, tokens);
       var last = insideInvocation[insideInvocation.length - 1];
@@ -291,7 +284,7 @@ module.exports = function(code) {
       continue;
     }
     
-    // collection initializer syntax handling
+    // collection initializer handling
     if (tokens.length && currCol === '(' && 
       (lastToken.type === 'ARRAY_END' || lastToken.type === 'DICTIONARY_END')) {
       lexerFunctions.checkFor('FUNCTION_INVOCATION', currCol, tokens);
@@ -304,7 +297,7 @@ module.exports = function(code) {
       continue;
     }
     
-    // handles inheritance operators
+    // handles colons functioning as inheritance operators
     if (tokens.length > 2 && tokens[tokens.length - 2].value === ':' && 
       CLASS_NAMES[lastToken.value] && CLASS_NAMES[tokens[tokens.length - 3].value]) {
       tokens[tokens.length - 2].type = 'INHERITANCE_OPERATOR';      
