@@ -36,7 +36,8 @@ function Tuple(tuple) {
       } else if (typeof tuple[i] === "boolean" || typeof tuple[i] === "number" || typeof tuple[i] === "string") {
         this.tup[i] = {'val': tuple[i]};
       } else if (Array.isArray(tuple[i])) {
-        this.tup[i] = (new Tuple(tuple[i]))._tupleToObject();
+        // this.tup[i] = (new Tuple(tuple[i]))._tupleToObject();
+        this.tup[i] = new Tuple(tuple[i]);
       } else {
         //return error if the input is incorrect
         return null;
@@ -50,79 +51,80 @@ function Tuple(tuple) {
 
 };
 
-  Tuple.prototype._tupleToObject = function() {
-    if (this instanceof Tuple) {
-      return this.tup;
-    }
+Tuple.prototype._tupleToObject = function() {
+  if (this instanceof Tuple) {
+    return this.tup;
+  }
+  return false;
+};
+
+Tuple.prototype.findValue = function(keyOrIndex){
+  var x = this.tup[keyOrIndex];
+  // console.log(x["tup"]);
+  if (x instanceof Tuple ) {
+    return x["tup"];
+  } else {
+    return x === undefined ? undefined : this.tup[keyOrIndex]["val"];
+  }
+};
+
+Tuple.prototype.modifyVal = function(keyOrIndex, newVal) {
+  var x = this.tup[keyOrIndex];
+  if (x === undefined) {
     return false;
-  };
+  }
+  
+  if (typeof x['val'] === typeof newVal) {
+    x['val'] = newVal;
+    if (x.hasOwnProperty('key')) {
+      var otherKey = x['key'];
+      this.tup[otherKey]['val'] = newVal;
+    }
+    return true;
+  }
+  return false;
+  
+};
 
-  Tuple.prototype.findValue = function(keyOrIndex){
-    var x = this.tup[keyOrIndex];
-    if (x instanceof Object) {
-      return x;
-    } else {
-      return x === undefined ? undefined : this.tup[keyOrIndex]["val"];
-    }
-  };
+// Tuple.prototype.deleteElement = function(keyOrIndex) {
+//   var x = this.tup[keyOrIndex];
+//   if (x === undefined) {
+//     return false;
+//   }
+//   if (x.hasOwnProperty('key')) {
+//     var otherKey = x['key'];
+//     delete this.tup[otherKey];
+//   } 
+//   delete this.tup[keyOrIndex];
+//   return true;
+// };
 
-  Tuple.prototype.modifyVal = function(keyOrIndex, newVal) {
-    var x = this.tup[keyOrIndex];
-    if (x === undefined) {
-      return false;
-    }
-    
-    if (typeof x['val'] === typeof newVal) {
-      x['val'] = newVal;
-      if (x.hasOwnProperty('key')) {
-        var otherKey = x['key'];
-        this.tup[otherKey]['val'] = newVal;
-      }
-      return true;
-    }
+
+// Tuple.prototype.moveElement = function(oldKeyorIndex, newIndex) {
+  
+// };
+
+Tuple.prototype.renameElement = function(oldKey, newKey) {
+  //partially implimented
+  if (!isNaN(oldKey) || !isNaN(newKey)) {
     return false;
-    
-  };
-
-  // Tuple.prototype.deleteElement = function(keyOrIndex) {
-  //   var x = this.tup[keyOrIndex];
-  //   if (x === undefined) {
-  //     return false;
-  //   }
-  //   if (x.hasOwnProperty('key')) {
-  //     var otherKey = x['key'];
-  //     delete this.tup[otherKey];
-  //   } 
-  //   delete this.tup[keyOrIndex];
-  //   return true;
-  // };
-
-
-  // Tuple.prototype.moveElement = function(oldKeyorIndex, newIndex) {
-    
-  // };
-
-  Tuple.prototype.renameElement = function(oldKey, newKey) {
-    //partially implimented
-    if (!isNaN(oldKey) || !isNaN(newKey)) {
-      return false;
-    }
-    var x = this.tup[oldKey];
-    if (x === undefined) {
-      return false;
-    }
-
-    if (oldKey !== newKey && typeof oldKey === "string" && typeof newKey === "string") {
-      var val = x['val'];
-      var index = x['key'];
-      this.tup[index]['key'] = newKey;
-      this.tup[newKey] = x;
-      delete this.tup[oldKey];
-      return true;
-    }
+  }
+  var x = this.tup[oldKey];
+  if (x === undefined) {
     return false;
-  };
+  }
 
-  Tuple.prototype.constructor = Tuple;
+  if (oldKey !== newKey && typeof oldKey === "string" && typeof newKey === "string") {
+    var val = x['val'];
+    var index = x['key'];
+    this.tup[index]['key'] = newKey;
+    this.tup[newKey] = x;
+    delete this.tup[oldKey];
+    return true;
+  }
+  return false;
+};
+
+Tuple.prototype.constructor = Tuple;
 
 module.exports = Tuple;
