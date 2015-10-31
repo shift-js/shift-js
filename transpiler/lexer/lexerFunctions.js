@@ -232,12 +232,12 @@ module.exports = {
           module.exports.checkFor('FUNCTION_DECLARATION', '...', tokens);
           return true;
         } else {
-          module.exports.checkFor('RANGES', '...', tokens);
+          module.exports.checkFor('RANGE', '...', tokens);
           return true;
         }
       }
       if (currCol === '.' && nextCol === '.' && nextNextCol === '<') {
-        module.exports.checkFor('RANGES', '..<', tokens);
+        module.exports.checkFor('RANGE', '..<', tokens);
         return true;
       }
     }
