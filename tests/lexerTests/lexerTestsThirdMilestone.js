@@ -1677,6 +1677,251 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
+    it('should handle functions that have external and internal parameter names and have a void return type', function () {
+      input = String.raw`func sayHelloNoOutput(to person: String, from anotherPerson: String) {
+                              print("To \(person) from \(anotherPerson)!")
+                          }
+
+                          sayHelloNoOutput(to: "Bill", from: "Ted")`;
+      output = [ 
+        { type: 'DECLARATION_KEYWORD', value: 'func' },
+        { type: 'IDENTIFIER', value: 'sayHelloNoOutput' },
+        { type: 'PARAMS_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'to' },
+        { type: 'IDENTIFIER', value: 'person' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_STRING', value: 'String' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'IDENTIFIER', value: 'from' },
+        { type: 'IDENTIFIER', value: 'anotherPerson' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_STRING', value: 'String' },
+        { type: 'PARAMS_END', value: ')' },
+        { type: 'STATEMENTS_START', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'NATIVE_METHOD', value: 'print' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'STRING', value: 'To ' },
+        { type: 'STRING_INTERPOLATION_START', value: '\\(' },
+        { type: 'IDENTIFIER', value: 'person' },
+        { type: 'STRING_INTERPOLATION_END', value: ')' },
+        { type: 'STRING', value: ' from ' },
+        { type: 'STRING_INTERPOLATION_START', value: '\\(' },
+        { type: 'IDENTIFIER', value: 'anotherPerson' },
+        { type: 'STRING_INTERPOLATION_END', value: ')' },
+        { type: 'STRING', value: '!' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENTS_END', value: '}' },
+        { type: 'TERMINATOR', value: '\\n' },
+        { type: 'TERMINATOR', value: '\\n' },
+        
+        { type: 'IDENTIFIER', value: 'sayHelloNoOutput' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'to' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'STRING', value: 'Bill' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'IDENTIFIER', value: 'from' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'STRING', value: 'Ted' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: 'EOF' } 
+        ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle functions that have external and internal parameter names and have a string return type', function () {
+      input = String.raw`func sayHello(to person: String, from anotherPerson: String) -> String {
+                              return "To \(person) from \(anotherPerson)"
+                          }
+                          print(sayHello(to: "Bill", from: "Ted"))`;
+      output = [ 
+        { type: 'DECLARATION_KEYWORD', value: 'func' },
+        { type: 'IDENTIFIER', value: 'sayHello' },
+        { type: 'PARAMS_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'to' },
+        { type: 'IDENTIFIER', value: 'person' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_STRING', value: 'String' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'IDENTIFIER', value: 'from' },
+        { type: 'IDENTIFIER', value: 'anotherPerson' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_STRING', value: 'String' },
+        { type: 'PARAMS_END', value: ')' },
+        { type: 'RETURN_ARROW', value: '->' },
+        { type: 'TYPE_STRING', value: 'String' },
+        { type: 'STATEMENTS_START', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD', value: 'return' },
+        { type: 'STRING', value: 'To ' },
+        { type: 'STRING_INTERPOLATION_START', value: '\\(' },
+        { type: 'IDENTIFIER', value: 'person' },
+        { type: 'STRING_INTERPOLATION_END', value: ')' },
+        { type: 'STRING', value: ' from ' },
+        { type: 'STRING_INTERPOLATION_START', value: '\\(' },
+        { type: 'IDENTIFIER', value: 'anotherPerson' },
+        { type: 'STRING_INTERPOLATION_END', value: ')' },
+        { type: 'STRING', value: '' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENTS_END', value: '}' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'NATIVE_METHOD', value: 'print' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'sayHello' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'to' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'STRING', value: 'Bill' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'IDENTIFIER', value: 'from' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'STRING', value: 'Ted' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: 'EOF' } 
+        ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle functions that return a dictionary type', function () {
+      input = String.raw`func dictionary() -> [String: Int] {
+                              return ["one":1,"two":2,"three":3,"four":4,"five":5]
+                          }`;
+      output = [ 
+        { type: 'DECLARATION_KEYWORD', value: 'func' },
+        { type: 'IDENTIFIER', value: 'dictionary' },
+        { type: 'PARAMS_START', value: '(' },
+        { type: 'PARAMS_END', value: ')' },
+        { type: 'RETURN_ARROW', value: '->' },
+        { type: 'DICTIONARY_START', value: '[' },
+        { type: 'TYPE_STRING', value: 'String' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'DICTIONARY_END', value: ']' },
+        { type: 'STATEMENTS_START', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD', value: 'return' },
+        { type: 'DICTIONARY_START', value: '[' },
+        { type: 'STRING', value: 'one' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'NUMBER', value: '1' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'STRING', value: 'two' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'NUMBER', value: '2' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'STRING', value: 'three' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'NUMBER', value: '3' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'STRING', value: 'four' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'NUMBER', value: '4' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'STRING', value: 'five' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'NUMBER', value: '5' },
+        { type: 'DICTIONARY_END', value: ']' },
+        { type: 'TERMINATOR', value: '\\n' },
+        
+        { type: 'STATEMENTS_END', value: '}' },
+        { type: 'TERMINATOR', value: 'EOF' } 
+        ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle functions that return an array type', function () {
+      input = String.raw`func array() -> [Int] {
+                              return [1,2,3,4,5]
+                          }`;
+      output = [ 
+        { type: 'DECLARATION_KEYWORD', value: 'func' },
+        { type: 'IDENTIFIER', value: 'array' },
+        { type: 'PARAMS_START', value: '(' },
+        { type: 'PARAMS_END', value: ')' },
+        { type: 'RETURN_ARROW', value: '->' },
+        { type: 'ARRAY_START', value: '[' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'ARRAY_END', value: ']' },
+        { type: 'STATEMENTS_START', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD', value: 'return' },
+        { type: 'ARRAY_START', value: '[' },
+        { type: 'NUMBER', value: '1' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'NUMBER', value: '2' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'NUMBER', value: '3' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'NUMBER', value: '4' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'NUMBER', value: '5' },
+        { type: 'ARRAY_END', value: ']' },
+        { type: 'TERMINATOR', value: '\\n' },
+        
+        { type: 'STATEMENTS_END', value: '}' },
+        { type: 'TERMINATOR', value: 'EOF' } 
+        ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle functions that accept dictionaries as inputs', function () {
+      input = String.raw`func abc(a: [String: Int]) {
+                                print(a)
+                            }
+
+                            abc(["one":1,"two":2])`;
+      output = [ 
+        { type: 'DECLARATION_KEYWORD', value: 'func' },
+        { type: 'IDENTIFIER', value: 'abc' },
+        { type: 'PARAMS_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'a' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'DICTIONARY_START', value: '[' },
+        { type: 'TYPE_STRING', value: 'String' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'DICTIONARY_END', value: ']' },
+        { type: 'PARAMS_END', value: ')' },
+        { type: 'STATEMENTS_START', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'NATIVE_METHOD', value: 'print' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'a' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENTS_END', value: '}' },
+        { type: 'TERMINATOR', value: '\\n' },
+        { type: 'TERMINATOR', value: '\\n' },
+        
+        { type: 'IDENTIFIER', value: 'abc' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'DICTIONARY_START', value: '[' },
+        { type: 'STRING', value: 'one' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'NUMBER', value: '1' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'STRING', value: 'two' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'NUMBER', value: '2' },
+        { type: 'DICTIONARY_END', value: ']' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: 'EOF' } 
+        ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
     xit('should handle functions that take a function specified with parentheses around an argument and parenthesis', function () {
       input = String.raw`func any(list: [Int], condition: ((Int,String,Bool) -> Bool)) -> Bool {
                               for item in list {
@@ -2211,6 +2456,69 @@ describe('Lexer: Third Milestone', function() {
           value: 'giveTwoValuesIfNumberGreaterThan5' },
         { type: 'INVOCATION_START', value: '(' },
         { type: 'NUMBER', value: '4' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: 'EOF' } 
+        ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    xit('should handle functions that has an internal parameter that takes in a tuple and prints out the elements of that tuple ', function () {
+      input = String.raw`func ab(a: (plusFive: Int, timesFive: Int)) {
+                                print(a.plusFive)
+                                print(a.timesFive)
+                            }
+
+                            ab((plusFive: 6, timesFive: 8))`;
+      output = [ 
+        { type: 'DECLARATION_KEYWORD', value: 'func' },
+        { type: 'IDENTIFIER', value: 'ab' },
+        { type: 'PARAMS_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'a' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TUPLE_START', value: '(' },
+        { type: 'TUPLE_ELEMENT_NAME', value: 'plusFive' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'TUPLE_ELEMENT_NAME', value: 'timesFive' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'TUPLE_END', value: ')' },
+        { type: 'PARAMS_START', value: ')' },
+        { type: 'STATEMENTS_START', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'NATIVE_METHOD', value: 'print' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'a' },
+        { type: 'DOT_SYNTAX', value: '.' },
+        { type: 'IDENTIFIER', value: 'plusFive' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'NATIVE_METHOD', value: 'print' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'a' },
+        { type: 'DOT_SYNTAX', value: '.' },
+        { type: 'IDENTIFIER', value: 'timesFive' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENTS_END', value: '}' },
+        { type: 'TERMINATOR', value: '\\n' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'IDENTIFIER', value: 'ab' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'TUPLE_START', value: '(' },
+        { type: 'TUPLE_ELEMENT_NAME', value: 'plusFive' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'NUMBER', value: '6' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'TUPLE_ELEMENT_NAME', value: 'timesFive' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'NUMBER', value: '8' },
+        { type: 'TUPLE_END', value: ')' },
         { type: 'INVOCATION_END', value: ')' },
         { type: 'TERMINATOR', value: 'EOF' } 
         ];
