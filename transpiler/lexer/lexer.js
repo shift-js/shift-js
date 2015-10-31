@@ -264,8 +264,8 @@ module.exports = function(code) {
       continue;
     }
 
-    if (tokens.length >= 2 && tokens[tokens.length - 2]['type'] === 'PUNCTUATION' && 
-      tokens[tokens.length - 2]['value'] === '(' && lastFunction && lastFunction.insideReturnStatement === true) {
+    if (tokens.length >= 2 && tokens[tokens.length - 2].type === 'PUNCTUATION' &&
+      tokens[tokens.length - 2].value === '(' && lastFunction && lastFunction.insideReturnStatement === true) {
       tokens[tokens.length - 2].type = 'PARAMS_START';
     }
 
