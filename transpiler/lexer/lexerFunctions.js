@@ -420,8 +420,8 @@ module.exports = {
     }
   },
 
-  handleEndOfFile: function(nextCol, tokens) {
-    if (nextCol === undefined) module.exports.makeToken(undefined, undefined, tokens, 'TERMINATOR', 'EOF');
+  handleEndOfFile: function(col, tokens) {
+    if (col === undefined) module.exports.makeToken(undefined, undefined, tokens, 'TERMINATOR', 'EOF');
   }
 
 };
