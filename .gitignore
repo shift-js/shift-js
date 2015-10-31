@@ -8,6 +8,8 @@ transpiler/lexer/singleTest2.js
 transpiler/lexer/singleTest3.js
 transpiler/lexer/tmpFunction.js
 transpiler/lexer/tmpFunctionInvoke.js
+tupleDataStructure/tupleJS.js
+tests/tupleTests/tupleTest.js
 
 .floo
 .flooignore
