@@ -327,7 +327,7 @@ describe('End to End: First Milestone', function() {
 
     // Swift input: 'let arr = [1,2]; var u = [arr[0]];'
     it('should handle arrays of that contain a substring lookup', function () {
-      //TODO Works when token.type of SUBSTRING_LOOKUP is replaced with token.type PUNCTUATION
+      //TODO Works when token.type of SUBSCRIPT_LOOKUP is replaced with token.type PUNCTUATION
       //TODO Why no longer just
       input = String.raw`let arr = [1,2]; var u = [arr[0]];`;
       output = `var arr = [
