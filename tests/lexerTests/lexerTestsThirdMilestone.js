@@ -5614,7 +5614,7 @@ describe('Lexer: Third Milestone', function() {
         expect(lexer(input)).to.deep.equal(output);
       });
 
-      it('should handle the drop first method', function () {
+      it('should handle the drop last method', function () {
         input = String.raw `var arr = [1,2,3,4,5]
                               var lessLast = arr.dropLast()
                               var lessLastThree = arr.dropLast(3)`;
