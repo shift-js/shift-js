@@ -227,6 +227,27 @@ module.exports = {
       return true;
     }
   },
+  
+  // helper function to handle range operators
+  handleRange: function(insideString, insideFunction, insideComment, 
+                        tokens, currCol, nextCol, nextNextCol) {
+    if (!insideString.status && !module.exports.checkIfInsideComment(insideComment)) {
+      if (currCol === '.' && nextCol === '.' && nextNextCol === '.') {
+        if (insideFunction.length && insideFunction[insideFunction.length - 1].insideParams === true) {
+          module.exports.checkFor('FUNCTION_DECLARATION', '...', tokens);
+          return true;
+        } else {
+          module.exports.checkFor('RANGES', '...', tokens);
+          return true;
+        }
+      }
+      if (currCol === '.' && nextCol === '.' && nextNextCol === '<') {
+        module.exports.checkFor('RANGES', '..<', tokens);
+        return true;
+      }
+    }
+    return false;
+  },
 
   checkForStringInterpolationStart: function(stringInterpolation, insideString,
                                              chunk, tokens, nextCol, nextNextCol) {

@@ -62,13 +62,13 @@ module.exports = function(code) {
     // console.log(tokens);
     // console.log(emptyLine);
 
-    // newline handling
+    // handles newlines
     if (lexerFunctions.handleNewLine(emptyLine, tokens, lastToken, currCol)) {
       advanceAndClear(1);
       continue
     }
 
-    // comment handling
+    // handles comments
     if (lexerFunctions.checkForCommentStart(insideComment, chunk, tokens,
         currCol, nextCol)) {
       advanceAndClear(2);
@@ -96,7 +96,7 @@ module.exports = function(code) {
       insideString.status = true;
     }
 
-    // number handling
+    // handles numbers
     if (lexerFunctions.handleNumber(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol) === true) {
       advanceAndClear(1);
       continue;
@@ -106,27 +106,14 @@ module.exports = function(code) {
       continue;
     }
 
-    // handle ranges
-    if (!insideString.status && !lexerFunctions.checkIfInsideComment(insideComment)) {
-      if (currCol === '.' && nextCol === '.' && nextNextCol === '.') {
-        if (insideFunction.length && insideFunction[insideFunction.length - 1].insideParams === true) {
-          lexerFunctions.checkFor('FUNCTION_DECLARATION', '...', tokens);
-          advanceAndClear(3);
-          continue;
-        } else {
-          lexerFunctions.checkFor('RANGES', '...', tokens);
-          advanceAndClear(3);
-          continue;
-        }
-      }
-      if (currCol === '.' && nextCol === '.' && nextNextCol === '<') {
-        lexerFunctions.checkFor('RANGES', '..<', tokens);
-        advanceAndClear(3);
-        continue;
-      }
+    // handles ranges
+    if (lexerFunctions.handleRange(insideString, insideFunction, insideComment,
+                                  tokens, currCol, nextCol, nextNextCol)) {
+      advanceAndClear(3);
+      continue;
     }
 
-    // string interpolation handling
+    // handles string interpolation
     if (lexerFunctions.checkForStringInterpolationStart(stringInterpolation,
         insideString, chunk, tokens, nextCol, nextNextCol)) {
       advanceAndClear(3);
