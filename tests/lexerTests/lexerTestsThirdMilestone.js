@@ -1677,6 +1677,83 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
+    xit('should handle functions that take a function specified with parentheses around an argument and parenthesis', function () {
+      input = String.raw`func any(list: [Int], condition: ((Int,String,Bool) -> Bool)) -> Bool {
+                              for item in list {
+                                  if condition(item,"abc",true) {
+                                      return true
+                                  }
+                              }
+                              return false
+                          }`;
+      output = [
+        { type: "DECLARATION_KEYWORD",        value: "func"},
+        { type: "IDENTIFIER",                 value: "any" },
+        { type: "PARAMS_START",               value: "(" },
+        { type: "IDENTIFIER",                 value: "list" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "ARRAY_START",                value: "["},
+        { type: "TYPE_NUMBER",                value: "Int" },
+        { type: "ARRAY_END",                  value: "]"},
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "condition" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "PUNCTUATION",                value: "(" },
+        { type: "PARAMS_START",               value: "(" },
+        { type: "TYPE_NUMBER",                value: "Int" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "TYPE_STRING",                value: "String" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "TYPE_BOOLEAN",               value: "Bool" },
+        { type: "PARAMS_END",                 value: ")" },
+        { type: "RETURN_ARROW",               value: "->" },
+        { type: "TYPE_BOOLEAN",               value: "Bool" },
+        { type: "PUNCTUATION",                value: ")" },
+        { type: "PARAMS_END",                 value: ")" },
+        { type: "RETURN_ARROW",               value: "->" },
+        { type: "TYPE_BOOLEAN",               value: "Bool" },
+        { type: "STATEMENTS_START",           value: "{" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "STATEMENT_KEYWORD",          value: "for" },
+        { type: "IDENTIFIER",                 value: "item" },
+        { type: "STATEMENT_KEYWORD",          value: "in" },
+        { type: "IDENTIFIER",                 value: "list" },
+        { type: "PUNCTUATION",                value: "{" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "STATEMENT_KEYWORD",          value: "if" },
+        { type: "IDENTIFIER",                 value: "condition" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "item" },
+        { type: "PUNCTUATION",                value: "," },
+
+        { type: "PUNCTUATION",                value: "," },
+        { type: "BOOLEAN",                    value: "true" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "PUNCTUATION",                value: "{" },
+        { type: "TERMINATOR",                 value: "\\n"},
+        { type: "STRING",                     value: "abc" },
+        { type: "STATEMENT_KEYWORD",          value: "return"},
+        { type: "BOOLEAN",                    value: "true" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "PUNCTUATION",                value: "}" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "PUNCTUATION",                value: "}" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "STATEMENT_KEYWORD",          value: "return"},
+        { type: "BOOLEAN",                    value: "false" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "STATEMENTS_END",             value: "}" },
+        { type: "TERMINATOR",                 value: "EOF"}
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
     it('should handle functions that take a function specified without parentheses as an argument and parenthesis around the return type', function () {
       input = String.raw`func any(list: [Int], condition: (Int) -> Bool) -> (Bool) {
                               for item in list {
@@ -1806,7 +1883,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'PARAMS_START', value: '(' },
         { type: 'PARAMS_END', value: ')' },
         { type: 'RETURN_ARROW', value: '->' },
-        { type: 'TYPE_STRING', value: 'Int' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
         { type: 'STATEMENTS_START', value: '{' },
         { type: 'TERMINATOR', value: '\\n' },
 
@@ -1987,6 +2064,156 @@ describe('Lexer: Third Milestone', function() {
         { type: "INVOCATION_END",             value: ")" },
         { type: "TERMINATOR",                 value: "EOF"}
       ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    xit('should handle functions that get assigned to a variable and are invoked later', function () {
+      input = String.raw`func addTwoInts(a: Int, b: Int) -> Int {
+                                return a+b
+                            }
+
+                            var mathFunction: (Int, Int) -> Int = addTwoInts
+
+                            print(mathFunction(2,3))`;
+      output = [ 
+        { type: 'DECLARATION_KEYWORD', value: 'func' },
+        { type: 'IDENTIFIER', value: 'addTwoInts' },
+        { type: 'PARAMS_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'a' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'IDENTIFIER', value: 'b' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'PARAMS_END', value: ')' },
+        { type: 'RETURN_ARROW', value: '->' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'STATEMENTS_START', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD', value: 'return' },
+        { type: 'IDENTIFIER', value: 'a' },
+        { type: 'OPERATOR', value: '+' },
+        { type: 'IDENTIFIER', value: 'b' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENTS_END', value: '}' },
+        { type: 'TERMINATOR', value: '\\n' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'DECLARATION_KEYWORD', value: 'var' },
+        { type: 'IDENTIFIER', value: 'mathFunction' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'PUNCTUATION', value: '(' }, //TODO make Params_start
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'PUNCTUATION', value: ')' }, //TODO make Params_end
+        { type: 'OPERATOR', value: '-' }, // Not correct
+        { type: 'OPERATOR', value: '>' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'OPERATOR', value: '=' },
+        { type: 'IDENTIFIER', value: 'addTwoInts' }, //Need to go backward frmo here to var keyword and modify accordingly
+        { type: 'TERMINATOR', value: '\\n' },
+        { type: 'TERMINATOR', value: '\\n' },
+        
+        { type: 'NATIVE_METHOD', value: 'print' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'mathFunction' },
+        { type: 'PUNCTUATION', value: '(' },
+        { type: 'NUMBER', value: '2' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'NUMBER', value: '3' },
+        { type: 'PUNCTUATION', value: ')' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: 'EOF' } 
+        ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle functions that return nil when the input is invalid', function () {
+      input = String.raw`func giveTwoValuesIfNumberGreaterThan5(input: Int) -> (one: Int, two: Int)? {
+                            if input > 5 {
+                                return (input+1,input-1)
+                            } else {
+                                return nil
+                            }
+                        }
+
+                        giveTwoValuesIfNumberGreaterThan5(6)
+                        giveTwoValuesIfNumberGreaterThan5(4)`;
+      output = [ 
+        { type: 'DECLARATION_KEYWORD', value: 'func' },
+        { type: 'IDENTIFIER',value: 'giveTwoValuesIfNumberGreaterThan5' },
+        { type: 'PARAMS_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'input' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'PARAMS_END', value: ')' },
+        { type: 'RETURN_ARROW', value: '->' },
+        { type: 'TUPLE_START', value: '(' },
+        { type: 'TUPLE_ELEMENT_NAME', value: 'one' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'TUPLE_ELEMENT_NAME', value: 'two' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_NUMBER', value: 'Int' },
+        { type: 'TUPLE_END', value: ')' },
+        { type: 'OPERATOR', value: '?' },
+        { type: 'STATEMENTS_START', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD', value: 'if' },
+        { type: 'IDENTIFIER', value: 'input' },
+        { type: 'OPERATOR', value: '>' },
+        { type: 'NUMBER', value: '5' },
+        { type: 'PUNCTUATION', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD', value: 'return' },
+        { type: 'TUPLE_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'input' },
+        { type: 'OPERATOR', value: '+' },
+        { type: 'NUMBER', value: '1' },
+        { type: 'PUNCTUATION', value: ',' },
+        { type: 'IDENTIFIER', value: 'input' },
+        { type: 'OPERATOR', value: '-' },
+        { type: 'NUMBER', value: '1' },
+        { type: 'TUPLE_END', value: ')' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'PUNCTUATION', value: '}' },
+        { type: 'STATEMENT_KEYWORD', value: 'else' },
+        { type: 'PUNCTUATION', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENT_KEYWORD', value: 'return' },
+        { type: 'EXPRESSION_OR_TYPE_KEYWORD', value: 'nil' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'PUNCTUATION', value: '}' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENTS_END', value: '}' },
+        { type: 'TERMINATOR', value: '\\n' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'IDENTIFIER',
+          value: 'giveTwoValuesIfNumberGreaterThan5' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'NUMBER', value: '6' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: '\\n' },
+        
+        { type: 'IDENTIFIER',
+          value: 'giveTwoValuesIfNumberGreaterThan5' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'NUMBER', value: '4' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: 'EOF' } 
+        ];
       expect(lexer(input)).to.deep.equal(output);
     });
 
