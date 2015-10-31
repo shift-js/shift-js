@@ -317,63 +317,17 @@ module.exports = function(code) {
       continue;
     }
     
-    /////////////////////////////////////////////
-    //                                         // 
-    //      classes and structures handling    //
-    //                                         //
-    ///////////////////////////////////////////////////////////////////////////
-
     // handles inheritance operators
     if (tokens.length > 2 && tokens[tokens.length - 2].value === ':' && 
       CLASS_NAMES[lastToken.value] && CLASS_NAMES[tokens[tokens.length - 3].value]) {
       tokens[tokens.length - 2].type = 'INHERITANCE_OPERATOR';      
     }
-    if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
-      chunk === '{') {
-      lexerFunctions.checkFor('CLASS_DEFINITION', chunk, tokens);
-      insideClass[insideClass.length - 1].curly++;
+    
+    // handles classes and structs
+    if (lexerFunctions.handleClassOrStruct(insideClass, insideStruct, 
+                        insideInitialization, chunk, tokens, lastToken, 
+                        nextCol, CLASS_NAMES, STRUCT_NAMES)) {
       advanceAndClear(1);
-      continue;
-    }
-    if (insideClass.length && insideClass[insideClass.length - 1].curly === 1 &&
-      chunk === '}') {
-      lexerFunctions.checkFor('CLASS_DEFINITION', chunk, tokens);
-      insideClass.pop();
-      advanceAndClear(1);
-      lexerFunctions.handleEndOfFile(nextCol, tokens);
-      continue;
-    }
-    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 0 &&
-      chunk === '{') {
-      lexerFunctions.checkFor('STRUCT_DEFINITION', chunk, tokens);
-      insideStruct[insideStruct.length - 1].curly++;
-      advanceAndClear(1);
-      continue;
-    }
-    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 1 &&
-      chunk === '}') {
-      lexerFunctions.checkFor('STRUCT_DEFINITION', chunk, tokens);
-      insideStruct.pop();
-      advanceAndClear(1);
-      lexerFunctions.handleEndOfFile(nextCol, tokens);
-      continue;
-    }
-    if (tokens.length && (CLASS_NAMES[lastToken.value] || 
-      STRUCT_NAMES[lastToken.value]) && chunk === '(') {
-      lexerFunctions.checkFor('INITIALIZATION', chunk, tokens)
-      var temp = {};
-      temp.status = true;
-      temp.parens = 1;
-      insideInitialization.push(temp);
-      advanceAndClear(1);
-      continue;
-    }
-    if (chunk === ')' && insideInitialization.length && 
-      insideInitialization[insideInitialization.length - 1].parens === 1) {
-      lexerFunctions.checkFor('INITIALIZATION', chunk, tokens);
-      insideInitialization.pop();
-      advanceAndClear(1);
-      lexerFunctions.handleEndOfFile(nextCol, tokens);
       continue;
     }
     
@@ -396,8 +350,6 @@ module.exports = function(code) {
       continue;
     }
     
-    ///////////////////////////////////////////////////////////////////////////
-
     // main evaluation block
     if (!insideString.status && !insideNumber.status &&
       lexerFunctions.checkForEvaluationPoint(currCol, nextCol)) {

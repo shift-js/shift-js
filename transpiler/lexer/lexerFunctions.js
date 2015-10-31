@@ -250,7 +250,59 @@ module.exports = {
       return true;
     }
   },
-
+  
+  
+  // handles classes and structures
+  handleClassOrStruct: function(insideClass, insideStruct, insideInitialization,
+                                chunk, tokens, lastToken, nextCol, CLASS_NAMES,
+                                STRUCT_NAMES) {
+    if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
+      chunk === '{') {
+      module.exports.checkFor('CLASS_DEFINITION', chunk, tokens);
+      insideClass[insideClass.length - 1].curly++;
+      return true;
+    }
+    if (insideClass.length && insideClass[insideClass.length - 1].curly === 1 &&
+      chunk === '}') {
+      module.exports.checkFor('CLASS_DEFINITION', chunk, tokens);
+      insideClass.pop();
+      module.exports.handleEndOfFile(nextCol, tokens);
+      return true;
+    }
+    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 0 &&
+      chunk === '{') {
+      module.exports.checkFor('STRUCT_DEFINITION', chunk, tokens);
+      insideStruct[insideStruct.length - 1].curly++;
+      return true;
+    }
+    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 1 &&
+      chunk === '}') {
+      module.exports.checkFor('STRUCT_DEFINITION', chunk, tokens);
+      insideStruct.pop();
+      module.exports.handleEndOfFile(nextCol, tokens);
+      return true;
+    }
+    if (tokens.length && (CLASS_NAMES[lastToken.value] || 
+      STRUCT_NAMES[lastToken.value]) && chunk === '(') {
+      module.exports.checkFor('INITIALIZATION', chunk, tokens)
+      var temp = {};
+      temp.status = true;
+      temp.parens = 1;
+      insideInitialization.push(temp);
+      return true;
+    }
+    if (chunk === ')' && insideInitialization.length && 
+      insideInitialization[insideInitialization.length - 1].parens === 1) {
+      module.exports.checkFor('INITIALIZATION', chunk, tokens);
+      insideInitialization.pop();
+      module.exports.handleEndOfFile(nextCol, tokens);
+      return true;
+    }
+    
+    return false;
+    
+  },
+  
   checkForTupleStart: function(insideTuple, chunk, tokens, lastToken,
                                currCol, nextCol, nextNextCol, cb) {
     if (!insideTuple.status && currCol === '(' && (lastToken.value === '=' ||
@@ -337,7 +389,6 @@ module.exports = {
         insideStruct.push(temp);
         STRUCT_NAMES[chunk] = true;
       }
-      
       return true;
     }
     return false;
