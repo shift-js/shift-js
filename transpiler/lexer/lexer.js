@@ -83,8 +83,8 @@ module.exports = function(code) {
       continue;
     }
 
-    // ignoring whitespace
-    if (chunk === ' ') {
+    // ignores chunks that are solely whitespace
+    if (lexerFunctions.checkForWhitespace(chunk)) {
       advanceAndClear(1);
       continue;
     }

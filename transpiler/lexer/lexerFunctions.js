@@ -4,6 +4,11 @@ var NUMBER = /^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i;
 
 module.exports = {
 
+  // helper function to check for whitespace
+  checkForWhitespace: function(chunk) {
+    return chunk === ' ';
+  },
+  
   // default check for point at which to evaluate chunk
   checkForEvaluationPoint: function(currCol, nextCol) {
     if (
@@ -244,11 +249,6 @@ module.exports = {
       insideString.status = true;
       return true;
     }
-  },
-
-  // helper function to check for whitespace
-  checkForWhitespace: function(chunk) {
-    return chunk === ' ';
   },
 
   checkForTupleStart: function(insideTuple, chunk, tokens, lastToken,
