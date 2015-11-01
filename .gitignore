@@ -5,7 +5,6 @@ client/app/components/repl/api.js
 
 transpiler/lexer/singleTest.js
 transpiler/lexer/singleTest2.js
-transpiler/lexer/singleTest3.js
 transpiler/lexer/tmpFunction.js
 transpiler/lexer/tmpFunctionInvoke.js
 

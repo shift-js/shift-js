@@ -58,6 +58,11 @@ Tuple.prototype._tupleToObject = function() {
   return false;
 };
 
+Tuple.prototype.findLocation = function(keyOrIndex) {
+
+}
+
+// make findValue has an optional level taking in the level as a # or a string such as "all"
 Tuple.prototype.findValue = function(keyOrIndex){
   var x = this.tup[keyOrIndex];
   // console.log(x["tup"]);
