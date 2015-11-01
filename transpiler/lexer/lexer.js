@@ -1,14 +1,14 @@
 var lexerFunctions = require("./lexerFunctions");
 
 module.exports = function(code) {
-  
+
   var STATE = {
     i: 0,
     tokens: [],
     chunk: '',
     currCol: undefined,
     prevCol: undefined,
-    nextCol: undefined, 
+    nextCol: undefined,
     nextNextCol: undefined,
     VARIABLE_NAMES: {},
     FUNCTION_NAMES: {},
@@ -44,7 +44,7 @@ module.exports = function(code) {
   }
 
   while (code[STATE.i] !== undefined) {
-    // debugger;
+    debugger;
     STATE.chunk += code[STATE.i];
     STATE.currCol = code[STATE.i];
     STATE.prevCol = code[STATE.i - 1];
