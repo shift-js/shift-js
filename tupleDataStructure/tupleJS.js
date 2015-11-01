@@ -59,7 +59,9 @@ Tuple.prototype._tupleToObject = function() {
 };
 
 Tuple.prototype.findLocation = function(keyOrIndex) {
-
+  var result = [];
+  //recursive IIFE here
+  return result;
 }
 
 // make findValue has an optional level taking in the level as a # or a string such as "all"
