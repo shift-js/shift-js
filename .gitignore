@@ -9,6 +9,8 @@ transpiler/lexer/singleTest3.js
 transpiler/lexer/tmpFunction.js
 transpiler/lexer/tmpFunctionInvoke.js
 
+clitest/
+
 .floo
 .flooignore
 .idea

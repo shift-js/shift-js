@@ -5,23 +5,22 @@ var NUMBER = /^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i;
 module.exports = {
 
   // helper function to check for whitespace
-  checkForWhitespace: function(chunk) {
-    return chunk === ' ';
+  checkForWhitespace: function(col) {
+    return col === ' ';
   },
   
   // default check for point at which to evaluate chunk
-  checkForEvaluationPoint: function(currCol, nextCol) {
+  checkForEvaluationPoint: function(STATE) {
     if (
-
-      module.exports.checkForWhitespace(currCol) ||
-      module.exports.checkForWhitespace(nextCol) ||
-      module.exports.checkFor('PUNCTUATION', nextCol) ||
-      module.exports.checkFor('PUNCTUATION', currCol) ||
-      module.exports.checkFor('OPERATOR', nextCol) ||
-      module.exports.checkFor('OPERATOR', currCol) ||
-      nextCol === '"' || nextCol === ']' || currCol === '[' ||
-      currCol === ']' || nextCol === '[' || nextCol === '\n' ||
-      nextCol === undefined
+      module.exports.checkForWhitespace(STATE.currCol) ||
+      module.exports.checkForWhitespace(STATE.nextCol) ||
+      module.exports.checkFor('PUNCTUATION', STATE.nextCol) ||
+      module.exports.checkFor('PUNCTUATION', STATE.currCol) ||
+      module.exports.checkFor('OPERATOR', STATE.nextCol) ||
+      module.exports.checkFor('OPERATOR', STATE.currCol) ||
+      STATE.nextCol === '"' || STATE.nextCol === ']' || STATE.currCol === '[' ||
+      STATE.currCol === ']' || STATE.nextCol === '[' || STATE.nextCol === '\n' ||
+      STATE.nextCol === undefined
 
     ) {
 
@@ -32,43 +31,43 @@ module.exports = {
   },
 
   // helper function to handle function invocation
-  handleFunctionInvocation: function(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) {
-    if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
-      tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD')) {
-      module.exports.checkFor('FUNCTION_INVOCATION', chunk, tokens);
-      var tmp = {};
-      tmp.name = lastToken.value;
-      tmp.status = true;
-      tmp.parens = 0;
-      insideInvocation.push(tmp);
-      return "cb1";
-    }
+  // handleFunctionInvocation: function(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) {
+  //   if (chunk === '(' && ((FUNCTION_NAMES[lastToken.value] && 
+  //     tokens[tokens.length - 2].value !== 'func') || lastToken.type === 'NATIVE_METHOD')) {
+  //     module.exports.checkFor('FUNCTION_INVOCATION', chunk, tokens);
+  //     var tmp = {};
+  //     tmp.name = lastToken.value;
+  //     tmp.status = true;
+  //     tmp.parens = 0;
+  //     insideInvocation.push(tmp);
+  //     return "cb1";
+  //   }
     
-    if (insideInvocation.length && (insideInvocation[insideInvocation.length - 1]).status && chunk === ')' && 
-      (insideInvocation[insideInvocation.length - 1]).parens === 0) {
-      module.exports.checkFor('FUNCTION_INVOCATION', chunk, tokens);
-      var last = insideInvocation[insideInvocation.length - 1]; //may be unnecessary
-      last.status = false; //may be unnecessary since poping next
-      insideInvocation.pop();
-      return "cb2";
-    }
+  //   if (insideInvocation.length && (insideInvocation[insideInvocation.length - 1]).status && chunk === ')' && 
+  //     (insideInvocation[insideInvocation.length - 1]).parens === 0) {
+  //     module.exports.checkFor('FUNCTION_INVOCATION', chunk, tokens);
+  //     var last = insideInvocation[insideInvocation.length - 1]; //may be unnecessary
+  //     last.status = false; //may be unnecessary since poping next
+  //     insideInvocation.pop();
+  //     return "cb2";
+  //   }
 
-    if (insideInvocation.length && chunk === '(' && (insideInvocation[insideInvocation.length - 1]).status) {
-      module.exports.checkFor('PUNCTUATION', chunk, tokens);
-      var last = insideInvocation[insideInvocation.length - 1];
-      last.parens++;
-      return "cb1";
-    }
+  //   if (insideInvocation.length && chunk === '(' && (insideInvocation[insideInvocation.length - 1]).status) {
+  //     module.exports.checkFor('PUNCTUATION', chunk, tokens);
+  //     var last = insideInvocation[insideInvocation.length - 1];
+  //     last.parens++;
+  //     return "cb1";
+  //   }
 
-    if (insideInvocation.length && chunk === ')' && (insideInvocation[insideInvocation.length - 1]).status) {
-      module.exports.checkFor('PUNCTUATION', chunk, tokens);
-      var last = insideInvocation[insideInvocation.length - 1];
-      last.parens--;
-      return "cb1";
-    }
+  //   if (insideInvocation.length && chunk === ')' && (insideInvocation[insideInvocation.length - 1]).status) {
+  //     module.exports.checkFor('PUNCTUATION', chunk, tokens);
+  //     var last = insideInvocation[insideInvocation.length - 1];
+  //     last.parens--;
+  //     return "cb1";
+  //   }
     
-    return false;
-  },
+  //   return false;
+  // },
 
   // helper function to make token and add to tokens array
   makeToken: function(lexicalType, chunk, tokens, type, value) {
@@ -81,16 +80,16 @@ module.exports = {
   },
 
   // helper function to handle new lines
-  handleNewLine: function(emptyLine, tokens, lastToken, currCol) {
-    if (currCol === '\n') {
-      module.exports.makeToken(undefined, undefined, tokens, 'TERMINATOR', '\\n');
-      emptyLine.status = true;
+  handleNewLine: function(STATE) {
+    if (STATE.currCol === '\n') {
+      module.exports.makeToken(undefined, undefined, STATE.tokens, 'TERMINATOR', '\\n');
+      STATE.emptyLine = true;
       return true;
     }
-    if (emptyLine.status && !module.exports.checkForWhitespace(currCol)) {
-      emptyLine.status = false;
+    if (STATE.emptyLine && !module.exports.checkForWhitespace(STATE.currCol)) {
+      STATE.emptyLine = false;
     }
-    if (emptyLine.status && lastToken && lastToken.value === '\\n') {
+    if (STATE.emptyLine && STATE.lastToken && STATE.lastToken.value === '\\n') {
       return true;
     }
     return false;
@@ -126,53 +125,52 @@ module.exports = {
   },
 
   // handles start of multi-line and single-line comments
-  checkForCommentStart: function(insideComment, chunk, tokens, currCol,
-                                 nextCol) {
-    if (currCol === '/' && nextCol === '*' && !(insideComment.multi && insideComment.single)) {
-      insideComment.multi = true;
-      chunk += nextCol;
-      module.exports.checkFor('COMMENT', chunk, tokens);
+  checkForCommentStart: function(STATE) {
+    if (STATE.currCol === '/' && STATE.nextCol === '*' && !(STATE.insideComment.multi && STATE.insideComment.single)) {
+      STATE.insideComment.multi = true;
+      STATE.chunk += STATE.nextCol;
+      module.exports.checkFor('COMMENT', STATE.chunk, STATE.tokens);
       return true;
     }
-    else if (currCol === '/' && nextCol === '/' && !(insideComment.multi && insideComment.single)) {
-      insideComment.single = true;
-      chunk += nextCol;
-      module.exports.checkFor('COMMENT', chunk, tokens);
+    else if (STATE.currCol === '/' && STATE.nextCol === '/' && !(STATE.insideComment.multi && STATE.insideComment.single)) {
+      STATE.insideComment.single = true;
+      STATE.chunk += STATE.nextCol;
+      module.exports.checkFor('COMMENT', STATE.chunk, STATE.tokens);
       return true;
     }
     return false;
   },
 
   // tokenizes comment contents and handles end of single and multi-line comments
-  handleComment: function(insideComment, chunk, tokens, currCol, nextCol, nextNextCol, cb) {
-    if (insideComment.multi) {
-      if (chunk === '*/') {
-        module.exports.checkFor('COMMENT', chunk, tokens);
-        insideComment.multi = false;
-        if (nextCol === '\n') {
-          cb(1);
+  handleComment: function(STATE, cb) {
+    if (STATE.insideComment.multi) {
+      if (STATE.chunk === '*/') {
+        module.exports.checkFor('COMMENT', STATE.chunk, STATE.tokens);
+        STATE.insideComment.multi = false;
+        if (STATE.nextCol === '\n') {
+          STATE.advanceAndClear(1);
         } else {
-          cb(2);
+          STATE.advanceAndClear(2);
         }
         return true;
-      } else if ((nextCol === '*' && nextNextCol === '/') || nextCol === '\n') {
-        module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
-        cb(1);
+      } else if ((STATE.nextCol === '*' && STATE.nextNextCol === '/') || STATE.nextCol === '\n') {
+        module.exports.makeToken(undefined, undefined, STATE.tokens, 'COMMENT', STATE.chunk);
+        STATE.advanceAndClear(1);
         return true;
       }
     }
-    else if (insideComment.single && (nextCol === undefined || nextCol === '\n')) {
-      insideComment.single = false;
-      module.exports.makeToken(undefined, undefined, tokens, 'COMMENT', chunk);
-      module.exports.handleEndOfFile(nextCol, tokens);
-      cb(1);
+    else if (STATE.insideComment.single && (STATE.nextCol === undefined || STATE.nextCol === '\n')) {
+      STATE.insideComment.single = false;
+      module.exports.makeToken(undefined, undefined, STATE.tokens, 'COMMENT', STATE.chunk);
+      module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      STATE.advanceAndClear(1);
       return true;
     }
     return false;
   },
 
-  checkIfInsideComment: function(insideComment) {
-    if (insideComment.multi || insideComment.single) {
+  checkIfInsideComment: function(STATE) {
+    if (STATE.insideComment.multi || STATE.insideComment.single) {
       return true;
     }
     return false;
@@ -196,224 +194,216 @@ module.exports = {
   },
 
   // helper function to handle numbers, including numbers written with underscores
-  handleNumber: function(insideString, insideNumber, chunk, tokens, nextCol, nextNextCol, cb) {
-    if (NUMBER.test(chunk) && !insideString.status && !insideNumber.status) {
-      insideNumber.status = true;
+  handleNumber: function(STATE, cb) {
+    if (NUMBER.test(STATE.chunk) && !STATE.insideString && !STATE.insideNumber) {
+      STATE.insideNumber = true;
     }
     // have an _ in the input
-    if (insideNumber.status && nextCol === '_') {
+    if (STATE.insideNumber && STATE.nextCol === '_') {
       return "skip";
     }
 
     //have an integer or decimal
-    if (insideNumber.status && (nextCol === '\n' ||
-      (isNaN(nextCol) && (nextCol !== '.') && (nextNextCol !== '.')))) {
-      insideNumber.status = false;
-      module.exports.makeToken(undefined, chunk, tokens, 'NUMBER', chunk.trim());
-      module.exports.handleEndOfFile(nextCol, tokens);
+    if (STATE.insideNumber && (STATE.nextCol === '\n' ||
+      (isNaN(STATE.nextCol) && (STATE.nextCol !== '.') && (STATE.nextNextCol !== '.')))) {
+      STATE.insideNumber = false;
+      module.exports.makeToken(undefined, STATE.chunk, STATE.tokens, 'NUMBER', STATE.chunk.trim());
+      module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
       return true;
     }
 
     //have a range
-    if (insideNumber.status && (nextCol === '.') && (nextNextCol === '.')) {
-      insideNumber.status = false;
-      module.exports.makeToken(undefined, chunk, tokens, 'NUMBER', chunk.trim());
-      module.exports.handleEndOfFile(nextCol, tokens);
+    if (STATE.insideNumber && (STATE.nextCol === '.') && (STATE.nextNextCol === '.')) {
+      STATE.insideNumber = false;
+      module.exports.makeToken(undefined, STATE.chunk, STATE.tokens, 'NUMBER', STATE.chunk.trim());
+      module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
       return true;
     }
   },
   
   // helper function to handle range operators
-  handleRange: function(insideString, insideFunction, insideComment, 
-                        tokens, currCol, nextCol, nextNextCol) {
-    if (!insideString.status && !module.exports.checkIfInsideComment(insideComment)) {
-      if (currCol === '.' && nextCol === '.' && nextNextCol === '.') {
-        if (insideFunction.length && insideFunction[insideFunction.length - 1].insideParams === true) {
-          module.exports.checkFor('FUNCTION_DECLARATION', '...', tokens);
+  handleRange: function(STATE) {
+    if (!STATE.insideString && !module.exports.checkIfInsideComment(STATE)) {
+      if (STATE.currCol === '.' && STATE.nextCol === '.' && STATE.nextNextCol === '.') {
+        if (STATE.insideFunction.length && STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true) {
+          module.exports.checkFor('FUNCTION_DECLARATION', '...', STATE.tokens);
           return true;
         } else {
-          module.exports.checkFor('RANGE', '...', tokens);
+          module.exports.checkFor('RANGE', '...', STATE.tokens);
           return true;
         }
       }
-      if (currCol === '.' && nextCol === '.' && nextNextCol === '<') {
-        module.exports.checkFor('RANGE', '..<', tokens);
+      if (STATE.currCol === '.' && STATE.nextCol === '.' && STATE.nextNextCol === '<') {
+        module.exports.checkFor('RANGE', '..<', STATE.tokens);
         return true;
       }
     }
     return false;
   },
 
-  checkForStringInterpolationStart: function(stringInterpolation, insideString,
-                                             chunk, tokens, nextCol, nextNextCol) {
-    if (!stringInterpolation.status && nextCol === '\\' && nextNextCol === '(') {
-      stringInterpolation.status = true;
-      if (chunk !== "") {
-        module.exports.checkForLiteral(chunk + '"', tokens);
+  checkForStringInterpolationStart: function(STATE) {
+    if (!STATE.stringInterpolation.status && STATE.nextCol === '\\' && STATE.nextNextCol === '(') {
+      STATE.stringInterpolation.status = true;
+      if (STATE.chunk !== "") {
+        module.exports.checkForLiteral(STATE.chunk + '"', STATE.tokens);
       }
-      module.exports.makeToken("SPECIAL_STRING", "\\(", tokens);
-      insideString.status = false;
+      module.exports.makeToken("SPECIAL_STRING", "\\(", STATE.tokens);
+      STATE.insideString = false;
       return true;
     }
   },
 
-  checkForStringInterpolationEnd: function(stringInterpolation, insideString,
-                                           tokens, currCol) {
-    if (stringInterpolation.status && currCol === ")") {
-      stringInterpolation.status = false;
-      module.exports.makeToken("SPECIAL_STRING", ")", tokens);
-      insideString.status = true;
+  checkForStringInterpolationEnd: function(STATE) {
+    if (STATE.stringInterpolation.status && STATE.currCol === ")") {
+      STATE.stringInterpolation.status = false;
+      module.exports.makeToken("SPECIAL_STRING", ")", STATE.tokens);
+      STATE.insideString = true;
       return true;
     }
   },
   
   
   // handles classes and structures
-  handleClassOrStruct: function(insideClass, insideStruct, insideInitialization,
-                                chunk, tokens, lastToken, nextCol, CLASS_NAMES,
-                                STRUCT_NAMES) {
-    if (insideClass.length && insideClass[insideClass.length - 1].curly === 0 &&
-      chunk === '{') {
-      module.exports.checkFor('CLASS_DEFINITION', chunk, tokens);
-      insideClass[insideClass.length - 1].curly++;
+  handleClassOrStruct: function(STATE) {
+    if (STATE.insideClass.length && STATE.insideClass[STATE.insideClass.length - 1].curly === 0 && STATE.chunk === '{') {
+      module.exports.checkFor('CLASS_DEFINITION', STATE.chunk, STATE.tokens);
+      STATE.insideClass[STATE.insideClass.length - 1].curly++;
       return true;
     }
-    if (insideClass.length && insideClass[insideClass.length - 1].curly === 1 &&
-      chunk === '}') {
-      module.exports.checkFor('CLASS_DEFINITION', chunk, tokens);
-      insideClass.pop();
-      module.exports.handleEndOfFile(nextCol, tokens);
+    if (STATE.insideClass.length && STATE.insideClass[STATE.insideClass.length - 1].curly === 1 && STATE.chunk === '}') {
+      module.exports.checkFor('CLASS_DEFINITION', STATE.chunk, STATE.tokens);
+      STATE.insideClass.pop();
+      module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
       return true;
     }
-    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 0 &&
-      chunk === '{') {
-      module.exports.checkFor('STRUCT_DEFINITION', chunk, tokens);
-      insideStruct[insideStruct.length - 1].curly++;
+    if (STATE.insideStruct.length && STATE.insideStruct[STATE.insideStruct.length - 1].curly === 0 &&
+      STATE.chunk === '{') {
+      module.exports.checkFor('STRUCT_DEFINITION', STATE.chunk, STATE.tokens);
+      STATE.insideStruct[STATE.insideStruct.length - 1].curly++;
       return true;
     }
-    if (insideStruct.length && insideStruct[insideStruct.length - 1].curly === 1 &&
-      chunk === '}') {
-      module.exports.checkFor('STRUCT_DEFINITION', chunk, tokens);
-      insideStruct.pop();
-      module.exports.handleEndOfFile(nextCol, tokens);
+    if (STATE.insideStruct.length && STATE.insideStruct[STATE.insideStruct.length - 1].curly === 1 &&
+      STATE.chunk === '}') {
+      module.exports.checkFor('STRUCT_DEFINITION', STATE.chunk, STATE.tokens);
+      STATE.insideStruct.pop();
+      module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
       return true;
     }
-    if (tokens.length && (CLASS_NAMES[lastToken.value] || 
-      STRUCT_NAMES[lastToken.value]) && chunk === '(') {
-      module.exports.checkFor('INITIALIZATION', chunk, tokens)
+    if (STATE.tokens.length && (STATE.CLASS_NAMES[STATE.lastToken.value] || 
+      STATE.STRUCT_NAMES[STATE.lastToken.value]) && STATE.chunk === '(') {
+      module.exports.checkFor('INITIALIZATION', STATE.chunk, STATE.tokens)
       var temp = {};
       temp.status = true;
       temp.parens = 1;
-      insideInitialization.push(temp);
+      STATE.insideInitialization.push(temp);
       return true;
     }
-    if (chunk === ')' && insideInitialization.length && 
-      insideInitialization[insideInitialization.length - 1].parens === 1) {
-      module.exports.checkFor('INITIALIZATION', chunk, tokens);
-      insideInitialization.pop();
-      module.exports.handleEndOfFile(nextCol, tokens);
+    if (STATE.chunk === ')' && STATE.insideInitialization.length && 
+      STATE.insideInitialization[STATE.insideInitialization.length - 1].parens === 1) {
+      module.exports.checkFor('INITIALIZATION', STATE.chunk, STATE.tokens);
+      STATE.insideInitialization.pop();
+      module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
       return true;
     }
     return false;
   },
   
-  checkForTupleStart: function(insideTuple, chunk, tokens, lastToken,
-                               currCol, nextCol, nextNextCol, cb) {
-    if (!insideTuple.status && currCol === '(' && (lastToken.value === '=' ||
-      lastToken.value === 'return' || lastToken.value === '->') ) {
-      module.exports.makeToken(undefined, undefined, tokens,
-        'TUPLE_START', chunk);
+  checkForTupleStart: function(STATE) {
+    if (!STATE.insideTuple.status && STATE.currCol === '(' && (STATE.lastToken.value === '=' ||
+      STATE.lastToken.value === 'return' || STATE.lastToken.value === '->') ) {
+      module.exports.makeToken(undefined, undefined, STATE.tokens,
+        'TUPLE_START', STATE.chunk);
       // special handling of empty tuples
-      if (nextCol === ')') {
-        module.exports.makeToken(undefined, undefined, tokens, 'TUPLE_END', nextCol);
-        module.exports.handleEndOfFile(nextNextCol, tokens);
-        cb(1);
+      if (STATE.nextCol === ')') {
+        module.exports.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_END', STATE.nextCol);
+        module.exports.handleEndOfFile(STATE.nextNextCol, STATE.tokens);
+        STATE.advanceAndClear(1);
       } else {
-        insideTuple.status = true;
-        insideTuple.startIndex = tokens.length - 1;
+        STATE.insideTuple.status = true;
+        STATE.insideTuple.startIndex = STATE.tokens.length - 1;
       }
       return true;
     }
     return false;
   },
 
-  handleTuple: function(insideTuple, chunk, tokens, currCol, nextCol, TUPLE_ELEMENT_NAMES) {
-    if (nextCol === ':') {
-      module.exports.makeToken(undefined, undefined, tokens, 'TUPLE_ELEMENT_NAME', chunk);
-      TUPLE_ELEMENT_NAMES[chunk] = true;
+  handleTuple: function(STATE) {
+    if (STATE.nextCol === ':') {
+      module.exports.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_ELEMENT_NAME', STATE.chunk);
+      STATE.TUPLE_ELEMENT_NAMES[STATE.chunk] = true;
       return true;
-    } else if (currCol === ',') {
-      insideTuple.verified = true;
+    } else if (STATE.currCol === ',') {
+      STATE.insideTuple.verified = true;
       return false
     }
   },
 
-  checkForTupleEnd: function(insideTuple, chunk, tokens, currCol) {
-    if (insideTuple.status && currCol === ')') {
-      if (insideTuple.verified) {
-        module.exports.makeToken(undefined, undefined, tokens, 'TUPLE_END', chunk);
-        insideTuple.status = false;
-        insideTuple.startIndex = undefined;
-        insideTuple.verified = false;
+  checkForTupleEnd: function(STATE) {
+    if (STATE.insideTuple.status && STATE.currCol === ')') {
+      if (STATE.insideTuple.verified) {
+        module.exports.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_END', STATE.chunk);
+        STATE.insideTuple.status = false;
+        STATE.insideTuple.startIndex = undefined;
+        STATE.insideTuple.verified = false;
         return true;
       } else {
-        tokens[insideTuple.startIndex].type = 'PUNCTUATION';
-        insideTuple.status = false;
-        insideTuple.startIndex = undefined;
-        insideTuple.verified = false;
+        STATE.tokens[STATE.insideTuple.startIndex].type = 'PUNCTUATION';
+        STATE.insideTuple.status = false;
+        STATE.insideTuple.startIndex = undefined;
+        STATE.insideTuple.verified = false;
         return false;
       }
     }
   },
 
   // helper function to check for identifiers
-  checkForIdentifier: function(chunk, tokens, lastToken, VARIABLE_NAMES, insideFunction, insideClass, insideStruct, CLASS_NAMES, STRUCT_NAMES) {
-    if (VARIABLE_NAMES[chunk]) {
-      if (tokens) {
-        module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
+  checkForIdentifier: function(STATE) {
+    if (STATE.VARIABLE_NAMES[STATE.chunk]) {
+      if (STATE.tokens) {
+        module.exports.makeToken(undefined, STATE.chunk, STATE.tokens, 'IDENTIFIER', STATE.chunk);
       }
       return true;
-    } else if (lastToken && (lastToken.type === 'DECLARATION_KEYWORD' ||
-      lastToken.value === 'for' ||
+    } else if (STATE.lastToken && (STATE.lastToken.type === 'DECLARATION_KEYWORD' ||
+      STATE.lastToken.value === 'for' ||
       
       // special condition for multiple variables of the same type declared on a single line
-      (lastToken.value === ',' && VARIABLE_NAMES[tokens[tokens.length -2].value]) ||
+      (STATE.lastToken.value === ',' && STATE.VARIABLE_NAMES[STATE.tokens[STATE.tokens.length -2].value]) ||
 
         // special conditions to handle for-in loops that iterate over dictionaries
-      (lastToken.value === '(' && tokens[tokens.length - 2].value === 'for') ||
-      (lastToken.value === ',' && tokens[tokens.length - 3].value) === '(' &&
-      tokens[tokens.length - 4].value === 'for' || (insideFunction.length && insideFunction[insideFunction.length - 1].insideParams === true && lastToken.value !== '='))) {
-      if (tokens) {
-        module.exports.makeToken(undefined, chunk, tokens, 'IDENTIFIER', chunk);
+      (STATE.lastToken.value === '(' && STATE.tokens[STATE.tokens.length - 2].value === 'for') ||
+      (STATE.lastToken.value === ',' && STATE.tokens[STATE.tokens.length - 3].value) === '(' &&
+      STATE.tokens[STATE.tokens.length - 4].value === 'for' || (STATE.insideFunction.length && STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true && STATE.lastToken.value !== '='))) {
+      if (STATE.tokens) {
+        module.exports.makeToken(undefined, STATE.chunk, STATE.tokens, 'IDENTIFIER', STATE.chunk);
       }
-      VARIABLE_NAMES[chunk] = true;
+      STATE.VARIABLE_NAMES[STATE.chunk] = true;
       
       // special conditions to handle identifiers for classes and structs
-      if (tokens[tokens.length - 2].value === 'class') {
+      if (STATE.tokens[STATE.tokens.length - 2].value === 'class') {
         var temp = {};
         temp.status = true;
         temp.curly = 0;
-        insideClass.push(temp);
-        CLASS_NAMES[chunk] = true;
+        STATE.insideClass.push(temp);
+        STATE.CLASS_NAMES[STATE.chunk] = true;
       }
-      if (tokens[tokens.length - 2].value === 'struct') {
+      if (STATE.tokens[STATE.tokens.length - 2].value === 'struct') {
         var temp = {};
         temp.status = true;
         temp.curly = 0;
-        insideStruct.push(temp);
-        STRUCT_NAMES[chunk] = true;
+        STATE.insideStruct.push(temp);
+        STATE.STRUCT_NAMES[STATE.chunk] = true;
       }
       return true;
     }
     return false;
   },
 
-  determineCollectionType: function(collectionInformation, tokens, cb) {
-    if (tokens[tokens.length - 1].value === ':') {
-      tokens[collectionInformation[collectionInformation.length - 1].location].type = 'DICTIONARY_START';
-      collectionInformation[collectionInformation.length - 1].type = 'DICTIONARY_END';
+  determineCollectionType: function(STATE, cb) {
+    if (STATE.tokens[STATE.tokens.length - 1].value === ':') {
+      STATE.tokens[STATE.insideCollection[STATE.insideCollection.length - 1].location].type = 'DICTIONARY_START';
+      STATE.insideCollection[STATE.insideCollection.length - 1].type = 'DICTIONARY_END';
     } else {
-      collectionInformation[collectionInformation.length - 1].type  = 'ARRAY_END';
+      STATE.insideCollection[STATE.insideCollection.length - 1].type  = 'ARRAY_END';
     }
     if (cb) {
       cb();
