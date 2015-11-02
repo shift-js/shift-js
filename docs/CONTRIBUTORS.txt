@@ -1,0 +1,26 @@
+# Contributions to Shift.JS in Chronological Order:
+
+* David Churchill 
+  * <https://github.com/webdevdave>
+  * <dchurchill92@gmail.com>
+  * Project Founder, Engineering Team
+
+* Rex Souter 
+  * <https://github.com/rex-en-abyme>
+  * <rex.suter@gmail.com>
+  * Project Founder, Engineering Team
+
+* Verlon Smith
+  * <https://github.com/kingedward35>
+  * <vsmith3113@gmail.com>
+  * Project Founder, Engineering Team
+
+* Don Steinert
+  * <https://github.com/Dnld>
+  * <steinert.donald@gmail.com>
+  * Project Founder, Project Owner
+  
+* Max Yazbin
+  * <https://github.com/myazhbin>
+  * <myazhbin@gmail.com>
+  * Project Founder, Scrum Master
