@@ -13,6 +13,7 @@ var swiftCode = String.raw`func any(list: [Int], condition: ((Int,String,Bool) -
                               return false
                           }`;
 
+
 var swiftCodeAnswers = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
         { type: "IDENTIFIER",                 value: "any" },

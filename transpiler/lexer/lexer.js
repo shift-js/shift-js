@@ -169,7 +169,15 @@ module.exports = function(code) {
     }
 
     //handling functions lexing
-    if (lexerFunctions.handleFunctionDeclaration(STATE)) {
+    if (lexerFunctions.handleFunctionDeclarationStart(STATE)) {
+      continue;
+    }
+
+    if (lexerFunctions.handleFunctionDeclarationInside(STATE)) {
+      continue;
+    }
+
+    if (lexerFunctions.handleFunctionDeclarationEnd(STATE)) {
       continue;
     }
 
