@@ -148,7 +148,7 @@ module.exports = function(code) {
         STATE.FUNCTION_NAMES[STATE.tokens[len].value] = true;
     }
 
-    // Handles Function Invocations
+    // Handles Function Invocations starting and ending
     if (lexerFunctions.handleFunctionInvocationStart(STATE)) {
       continue;
     }
@@ -157,9 +157,7 @@ module.exports = function(code) {
       continue;
     }
 
-    if (lexerFunctions.handleFunctionInvocationInside(STATE)) {
-      continue;
-    }
+
 
     // tuple handling
     if (lexerFunctions.checkForTupleStart(STATE)) {
@@ -176,7 +174,12 @@ module.exports = function(code) {
       continue;
     }
 
-    //handling functions lexing
+    // handling the ()'s inside of the function invocation
+    if (lexerFunctions.handleFunctionInvocationInside(STATE)) {
+      continue;
+    }
+
+    //handling functions declarations
     if (lexerFunctions.handleFunctionDeclarationStart(STATE)) {
       continue;
     }
