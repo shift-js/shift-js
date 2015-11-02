@@ -2080,7 +2080,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions that take a function specified with parentheses around an argument and parenthesis', function () {
+    it('should handle functions that take a function specified with parentheses around an argument and parenthesis', function () {
       input = String.raw`func any(list: [Int], condition: ((Int,String,Bool) -> Bool)) -> Bool {
                               for item in list {
                                   if condition(item,"abc",true) {
@@ -2130,13 +2130,12 @@ describe('Lexer: Third Milestone', function() {
         { type: "INVOCATION_START",           value: "(" },
         { type: "IDENTIFIER",                 value: "item" },
         { type: "PUNCTUATION",                value: "," },
-
+        { type: "STRING",                     value: "abc" },
         { type: "PUNCTUATION",                value: "," },
         { type: "BOOLEAN",                    value: "true" },
         { type: "INVOCATION_END",             value: ")" },
         { type: "PUNCTUATION",                value: "{" },
         { type: "TERMINATOR",                 value: "\\n"},
-        { type: "STRING",                     value: "abc" },
         { type: "STATEMENT_KEYWORD",          value: "return"},
         { type: "BOOLEAN",                    value: "true" },
         { type: "TERMINATOR",                 value: "\\n"},
