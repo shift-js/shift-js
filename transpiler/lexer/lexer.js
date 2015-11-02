@@ -140,58 +140,18 @@ module.exports = function(code) {
         continue;
     }
 
-    // Function Invocation Start
-
-    // if (lexerFunctions.handleFunctionInvocation(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) === "cb1") {
-    //   // debugger;
-    //   advanceAndClear(1);
-    //   continue;
-    // }
-
-    // if (lexerFunctions.handleFunctionInvocation(chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation) === "cb2") {
-    //   // debugger;
-    //   advanceAndClear(1);
-    //   lexerFunctions.handleEndOfFile(nextCol, tokens);
-    //   continue;
-    // }
-
-    if (STATE.chunk === '(' && ((STATE.FUNCTION_NAMES[STATE.lastToken.value] &&
-      STATE.tokens[STATE.tokens.length - 2].value !== 'func') || STATE.lastToken.type === 'NATIVE_METHOD' || STATE.lastToken.type === 'TYPE_STRING' ||
-      STATE.lastToken.type === 'TYPE_NUMBER')) {
-      lexerFunctions.checkFor('FUNCTION_INVOCATION', STATE.chunk, STATE.tokens);
-      var tmp = {};
-      tmp.name = STATE.lastToken.value;
-      tmp.status = true;
-      tmp.parens = 0;
-      STATE.insideInvocation.push(tmp);
-      STATE.advanceAndClear(1);
-      continue;
-    }
-    if (STATE.insideInvocation.length && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).status && STATE.chunk === ')' && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).parens === 0) {
-      lexerFunctions.checkFor('FUNCTION_INVOCATION', STATE.chunk, STATE.tokens);
-      var last = STATE.insideInvocation[STATE.insideInvocation.length - 1]; //may be unnecessary
-      last.status = false; //may be unnecessary since poping next
-      STATE.insideInvocation.pop();
-      STATE.advanceAndClear(1);
-      lexerFunctions.handleEndOfFile(STATE.nextCol, STATE.tokens);
-      continue;
-    }
-    if (STATE.insideInvocation.length && STATE.chunk === '(' && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).status) {
-      lexerFunctions.checkFor('PUNCTUATION', STATE.chunk, STATE.tokens);
-      var last = STATE.insideInvocation[STATE.insideInvocation.length - 1];
-      last.parens++;
-      STATE.advanceAndClear(1);
-      continue;
-    }
-    if (STATE.insideInvocation.length && STATE.chunk === ')' && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).status) {
-      lexerFunctions.checkFor('PUNCTUATION', STATE.chunk, STATE.tokens);
-      var last = STATE.insideInvocation[STATE.insideInvocation.length - 1];
-      last.parens--;
-      STATE.advanceAndClear(1);
+    // Handles Function Invocations
+    if (lexerFunctions.handleFunctionInvocationStart(STATE)) {
       continue;
     }
 
-    //Function invocation end
+    if (lexerFunctions.handleFunctionInvocationEnd(STATE)) {
+      continue;
+    }
+
+    if (lexerFunctions.handleFunctionInvocationInside(STATE)) {
+      continue;
+    }
 
     // tuple handling
     if (lexerFunctions.checkForTupleStart(STATE)) {
