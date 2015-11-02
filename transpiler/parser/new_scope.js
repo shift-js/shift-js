@@ -1,12 +1,10 @@
-var new_scope = function(params, original_scope) {
+var newScope = function(state, originalScope) {
 
-  var scope = params['scope'];
-
-  var s = scope;
-  scope = Object.create(original_scope);
-  scope.def = {};
-  scope.parent = s;
-  return scope;
+  var s = state.scope;
+  state.scope = Object.create(originalScope);
+  state.scope.def = {};
+  state.scope.parent = s;
+  return state.scope;
 };
 
-module.exports = new_scope;
+module.exports = newScope;

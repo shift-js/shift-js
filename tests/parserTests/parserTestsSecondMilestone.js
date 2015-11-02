@@ -3427,14 +3427,14 @@ describe('Parser: Second Milestone', function() {
     //                   }
     //               }`;
     /**
-    //AST Explorer input:
-    var interestingNumbers = {
+     //AST Explorer input:
+     var interestingNumbers = {
       "Prime":[2, 3, 5, 7, 11, 13],
       "Fibonacci":[1, 1, 2, 3, 5, 8],
       "Square":[1, 4, 9, 16, 25]
     };
-    var largest = 0;
-    for(var kind in interestingNumbers) {
+     var largest = 0;
+     for(var kind in interestingNumbers) {
       var numbers = interestingNumbers[kind];
       for(var number in numbers) {
         if(number > largest) {
@@ -3442,7 +3442,7 @@ describe('Parser: Second Milestone', function() {
         }
       }
     }
-    */
+     */
     it('should handle for-in loops that iterate over items in a dictionary', function () {
       input = [
         { type: 'DECLARATION_KEYWORD',         value: 'let' },
@@ -5595,4 +5595,468 @@ describe('Parser: Second Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
   });
+
+  describe('Swift #print method', function() {
+    it('should convert print to console.log base case', function() {
+      input = [
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "Hello" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "EOF" },
+      ];
+      output= {
+        "type": "Program",
+        "body": [
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+
+              "type": "CallExpression",
+              "callee": {
+
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "Literal",
+                  "value": "Hello",
+                  "raw": '"Hello"'
+                }
+              ]
+            }
+          }
+        ],
+        "sourceType": "module"
+      }
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    it('should convert print to cosole.log with multiple parentheses', function() {
+      input = [
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "NUMBER",                     value: "5" },
+        { type: "OPERATOR",                   value: "*" },
+        { type: "PUNCTUATION",                value: "(" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "OPERATOR",                   value: "+" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: ")" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+
+      output = {
+
+        "type": "Program",
+        "body": [
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "BinaryExpression",
+                  "operator": "*",
+                  "left": {
+                    "type": "Literal",
+                    "value": 5,
+                    "raw": "5"
+                  },
+                  "right": {
+                    "type": "BinaryExpression",
+                    "operator": "+",
+                    "left": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "sourceType": "module"
+
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+
+
+    /*
+     var name = "Joe";
+     var arr = [1, 2];
+     var tup = {
+     0: 1,
+     1: 2
+     };
+
+     console.log('Hello, ' + name + '');
+     console.log(5 * (1 + 1));
+     console.log(arr[1]);
+     console.log(tup[0]);
+
+     TODO BUG BUG tup.0 doesn't work but tup[0] does. Fix
+     */
+    xit('should handle calls to print multiline', function() {
+      input = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "name" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "STRING",                     value: "Joe" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "arr" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "ARRAY_START",                value: "[" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "NUMBER",                     value: "2" },
+        { type: "ARRAY_END",                  value: "]" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "tup" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "TUPLE_START",                value: "(" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "NUMBER",                     value: "2" },
+        { type: "TUPLE_END",                  value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "name" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "Hello, " },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "name" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: "" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "NUMBER",                     value: "5" },
+        { type: "OPERATOR",                   value: "*" },
+        { type: "PUNCTUATION",                value: "(" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "OPERATOR",                   value: "+" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: ")" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "arr" },
+        { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "tup" },
+        { type: "DOT_SYNTAX",                 value: "." },
+        { type: "NUMBER",                     value: "0"},
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "name"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": "Joe",
+                  "raw": "\"Joe\""
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "arr"
+                },
+                "init": {
+                  "type": "ArrayExpression",
+                  "elements": [
+                    {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 2,
+                      "raw": "2"
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "tup"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": 0,
+                        "raw": "0"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": 2,
+                        "raw": "2"
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "BinaryExpression",
+                  "operator": "+",
+                  "left": {
+                    "type": "BinaryExpression",
+                    "operator": "+",
+                    "left": {
+                      "type": "Literal",
+                      "value": "Hello, ",
+                      "raw": '"Hello, "'
+                    },
+                    "right": {
+                      "type": "Identifier",
+                      "name": "name"
+                    }
+                  },
+                  "right": {
+                    "type": "Literal",
+                    "value": "",
+                    "raw": "''"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "BinaryExpression",
+                  "operator": "*",
+                  "left": {
+                    "type": "Literal",
+                    "value": 5,
+                    "raw": "5"
+                  },
+                  "right": {
+                    "type": "BinaryExpression",
+                    "operator": "+",
+                    "left": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "MemberExpression",
+                  "computed": true,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "arr"
+                  },
+                  "property": {
+                    "type": "Literal",
+                    "value": 1,
+                    "raw": "1"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "MemberExpression",
+                  "computed": true,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "tup"
+                  },
+                  "property": {
+                    "type": "Literal",
+                    "value": 0,
+                    "raw": "0"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+  })
 });

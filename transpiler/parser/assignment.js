@@ -3,8 +3,14 @@ var infixr = require('./infixr');
 
 var assignment = function(state, id) {
   return infixr(state, id, 10, function(left) {
-    if (left.id !== "+=" && left.id !== "." && left.id !== "[" && left.type !== "name" && left.id !== "(name)") {
-      left.error("Bad lvalue.");
+    if(left.id) {
+      if (left.id !== "+=" && left.id !== "." && left.id !== "[" && left.type !== "name" && left.id !== "(name)") {
+        left.error("Bad lvalue.");
+      }
+    } else if(left.type) {
+      if(left.type !== "IDENTIFIER") {
+        left.error("Bad lvalue.");
+      }
     }
     left.type = "Identifier";
     left.name = left.value;;

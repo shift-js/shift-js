@@ -7,297 +7,163 @@ var expected = {
   "type": "Program",
   "body": [
     {
-      "type": "VariableDeclaration",
-      "declarations": [
-        {
-          "type": "VariableDeclarator",
-          "id": {
-            "type": "Identifier",
-            "name": "gameInProgress"
-          },
-          "init": {
-            "type": "Literal",
-            "value": false,
-            "raw": "false"
-          }
-        }
-      ],
-      "kind": "var"
-    },
-    {
-      "type": "VariableDeclaration",
-      "declarations": [
-        {
-          "type": "VariableDeclarator",
-          "id": {
-            "type": "Identifier",
-            "name": "score"
-          },
-          "init": {
-            "type": "Literal",
-            "value": 0,
-            "raw": "0"
-          }
-        }
-      ],
-      "kind": "var"
-    },
-    {
-      "type": "VariableDeclaration",
-      "declarations": [
-        {
-          "type": "VariableDeclarator",
-          "id": {
-            "type": "Identifier",
-            "name": "typeOfScore"
-          },
-          "init": {
-            "type": "Literal",
-            "value": "",
-            "raw": "\"\""
-          }
-        }
-      ],
-      "kind": "var"
-    },
-    {
-      "type": "VariableDeclaration",
-      "declarations": [
-        {
-          "type": "VariableDeclarator",
-          "id": {
-            "type": "Identifier",
-            "name": "PAT"
-          },
-          "init": {
-            "type": "Literal",
-            "value": "",
-            "raw": "\"\""
-          }
-        }
-      ],
-      "kind": "var"
-    },
-    {
-      "type": "WhileStatement",
-      "test": {
+      "type": "FunctionDeclaration",
+      "id": {
         "type": "Identifier",
-        "name": "gameInProgress"
+        "name": "addSevenInts"
       },
+      "params": [
+        {
+          "type": "Identifier",
+          "name": "first"
+        },
+        {
+          "type": "Identifier",
+          "name": "second"
+        },
+        {
+          "type": "Identifier",
+          "name": "third"
+        },
+        {
+          "type": "Identifier",
+          "name": "fourth"
+        },
+        {
+          "type": "Identifier",
+          "name": "fifth"
+        },
+        {
+          "type": "Identifier",
+          "name": "sixth"
+        },
+        {
+          "type": "Identifier",
+          "name": "seventh"
+        }
+      ],
+      "defaults": [],
       "body": {
         "type": "BlockStatement",
         "body": [
           {
-            "type": "IfStatement",
-            "test": {
-              "type": "BinaryExpression",
-              "operator": "!=",
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
               "left": {
                 "type": "Identifier",
-                "name": "typeOfScore"
+                "name": "sum"
               },
               "right": {
-                "type": "Literal",
-                "value": "",
-                "raw": "\"\""
-              }
-            },
-            "consequent": {
-              "type": "BlockStatement",
-              "body": [
-                {
-                  "type": "IfStatement",
-                  "test": {
+                "type": "BinaryExpression",
+                "operator": "+",
+                "left": {
+                  "type": "BinaryExpression",
+                  "operator": "+",
+                  "left": {
                     "type": "BinaryExpression",
-                    "operator": "==",
+                    "operator": "+",
                     "left": {
-                      "type": "Identifier",
-                      "name": "typeOfScore"
-                    },
-                    "right": {
-                      "type": "Literal",
-                      "value": "TD",
-                      "raw": "\"TD\""
-                    }
-                  },
-                  "consequent": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                          "type": "AssignmentExpression",
-                          "operator": "+=",
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "BinaryExpression",
+                        "operator": "+",
+                        "left": {
+                          "type": "BinaryExpression",
+                          "operator": "+",
                           "left": {
                             "type": "Identifier",
-                            "name": "score"
+                            "name": "first"
                           },
                           "right": {
-                            "type": "Literal",
-                            "value": 6,
-                            "raw": "6"
+                            "type": "Identifier",
+                            "name": "second"
                           }
-                        }
-                      }
-                    ]
-                  },
-                  "alternate": {
-                    "type": "IfStatement",
-                    "test": {
-                      "type": "BinaryExpression",
-                      "operator": "==",
-                      "left": {
-                        "type": "Identifier",
-                        "name": "typeOfScore"
-                      },
-                      "right": {
-                        "type": "Literal",
-                        "value": "PAT",
-                        "raw": "\"PAT\""
-                      }
-                    },
-                    "consequent": {
-                      "type": "BlockStatement",
-                      "body": [
-                        {
-                          "type": "IfStatement",
-                          "test": {
-                            "type": "BinaryExpression",
-                            "operator": "==",
-                            "left": {
-                              "type": "Identifier",
-                              "name": "PAT"
-                            },
-                            "right": {
-                              "type": "Literal",
-                              "value": "TD",
-                              "raw": "\"TD\""
-                            }
-                          },
-                          "consequent": {
-                            "type": "BlockStatement",
-                            "body": [
-                              {
-                                "type": "ExpressionStatement",
-                                "expression": {
-                                  "type": "AssignmentExpression",
-                                  "operator": "+=",
-                                  "left": {
-                                    "type": "Identifier",
-                                    "name": "score"
-                                  },
-                                  "right": {
-                                    "type": "Literal",
-                                    "value": 2,
-                                    "raw": "2"
-                                  }
-                                }
-                              }
-                            ]
-                          },
-                          "alternate": {
-                            "type": "BlockStatement",
-                            "body": [
-                              {
-                                "type": "ExpressionStatement",
-                                "expression": {
-                                  "type": "AssignmentExpression",
-                                  "operator": "+=",
-                                  "left": {
-                                    "type": "Identifier",
-                                    "name": "score"
-                                  },
-                                  "right": {
-                                    "type": "Literal",
-                                    "value": 1,
-                                    "raw": "1"
-                                  }
-                                }
-                              }
-                            ]
-                          }
-                        }
-                      ]
-                    },
-                    "alternate": {
-                      "type": "IfStatement",
-                      "test": {
-                        "type": "BinaryExpression",
-                        "operator": "==",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "typeOfScore"
                         },
                         "right": {
-                          "type": "Literal",
-                          "value": "FG",
-                          "raw": "\"FG\""
+                          "type": "Identifier",
+                          "name": "third"
                         }
                       },
-                      "consequent": {
-                        "type": "BlockStatement",
-                        "body": [
-                          {
-                            "type": "ExpressionStatement",
-                            "expression": {
-                              "type": "AssignmentExpression",
-                              "operator": "+=",
-                              "left": {
-                                "type": "Identifier",
-                                "name": "score"
-                              },
-                              "right": {
-                                "type": "Literal",
-                                "value": 3,
-                                "raw": "3"
-                              }
-                            }
-                          }
-                        ]
-                      },
-                      "alternate": {
-                        "type": "BlockStatement",
-                        "body": [
-                          {
-                            "type": "ExpressionStatement",
-                            "expression": {
-                              "type": "AssignmentExpression",
-                              "operator": "+=",
-                              "left": {
-                                "type": "Identifier",
-                                "name": "score"
-                              },
-                              "right": {
-                                "type": "Literal",
-                                "value": 2,
-                                "raw": "2"
-                              }
-                            }
-                          }
-                        ]
+                      "right": {
+                        "type": "Identifier",
+                        "name": "fourth"
                       }
-                    }
-                  }
-                },
-                {
-                  "type": "ExpressionStatement",
-                  "expression": {
-                    "type": "AssignmentExpression",
-                    "operator": "=",
-                    "left": {
-                      "type": "Identifier",
-                      "name": "typeOfScore"
                     },
                     "right": {
-                      "type": "Literal",
-                      "value": "",
-                      "raw": "\"\""
+                      "type": "Identifier",
+                      "name": "fifth"
                     }
+                  },
+                  "right": {
+                    "type": "Identifier",
+                    "name": "sixth"
                   }
+                },
+                "right": {
+                  "type": "Identifier",
+                  "name": "seventh"
                 }
-              ]
-            },
-            "alternate": null
+              }
+            }
+          },
+          {
+            "type": "ReturnStatement",
+            "argument": {
+              "type": "Identifier",
+              "name": "sum"
+            }
+          }
+        ]
+      },
+      "generator": false,
+      "expression": false
+    },
+    {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "CallExpression",
+        "callee": {
+          "type": "Identifier",
+          "name": "addSevenInts"
+        },
+        "arguments": [
+          {
+            "type": "Literal",
+            "value": 143242134,
+            "raw": "143242134"
+          },
+          {
+            "type": "Literal",
+            "value": 34543,
+            "raw": "34543"
+          },
+          {
+            "type": "Literal",
+            "value": 4,
+            "raw": "4"
+          },
+          {
+            "type": "Literal",
+            "value": 6,
+            "raw": "6"
+          },
+          {
+            "type": "Literal",
+            "value": 0,
+            "raw": "0"
+          },
+          {
+            "type": "Literal",
+            "value": 56,
+            "raw": "56"
+          },
+          {
+            "type": "Literal",
+            "value": 5,
+            "raw": "5"
           }
         ]
       }
@@ -305,141 +171,101 @@ var expected = {
   ],
   "sourceType": "module"
 };
+
+
 var tokenStream = [
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'DECLARATION_KEYWORD',         value: 'var' },
-  { type: 'IDENTIFIER',                  value: 'gameInProgress' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'BOOLEAN',                     value: 'false' },
-  { type: 'PUNCTUATION',                 value: ';' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'DECLARATION_KEYWORD',         value: 'var' },
-  { type: 'IDENTIFIER',                  value: 'score' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'NUMBER',                      value: '0' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'DECLARATION_KEYWORD',         value: 'var' },
-  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'STRING',                      value: '' },
-  { type: 'PUNCTUATION',                 value: ';' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'DECLARATION_KEYWORD',         value: 'var' },
-  { type: 'IDENTIFIER',                  value: 'PAT' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'STRING',                      value: '' },
-  { type: 'PUNCTUATION',                 value: ';' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'STATEMENT_KEYWORD',           value: 'while' },
-  { type: 'IDENTIFIER',                  value: 'gameInProgress' },
-  { type: 'PUNCTUATION',                 value: '{' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'STATEMENT_KEYWORD',           value: 'if' },
-  { type: 'PUNCTUATION',                 value: '(' },
-  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
-  { type: 'OPERATOR',                    value: '!' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'STRING',                      value: '' },
-  { type: 'PUNCTUATION',                 value: ')' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'PUNCTUATION',                 value: '{' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'STATEMENT_KEYWORD',           value: 'if' },
-  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'STRING',                      value: 'TD' },
-  { type: 'PUNCTUATION',                 value: '{' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'IDENTIFIER',                  value: 'score' },
-  { type: 'OPERATOR',                    value: '+' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'NUMBER',                      value: '6' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'PUNCTUATION',                 value: '}' },
-  { type: 'STATEMENT_KEYWORD',           value: 'else' },
-  { type: 'STATEMENT_KEYWORD',           value: 'if' },
-  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'STRING',                      value: 'PAT' },
-  { type: 'PUNCTUATION',                 value: '{' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'STATEMENT_KEYWORD',           value: 'if' },
-  { type: 'IDENTIFIER',                  value: 'PAT' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'STRING',                      value: 'TD' },
-  { type: 'PUNCTUATION',                 value: '{' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'IDENTIFIER',                  value: 'score' },
-  { type: 'OPERATOR',                    value: '+' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'NUMBER',                      value: '2' },
-  { type: 'PUNCTUATION',                 value: ';' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'PUNCTUATION',                 value: '}' },
-  { type: 'STATEMENT_KEYWORD',           value: 'else' },
-  { type: 'PUNCTUATION',                 value: '{' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'IDENTIFIER',                  value: 'score' },
-  { type: 'OPERATOR',                    value: '+' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'NUMBER',                      value: '1' },
-  { type: 'PUNCTUATION',                 value: ';' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'PUNCTUATION',                 value: '}' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'PUNCTUATION',                 value: '}' },
-  { type: 'STATEMENT_KEYWORD',           value: 'else' },
-  { type: 'STATEMENT_KEYWORD',           value: 'if' },
-  { type: 'PUNCTUATION',                 value: '(' },
-  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'STRING',                      value: 'FG' },
-  { type: 'PUNCTUATION',                 value: ')' },
-  { type: 'PUNCTUATION',                 value: '{' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'IDENTIFIER',                  value: 'score' },
-  { type: 'OPERATOR',                    value: '+' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'NUMBER',                      value: '3' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'PUNCTUATION',                 value: '}' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'STATEMENT_KEYWORD',           value: 'else' },
-  { type: 'PUNCTUATION',                 value: '{' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'IDENTIFIER',                  value: 'score' },
-  { type: 'OPERATOR',                    value: '+' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'NUMBER',                      value: '2' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'PUNCTUATION',                 value: '}' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'IDENTIFIER',                  value: 'typeOfScore' },
-  { type: 'OPERATOR',                    value: '=' },
-  { type: 'STRING',                      value: '' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'PUNCTUATION',                 value: '}' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'PUNCTUATION',                 value: '}' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: '\\n' },
-  { type: 'TERMINATOR',                  value: 'EOF' }
+  { type: "DECLARATION_KEYWORD",        value: "func"},
+  { type: "IDENTIFIER",                 value: "addSevenInts" },
+  { type: "PARAMS_START",               value: "(" },
+  { type: "IDENTIFIER",                 value: "first" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "TYPE_NUMBER",                value: "Int" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "second" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "TYPE_NUMBER",                value: "Int" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "third" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "TYPE_NUMBER",                value: "Int" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "fourth" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "TYPE_NUMBER",                value: "Int" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "fifth" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "TYPE_NUMBER",                value: "Int" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "sixth" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "TYPE_NUMBER",                value: "Int" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "seventh" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "TYPE_NUMBER",                value: "Int" },
+  { type: "PARAMS_END",                 value: ")" },
+  { type: "RETURN_ARROW",               value: "->" },
+
+  { type: "TYPE_NUMBER",                value: "Int" },
+  { type: "STATEMENTS_START",           value: "{" },
+  { type: "TERMINATOR",                 value: "\\n"},
+
+  { type: "DECLARATION_KEYWORD",        value: "let" },
+  { type: "IDENTIFIER",                 value: "sum" },
+  { type: "OPERATOR",                   value: "=" },
+  { type: "IDENTIFIER",                 value: "first" },
+  { type: "OPERATOR",                   value: "+" },
+  { type: "IDENTIFIER",                 value: "second" },
+  { type: "OPERATOR",                   value: "+" },
+  { type: "IDENTIFIER",                 value: "third" },
+  { type: "OPERATOR",                   value: "+" },
+  { type: "IDENTIFIER",                 value: "fourth" },
+  { type: "OPERATOR",                   value: "+" },
+  { type: "IDENTIFIER",                 value: "fifth" },
+  { type: "OPERATOR",                   value: "+" },
+  { type: "IDENTIFIER",                 value: "sixth" },
+  { type: "OPERATOR",                   value: "+" },
+  { type: "IDENTIFIER",                 value: "seventh" },
+  { type: "TERMINATOR",                 value: "\\n"},
+
+  { type: "STATEMENT_KEYWORD",          value: "return"},
+  { type: "IDENTIFIER",                 value: "sum" },
+  { type: "TERMINATOR",                 value: "\\n"},
+
+  { type: "STATEMENTS_END",             value: "}" },
+  { type: "TERMINATOR",                 value: "\\n"},
+
+  { type: "IDENTIFIER",                 value: "addSevenInts" },
+  { type: "INVOCATION_START",           value: "(" },
+  { type: "NUMBER",                     value: "143242134" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "second" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "NUMBER",                     value: "34543" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "third" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "NUMBER",                     value: "4" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "fourth" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "NUMBER",                     value: "6" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "fifth" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "NUMBER",                     value: "0" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "sixth" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "NUMBER",                     value: "56" },
+  { type: "PUNCTUATION",                value: "," },
+  { type: "IDENTIFIER",                 value: "seventh" },
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "NUMBER",                     value: "5" },
+  { type: "INVOCATION_END",             value: ")" },
+  { type: "TERMINATOR",                 value: "EOF"}
+
 ];
 var parser = makeParse();
 
@@ -469,8 +295,7 @@ console.log("########## DIFF ############");
 var dfrnc = diff(actual,expected);
 console.log(dfrnc);
 
-var escodegen = require('escodegen');
-
+//var escodegen = require('escodegen');
 //console.log('JSJSJSJSJSJSJSJSJSJSJSJSJSJSJS');
 //console.log(escodegen.generate(expected));
 //console.log('JSJSJSJSJSJSJSJSJSJSJSJSJSJSJS');

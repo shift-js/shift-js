@@ -16,6 +16,9 @@ var originalScope = {
     n.scope = scope;
     return n;
   },
+  delete: function(state, n) {
+    delete this.def[n.value];
+  },
   find: function(n, symbolTable) {
     var e = this,
       o;
