@@ -10,8 +10,9 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
   var left;
   var t = state.token;
   state = advance(state);
-  //console.log(t);
   left = t.nud();
+
+
 
   if (t.value === "++" || t.value === "--") {
     /*Pre-fix operator*/
@@ -60,7 +61,6 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
    * Logic to handle the recursive case
    */
   while (rbp < state.token.lbp) {
-    var overwrittenMemberExpression = left;//TODO delete
     t = state.token;
     state = advance(state);
     left = t.led(left);//assignments
@@ -108,15 +108,27 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
       expressionStmtNode.expression = left;
       left = expressionStmtNode;
     }
-
   } else if (left.operator === "===") {
     //TODO
+  } else if (t.value === ".") {
+    state = advance(state);
   }
-  //else if (left.type === "AssignmentExpression") {
-  //  //left.left = overwrittenMemberExpression;
-  //  left.left.type = "MemberExpression";
-  //  delete left.left.name;
-  //}
+  else if (left.type === "INVOCATION_START") {
+    delete left.value;
+    left.type = "CallExpression";
+    left.callee = left.object;
+    delete left.object;
+    if(left.callee.type === "IDENTIFIER") {
+      left.callee.type = "Identifier";
+      left.callee.name = left.callee.value;
+      delete left.callee.value;
+    }
+    var wrapper = {
+      type: "ExpressionStatement",
+      expression: left
+    };
+    left = wrapper;
+  }
 
   return left;
 };

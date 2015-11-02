@@ -28,8 +28,12 @@ module.exports = {
     "INVOCATION_END",
     "PUNCTUATION",
     "OPERATOR",
+    "SUBSTRING_LOOKUP_END",
+    "SUBSTRING_LOOKUP_START",
+    "SUBSCRIPT_LOOKUP_START",
     "SUBSCRIPT_LOOKUP_END",
-    "SUBSCRIPT_LOOKUP_START"
+    "DOT_SYNTAX"
+
   ],
   noun : [
     "DECLARATION_KEYWORD",
@@ -38,14 +42,15 @@ module.exports = {
     "STATEMENT_KEYWORD",
     "TYPE_BOOLEAN",
     "TYPE_NUMBER",
-    "TYPE_STRING"
+    "TYPE_STRING",
+    "RETURN_ARROW"
   ],
   comment : [
     "COMMENT_START",
     "COMMENT",
     "MULTI_LINE_COMMENT_START",
     "MULTI_LINE_COMMENT_END"
-  ]
+  ]//INVOCATION_START//INVOCATION_END
 };
 
 

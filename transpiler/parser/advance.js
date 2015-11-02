@@ -23,7 +23,7 @@ var advance = function(state, id) {
   a = t.type;
 
   if (tokenTypes.noun.hasItem(a)) {
-    if (a === "DECLARATION_KEYWORD") {
+    if (a === "DECLARATION_KEYWORD" && (v === "var" || v === "let")) {
       v = "var";
     }
     o = state.scope.find(v, state.symbolTable);

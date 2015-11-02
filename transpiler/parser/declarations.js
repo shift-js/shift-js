@@ -22,7 +22,7 @@ var declarations = {
     symbol(state, originalSymbol, "\n");
     symbol(state, originalSymbol, "\\n");
     symbol(state, originalSymbol, "(end)");
-    symbol(state, originalSymbol, "(name)");
+    symbol(state, originalSymbol, "(name)").nud = helpers.itself;
     symbol(state, originalSymbol, ":");
     symbol(state, originalSymbol, ";");
     symbol(state, originalSymbol, ")");
@@ -77,17 +77,18 @@ var declarations = {
     infix(state, "*", 60);
     infix(state, "/", 60);
     infix(state, "%", 60);
-    //infix(state, ".", 80, function(left) {
-    //  this.first = left;
-    //  if (state.token.type !== "name") {
-    //    state.token.error("Expected a property name.");
-    //  }
-    //  state.token.type = "literal";
-    //  this.second = state.token;
-    //  state.type = "binary";
-    //  state = advance(state);
-    //  return state;
-    //});
+
+    infix(state, ".", 80, function(left) {
+      this.first = left;
+      if (state.token.type !== "IDENTIFIER") {
+        state.token.error("Expected a property name.");
+      }
+      state.token.arity = "literal";
+      this.second = state.token;
+      this.arity = "binary";
+      state = advance(state);
+      return this;
+    });
 
     infix(state, "[", 80, function(left) {
       this.type = "MemberExpression";
@@ -104,35 +105,58 @@ var declarations = {
       return this;
     });
 
-    //infix(state, "(", 80, function(left) {
-    //  var a = [];
-    //  if (left.id === "." || left.id === "[") {
-    //    this.type = "ternary";
-    //    this.first = left.first;
-    //    this.second = left.second;
-    //    this.third = a;
-    //  } else {
-    //    this.type = "binary";
-    //    this.first = left;
-    //    this.second = a;
-    //    if ((left.type !== "unary" || left.id !== "function") &&
-    //      left.type !== "name" && left.id !== "(" &&
-    //      left.id !== "&&" && left.id !== "||" && left.id !== "?") {
-    //      left.error("Expected a variable name.");
-    //    }
-    //  }
-    //  if (state.token.id !== ")") {
-    //    while (true) {
-    //      a.push(expression(state, 0));
-    //      if (state.token.id !== ",") {
-    //        break;
-    //      }
-    //      state = advance(state, ",");
-    //    }
-    //  }
-    //  state = advance(state, ")");
-    //  return this;
-    //});
+    infix(state, "(", 80, function(left) {
+      var a = [], parentParentNode;
+      if (left.id === "." || left.id === "[") {
+        this.type = "MemberExpression";
+        this.computed = false;
+        delete this.value;
+        this.object = left.first;
+        this.object.name = this.object.value;
+        delete this.object.value;
+        this.object.type = "Identifier";
+        this.property = left.second;
+        this.property.name = this.property.value;
+        delete this.property.value;
+        this.property.type = "Identifier";
+        delete this.property.arity;
+
+        parentParentNode = {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'CallExpression',
+            callee: this,
+            arguments: a
+          }
+        };
+      } else {
+        this.object = left;
+        this.arguments = a;
+        if ((left.arity !== "unary" || left.id !== "function") &&
+          left.type !== "IDENTIFIER" && left.id !== "(" &&
+          left.id !== "&&" && left.id !== "||" && left.id !== "?") {
+          left.error("Expected a variable name.");
+        }
+
+        parentParentNode = this;
+
+      }
+
+      /*TODO add logic checking for invocation parameter naming, ex (day: "Tuesday")*/
+      // Are swift params order dependent??
+
+      if (state.token.id !== ")") {
+        while (true) {
+          a.push(expression(state, 0));
+          if (state.token.id !== ",") {
+            break;
+          }
+          state = advance(state, ",");
+        }
+      }
+      state = advance(state, ")");
+      return parentParentNode;
+    });
   },
 
   prefixes: function(state) {
@@ -149,36 +173,106 @@ var declarations = {
       return e;
     });
 
-    prefix(state, "function", function() {
+    prefix(state, "func", function() {
       var a = [];
       state.scope = newScope(state, originalScope);
-      if (state.token.type === "name") {
-        state.scope.define(token);
+      if (state.token.type === "IDENTIFIER") {
+        state.scope.define(state, state.token);
         this.name = state.token.value;
         state = advance(state);
       }
       state = advance(state, "(");
       if (state.token.id !== ")") {
         while (true) {
-          if (state.token.type !== "name") {
+          if(state.token.value === "var") {
+            state = advance(state);
+          }
+          if (state.token.type !== "IDENTIFIER") {
             state.token.error("Expected a parameter name.");
           }
-          state.scope.define(token);
+          state.scope.define(state, state.token);
+          state.token.type = "Identifier";
+          state.token.name = state.token.value;
+          delete state.token.value;
+
           a.push(state.token);
           state = advance(state);
+          if (state.token.id === ":") {
+            state = advance(state);
+            state = advance(state);
+          }
           if (state.token.id !== ",") {
             break;
           }
           state = advance(state, ",");
         }
       }
-      this.first = a;
+
       state = advance(state, ")");
+      if(state.token.value === "->") {
+        state = advance(state);
+        state = advance(state);
+      }
+
       state = advance(state, "{");
-      this.second = statements();
+
+      while(true) {
+        if(state.token.value === "\\n") {
+          state = advance(state);
+        } else {
+          break;
+        }
+      }
+
+      /* TODO Hacky solution to 'let a = a + 1' when a has already been defined as a parameter to function signature. */
+
+      var tmpLookAhead = state.tokens[state.index];
+      if(state.token.value === "var") {
+        for(var p=0; p<a.length; p++) {
+          var param = a[p];
+          var paramIdentity = param.name;
+          if(tmpLookAhead.value === paramIdentity) {
+            //TODO delete item from scope so it can be re-added
+            state.scope.delete(state, tmpLookAhead);
+            // remove var token from tokens array
+            state.tokens.splice(state.index - 1, 1);
+
+            var t = state.tokens[state.index - 1];
+            var tmpVar = state.scope.find(t.value, state.symbolTable);
+            var tmpSymb = Object.create(tmpVar);
+            tmpSymb.value = t.value;
+            tmpSymb.type = t.type;
+            state.token = tmpSymb;
+          }
+        }
+      }
+
+      var fnBody = statements(state);
+
+      while(true) {
+        if(state.token.value === "\\n") {
+          state = advance(state);
+        } else {
+          break;
+        }
+      }
+
       state = advance(state, "}");
-      this.type = "function";
-      scope.pop();
+
+      var fnBodyArray = Array.isArray(fnBody) ? fnBody : [fnBody];
+      this.type = "FunctionDeclaration";
+      delete this.value;
+      this.id = { type: "Identifier", name: this.name };
+      delete this.name;
+      this.params = a;
+      this.defaults = [];
+      this.body = {
+        type: 'BlockStatement',
+        body: fnBodyArray
+      };
+      this.generator = false;
+      this.expression = false;
+      state.scope.pop();
       return this;
     });
 
@@ -212,6 +306,11 @@ var declarations = {
           break;
         }
       }
+
+      /**
+       * Currently only handles collections
+       * TODO Extend to also include function bodies?
+       */
 
       var tmpLookAhead = state.tokens[state.index];
       if(tmpLookAhead.type === "DICTIONARY_END") {
@@ -470,7 +569,7 @@ var declarations = {
     stmt(state, "if", function() {
 
       /* Determine whether the conditional for this
-         if statement is surrounded by parentheses */
+       if statement is surrounded by parentheses */
       var parenthetical = false;
       var allTokens = state.tokens.slice();
       var indexOfNextToken = state.index;
@@ -516,24 +615,53 @@ var declarations = {
       return this;
     });
 
-    //stmt("return", function() {
-    //  if (state.token.id !== ";") {
-    //    this.first = expression(state, 0);
-    //  }
-    //  state = advance(state, ";");
-    //  if (state.token.id !== "}") {
-    //    state.token.error("Unreachable statement.");
-    //  }
-    //  return this;
-    //});
+    stmt(state, "return", function() {
 
-    //stmt("break", function() {
-    //  state = advance(state, ";");
-    //  if (state.token.id !== "}") {
-    //    state.token.error("Unreachable statement.");
-    //  }
-    //  return this;
-    //});
+      if (state.token.id !== ";") {
+        this.argument = expression(state, 0);
+      }
+
+      while(true) {
+        if(state.token.value === "\\n") {
+          state = advance(state);
+        } else {
+          break;
+        }
+      }
+
+      if(state.token.id === ";") {
+        state = advance(state, ";");
+      }
+
+      while(true) {
+        if(state.token.value === "\\n") {
+          state = advance(state);
+        } else {
+          break;
+        }
+      }
+
+      if (state.token.id !== "}") {
+        state.token.error("Unreachable statement.");
+      }
+
+      this.type = "ReturnStatement";
+      delete this.value;
+
+      if(this.argument.type === "ExpressionStatement" && this.argument.expression.type === "CallExpression") {
+        this.argument = this.argument.expression;
+      }
+
+      return this;
+    });
+
+    stmt(state, "break", function() {
+      state = advance(state, ";");
+      if (state.token.id !== "}") {
+        state.token.error("Unreachable statement.");
+      }
+      return this;
+    });
 
     stmt(state, "while", function() {
       this.type = "WhileStatement";

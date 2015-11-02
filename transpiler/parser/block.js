@@ -12,9 +12,7 @@ var block = function(state) {
   /* Logic as to whether statement node needs a parent node wrapper */
   if(Array.isArray(stdReturnVal)) {
     blockStmtChildNode = stdReturnVal;
-  } else if(stdReturnVal.type === "IfStatement") {
-    blockStmtChildNode = stdReturnVal;
-  } else if(stdReturnVal.type === "ForStatement") {
+  } else if(["IfStatement", "ReturnStatement", "ForStatement"].hasItem(stdReturnVal.type)) {
     blockStmtChildNode = stdReturnVal;
   } else if(stdReturnVal.type !== "ExpressionStatement") {
     blockStmtChildNode = {

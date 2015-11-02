@@ -10,20 +10,22 @@ describe('Parser: Third Milestone', function() {
     parser = makeParser();
   });
 
-  xdescribe('Functions', function() {
+  describe('Functions', function() {
 
     // input = String.raw`func someFunction(var a: Int) -> Int {
     //                         a = a + 1;
     //                         return a;
     //                     }
     //                     someFunction(5);`;
-    // AST Explorer input:
-    // var someFunction = function(a) {
-    //   a = a + 1;
-    //   return a;
-    // }
-    // someFunction(5);
-    xit('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
+    //
+    /** AST Explorer input:
+     function someFunction(a) {
+      a = a + 1;
+      return a;
+    }
+     someFunction(5);
+     */
+    it('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "func"},
         { type: "IDENTIFIER",           value: "someFunction" },
@@ -56,71 +58,61 @@ describe('Parser: Third Milestone', function() {
         { type: "INVOCATION_END",       value: ")" },
         { type: "PUNCTUATION",          value: ";" },
         { type: "TERMINATOR",           value: "EOF"}
-      ]
+      ];
       output = {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "someFunction"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "someFunction"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "a"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                          "type": "AssignmentExpression",
-                          "operator": "=",
-                          "left": {
-                            "type": "Identifier",
-                            "name": "a"
-                          },
-                          "right": {
-                            "type": "BinaryExpression",
-                            "operator": "+",
-                            "left": {
-                              "type": "Identifier",
-                              "name": "a"
-                            },
-                            "right": {
-                              "type": "Literal",
-                              "value": 1,
-                              "raw": "1"
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Identifier",
-                          "name": "a"
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
-                }
+                "type": "Identifier",
+                "name": "a"
               }
             ],
-            "kind": "var"
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "a"
+                    },
+                    "right": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "Identifier",
+                        "name": "a"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "a"
+                  }
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
             "type": "ExpressionStatement",
@@ -146,17 +138,18 @@ describe('Parser: Third Milestone', function() {
     });
 
     // input = String.raw`func someFunction(a: Int)->Int{
-    //                           let a = a + 1;
+    //                           a = a + 1;
     //                           return a
     //                       }
     //                       someFunction(5);`;
-    // AST Explorer input:
-    // var someFunction = function(a) {
-    //   a = a + 1;
-    //   return a;
-    // }
-    // someFunction(5);
-    xit('should handle function declaration and invocation with no spacing', function() {
+    /** AST Explorer input:
+     function someFunction(a) {
+      a = a + 1;
+      return a;
+    }
+     someFunction(5);
+     */
+    it('should handle function declaration and invocation with no spacing', function() {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "func"},
         { type: "IDENTIFIER",           value: "someFunction" },
@@ -169,7 +162,6 @@ describe('Parser: Third Milestone', function() {
         { type: "TYPE_NUMBER",          value: "Int" },
         { type: "STATEMENTS_START",     value: "{" },
         { type: "TERMINATOR",           value: "\\n"},
-        { type: "DECLARATION_KEYWORD",  value: "let"},
         { type: "IDENTIFIER",           value: "a" },
         { type: "OPERATOR",             value: "=" },
         { type: "IDENTIFIER",           value: "a" },
@@ -193,66 +185,56 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "someFunction"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "someFunction"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "a"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                          "type": "AssignmentExpression",
-                          "operator": "=",
-                          "left": {
-                            "type": "Identifier",
-                            "name": "a"
-                          },
-                          "right": {
-                            "type": "BinaryExpression",
-                            "operator": "+",
-                            "left": {
-                              "type": "Identifier",
-                              "name": "a"
-                            },
-                            "right": {
-                              "type": "Literal",
-                              "value": 1,
-                              "raw": "1"
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Identifier",
-                          "name": "a"
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
-                }
+                "type": "Identifier",
+                "name": "a"
               }
             ],
-            "kind": "var"
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "a"
+                    },
+                    "right": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "Identifier",
+                        "name": "a"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "a"
+                  }
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
             "type": "ExpressionStatement",
@@ -282,13 +264,14 @@ describe('Parser: Third Milestone', function() {
     //                         return a
     //                     }
     //                     someFunction(5);`
-    // AST Explorer input:
-    // var someFunction = function(a) {
-    //   a = a + 1;
-    //   return a;
-    // }
-    // someFunction(5);
-    xit('should handle function declaration and invocation with spaces between each part of the declaration', function() {
+    /** AST Explorer input:
+     var someFunction = function(a) {
+      a = a + 1;
+      return a;
+    }
+     someFunction(5);
+     */
+    it('should handle function declaration and invocation with spaces between each part of the declaration', function() {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "func"},
         { type: "IDENTIFIER",           value: "someFunction" },
@@ -325,66 +308,56 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "someFunction"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "someFunction"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "a"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                          "type": "AssignmentExpression",
-                          "operator": "=",
-                          "left": {
-                            "type": "Identifier",
-                            "name": "a"
-                          },
-                          "right": {
-                            "type": "BinaryExpression",
-                            "operator": "+",
-                            "left": {
-                              "type": "Identifier",
-                              "name": "a"
-                            },
-                            "right": {
-                              "type": "Literal",
-                              "value": 1,
-                              "raw": "1"
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Identifier",
-                          "name": "a"
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
-                }
+                "type": "Identifier",
+                "name": "a"
               }
             ],
-            "kind": "var"
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "a"
+                    },
+                    "right": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "Identifier",
+                        "name": "a"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "a"
+                  }
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
             "type": "ExpressionStatement",
@@ -414,13 +387,14 @@ describe('Parser: Third Milestone', function() {
     //                                   return a
     //                               }
     //                               someFunction(5);`;
-    // AST Explorer input:
-    // var someFunction = function(a) {
-    //   a = a + 1;
-    //   return a;
-    // }
-    // someFunction(5);
-    xit('should handle function declaration and invocation with no space after the function name', function() {
+    /** AST Explorer input:
+     var someFunction = function(a) {
+      a = a + 1;
+      return a;
+    }
+     someFunction(5);
+     */
+    it('should handle function declaration and invocation with no space after the function name', function() {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "func"},
         { type: "IDENTIFIER",           value: "someFunction" },
@@ -457,66 +431,56 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "someFunction"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "someFunction"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "a"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                          "type": "AssignmentExpression",
-                          "operator": "=",
-                          "left": {
-                            "type": "Identifier",
-                            "name": "a"
-                          },
-                          "right": {
-                            "type": "BinaryExpression",
-                            "operator": "+",
-                            "left": {
-                              "type": "Identifier",
-                              "name": "a"
-                            },
-                            "right": {
-                              "type": "Literal",
-                              "value": 1,
-                              "raw": "1"
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Identifier",
-                          "name": "a"
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
-                }
+                "type": "Identifier",
+                "name": "a"
               }
             ],
-            "kind": "var"
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "a"
+                    },
+                    "right": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "Identifier",
+                        "name": "a"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "a"
+                  }
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
             "type": "ExpressionStatement",
@@ -546,145 +510,14 @@ describe('Parser: Third Milestone', function() {
     //                         return a
     //                     }
     //                     someFunction(5);`
-    // AST Explorer input:
-    // var someFunction = function(a) {
-    //   a = a + 1;
-    //   return a;
-    // }
-    // someFunction(5);
-    xit('should handle function declaration and invocation with no space after the parameter declaration', function() {
-      input = [
-       { type: "DECLARATION_KEYWORD",  value: "func"},
-       { type: "IDENTIFIER",           value: "someFunction" },
-       { type: "PARAMS_START",         value: "(" },
-       { type: "IDENTIFIER",           value: "a" },
-       { type: "PUNCTUATION",          value: ":" },
-       { type: "TYPE_NUMBER",          value: "Int" },
-       { type: "PARAMS_END",           value: ")" },
-       { type: "RETURN_ARROW",         value: "->" },
-       { type: "TYPE_NUMBER",          value: "Int" },
-       { type: "STATEMENTS_START",     value: "{" },
-       { type: "TERMINATOR",           value: "\\n"},
-       { type: "DECLARATION_KEYWORD",  value: "let"},
-       { type: "IDENTIFIER",           value: "a" },
-       { type: "OPERATOR",             value: "=" },
-       { type: "IDENTIFIER",           value: "a" },
-       { type: "OPERATOR",             value: "+" },
-       { type: "NUMBER",               value: "1" },
-       { type: "PUNCTUATION",          value: ";" },
-       { type: "TERMINATOR",           value: "\\n"},
-       { type: "STATEMENT_KEYWORD",    value: "return"},
-       { type: "IDENTIFIER",           value: "a" },
-       { type: "TERMINATOR",           value: "\\n"},
-       { type: "STATEMENTS_END",       value: "}"},
-       { type: "TERMINATOR",           value: "\\n"},
-       { type: "IDENTIFIER",           value: "someFunction" },
-       { type: "INVOCATION_START",     value: "(" },
-       { type: "NUMBER",               value: "5" },
-       { type: "INVOCATION_END",       value: ")" },
-       { type: "PUNCTUATION",          value: ";" },
-       { type: "TERMINATOR",           value: "EOF"}
-      ]
-      output = {
-        "type": "Program",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "someFunction"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "a"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                          "type": "AssignmentExpression",
-                          "operator": "=",
-                          "left": {
-                            "type": "Identifier",
-                            "name": "a"
-                          },
-                          "right": {
-                            "type": "BinaryExpression",
-                            "operator": "+",
-                            "left": {
-                              "type": "Identifier",
-                              "name": "a"
-                            },
-                            "right": {
-                              "type": "Literal",
-                              "value": 1,
-                              "raw": "1"
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Identifier",
-                          "name": "a"
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "CallExpression",
-              "callee": {
-                "type": "Identifier",
-                "name": "someFunction"
-              },
-              "arguments": [
-                {
-                  "type": "Literal",
-                  "value": 5,
-                  "raw": "5"
-                }
-              ]
-            }
-          }
-        ],
-        "sourceType": "module"
-      };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
-    // input = String.raw`func  someFunction(a: Int)           ->  Int{
-    //                         let a = a +               1;
-    //                         return                                  a
-    //                     }
-    //                     someFunction           (5)       ;`;
-    // AST Explorer input:
-    // var someFunction = function(a) {
-    //   a = a + 1;
-    //   return a;
-    // }
-    // someFunction(5);
-    xit('should handle function declaration and invocation with erratic spacing', function() {
+    /** AST Explorer input:
+     var someFunction = function(a) {
+      a = a + 1;
+      return a;
+    }
+     someFunction(5);
+     */
+    it('should handle function declaration and invocation with no space after the parameter declaration', function() {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "func"},
         { type: "IDENTIFIER",           value: "someFunction" },
@@ -721,66 +554,179 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "someFunction"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "someFunction"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "a"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                          "type": "AssignmentExpression",
-                          "operator": "=",
-                          "left": {
-                            "type": "Identifier",
-                            "name": "a"
-                          },
-                          "right": {
-                            "type": "BinaryExpression",
-                            "operator": "+",
-                            "left": {
-                              "type": "Identifier",
-                              "name": "a"
-                            },
-                            "right": {
-                              "type": "Literal",
-                              "value": 1,
-                              "raw": "1"
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Identifier",
-                          "name": "a"
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
-                }
+                "type": "Identifier",
+                "name": "a"
               }
             ],
-            "kind": "var"
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "a"
+                    },
+                    "right": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "Identifier",
+                        "name": "a"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "a"
+                  }
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "Identifier",
+                "name": "someFunction"
+              },
+              "arguments": [
+                {
+                  "type": "Literal",
+                  "value": 5,
+                  "raw": "5"
+                }
+              ]
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`func  someFunction(a: Int)           ->  Int{
+    //                         let a = a +               1;
+    //                         return                                  a
+    //                     }
+    //                     someFunction           (5)       ;`;
+    /** AST Explorer input:
+     var someFunction = function(a) {
+      a = a + 1;
+      return a;
+    }
+     someFunction(5);
+     */
+    it('should handle function declaration and invocation with erratic spacing', function() {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "func"},
+        { type: "IDENTIFIER",           value: "someFunction" },
+        { type: "PARAMS_START",         value: "(" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "TYPE_NUMBER",          value: "Int" },
+        { type: "PARAMS_END",           value: ")" },
+        { type: "RETURN_ARROW",         value: "->" },
+        { type: "TYPE_NUMBER",          value: "Int" },
+        { type: "STATEMENTS_START",     value: "{" },
+        { type: "TERMINATOR",           value: "\\n"},
+        { type: "DECLARATION_KEYWORD",  value: "let"},
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "NUMBER",               value: "1" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "\\n"},
+        { type: "STATEMENT_KEYWORD",    value: "return"},
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "TERMINATOR",           value: "\\n"},
+        { type: "STATEMENTS_END",       value: "}"},
+        { type: "TERMINATOR",           value: "\\n"},
+        { type: "IDENTIFIER",           value: "someFunction" },
+        { type: "INVOCATION_START",     value: "(" },
+        { type: "NUMBER",               value: "5" },
+        { type: "INVOCATION_END",       value: ")" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ]
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "someFunction"
+            },
+            "params": [
+              {
+                "type": "Identifier",
+                "name": "a"
+              }
+            ],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "a"
+                    },
+                    "right": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "Identifier",
+                        "name": "a"
+                      },
+                      "right": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "a"
+                  }
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
             "type": "ExpressionStatement",
@@ -808,11 +754,12 @@ describe('Parser: Third Milestone', function() {
     // input = String.raw`func sayHelloWorld() -> String {
     //                        return "hello, world"
     //                    }`;
-    // AST Explorer input:
-    // var sayHelloWorld = function() {
-    //   return "hello, world"
-    // }
-    xit('should handle functions that return strings', function() {
+    /** AST Explorer input:
+     function sayHelloWorld() {
+      return "hello, world";
+    }
+     */
+    it('should handle functions that return strings', function() {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "func"},
         { type: "IDENTIFIER",           value: "sayHelloWorld" },
@@ -827,43 +774,33 @@ describe('Parser: Third Milestone', function() {
         { type: "TERMINATOR",           value: "\\n"},
         { type: "STATEMENTS_END",       value: "}"},
         { type: "TERMINATOR",           value: "EOF"}
-      ]
+      ];
       output = {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "sayHelloWorld"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Literal",
-                          "value": "hello, world",
-                          "raw": "\"hello, world\""
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "sayHelloWorld"
+            },
+            "params": [],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Literal",
+                    "value": "hello, world",
+                    "raw": "\"hello, world\""
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           }
         ],
         "sourceType": "module"
@@ -875,12 +812,13 @@ describe('Parser: Third Milestone', function() {
     //                       let greeting = "Hello, " + personName + "!"
     //                       return greeting
     //                   }`;
-    // AST Explorer input:
-    // var sayHello = function(personName) {
-    //   var greeting = "Hello, " + personName + "!"
-    //   return greeting
-    // }
-    xit('should handle functions with an input that return strings', function() {
+    /** AST Explorer input:
+     function sayHello(personName) {
+      var greeting = "Hello, " + personName + "!";
+      return greeting;
+    }
+     */
+    it('should handle functions with an input that return strings', function() {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "func"},
         { type: "IDENTIFIER",           value: "sayHello" },
@@ -907,82 +845,87 @@ describe('Parser: Third Milestone', function() {
         { type: "TERMINATOR",           value: "\\n"},
         { type: "STATEMENTS_END",       value: "}"},
         { type: "TERMINATOR",           value: "EOF"}
-      ]
+      ];
       output = {
+
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+
+            "type": "FunctionDeclaration",
+            "id": {
+
+              "type": "Identifier",
+              "name": "sayHello"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "sayHello"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "personName"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                          {
-                            "type": "VariableDeclarator",
-                            "id": {
-                              "type": "Identifier",
-                              "name": "greeting"
-                            },
-                            "init": {
-                              "type": "BinaryExpression",
-                              "operator": "+",
-                              "left": {
-                                "type": "BinaryExpression",
-                                "operator": "+",
-                                "left": {
-                                  "type": "Literal",
-                                  "value": "Hello, ",
-                                  "raw": "\"Hello, \""
-                                },
-                                "right": {
-                                  "type": "Identifier",
-                                  "name": "personName"
-                                }
-                              },
-                              "right": {
-                                "type": "Literal",
-                                "value": "!",
-                                "raw": "\"!\""
-                              }
-                            }
-                          }
-                        ],
-                        "kind": "var"
-                      },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Identifier",
-                          "name": "greeting"
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
-                }
+
+                "type": "Identifier",
+                "name": "personName"
               }
             ],
-            "kind": "var"
+            "defaults": [],
+            "body": {
+
+              "type": "BlockStatement",
+              "body": [
+                {
+
+                  "type": "VariableDeclaration",
+                  "declarations": [
+                    {
+
+                      "type": "VariableDeclarator",
+                      "id": {
+
+                        "type": "Identifier",
+                        "name": "greeting"
+                      },
+                      "init": {
+
+                        "type": "BinaryExpression",
+                        "operator": "+",
+                        "left": {
+
+                          "type": "BinaryExpression",
+                          "operator": "+",
+                          "left": {
+
+                            "type": "Literal",
+                            "value": "Hello, ",
+                            "raw": "\"Hello, \""
+                          },
+                          "right": {
+
+                            "type": "Identifier",
+                            "name": "personName"
+                          }
+                        },
+                        "right": {
+
+                          "type": "Literal",
+                          "value": "!",
+                          "raw": "\"!\""
+                        }
+                      }
+                    }
+                  ],
+                  "kind": "var"
+                },
+                {
+
+                  "type": "ReturnStatement",
+                  "argument": {
+
+                    "type": "Identifier",
+                    "name": "greeting"
+                  }
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
           }
         ],
         "sourceType": "module"
@@ -998,16 +941,17 @@ describe('Parser: Third Milestone', function() {
     //                         }
     //                     }
     //                     sayHello(true)`;
-    // AST Explorer input:
-    // var sayHello = function(alreadyGreeted) {
-    //   if (alreadyGreeted) {
-    //     return "blah"
-    //   } else {
-    //     return "hello"
-    //   }
-    // }
-    // sayHello(true)
-    xit('should handle functions that have if else statements that use curly braces and have a return value', function() {
+    /** AST Explorer input:
+     function sayHello(alreadyGreeted) {
+      if (alreadyGreeted) {
+        return "blah";
+      } else {
+        return "hello";
+      }
+    }
+     sayHello(true);
+     */
+    it('should handle functions that have if else statements that use curly braces and have a return value', function() {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "func"},
         { type: "IDENTIFIER",           value: "sayHello" },
@@ -1053,82 +997,89 @@ describe('Parser: Third Milestone', function() {
         { type: "TERMINATOR",           value: "EOF"}
       ]
       output = {
+
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+
+            "type": "FunctionDeclaration",
+            "id": {
+
+              "type": "Identifier",
+              "name": "sayHello"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "sayHello"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "alreadyGreeted"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
+
+                "type": "Identifier",
+                "name": "alreadyGreeted"
+              }
+            ],
+            "defaults": [],
+            "body": {
+
+              "type": "BlockStatement",
+              "body": [
+                {
+
+                  "type": "IfStatement",
+                  "test": {
+
+                    "type": "Identifier",
+                    "name": "alreadyGreeted"
+                  },
+                  "consequent": {
+
                     "type": "BlockStatement",
                     "body": [
                       {
-                        "type": "IfStatement",
-                        "test": {
-                          "type": "Identifier",
-                          "name": "alreadyGreeted"
-                        },
-                        "consequent": {
-                          "type": "BlockStatement",
-                          "body": [
-                            {
-                              "type": "ReturnStatement",
-                              "argument": {
-                                "type": "Literal",
-                                "value": "blah",
-                                "raw": "\"blah\""
-                              }
-                            }
-                          ]
-                        },
-                        "alternate": {
-                          "type": "BlockStatement",
-                          "body": [
-                            {
-                              "type": "ReturnStatement",
-                              "argument": {
-                                "type": "Literal",
-                                "value": "hello",
-                                "raw": "\"hello\""
-                              }
-                            }
-                          ]
+
+                        "type": "ReturnStatement",
+                        "argument": {
+
+                          "type": "Literal",
+                          "value": "blah",
+                          "raw": "\"blah\""
                         }
                       }
                     ]
                   },
-                  "generator": false,
-                  "expression": false
+                  "alternate": {
+
+                    "type": "BlockStatement",
+                    "body": [
+                      {
+
+                        "type": "ReturnStatement",
+                        "argument": {
+
+                          "type": "Literal",
+                          "value": "hello",
+                          "raw": "\"hello\""
+                        }
+                      }
+                    ]
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
+
             "type": "ExpressionStatement",
             "expression": {
+
               "type": "CallExpression",
               "callee": {
+
                 "type": "Identifier",
                 "name": "sayHello"
               },
               "arguments": [
                 {
+
                   "type": "Literal",
                   "value": true,
                   "raw": "true"
@@ -1148,14 +1099,15 @@ describe('Parser: Third Milestone', function() {
     //             }
     //             return giveString()
     //         }`;
-    // AST Explorer input:
-    // var sayHello = function(firstName, lastName) {
-    //   var giveString = function() {
-    //     return firstName + " " + lastName
-    //   }
-    //   return giveString()
-    // }
-    xit('should handle nested functions with function invocation', function() {
+    /** AST Explorer input:
+     function sayHello(firstName, lastName) {
+      function giveString() {
+        return firstName + " " + lastName;
+      }
+      return giveString();
+    }
+     */
+    it('should handle nested functions with function invocation', function() {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "func"},
         { type: "IDENTIFIER",           value: "sayHello" },
@@ -1203,103 +1155,101 @@ describe('Parser: Third Milestone', function() {
         { type: "TERMINATOR",           value: "EOF"}
       ];
       output = {
+
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+
+            "type": "FunctionDeclaration",
+            "id": {
+
+              "type": "Identifier",
+              "name": "sayHello"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "sayHello"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "firstName"
-                    },
-                    {
-                      "type": "Identifier",
-                      "name": "lastName"
-                    }
-                  ],
+
+                "type": "Identifier",
+                "name": "firstName"
+              },
+              {
+
+                "type": "Identifier",
+                "name": "lastName"
+              }
+            ],
+            "defaults": [],
+            "body": {
+
+              "type": "BlockStatement",
+              "body": [
+                {
+
+                  "type": "FunctionDeclaration",
+                  "id": {
+
+                    "type": "Identifier",
+                    "name": "giveString"
+                  },
+                  "params": [],
                   "defaults": [],
                   "body": {
+
                     "type": "BlockStatement",
                     "body": [
                       {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                          {
-                            "type": "VariableDeclarator",
-                            "id": {
-                              "type": "Identifier",
-                              "name": "giveString"
-                            },
-                            "init": {
-                              "type": "FunctionExpression",
-                              "id": null,
-                              "params": [],
-                              "defaults": [],
-                              "body": {
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-                                    "type": "ReturnStatement",
-                                    "argument": {
-                                      "type": "BinaryExpression",
-                                      "operator": "+",
-                                      "left": {
-                                        "type": "BinaryExpression",
-                                        "operator": "+",
-                                        "left": {
-                                          "type": "Identifier",
-                                          "name": "firstName"
-                                        },
-                                        "right": {
-                                          "type": "Literal",
-                                          "value": " ",
-                                          "raw": "\" \""
-                                        }
-                                      },
-                                      "right": {
-                                        "type": "Identifier",
-                                        "name": "lastName"
-                                      }
-                                    }
-                                  }
-                                ]
-                              },
-                              "generator": false,
-                              "expression": false
-                            }
-                          }
-                        ],
-                        "kind": "var"
-                      },
-                      {
+
                         "type": "ReturnStatement",
                         "argument": {
-                          "type": "CallExpression",
-                          "callee": {
-                            "type": "Identifier",
-                            "name": "giveString"
+
+                          "type": "BinaryExpression",
+                          "operator": "+",
+                          "left": {
+
+                            "type": "BinaryExpression",
+                            "operator": "+",
+                            "left": {
+
+                              "type": "Identifier",
+                              "name": "firstName"
+                            },
+                            "right": {
+
+                              "type": "Literal",
+                              "value": " ",
+                              "raw": "\" \""
+                            }
                           },
-                          "arguments": []
+                          "right": {
+
+                            "type": "Identifier",
+                            "name": "lastName"
+                          }
                         }
                       }
                     ]
                   },
                   "generator": false,
                   "expression": false
+                },
+                {
+
+                  "type": "ReturnStatement",
+                  "argument": {
+
+                    "type": "CallExpression",
+                    "callee": {
+
+                      "type": "Identifier",
+                      "name": "giveString"
+                    },
+                    "arguments": []
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           }
         ],
         "sourceType": "module"
@@ -1311,11 +1261,12 @@ describe('Parser: Third Milestone', function() {
     //                 return "Hello \(name), today is \(day)."
     //             }
     //             greet("Bob", day: "Tuesday")`;
-    // AST Explorer input:
-    // var greet = function(name, day) {
-    //   return "Hello " + name + ", today is " + day + "."
-    // }
-    // greet("Bob", "Tuesday")
+    /** AST Explorer input:
+     function greet(name, day) {
+      return "Hello " + name + ", today is " + day + ".";
+    }
+     greet("Bob", "Tuesday");
+     */
     xit('should handle functions with string interpolation', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
@@ -1360,85 +1311,76 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "greet"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "greet"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "name"
-                    },
-                    {
-                      "type": "Identifier",
-                      "name": "day"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
+                "type": "Identifier",
+                "name": "name"
+              },
+              {
+                "type": "Identifier",
+                "name": "day"
+              }
+            ],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "BinaryExpression",
+                    "operator": "+",
+                    "left": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "BinaryExpression",
+                        "operator": "+",
+                        "left": {
                           "type": "BinaryExpression",
                           "operator": "+",
                           "left": {
-                            "type": "BinaryExpression",
-                            "operator": "+",
-                            "left": {
-                              "type": "BinaryExpression",
-                              "operator": "+",
-                              "left": {
-                                "type": "BinaryExpression",
-                                "operator": "+",
-                                "left": {
-                                  "type": "Literal",
-                                  "value": "Hello ",
-                                  "raw": "\"Hello \""
-                                },
-                                "right": {
-                                  "type": "Identifier",
-                                  "name": "name"
-                                }
-                              },
-                              "right": {
-                                "type": "Literal",
-                                "value": ", today is ",
-                                "raw": "\", today is \""
-                              }
-                            },
-                            "right": {
-                              "type": "Identifier",
-                              "name": "day"
-                            }
+                            "type": "Literal",
+                            "value": "Hello ",
+                            "raw": "\"Hello \""
                           },
                           "right": {
-                            "type": "Literal",
-                            "value": ".",
-                            "raw": "\".\""
+                            "type": "Identifier",
+                            "name": "name"
                           }
+                        },
+                        "right": {
+                          "type": "Literal",
+                          "value": ", today is ",
+                          "raw": "\", today is \""
                         }
+                      },
+                      "right": {
+                        "type": "Identifier",
+                        "name": "day"
                       }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": ".",
+                      "raw": "\".\""
+                    }
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
             "type": "ExpressionStatement",
             "expression": {
+
               "type": "CallExpression",
               "callee": {
                 "type": "Identifier",
@@ -1469,12 +1411,13 @@ describe('Parser: Third Milestone', function() {
     //                   return sum
     //               }
     //               addSevenInts(143242134, second: 34543, third: 4, fourth: 6, fifth: 0, sixth: 56, seventh: 5)`;
-    // AST Explorer input:
-    // var addSevenInts = function(first, second, third, fourth, fifth, sixth, seventh) {
-    //   sum = first + second + third + fourth + fifth + sixth + seventh
-    //   return sum
-    // }
-    // addSevenInts(143242134, 34543, 4, 6, 0, 56, 5)
+    /** AST Explorer input:
+     function addSevenInts(first, second, third, fourth, fifth, sixth, seventh) {
+      sum = first + second + third + fourth + fifth + sixth + seventh;
+      return sum;
+    }
+     addSevenInts(143242134, 34543, 4, 6, 0, 56, 5);
+     */
     xit('should handle functions with many arguments', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
@@ -1574,61 +1517,64 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "addSevenInts"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "addSevenInts"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
+                "type": "Identifier",
+                "name": "first"
+              },
+              {
+                "type": "Identifier",
+                "name": "second"
+              },
+              {
+                "type": "Identifier",
+                "name": "third"
+              },
+              {
+                "type": "Identifier",
+                "name": "fourth"
+              },
+              {
+                "type": "Identifier",
+                "name": "fifth"
+              },
+              {
+                "type": "Identifier",
+                "name": "sixth"
+              },
+              {
+                "type": "Identifier",
+                "name": "seventh"
+              }
+            ],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
                       "type": "Identifier",
-                      "name": "first"
+                      "name": "sum"
                     },
-                    {
-                      "type": "Identifier",
-                      "name": "second"
-                    },
-                    {
-                      "type": "Identifier",
-                      "name": "third"
-                    },
-                    {
-                      "type": "Identifier",
-                      "name": "fourth"
-                    },
-                    {
-                      "type": "Identifier",
-                      "name": "fifth"
-                    },
-                    {
-                      "type": "Identifier",
-                      "name": "sixth"
-                    },
-                    {
-                      "type": "Identifier",
-                      "name": "seventh"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                          "type": "AssignmentExpression",
-                          "operator": "=",
+                    "right": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "BinaryExpression",
+                        "operator": "+",
+                        "left": {
+                          "type": "BinaryExpression",
+                          "operator": "+",
                           "left": {
-                            "type": "Identifier",
-                            "name": "sum"
-                          },
-                          "right": {
                             "type": "BinaryExpression",
                             "operator": "+",
                             "left": {
@@ -1638,65 +1584,52 @@ describe('Parser: Third Milestone', function() {
                                 "type": "BinaryExpression",
                                 "operator": "+",
                                 "left": {
-                                  "type": "BinaryExpression",
-                                  "operator": "+",
-                                  "left": {
-                                    "type": "BinaryExpression",
-                                    "operator": "+",
-                                    "left": {
-                                      "type": "BinaryExpression",
-                                      "operator": "+",
-                                      "left": {
-                                        "type": "Identifier",
-                                        "name": "first"
-                                      },
-                                      "right": {
-                                        "type": "Identifier",
-                                        "name": "second"
-                                      }
-                                    },
-                                    "right": {
-                                      "type": "Identifier",
-                                      "name": "third"
-                                    }
-                                  },
-                                  "right": {
-                                    "type": "Identifier",
-                                    "name": "fourth"
-                                  }
+                                  "type": "Identifier",
+                                  "name": "first"
                                 },
                                 "right": {
                                   "type": "Identifier",
-                                  "name": "fifth"
+                                  "name": "second"
                                 }
                               },
                               "right": {
                                 "type": "Identifier",
-                                "name": "sixth"
+                                "name": "third"
                               }
                             },
                             "right": {
                               "type": "Identifier",
-                              "name": "seventh"
+                              "name": "fourth"
                             }
+                          },
+                          "right": {
+                            "type": "Identifier",
+                            "name": "fifth"
                           }
+                        },
+                        "right": {
+                          "type": "Identifier",
+                          "name": "sixth"
                         }
                       },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Identifier",
-                          "name": "sum"
-                        }
+                      "right": {
+                        "type": "Identifier",
+                        "name": "seventh"
                       }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
+                    }
+                  }
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "sum"
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
             "type": "ExpressionStatement",
