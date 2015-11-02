@@ -74,13 +74,13 @@ grunt test
 
 The test suite contains unit tests for each of the main parts of the transpiler.  
 
-- ```lexerTests/```: tests to ensure that the lexer is generating the correct token stream
+- ```lexerTests/``` : tests to ensure that the lexer is generating the correct token stream
 
-- ```parserTests/```: tests to ensure that the parser is generating the correct AST based on the token stream
+- ```parserTests/``` : tests to ensure that the parser is generating the correct AST based on the token stream
 
-- ```generatorTests/```: tests to ensure that Escodgen is generating the correct JavaScript based on the AST
+- ```generatorTests/``` : tests to ensure that Escodgen is generating the correct JavaScript based on the AST
 
-- ```endToEnd/```: tests to ensure that the transpiler as a whole is generating the correct JavaScript based on the Swift input
+- ```endToEnd/``` : tests to ensure that the transpiler as a whole is generating the correct JavaScript based on the Swift input
 
 To run any of these particular tests, rather then the entire test suite, use one of the following:
 
@@ -94,9 +94,11 @@ grunt testGenerator
 grunt testEndToEnd
 ```
 
+Each Swift language feature should have corresponding lexer, parser, generator, and end to end tests.
+
 ### Contributing
 
-1. [Check for open issues] (https://github.com/shift-js/shift-js/issues>) or open a fresh issue to start a discussion around a feature idea or a bug
+1. [Check for open issues] (https://github.com/shift-js/shift-js/issues>) or open a fresh issue to start a discussion around a feature idea or a bug.
 
 2. [Fork the shift-js repository on Github] (https://github.com/shift-js/shift-js/issues#fork-destination-box) to start making your changes. Cut a namespaced feature branch from develop that is named appropriately for the feature you plan to work on.
 
