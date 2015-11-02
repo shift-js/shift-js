@@ -78,6 +78,92 @@ module.exports = {
     return false;
   },
 
+  // helper function to handle function declarations
+  handleFunctionDeclaration: function(STATE) {
+    if (STATE.chunk === 'func') {
+      module.exports.checkFor('KEYWORD', STATE.chunk, STATE.tokens);
+      var temp = {};
+      temp.status = true; // whether inside of a function declaration or not
+      temp.insideParams = false; // 3-valued statement for whether not started, inside, or ended function parameters declaration
+      temp.paramsParens = 0; // handles the parenthesis in the parameters of the parent function
+      temp.statements = 0; //number of statements where by a function statement start with a {
+      temp.curly = 0; // all other { such as for loops are counted as curly
+      temp.insideReturnStatement = false; // whether inside original function statement or not
+      // temp.index = tokens.length - 1;
+      STATE.insideFunction.push(temp);
+      STATE.advanceAndClear(2);
+      return true;
+    }
+
+    if (STATE.insideFunction.length && STATE.chunk === '(' &&
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === false) {
+      STATE.FUNCTION_NAMES[STATE.lastToken.value] = true;
+      module.exports.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideParams = true;
+      STATE.advanceAndClear(1);
+      return true;
+    }
+
+    if (STATE.insideFunction.length && STATE.chunk === ')' && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true) {
+      module.exports.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideParams = "ended";
+      STATE.advanceAndClear(1);
+      return true;
+    }
+
+    if (STATE.tokens.length >= 2 && 
+      STATE.tokens[STATE.tokens.length - 2].type === 'PUNCTUATION' &&
+      STATE.tokens[STATE.tokens.length - 2].value === '(' && 
+      STATE.lastFunction && 
+      STATE.lastFunction.insideReturnStatement === true) {
+      STATE.tokens[STATE.tokens.length - 2].type = 'PARAMS_START';
+    }
+
+    if (STATE.insideFunction.length && STATE.chunk === ')' && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement === true) {
+      module.exports.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement = "ended";
+      STATE.advanceAndClear(1);
+      return true;
+    }
+
+    if (STATE.insideFunction.length && STATE.chunk === '{' && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].statements === 0) {
+      module.exports.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - 1].statements++;
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement = "ended";
+      STATE.advanceAndClear(1);
+      return true;
+    }
+    if (STATE.insideFunction.length && STATE.chunk === '{' && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].statements === 1) {
+      module.exports.checkFor('PUNCTUATION', STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - 1].curly++;
+      STATE.advanceAndClear(1);
+      return true;
+    }
+    if (STATE.insideFunction.length && STATE.chunk === '}' && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].statements === 1 && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].curly > 0) {
+      module.exports.checkFor('PUNCTUATION', STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - 1].curly--;
+      STATE.advanceAndClear(1);
+      return true;
+    }
+    if (STATE.insideFunction.length && STATE.chunk === '}' && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].statements === 1 && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].curly === 0) {
+      module.exports.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - 1].statements--;
+      STATE.insideFunction.pop();
+      STATE.advanceAndClear(1);
+      module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      return true;
+    }
+    return false;
+  },
+
   // helper function to make token and add to tokens array
   makeToken: function(lexicalType, chunk, tokens, type, value) {
     if (tokens) {
