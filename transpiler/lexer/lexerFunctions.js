@@ -1,12 +1,14 @@
 var lexicalTypes = require("./lexicalTypes");
 
 var NUMBER = /^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i;
+// var WHITESPACE = /^[^\n\S]+/;
 
 module.exports = {
 
   // helper function to check for whitespace
   checkForWhitespace: function(col) {
     return col === ' ';
+    // return WHITESPACE.test(col);
   },
   
   // default check for point at which to evaluate chunk
