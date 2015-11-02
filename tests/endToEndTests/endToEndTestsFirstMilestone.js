@@ -56,7 +56,7 @@ describe('End to End: First Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle empty dictionaries', function () {
+    it('should handle empty dictionaries', function () {
       input = String.raw`var empty = [:]`;
       output = `var empty = {};`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
@@ -64,13 +64,13 @@ describe('End to End: First Milestone', function() {
 
     xit('should handle initializer syntax for arrays', function () {
       input = String.raw`var empty = [String]();`;
-      output = `var empty = []`;
+      output = `var empty = [];`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
     xit('should handle initializer syntax for dictionaries', function () {
       input = String.raw`var empty = [String:UInt16]();`;
-      output = `var empty = {}`;
+      output = `var empty = {};`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
@@ -211,12 +211,6 @@ describe('End to End: First Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle closed ranges', function () {
-      input = String.raw`var a = 1...5`;
-      output = `var k = 'Stephen' + ' ' + 'Tabor' + '!';`;
-      expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
-    });
-
     it('should handle string interpolation', function () {
       input = String.raw`var planet = "Earth"; let o = "\(planet)"`;
       output = `var planet = 'Earth';
@@ -292,34 +286,33 @@ describe('End to End: First Milestone', function() {
 
     // Swift input: 'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
     // AST Explorer input: 'let arr = [1,2]; var v = {}; v[arr[0]] = [[1,2], [3,4]]; v[arr[1]] = [["one", "two"], ["three", "four"]];'
-    xit('should handle arrays of dictionaries', function () {
+    it('should handle arrays of dictionaries', function () {
       input = String.raw`let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];`;
       output = `var arr = [
                   1,
                   2
                 ];
-                var v = {
-                  1: [
-                    [
-                      1,
-                      2
-                    ],
-                    [
-                      3,
-                      4
-                    ]
+                var v = {};
+                v[arr[0]] = [
+                  [
+                    1,
+                    2
                   ],
-                  2: [
-                    [
-                      "one",
-                      "two"
-                    ],
-                    [
-                      "three",
-                      "four"
-                    ]
+                  [
+                    3,
+                    4
                   ]
-                };`;
+                ];
+                v[arr[1]] = [
+                  [
+                    'one',
+                    'two'
+                  ],
+                  [
+                    'three',
+                    'four'
+                  ]
+                ];`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
