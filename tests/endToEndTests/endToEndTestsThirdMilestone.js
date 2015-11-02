@@ -10,13 +10,13 @@ describe('End to End: Third Milestone', function() {
 
   describe('Functions', function() {
 
-    xit('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
+    it('should handle function declaration and invocation with no spacing and with var in function parameters', function() {
       input = String.raw`func someFunction(var a: Int) -> Int {
                               a = a + 1;
                               return a;
                           }
                           someFunction(5);`;
-      output = `var someFunction = function(a) {
+      output = `function someFunction(a) {
                   a = a + 1;
                   return a;
                 }
@@ -24,13 +24,13 @@ describe('End to End: Third Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle function declaration and invocation with no spacing', function() {
+    it('should handle function declaration and invocation with no spacing', function() {
       input = String.raw`func someFunction(a: Int)->Int{
                                 let a = a + 1;
                                 return a
                             }
                             someFunction(5);`;
-      output = `var someFunction = function(a) {
+      output = `function someFunction(a) {
                   a = a + 1;
                   return a;
                 }
@@ -38,13 +38,13 @@ describe('End to End: Third Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle function declaration and invocation with spaces between each part of the declaration', function() {
+    it('should handle function declaration and invocation with spaces between each part of the declaration', function() {
       input = String.raw`func someFunction (a: Int) -> Int {
                               let a = a + 1;
                               return a
                           }
                           someFunction(5);`
-      output = `var someFunction = function(a) {
+      output = `function someFunction(a) {
                   a = a + 1;
                   return a;
                 }
@@ -52,13 +52,13 @@ describe('End to End: Third Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle function declaration and invocation with no space after the function name', function() {
+    it('should handle function declaration and invocation with no space after the function name', function() {
       input = String.raw`func someFunction(a: Int) -> Int {
                                         let a = a + 1;
                                         return a
                                     }
                                     someFunction(5);`;
-      output = `var someFunction = function(a) {
+      output = `function someFunction(a) {
                   a = a + 1;
                   return a;
                 }
@@ -66,13 +66,13 @@ describe('End to End: Third Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle function declaration and invocation with no space after the parameter declaration', function() {
+    it('should handle function declaration and invocation with no space after the parameter declaration', function() {
       input = String.raw`func someFunction(a: Int)-> Int {
                               let a = a + 1;
                               return a
                           }
                           someFunction(5);`
-      output = `var someFunction = function(a) {
+      output = `function someFunction(a) {
                   a = a + 1;
                   return a;
                 }
@@ -80,13 +80,13 @@ describe('End to End: Third Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle function declaration and invocation with erratic spacing', function() {
+    it('should handle function declaration and invocation with erratic spacing', function() {
       input = String.raw`func  someFunction(a: Int)           ->  Int{
                               let a = a +               1;
                               return                                  a
                           }
                           someFunction           (5)       ;`;
-      output = `var someFunction = function(a) {
+      output = `function someFunction(a) {
                   a = a + 1;
                   return a;
                 }
@@ -94,29 +94,29 @@ describe('End to End: Third Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle functions that return strings', function() {
+    it('should handle functions that return strings', function() {
       input = String.raw`func sayHelloWorld() -> String {
                              return "hello, world"
                          }`;
-      output = `var sayHelloWorld = function() {
-                  return "hello, world"
+      output = `function sayHelloWorld() {
+                  return 'hello, world';
                 }`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle functions with an input that return strings', function() {
+    it('should handle functions with an input that return strings', function() {
       input = String.raw`func sayHello(personName: String) -> String {
                             let greeting = "Hello, " + personName + "!"
                             return greeting
                         }`;
-      output = `var sayHello = function(personName) {
-                  var greeting = "Hello, " + personName + "!"
-                  return greeting
+      output = `function sayHello(personName) {
+                  var greeting = 'Hello, ' + personName + '!';
+                  return greeting;
                 }`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle functions that have if else statements that use curly braces and have a return value', function() {
+    it('should handle functions that have if else statements that use curly braces and have a return value', function() {
       input = String.raw`func sayHello(alreadyGreeted: Bool) -> String {
                               if alreadyGreeted {
                                   return "blah"
@@ -125,29 +125,29 @@ describe('End to End: Third Milestone', function() {
                               }
                           }
                           sayHello(true)`;
-      output = `var sayHello = function(alreadyGreeted) {
+      output = `function sayHello(alreadyGreeted) {
                   if (alreadyGreeted) {
-                    return "blah"
+                    return 'blah';
                   } else {
-                    return "hello"
+                    return 'hello';
                   }
                 }
-                sayHello(true)`;
+                sayHello(true);`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle nested functions with function invocation', function() {
+    it('should handle nested functions with function invocation', function() {
       input = String.raw`func sayHello(firstName: String, lastName: String) -> String {
                   func giveString() -> String {
                     return firstName + " " + lastName
                   }
                   return giveString()
               }`;
-      output = `var sayHello = function(firstName, lastName) {
-                  var giveString = function() {
-                    return firstName + " " + lastName
+      output = `function sayHello(firstName, lastName) {
+                  function giveString() {
+                    return firstName + ' ' + lastName;
                   }
-                  return giveString()
+                  return giveString();
                 }`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
@@ -157,10 +157,10 @@ describe('End to End: Third Milestone', function() {
                       return "Hello \(name), today is \(day)."
                   }
                   greet("Bob", day: "Tuesday")`;
-      output = `var greet = function(name, day) {
-                  return "Hello " + name + ", today is " + day + "."
+      output = `function greet(name, day) {
+                  return 'Hello ' + name + ', today is ' + day + '.';
                 }
-                greet("Bob", "Tuesday")`;
+                greet('Bob', 'Tuesday');`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
@@ -170,11 +170,11 @@ describe('End to End: Third Milestone', function() {
                         return sum
                     }
                     addSevenInts(143242134, second: 34543, third: 4, fourth: 6, fifth: 0, sixth: 56, seventh: 5)`;
-      output = `var addSevenInts = function(first, second, third, fourth, fifth, sixth, seventh) {
-                  sum = first + second + third + fourth + fifth + sixth + seventh
-                  return sum
+      output = `function addSevenInts(first, second, third, fourth, fifth, sixth, seventh) {
+                  sum = first + second + third + fourth + fifth + sixth + seventh;
+                  return sum;
                 }
-                addSevenInts(143242134, 34543, 4, 6, 0, 56, 5)`;
+                addSevenInts(143242134, 34543, 4, 6, 0, 56, 5);`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
@@ -183,10 +183,10 @@ describe('End to End: Third Milestone', function() {
                               return input + 1
                           }
                           addOne(((17 * 4) - 3) * 5)`;
-      output = `var addOne = function(input) {
-                  return input + 1
+      output = `function addOne(input) {
+                  return input + 1;
                 }
-                addOne(((17 * 4) - 3) * 5)`;
+                addOne((17 * 4 - 3) * 5);`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
@@ -210,7 +210,7 @@ describe('End to End: Third Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle functions with for loops, if and else if statments, and native count methods', function () {
+    xit('should handle functions with for loops, if and else if statements, and native count methods', function () {
       input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
                   var currentMin = array[0]
                   var currentMax = array[0]
@@ -227,7 +227,7 @@ describe('End to End: Third Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    xit('should handle functions with for loops and if and else if statments', function () {
+    xit('should handle functions with for loops and if and else if statements', function () {
       input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
                 var currentMin = array[0]
                 var currentMax = array[0]
@@ -253,15 +253,15 @@ describe('End to End: Third Milestone', function() {
                       return sum
                   }
                   sumOf(1,2,3)`;
-      output = `var sumOf = function() {
+      output = `function sumOf() {
                   var numbers = Array.prototype.slice.call(arguments);
                   var sum = 0;
-                  for (number in numbers) {
-                    sum += number
+                  for (var number in numbers) {
+                    sum += number;
                   }
-                  return sum
+                  return sum;
                 }
-                sumOf(1,2,3)`;
+                sumOf(1, 2, 3);`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
@@ -272,11 +272,11 @@ describe('End to End: Third Milestone', function() {
                           }
                           return addOne
                       }`;
-      output = `var makeIncrementer = function() {
-                  var addOne = function(number) {
-                    return 1 + number
+      output = `function makeIncrementer() {
+                  function addOne(number) {
+                    return 1 + number;
                   }
-                  return addOne
+                  return addOne;
                 }`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
@@ -288,11 +288,11 @@ describe('End to End: Third Milestone', function() {
                           }
                           return addOne
                       }`;
-      output = `var makeIncrementer = function() {
-                  var addOne = function(number) {
-                    return 1 + number
+      output = `function makeIncrementer() {
+                  function addOne(number) {
+                    return 1 + number;
                   }
-                  return addOne
+                  return addOne;
                 }`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
@@ -306,13 +306,13 @@ describe('End to End: Third Milestone', function() {
                             }
                             return false
                         }`;
-      output = `var any = function(list, condition) {
-                  for (item in list) {
+      output = `function any(list, condition) {
+                  for (var item in list) {
                     if (condition(item)) {
-                      return true
+                      return true;
                     }
                   }
-                  return false
+                  return false;
                 }`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
@@ -326,13 +326,13 @@ describe('End to End: Third Milestone', function() {
                             }
                             return false
                         }`;
-      output = `var any = function(list, condition) {
-                  for (item in list) {
+      output = `function any(list, condition) {
+                  for (var item in list) {
                     if (condition(item)) {
-                      return true
+                      return true;
                     }
                   }
-                  return false
+                  return false;
                 }`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
@@ -345,13 +345,13 @@ describe('End to End: Third Milestone', function() {
                             print(input)
                         }
                         printInput("Hello, \(returnWorld())!")`;
-      output = `var returnWorld = function() {
-                  return "World"
+      output = `function returnWorld() {
+                  return 'World';
                 }
-                var printInput = function(input) {
-                  print(input)
+                function printInput(input) {
+                  print(input);
                 }
-                printInput("Hello, " + returnWorld() + "!")`;
+                printInput('Hello, ' + returnWorld() + '!');`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
   });

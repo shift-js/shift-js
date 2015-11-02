@@ -393,7 +393,7 @@ describe('End to End: Second Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    xit('should handle for-in loops that iterate over items in a dictionary', function () {
+    it('should handle for-in loops that iterate over items in a dictionary', function () {
       input = String.raw`let interestingNumbers = [
                         "Prime": [2, 3, 5, 7, 11, 13],
                         "Fibonacci": [1, 1, 2, 3, 5, 8],
@@ -407,8 +407,41 @@ describe('End to End: Second Milestone', function() {
                             }
                         }
                     }`;
-      output = ``;
-      expect(R.equals(parser(input), output)).to.equal(true);
+      output = `var interestingNumbers = {
+                'Prime': [
+                  2,
+                  3,
+                  5,
+                  7,
+                  11,
+                  13
+                ],
+                'Fibonacci': [
+                  1,
+                  1,
+                  2,
+                  3,
+                  5,
+                  8
+                ],
+                'Square': [
+                  1,
+                  4,
+                  9,
+                  16,
+                  25
+                ]
+              };
+              var largest = 0;
+              for (var kind in interestingNumbers) {
+                var numbers = interestingNumbers[kind];
+                for (var number in numbers) {
+                  if (number > largest) {
+                    largest = number;
+                  }
+                }
+              }`;
+      expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
   });
 
@@ -561,7 +594,39 @@ describe('End to End: Second Milestone', function() {
     });
 
     xit('should handle complex control flow with erratic spacing and inconsistent use of semicolons and parenthesis', function () {
-      input = String.raw``;
+      input = String.raw`
+
+
+
+                var gameInProgress = false;
+                var score = 0
+                var typeOfScore = "";
+                                         var PAT = "";
+                while gameInProgress {
+                    if               (typeOfScore != "")
+                    {
+                    if typeOfScore == "TD" {
+                            score += 6
+                        } else if typeOfScore == "PAT" {
+                            if PAT == "TD" {
+
+                                score += 2;
+                            } else {
+                                score += 1;
+
+
+                                                                   }
+                        } else if (typeOfScore == "FG") {
+                            score += 3
+                        }
+
+                    else {
+
+                            score += 2
+                }
+                        typeOfScore = ""
+                    }
+                 }`;
       output = `var gameInProgress = false;
                 var score = 0;
                 var typeOfScore = '';

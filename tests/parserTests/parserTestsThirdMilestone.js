@@ -1736,51 +1736,41 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "addOne"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "addOne"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "input"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "BinaryExpression",
-                          "operator": "+",
-                          "left": {
-                            "type": "Identifier",
-                            "name": "input"
-                          },
-                          "right": {
-                            "type": "Literal",
-                            "value": 1,
-                            "raw": "1"
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
-                }
+                "type": "Identifier",
+                "name": "input"
               }
             ],
-            "kind": "var"
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "BinaryExpression",
+                    "operator": "+",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "input"
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    }
+                  }
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
             "type": "ExpressionStatement",
@@ -1975,7 +1965,7 @@ describe('Parser: Third Milestone', function() {
     //         }`;
     // AST Explorer input:
 
-    xit('should handle functions with for loops, if and else if statments, and native count methods', function () {
+    xit('should handle functions with for loops, if and else if statements, and native count methods', function () {
       input = [
         { type: "DECLARATION_KEYWORD",          value: "func"},
         { type: "IDENTIFIER",                   value: "minMax" },
@@ -2095,7 +2085,7 @@ describe('Parser: Third Milestone', function() {
     //         }`;
     // AST Explorer input:
 
-    xit('should handle functions with for loops and if and else if statments', function () {
+    xit('should handle functions with for loops and if and else if statements', function () {
       input = [
         { type: "DECLARATION_KEYWORD",            value: "func"},
         { type: "IDENTIFIER",                     value: "minMax" },
@@ -2209,15 +2199,15 @@ describe('Parser: Third Milestone', function() {
     //               }
     //               sumOf(1,2,3)`;
     // AST Explorer input:
-    // var sumOf = function() {
+    // function sumOf() {
     //   var numbers = Array.prototype.slice.call(arguments);
     //   var sum = 0;
-    //   for (number in numbers) {
-    //     sum += number
+    //   for (var number in numbers) {
+    //     sum += number;
     //   }
-    //   return sum
+    //   return sum;
     // }
-    // sumOf(1,2,3)
+    // sumOf(1, 2, 3);
 
     xit('should handle functions that have variadic parameters', function () {
       input = [
@@ -2277,137 +2267,137 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "sumOf"
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "sumOf"
+            },
+            "params": [],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "VariableDeclaration",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "id": {
+                        "type": "Identifier",
+                        "name": "numbers"
+                      },
+                      "init": {
+                        "type": "CallExpression",
+                        "callee": {
+                          "type": "MemberExpression",
+                          "computed": false,
+                          "object": {
+                            "type": "MemberExpression",
+                            "computed": false,
+                            "object": {
+                              "type": "MemberExpression",
+                              "computed": false,
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Array"
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "prototype"
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "slice"
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "call"
+                          }
+                        },
+                        "arguments": [
+                          {
+                            "type": "Identifier",
+                            "name": "arguments"
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "kind": "var"
                 },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [],
-                  "defaults": [],
+                {
+                  "type": "VariableDeclaration",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "id": {
+                        "type": "Identifier",
+                        "name": "sum"
+                      },
+                      "init": {
+                        "type": "Literal",
+                        "value": 0,
+                        "raw": "0"
+                      }
+                    }
+                  ],
+                  "kind": "var"
+                },
+                {
+                  "type": "ForInStatement",
+                  "left": {
+                    "type": "VariableDeclaration",
+                    "declarations": [
+                      {
+                        "type": "VariableDeclarator",
+                        "id": {
+                          "type": "Identifier",
+                          "name": "number"
+                        },
+                        "init": null
+                      }
+                    ],
+                    "kind": "var"
+                  },
+                  "right": {
+                    "type": "Identifier",
+                    "name": "numbers"
+                  },
                   "body": {
                     "type": "BlockStatement",
                     "body": [
                       {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                          {
-                            "type": "VariableDeclarator",
-                            "id": {
-                              "type": "Identifier",
-                              "name": "numbers"
-                            },
-                            "init": {
-                              "type": "CallExpression",
-                              "callee": {
-                                "type": "MemberExpression",
-                                "computed": false,
-                                "object": {
-                                  "type": "MemberExpression",
-                                  "computed": false,
-                                  "object": {
-                                    "type": "MemberExpression",
-                                    "computed": false,
-                                    "object": {
-                                      "type": "Identifier",
-                                      "name": "Array"
-                                    },
-                                    "property": {
-                                      "type": "Identifier",
-                                      "name": "prototype"
-                                    }
-                                  },
-                                  "property": {
-                                    "type": "Identifier",
-                                    "name": "slice"
-                                  }
-                                },
-                                "property": {
-                                  "type": "Identifier",
-                                  "name": "call"
-                                }
-                              },
-                              "arguments": [
-                                {
-                                  "type": "Identifier",
-                                  "name": "arguments"
-                                }
-                              ]
-                            }
+                        "type": "ExpressionStatement",
+                        "expression": {
+                          "type": "AssignmentExpression",
+                          "operator": "+=",
+                          "left": {
+                            "type": "Identifier",
+                            "name": "sum"
+                          },
+                          "right": {
+                            "type": "Identifier",
+                            "name": "number"
                           }
-                        ],
-                        "kind": "var"
-                      },
-                      {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                          {
-                            "type": "VariableDeclarator",
-                            "id": {
-                              "type": "Identifier",
-                              "name": "sum"
-                            },
-                            "init": {
-                              "type": "Literal",
-                              "value": 0,
-                              "raw": "0"
-                            }
-                          }
-                        ],
-                        "kind": "var"
-                      },
-                      {
-                        "type": "ForInStatement",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "number"
-                        },
-                        "right": {
-                          "type": "Identifier",
-                          "name": "numbers"
-                        },
-                        "body": {
-                          "type": "BlockStatement",
-                          "body": [
-                            {
-                              "type": "ExpressionStatement",
-                              "expression": {
-                                "type": "AssignmentExpression",
-                                "operator": "+=",
-                                "left": {
-                                  "type": "Identifier",
-                                  "name": "sum"
-                                },
-                                "right": {
-                                  "type": "Identifier",
-                                  "name": "number"
-                                }
-                              }
-                            }
-                          ]
-                        },
-                        "each": false
-                      },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Identifier",
-                          "name": "sum"
                         }
                       }
                     ]
                   },
-                  "generator": false,
-                  "expression": false
+                  "each": false
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "sum"
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
             "type": "ExpressionStatement",
@@ -2449,11 +2439,11 @@ describe('Parser: Third Milestone', function() {
     //                       return addOne
     //                   }`;
     // AST Explorer input:
-    // var makeIncrementer = function() {
-    //   var addOne = function(number) {
-    //     return 1 + number
+    // function makeIncrementer() {
+    //   function addOne(number) {
+    //     return 1 + number;
     //   }
-    //   return addOne
+    //   return addOne;
     // }
     xit('should handle functions that return functions where the return function is specified within parentheses', function () {
       input = [
@@ -2503,84 +2493,64 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "makeIncrementer"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [],
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "makeIncrementer"
+            },
+            "params": [],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "FunctionDeclaration",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "addOne"
+                  },
+                  "params": [
+                    {
+                      "type": "Identifier",
+                      "name": "number"
+                    }
+                  ],
                   "defaults": [],
                   "body": {
                     "type": "BlockStatement",
                     "body": [
                       {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                          {
-                            "type": "VariableDeclarator",
-                            "id": {
-                              "type": "Identifier",
-                              "name": "addOne"
-                            },
-                            "init": {
-                              "type": "FunctionExpression",
-                              "id": null,
-                              "params": [
-                                {
-                                  "type": "Identifier",
-                                  "name": "number"
-                                }
-                              ],
-                              "defaults": [],
-                              "body": {
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-                                    "type": "ReturnStatement",
-                                    "argument": {
-                                      "type": "BinaryExpression",
-                                      "operator": "+",
-                                      "left": {
-                                        "type": "Literal",
-                                        "value": 1,
-                                        "raw": "1"
-                                      },
-                                      "right": {
-                                        "type": "Identifier",
-                                        "name": "number"
-                                      }
-                                    }
-                                  }
-                                ]
-                              },
-                              "generator": false,
-                              "expression": false
-                            }
-                          }
-                        ],
-                        "kind": "var"
-                      },
-                      {
                         "type": "ReturnStatement",
                         "argument": {
-                          "type": "Identifier",
-                          "name": "addOne"
+                          "type": "BinaryExpression",
+                          "operator": "+",
+                          "left": {
+                            "type": "Literal",
+                            "value": 1,
+                            "raw": "1"
+                          },
+                          "right": {
+                            "type": "Identifier",
+                            "name": "number"
+                          }
                         }
                       }
                     ]
                   },
                   "generator": false,
                   "expression": false
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "addOne"
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           }
         ],
         "sourceType": "module"
@@ -2648,84 +2618,64 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "makeIncrementer"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [],
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "makeIncrementer"
+            },
+            "params": [],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "FunctionDeclaration",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "addOne"
+                  },
+                  "params": [
+                    {
+                      "type": "Identifier",
+                      "name": "number"
+                    }
+                  ],
                   "defaults": [],
                   "body": {
                     "type": "BlockStatement",
                     "body": [
                       {
-                        "type": "VariableDeclaration",
-                        "declarations": [
-                          {
-                            "type": "VariableDeclarator",
-                            "id": {
-                              "type": "Identifier",
-                              "name": "addOne"
-                            },
-                            "init": {
-                              "type": "FunctionExpression",
-                              "id": null,
-                              "params": [
-                                {
-                                  "type": "Identifier",
-                                  "name": "number"
-                                }
-                              ],
-                              "defaults": [],
-                              "body": {
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-                                    "type": "ReturnStatement",
-                                    "argument": {
-                                      "type": "BinaryExpression",
-                                      "operator": "+",
-                                      "left": {
-                                        "type": "Literal",
-                                        "value": 1,
-                                        "raw": "1"
-                                      },
-                                      "right": {
-                                        "type": "Identifier",
-                                        "name": "number"
-                                      }
-                                    }
-                                  }
-                                ]
-                              },
-                              "generator": false,
-                              "expression": false
-                            }
-                          }
-                        ],
-                        "kind": "var"
-                      },
-                      {
                         "type": "ReturnStatement",
                         "argument": {
-                          "type": "Identifier",
-                          "name": "addOne"
+                          "type": "BinaryExpression",
+                          "operator": "+",
+                          "left": {
+                            "type": "Literal",
+                            "value": 1,
+                            "raw": "1"
+                          },
+                          "right": {
+                            "type": "Identifier",
+                            "name": "number"
+                          }
                         }
                       }
                     ]
                   },
                   "generator": false,
                   "expression": false
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "addOne"
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           }
         ],
         "sourceType": "module"
@@ -2743,7 +2693,7 @@ describe('Parser: Third Milestone', function() {
     //                     }`;
     // AST Explorer input:
     // var any = function(list, condition) {
-    //   for (item in list) {
+    //   for (var item in list) {
     //     if (condition(item)) {
     //       return true
     //     }
@@ -2812,94 +2762,94 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "any"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "any"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "list"
-                    },
-                    {
-                      "type": "Identifier",
-                      "name": "condition"
-                    }
-                  ],
-                  "defaults": [],
+                "type": "Identifier",
+                "name": "list"
+              },
+              {
+                "type": "Identifier",
+                "name": "condition"
+              }
+            ],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ForInStatement",
+                  "left": {
+                    "type": "VariableDeclaration",
+                    "declarations": [
+                      {
+                        "type": "VariableDeclarator",
+                        "id": {
+                          "type": "Identifier",
+                          "name": "item"
+                        },
+                        "init": null
+                      }
+                    ],
+                    "kind": "var"
+                  },
+                  "right": {
+                    "type": "Identifier",
+                    "name": "list"
+                  },
                   "body": {
                     "type": "BlockStatement",
                     "body": [
                       {
-                        "type": "ForInStatement",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "item"
-                        },
-                        "right": {
-                          "type": "Identifier",
-                          "name": "list"
-                        },
-                        "body": {
-                          "type": "BlockStatement",
-                          "body": [
+                        "type": "IfStatement",
+                        "test": {
+                          "type": "CallExpression",
+                          "callee": {
+                            "type": "Identifier",
+                            "name": "condition"
+                          },
+                          "arguments": [
                             {
-                              "type": "IfStatement",
-                              "test": {
-                                "type": "CallExpression",
-                                "callee": {
-                                  "type": "Identifier",
-                                  "name": "condition"
-                                },
-                                "arguments": [
-                                  {
-                                    "type": "Identifier",
-                                    "name": "item"
-                                  }
-                                ]
-                              },
-                              "consequent": {
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-                                    "type": "ReturnStatement",
-                                    "argument": {
-                                      "type": "Literal",
-                                      "value": true,
-                                      "raw": "true"
-                                    }
-                                  }
-                                ]
-                              },
-                              "alternate": null
+                              "type": "Identifier",
+                              "name": "item"
                             }
                           ]
                         },
-                        "each": false
-                      },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Literal",
-                          "value": false,
-                          "raw": "false"
-                        }
+                        "consequent": {
+                          "type": "BlockStatement",
+                          "body": [
+                            {
+                              "type": "ReturnStatement",
+                              "argument": {
+                                "type": "Literal",
+                                "value": true,
+                                "raw": "true"
+                              }
+                            }
+                          ]
+                        },
+                        "alternate": null
                       }
                     ]
                   },
-                  "generator": false,
-                  "expression": false
+                  "each": false
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Literal",
+                    "value": false,
+                    "raw": "false"
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           }
         ],
         "sourceType": "module"
@@ -2917,7 +2867,7 @@ describe('Parser: Third Milestone', function() {
     //                     }`;
     // AST Explorer input:
     // var any = function(list, condition) {
-    //   for (item in list) {
+    //   for (var item in list) {
     //     if (condition(item)) {
     //       return true
     //     }
@@ -2984,94 +2934,94 @@ describe('Parser: Third Milestone', function() {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "any"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "any"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "list"
-                    },
-                    {
-                      "type": "Identifier",
-                      "name": "condition"
-                    }
-                  ],
-                  "defaults": [],
+                "type": "Identifier",
+                "name": "list"
+              },
+              {
+                "type": "Identifier",
+                "name": "condition"
+              }
+            ],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ForInStatement",
+                  "left": {
+                    "type": "VariableDeclaration",
+                    "declarations": [
+                      {
+                        "type": "VariableDeclarator",
+                        "id": {
+                          "type": "Identifier",
+                          "name": "item"
+                        },
+                        "init": null
+                      }
+                    ],
+                    "kind": "var"
+                  },
+                  "right": {
+                    "type": "Identifier",
+                    "name": "list"
+                  },
                   "body": {
                     "type": "BlockStatement",
                     "body": [
                       {
-                        "type": "ForInStatement",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "item"
-                        },
-                        "right": {
-                          "type": "Identifier",
-                          "name": "list"
-                        },
-                        "body": {
-                          "type": "BlockStatement",
-                          "body": [
+                        "type": "IfStatement",
+                        "test": {
+                          "type": "CallExpression",
+                          "callee": {
+                            "type": "Identifier",
+                            "name": "condition"
+                          },
+                          "arguments": [
                             {
-                              "type": "IfStatement",
-                              "test": {
-                                "type": "CallExpression",
-                                "callee": {
-                                  "type": "Identifier",
-                                  "name": "condition"
-                                },
-                                "arguments": [
-                                  {
-                                    "type": "Identifier",
-                                    "name": "item"
-                                  }
-                                ]
-                              },
-                              "consequent": {
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-                                    "type": "ReturnStatement",
-                                    "argument": {
-                                      "type": "Literal",
-                                      "value": true,
-                                      "raw": "true"
-                                    }
-                                  }
-                                ]
-                              },
-                              "alternate": null
+                              "type": "Identifier",
+                              "name": "item"
                             }
                           ]
                         },
-                        "each": false
-                      },
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Literal",
-                          "value": false,
-                          "raw": "false"
-                        }
+                        "consequent": {
+                          "type": "BlockStatement",
+                          "body": [
+                            {
+                              "type": "ReturnStatement",
+                              "argument": {
+                                "type": "Literal",
+                                "value": true,
+                                "raw": "true"
+                              }
+                            }
+                          ]
+                        },
+                        "alternate": null
                       }
                     ]
                   },
-                  "generator": false,
-                  "expression": false
+                  "each": false
+                },
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Literal",
+                    "value": false,
+                    "raw": "false"
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           }
         ],
         "sourceType": "module"
@@ -3094,93 +3044,118 @@ describe('Parser: Third Milestone', function() {
     //   print(input)
     // }
     // printInput("Hello, " + returnWorld() + "!")
-    xit('should handle functions whose invocation contains string interpolation that contains a function invocation', function () {
+    xit('should handle functions whose invocation contains string interpolation that contains a function invocation returning a string', function () {
       input = [
+        { type: 'DECLARATION_KEYWORD', value: 'func' },
+        { type: 'IDENTIFIER', value: 'returnWorld' },
+        { type: 'PARAMS_START', value: '(' },
+        { type: 'PARAMS_END', value: ')' },
+        { type: 'RETURN_ARROW', value: '->' },
+        { type: 'TYPE_STRING', value: 'String' },
+        { type: 'STATEMENTS_START', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
 
+        { type: 'STATEMENT_KEYWORD', value: 'return' },
+        { type: 'STRING', value: 'World' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENTS_END', value: '}' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'DECLARATION_KEYWORD', value: 'func' },
+        { type: 'IDENTIFIER', value: 'printInput' },
+        { type: 'PARAMS_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'input' },
+        { type: 'PUNCTUATION', value: ':' },
+        { type: 'TYPE_STRING', value: 'String' },
+        { type: 'PARAMS_END', value: ')' },
+        { type: 'STATEMENTS_START', value: '{' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'NATIVE_METHOD', value: 'print' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'IDENTIFIER', value: 'input' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'STATEMENTS_END', value: '}' },
+        { type: 'TERMINATOR', value: '\\n' },
+
+        { type: 'IDENTIFIER', value: 'printInput' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'STRING', value: 'Hello, ' },
+        { type: 'STRING_INTERPOLATION_START', value: '\\(' },
+        { type: 'IDENTIFIER', value: 'returnWorld' },
+        { type: 'INVOCATION_START', value: '(' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'STRING_INTERPOLATION_END', value: ')' },
+        { type: 'STRING', value: '!' },
+        { type: 'INVOCATION_END', value: ')' },
+        { type: 'TERMINATOR', value: 'EOF' }
       ];
       output = {
         "type": "Program",
         "body": [
           {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "returnWorld"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ReturnStatement",
-                        "argument": {
-                          "type": "Literal",
-                          "value": "World",
-                          "raw": "\"World\""
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "returnWorld"
+            },
+            "params": [],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ReturnStatement",
+                  "argument": {
+                    "type": "Literal",
+                    "value": "World",
+                    "raw": "'World'"
+                  }
                 }
-              }
-            ],
-            "kind": "var"
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
-            "type": "VariableDeclaration",
-            "declarations": [
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "printInput"
+            },
+            "params": [
               {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "printInput"
-                },
-                "init": {
-                  "type": "FunctionExpression",
-                  "id": null,
-                  "params": [
-                    {
-                      "type": "Identifier",
-                      "name": "input"
-                    }
-                  ],
-                  "defaults": [],
-                  "body": {
-                    "type": "BlockStatement",
-                    "body": [
-                      {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                          "type": "CallExpression",
-                          "callee": {
-                            "type": "Identifier",
-                            "name": "print"
-                          },
-                          "arguments": [
-                            {
-                              "type": "Identifier",
-                              "name": "input"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  "generator": false,
-                  "expression": false
-                }
+                "type": "Identifier",
+                "name": "input"
               }
             ],
-            "kind": "var"
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "CallExpression",
+                    "callee": {
+                      "type": "Identifier",
+                      "name": "print"
+                    },
+                    "arguments": [
+                      {
+                        "type": "Identifier",
+                        "name": "input"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
           },
           {
             "type": "ExpressionStatement",
@@ -3200,7 +3175,7 @@ describe('Parser: Third Milestone', function() {
                     "left": {
                       "type": "Literal",
                       "value": "Hello, ",
-                      "raw": "\"Hello, \""
+                      "raw": "'Hello, '"
                     },
                     "right": {
                       "type": "CallExpression",
@@ -3214,7 +3189,7 @@ describe('Parser: Third Milestone', function() {
                   "right": {
                     "type": "Literal",
                     "value": "!",
-                    "raw": "\"!\""
+                    "raw": "'!'"
                   }
                 }
               ]

@@ -241,7 +241,7 @@ describe('Generator: First Milestone', function() {
 
     // Swift input: 'var empty = [:]'
     // AST Explorer input: 'var empty = {}'
-    xit('should handle empty dictionaries', function () {
+    it('should handle empty dictionaries', function () {
       input = {
         "type": "Program",
         "body": [
@@ -271,7 +271,7 @@ describe('Generator: First Milestone', function() {
 
     // Swift input: 'var empty = [String]();'
     // AST Explorer input: 'var empty = [];'
-    xit('should handle initializer syntax for arrays', function () {
+    it('should handle initializer syntax for arrays', function () {
       input = {
         "type": "Program",
         "body": [
@@ -295,13 +295,13 @@ describe('Generator: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      output = ``;
+      output = `var empty = [];`;
       expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
     });
 
     // Swift input: 'var empty = [String:UInt16]();'
     // AST Explorer input: 'var empty = {};'
-    xit('should handle initializer syntax for dictionaries', function () {
+    it('should handle initializer syntax for dictionaries', function () {
       input = {
         "type": "Program",
         "body": [
@@ -325,7 +325,7 @@ describe('Generator: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      output = ``;
+      output = `var empty = {};`;
       expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
     });
 
@@ -981,7 +981,7 @@ describe('Generator: First Milestone', function() {
                                 operator: '<=',
                                 left: { value: 6, type: 'Literal', raw: '6' },
                                 right: { value: 7, type: 'Literal', raw: '7' } } } } } } } } ] } ] };
-      output = ``;
+      output = `var l = 6 != 7 ||  6 == 7 ||  6 > 7 ||  6 < 7 ||  6 >= 7 || 6 <= 7;`;
       expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
     });
 
@@ -1403,55 +1403,6 @@ describe('Generator: First Milestone', function() {
       };
       output = `var h = false;
                 var i = h ? 1 : 2;`;
-      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
-    });
-
-    // Swift input: 'var a = 1...5'
-    // AST Explorer input:
-    xit('should handle closed ranges', function () {
-      input = ``;
-      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
-    });
-
-    // Swift input: 'var a = 1.0...5.0'
-    // AST Explorer input:
-    xit('should handle decimal ending in 0 closed ranges', function () {
-      input = ``;
-      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
-    });
-
-    // Swift input: 'var a = 1.2...5.3'
-    // AST Explorer input:
-    xit('should handle random decimal closed ranges', function () {
-      input = ``;
-      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
-    });
-
-    // Swift input: 'var b = 1..<5'
-    // AST Explorer input:
-    xit('should handle half-open ranges', function () {
-      input = ``;
-      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
-    });
-
-    // Swift input: 'var a = 1.0..<5.0'
-    // AST Explorer input:
-    xit('should handle decimal ending in 0 half-open ranges', function () {
-      input = ``;
-      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
-    });
-
-    // Swift input: 'var a = 1.2..<5.3'
-    // AST Explorer input:
-    xit('should handle random decimal half-open ranges', function () {
-      input = ``;
-      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
-    });
-
-    // Swift input: 'var a = 1...5; var b = 2..<6'
-    // AST Explorer input:
-    xit('should handle all ranges', function () {
-      input = ``;
       expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
     });
   });
@@ -2064,11 +2015,9 @@ describe('Generator: First Milestone', function() {
       expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
     });
 
-
-
     // Test 20 - Swift input: 'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
     // AST Explorer input: 'let arr = [1,2]; var v = {}; v[arr[0]] = [[1,2], [3,4]]; v[arr[1]] = [["one", "two"], ["three", "four"]];'
-    xit('should handle arrays of dictionaries', function () {
+    it('should handle arrays of dictionaries', function () {
       input = {
         "type": "Program",
         "body": [
@@ -2098,7 +2047,7 @@ describe('Generator: First Milestone', function() {
                 }
               }
             ],
-            "kind": "let"
+            "kind": "var"
           },
           {
             "type": "VariableDeclaration",
@@ -2246,7 +2195,31 @@ describe('Generator: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      output = ``;
+      output = `var arr = [
+                  1,
+                  2
+                ];
+                var v = {};
+                v[arr[0]] = [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    3,
+                    4
+                  ]
+                ];
+                v[arr[1]] = [
+                  [
+                    'one',
+                    'two'
+                  ],
+                  [
+                    'three',
+                    'four'
+                  ]
+                ];`;
       expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
     });
 

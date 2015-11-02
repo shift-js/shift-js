@@ -996,7 +996,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle functions with for loops, if and else if statments, and native count methods', function () {
+    it('should handle functions with for loops, if and else if statements, and native count methods', function () {
       input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
                   var currentMin = array[0]
                   var currentMax = array[0]
@@ -1113,7 +1113,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle functions with for loops and if and else if statments', function () {
+    it('should handle functions with for loops and if and else if statements', function () {
       input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
                   var currentMin = array[0]
                   var currentMax = array[0]
@@ -1375,7 +1375,7 @@ describe('Lexer: Third Milestone', function() {
                                 }
                                 return addOne
                             }`;
-      output = [ 
+      output = [
           { type: 'DECLARATION_KEYWORD', value: 'func' },
           { type: 'IDENTIFIER', value: 'makeIncrementer' },
           { type: 'PARAMS_START', value: '(' },
@@ -1437,9 +1437,9 @@ describe('Lexer: Third Milestone', function() {
           { type: 'STATEMENT_KEYWORD', value: 'return' },
           { type: 'IDENTIFIER', value: 'addOne' },
           { type: 'TERMINATOR', value: '\\n' },
-          
+
           { type: 'STATEMENTS_END', value: '}' },
-          { type: 'TERMINATOR', value: 'EOF' } 
+          { type: 'TERMINATOR', value: 'EOF' }
           ];
       expect(lexer(input)).to.deep.equal(output);
     });
