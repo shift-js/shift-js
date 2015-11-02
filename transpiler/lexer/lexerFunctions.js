@@ -135,7 +135,7 @@ module.exports = {
         "TUPLE": function(tokenIndexStart, tokenIndexEnd) {
           STATE.tokens[tokenIndexStart]['type'] = "TUPLE_START";
           STATE.tokens[tokenIndexEnd]['type'] = "TUPLE_END";
-          for (var q = tokenIndexEnd - 1, enda = tokenIndexStart + 1; q >= enda; i--) {
+          for (var q = tokenIndexEnd - 1, enda = tokenIndexStart + 1; q >= enda; q--) {
             if (STATE.tokens[q]['value'] === ':') {
               STATE.tokens[q-1]['type'] = "TUPLE_ELEMENT_NAME";
             }
@@ -490,8 +490,8 @@ module.exports = {
   },
   
   checkForTupleStart: function(STATE) {
-    if (!STATE.insideTuple.status && STATE.currCol === '(' && (STATE.lastToken.value === '=' ||
-      STATE.lastToken.value === 'return' || STATE.lastToken.value === '->') ) {
+    if (!STATE.insideTuple.status && STATE.currCol === '(' && ((STATE.lastToken.value === '=' ||
+      STATE.lastToken.value === 'return' || STATE.lastToken.value === '->') || (STATE.insideInvocation.length && STATE.insideInvocation[STATE.insideInvocation.length - 1].status)) ) {
       module.exports.makeToken(undefined, undefined, STATE.tokens,
         'TUPLE_START', STATE.chunk);
       // special handling of empty tuples
