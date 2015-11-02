@@ -79,7 +79,7 @@ module.exports = {
   },
 
   // helper function to handle function declarations
-  handleFunctionDeclaration: function(STATE) {
+  handleFunctionDeclarationStart: function(STATE) {
     if (STATE.chunk === 'func') {
       module.exports.checkFor('KEYWORD', STATE.chunk, STATE.tokens);
       var temp = {};
@@ -94,7 +94,10 @@ module.exports = {
       STATE.advanceAndClear(2);
       return true;
     }
+    return false;
+  },
 
+  handleFunctionDeclarationInside: function(STATE) {
     if (STATE.insideFunction.length && STATE.chunk === '(' &&
       STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === false) {
       STATE.FUNCTION_NAMES[STATE.lastToken.value] = true;
@@ -151,6 +154,10 @@ module.exports = {
       STATE.advanceAndClear(1);
       return true;
     }
+    return false;
+  },
+
+  handleFunctionDeclarationEnd: function(STATE) {
     if (STATE.insideFunction.length && STATE.chunk === '}' && 
       STATE.insideFunction[STATE.insideFunction.length - 1].statements === 1 && 
       STATE.insideFunction[STATE.insideFunction.length - 1].curly === 0) {

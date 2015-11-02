@@ -13,6 +13,7 @@ var swiftCode = String.raw`func any(list: [Int], condition: ((Int,String,Bool) -
                               return false
                           }`;
 
+
 var swiftCodeAnswers = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
         { type: "IDENTIFIER",                 value: "any" },
@@ -53,6 +54,10 @@ var swiftCodeAnswers = [
         { type: "IDENTIFIER",                 value: "condition" },
         { type: "INVOCATION_START",           value: "(" },
         { type: "IDENTIFIER",                 value: "item" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "STRING",                     value: "abc" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "BOOLEAN",                    value: "true" },
         { type: "INVOCATION_END",             value: ")" },
         { type: "PUNCTUATION",                value: "{" },
         { type: "TERMINATOR",                 value: "\\n"},
