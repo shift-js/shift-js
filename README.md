@@ -45,7 +45,7 @@ https://github.com/shift-js/shift-js.git
 Install the required dependencies:
 
 ```
-https://github.com/shift-js/shift-js.git
+npm install
 ```
 
 ### Code Overview
@@ -72,15 +72,15 @@ To run the test suite:
 grunt test
 ```
 
-The test suite contains unit tests for each of the main parts of the transpiler.  
+The test suite contains tests for each of the main parts of the transpiler.  
 
-- ```lexerTests/``` : tests to ensure that the lexer is generating the correct token stream
+- Lexer tests ensure that the lexer is generating the correct token stream
 
-- ```parserTests/``` : tests to ensure that the parser is generating the correct AST based on the token stream
+- Parser tests ensure that the parser is generating the correct AST based on the token stream
 
-- ```generatorTests/``` : tests to ensure that Escodgen is generating the correct JavaScript based on the AST
+- Generator tests to ensure that Escodgen is generating the correct JavaScript based on the AST
 
-- ```endToEnd/``` : tests to ensure that the transpiler as a whole is generating the correct JavaScript based on the Swift input
+- End to end tests to ensure that the transpiler as a whole is generating the correct JavaScript based on the Swift input
 
 To run any of these particular tests, rather then the entire test suite, use one of the following:
 
@@ -94,7 +94,7 @@ grunt testGenerator
 grunt testEndToEnd
 ```
 
-Each Swift language feature should have corresponding lexer, parser, generator, and end to end tests.
+Each Swift language feature should have corresponding lexer, parser, generator, and end to end tests.  Please be sure to test your code before making a pull request and to include any new tests when appropriate.
 
 ### Contributing
 
@@ -104,7 +104,7 @@ Each Swift language feature should have corresponding lexer, parser, generator, 
 
 3. Tests are very important for this project. Write tests that show the bug was fixed or that the feature works as expected.
 
-4. Send a pull request. Make sure to add yourself to CONTRIBUTORS.txt.
+4. Send a
 
 Please refer to CONTRIBUTING.md and STYLEGUIDE.md in ```docs/``` for detailed contributing guidelines.
 

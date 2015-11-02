@@ -1,32 +1,5 @@
 # Contributing
 
-
-## General Workflow
-
-1. Fork the repo
-2. Cut a namespaced feature branch from dvelop
-  - bug/...
-  - feat/...
-  - test/...
-  - doc/...
-  - refactor/...
-3. Make commits to your feature branch. Prefix each commit like so:
-  - (feat) implement new feature
-  - (fix) fix inconsistent tests [Fixes #0]
-  - (refactor) refactor ...
-  - (cleanup) cleanup ...
-  - (test) test ...
-  - (doc) add
-4. When you've finished with your fix or feature, Rebase upstream changes into your branch. submit a pull request
-   directly to dvelop. Include a description of your changes.
-5. Your pull request will be reviewed by another maintainer. The point of code
-   reviews is to help keep the codebase clean and of high quality and, equally
-   as important, to help you grow as a programmer. If your code reviewer
-   requests you make a change you don't understand, ask them why.
-6. Fix any issues raised by your code reviwer, and push your fixes as a single
-   new commit.
-7. Once the pull request has been reviewed, it will be merged by another member of the team into develop and ultimately master. Do not merge your own commits.
-
 ## Detailed Workflow
 
 ### Fork the repo
@@ -37,7 +10,7 @@ Use github’s interface to make a fork of the repo, then add that repo as an up
 git remote add upstream https://github.com/greenfield-apollo/greenfield-apollo.git
 ```
 
-### Cut a namespaced feature branch from dvelop
+### Cut a namespaced feature branch from develop
 
 Your branch should follow this naming convention:
   - bug/...
@@ -84,11 +57,11 @@ changes.
 
 Once you are done making changes, you can begin the process of getting
 your code merged into the main repo. Step 1 is to rebase upstream
-changes to the dvelop branch into yours by running this command
+changes to the develop branch into yours by running this command
 from your branch:
 
 ```bash
-git pull --rebase upstream dvelop
+git pull --rebase upstream develop
 ```
 
 This will start the rebase process. You must commit all of your changes
@@ -121,9 +94,23 @@ make sure they work also.
 If rebasing broke anything, fix it, then repeat the above process until
 you get here again and nothing is broken and all the tests pass.
 
+### Test your Changes
+
+The nature of this project requires extensive tests, which are located in ```/tests```
+
+To run the test suite:
+
+```
+grunt test
+```
+
+The test suite contains unit tests for each of the main parts of the transpiler as well as end to end tests.  These ensure that each stage of the transpilation process is operating as expected and that the transpiler as a whole is outputting correct JavaScript.
+
+Please be sure to test your code before making a pull request and to write specific lexer, parser, generator, and end to end tests if necessary.
+
 ### Make a pull request
 
-Make a clear pull request from your fork and branch to the upstream dvelop
+Make a clear pull request from your fork and branch to the upstream develop
 branch, detailing exactly what changes you made and what feature this
 should add. The clearer your pull request is the faster you can get
 your changes incorporated into this repo.
@@ -143,18 +130,18 @@ Thanks for contributing!
 
 1. Follow STYLE-GUIDE.md
 2. Run the tests before submitting a pull request.
-3. Tests are very, very important. Submit tests if your pull request contains
+3. Tests are very, very important. Submit new tests if your pull request contains
    new, testable behavior.
 
 ## Checklist:
 
 This is just to help you organize your process
 
-- [ ] Did I cut my work branch off of dvelop (don't cut new branches from existing feature brances)?
+- [ ] Did I cut my work branch off of develop (don't cut new branches from existing feature brances)?
 - [ ] Did I follow the correct naming convention for my branch?
 - [ ] Is my branch focused on a single main change?
  - [ ] Do all of my changes directly relate to this change?
-- [ ] Did I rebase the upstream dvelop branch after I finished all my
+- [ ] Did I rebase the upstream develop branch after I finished all my
   work?
 - [ ] Did I write a clear pull request message detailing what changes I made?
 - [ ] Did I get a code review?
