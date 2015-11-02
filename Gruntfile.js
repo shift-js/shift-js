@@ -16,7 +16,23 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         src: [
-          'tests/tupleTests/*'
+          'tests/tupleTests/*.js'
+        ]
+      },
+      tupleSimple: {
+        options: {
+          reporter: 'spec'
+        },
+        src: [
+          'tests/tupleTests/tupleSimpleTest.js'
+        ]
+      },
+      tupleNested: {
+        options: {
+          reporter: 'spec'
+        },
+        src: [
+          'tests/tupleTests/tupleNestedTest.js'
         ]
       },
       lexer: {
@@ -135,6 +151,14 @@ module.exports = function(grunt) {
 
   grunt.registerTask('testTuple',[
     'mochaTest:tuple'
+  ]);
+
+  grunt.registerTask('testTupleSimple',[
+    'mochaTest:tupleSimple'
+  ]);
+
+  grunt.registerTask('testTupleNested',[
+    'mochaTest:tupleNested'
   ]);
 
   grunt.registerTask('testEndToEnd', [

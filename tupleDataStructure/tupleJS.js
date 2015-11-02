@@ -1,4 +1,4 @@
-// swift tuple example: ("blah", two: 2, (5, three: 3))
+// swift tuple example: var tup = ("blah", two: 2, (5, three: 3))
 // input into Tuple class, expected in form of an array: var myTupleInput = ["blah", {two: 2}, [5, {three: 3}]];
 // creating the tuple object: var t = new Tuple(myTupleInput);
 // internal state of the tuple:
@@ -15,6 +15,11 @@
   
 
 }
+*/
+
+/*
+
+
 */
 
 //TODO:
@@ -65,6 +70,7 @@ Tuple.prototype.findLocation = function(keyOrIndex) {
 }
 
 // make findValue has an optional level taking in the level as a # or a string such as "all"
+//
 Tuple.prototype.findValue = function(keyOrIndex){
   var x = this.tup[keyOrIndex];
   // console.log(x["tup"]);
