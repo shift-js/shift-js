@@ -5,6 +5,7 @@ module.exports = function(code) {
   var STATE = {
     i: 0,
     tokens: [],
+    currentTokenLength: 0,
     chunk: '',
     currCol: undefined,
     prevCol: undefined,
@@ -44,7 +45,7 @@ module.exports = function(code) {
   }
 
   while (code[STATE.i] !== undefined) {
-    debugger;
+    //debugger;
     STATE.chunk += code[STATE.i];
     STATE.currCol = code[STATE.i];
     STATE.prevCol = code[STATE.i - 1];
@@ -59,6 +60,17 @@ module.exports = function(code) {
     // console.log(STATE.nextCol);
     // console.log(STATE.tokens);
     // console.log(STATE.emptyLine);
+    
+    // if (STATE.tokens.length !== STATE.currentTokenLength) {
+    //  if (STATE.insideFunction.length) {
+    //    console.log(STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens);
+    //    console.log(STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter);
+    //    console.log(STATE.insideFunction[STATE.insideFunction.length - 1].insideParams);
+    //  }
+    //  STATE.currentTokenLength = STATE.tokens.length;
+    // }
+    
+    
 
     // handles new lines
     if (lexerFunctions.handleNewLine(STATE)) {
@@ -121,23 +133,19 @@ module.exports = function(code) {
 
     // Tokenizing return arrow
     if (STATE.insideFunction.length && STATE.currCol === "-" && STATE.nextCol === ">") {
-      lexerFunctions.checkFor('FUNCTION_DECLARATION', "->", STATE.tokens);
-      if (STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement === false) {
-        STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement = true;
-      }
+      lexerFunctions.checkFor(STATE, 'FUNCTION_DECLARATION', "->", STATE.tokens);
       STATE.advanceAndClear(2);
       continue;
     }
 
+    // adding the recently declared function to the FUNCTION_NAMES property, this may not work in all cases by adding incorrectly identified functions
     if (STATE.insideFunction.length && STATE.lastFunction.insideParams === true && STATE.chunk === '(') {
-      lexerFunctions.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      // lexerFunctions.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
         var len = STATE.tokens.length - 1;
         while (STATE.tokens[len].type !== 'IDENTIFIER') {
           len--;
         }
         STATE.FUNCTION_NAMES[STATE.tokens[len].value] = true;
-        STATE.advanceAndClear(1);
-        continue;
     }
 
     // Handles Function Invocations
@@ -184,7 +192,7 @@ module.exports = function(code) {
     // collection initializer handling
     if (STATE.tokens.length && STATE.currCol === '(' &&
       (STATE.lastToken.type === 'ARRAY_END' || STATE.lastToken.type === 'DICTIONARY_END')) {
-      lexerFunctions.checkFor('FUNCTION_INVOCATION', STATE.currCol, STATE.tokens);
+      lexerFunctions.checkFor(STATE, 'FUNCTION_INVOCATION', STATE.currCol, STATE.tokens);
       var tmp = {};
       tmp.name = STATE.lastToken.value;
       tmp.status = true;
@@ -230,29 +238,29 @@ module.exports = function(code) {
       if (STATE.lastToken && STATE.lastToken.type === 'DOT_SYNTAX' && STATE.TUPLE_ELEMENT_NAMES[STATE.chunk]) {
         lexerFunctions.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_ELEMENT_NAME', STATE.chunk);
       } else if (STATE.insideCollection.length && STATE.lastCollection.type === undefined &&
-        lexerFunctions.checkFor('PUNCTUATION', STATE.chunk, STATE.tokens)) {
+        lexerFunctions.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens)) {
         lexerFunctions.determineCollectionType(STATE);
       } else if (STATE.insideCollection.length && STATE.currCol === ']' && !STATE.substringLookup) {
-        lexerFunctions.checkFor('COLLECTION', STATE.chunk, STATE.tokens, function() {
+        lexerFunctions.checkFor(STATE, 'COLLECTION', STATE.chunk, STATE.tokens, function() {
           STATE.tokens[STATE.tokens.length - 1].type = STATE.lastCollection.type || 'ARRAY_END';
           STATE.insideCollection.pop();
         });
       } else if (STATE.tokens.length && STATE.lastToken.type !== 'IDENTIFIER' &&
         STATE.lastToken.type !== 'SUBSCRIPT_LOOKUP_END' && STATE.currCol === '[') {
-        lexerFunctions.checkFor('COLLECTION', STATE.chunk, STATE.tokens, function(){
+        lexerFunctions.checkFor(STATE, 'COLLECTION', STATE.chunk, STATE.tokens, function(){
           STATE.insideCollection.push({type: undefined, location: STATE.tokens.length-1});})
       } else {
-        lexerFunctions.checkFor('KEYWORD', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor('NATIVE_METHOD', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor('METHOD_ARGUMENT_NAME', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor('TYPE_PROPERTY', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor('TYPE', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor('PUNCTUATION', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor('SUBSCRIPT_LOOKUP', STATE.chunk, STATE.tokens, function() {
+        lexerFunctions.checkFor(STATE, 'KEYWORD', STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, 'NATIVE_METHOD', STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, 'METHOD_ARGUMENT_NAME', STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, 'TYPE_PROPERTY', STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, 'TYPE', STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, 'SUBSCRIPT_LOOKUP', STATE.chunk, STATE.tokens, function() {
           STATE.substringLookup = !STATE.substringLookup;
         }) ||
-        lexerFunctions.checkFor('OPERATOR', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor('TERMINATOR', STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, 'OPERATOR', STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, 'TERMINATOR', STATE.chunk, STATE.tokens) ||
         lexerFunctions.checkForIdentifier(STATE) ||
         lexerFunctions.checkForLiteral(STATE.chunk, STATE.tokens);
       }
