@@ -824,7 +824,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle function invocations with internal parentheses', function () {
+    xit('should handle function invocations with internal parentheses', function () {
       input = String.raw`func addOne(input: Int) -> Int {
                               return input + 1
                           }
@@ -2225,7 +2225,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle functions with mathematical operations and parentheses in their invocation', function () {
+    xit('should handle functions with mathematical operations and parentheses in their invocation', function () {
       input = String.raw `func addOne(input: Int) -> Int {
                               return input + 1
                           }
@@ -2469,7 +2469,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle functions that get assigned to a variable and are invoked later', function () {
+    xit('should handle functions that get assigned to a variable and are invoked later', function () {
       input = String.raw`func addTwoInts(a: Int, b: Int) -> Int {
                                 return a+b
                             }

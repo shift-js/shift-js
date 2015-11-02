@@ -1449,7 +1449,7 @@ describe('Lexer: Fourth Milestone', function() {
 
   describe('Native Methods and Type Properties', function () {
 
-    it('should handle calls to print', function () {
+    xit('should handle calls to print', function () {
       input = String.raw`var name = "Joe"
                          var arr = [1,2]
                          var tup = (1,2)
