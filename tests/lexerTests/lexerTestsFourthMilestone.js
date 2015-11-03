@@ -343,7 +343,7 @@ describe('Lexer: Fourth Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle complex memberwise initialization with string interpolation that contains a function invocation', function () {
+    it('should handle complex memberwise initialization with string interpolation that contains a function invocation', function () {
       input = String.raw`struct Greeting {
                             var greeting = ""
                         }
@@ -352,7 +352,46 @@ describe('Lexer: Fourth Milestone', function() {
                         }
                         var helloWorld = Greeting(greeting: "Hello, \(returnWorld())!")`;
       output = [
-
+        { type: 'DECLARATION_KEYWORD',         value: 'struct' },
+        { type: 'IDENTIFIER',                  value: 'Greeting' },
+        { type: 'STRUCT_DEFINITION_START',     value: '{' },
+        { type: 'TERMINATOR',                  value: '\\n' },
+        { type: 'DECLARATION_KEYWORD',         value: 'var' },
+        { type: 'IDENTIFIER',                  value: 'greeting' },
+        { type: 'OPERATOR',                    value: '=' },
+        { type: 'STRING',                      value: '' },
+        { type: 'TERMINATOR',                  value: '\\n' },
+        { type: 'STRUCT_DEFINITION_END',       value: '}' },
+        { type: 'TERMINATOR',                  value: '\\n' },
+        { type: 'DECLARATION_KEYWORD',         value: 'func' },
+        { type: 'IDENTIFIER',                  value: 'returnWorld' },
+        { type: 'PARAMS_START',                value: '(' },
+        { type: 'PARAMS_END',                  value: ')' },
+        { type: 'RETURN_ARROW',                value: '->' },
+        { type: 'TYPE_STRING',                 value: 'String' },
+        { type: 'STATEMENTS_START',            value: '{' },
+        { type: 'TERMINATOR',                  value: '\\n' },
+        { type: 'STATEMENT_KEYWORD',           value: 'return' },
+        { type: 'STRING',                      value: 'World' },
+        { type: 'TERMINATOR',                  value: '\\n' },
+        { type: 'STATEMENTS_END',              value: '}' },
+        { type: 'TERMINATOR',                  value: '\\n' },
+        { type: 'DECLARATION_KEYWORD',         value: 'var' },
+        { type: 'IDENTIFIER',                  value: 'helloWorld' },
+        { type: 'OPERATOR',                    value: '=' },
+        { type: 'IDENTIFIER',                  value: 'Greeting' },
+        { type: 'INITIALIZATION_START',        value: '(' },
+        { type: 'IDENTIFIER',                  value: 'greeting' },
+        { type: 'PUNCTUATION',                 value: ':' },
+        { type: 'STRING',                      value: 'Hello, ' },
+        { type: 'STRING_INTERPOLATION_START',  value: '\\(' },
+        { type: 'IDENTIFIER',                  value: 'returnWorld' },
+        { type: 'INVOCATION_START',            value: '(' },
+        { type: 'INVOCATION_END',              value: ')' },
+        { type: 'STRING_INTERPOLATION_END',    value: ')' },
+        { type: 'STRING',                      value: '!' },
+        { type: 'INITIALIZATION_END',          value: ')' },
+        { type: 'TERMINATOR',                  value: 'EOF' }   
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -1884,8 +1923,9 @@ describe('Lexer: Fourth Milestone', function() {
                            var y = s[s.startIndex.advancedBy(1)]
                            var fifteen = s.endIndex
                            var fourteen = s.endIndex.predecessor()
-                           var bang = s[s.endIndex.predecessor()]`;
-                    //TODO // print("the letter s: \(s[s.startIndex.advancedBy(3)])")`;
+                           var bang = s[s.endIndex.predecessor()]
+                           print("the letter s: \(s[s.startIndex.advancedBy(3)])")`;
+                           
         output = [
           { type: "DECLARATION_KEYWORD",        value: "var" },
           { type: "IDENTIFIER",                 value: "s" },
@@ -1986,26 +2026,26 @@ describe('Lexer: Fourth Milestone', function() {
           { type: "INVOCATION_START",           value: "(" },
           { type: "INVOCATION_END",             value: ")" },
           { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
-          // { type: "TERMINATOR",                 value: "\\n"},
+          { type: "TERMINATOR",                 value: "\\n"},
 
-          // { type: "NATIVE_METHOD",              value: "print"},
-          // { type: "INVOCATION_START",           value: "(" },
-          // { type: "STRING",                     value: "the letter s: " },
-          // { type: "STRING_INTERPOLATION_START", value: "\\(" },
-          // { type: "IDENTIFIER",                 value: "s" },
-          // { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
-          // { type: "IDENTIFIER",                 value: "s" },
-          // { type: "DOT_SYNTAX",                 value: "." },
-          // { type: "TYPE_PROPERTY",              value: "startIndex" },
-          // { type: "DOT_SYNTAX",                 value: "." },
-          // { type: "NATIVE_METHOD",              value: "advancedBy"},
-          // { type: "INVOCATION_START",           value: "(" },
-          // { type: "NUMBER",                     value: "3" },
-          // { type: "INVOCATION_END",             value: ")" },
-          // { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
-          // { type: "STRING_INTERPOLATION_END",   value: ")" },
-          // { type: "STRING",                     value: "" },
-          // { type: "INVOCATION_END",             value: ")" },
+          { type: "NATIVE_METHOD",              value: "print"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "STRING",                     value: "the letter s: " },
+          { type: "STRING_INTERPOLATION_START", value: "\\(" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
+          { type: "IDENTIFIER",                 value: "s" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "TYPE_PROPERTY",              value: "startIndex" },
+          { type: "DOT_SYNTAX",                 value: "." },
+          { type: "NATIVE_METHOD",              value: "advancedBy"},
+          { type: "INVOCATION_START",           value: "(" },
+          { type: "NUMBER",                     value: "3" },
+          { type: "INVOCATION_END",             value: ")" },
+          { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
+          { type: "STRING_INTERPOLATION_END",   value: ")" },
+          { type: "STRING",                     value: "" },
+          { type: "INVOCATION_END",             value: ")" },
           { type: "TERMINATOR",                 value: "EOF"},
         ];
         expect(lexer(input)).to.deep.equal(output);
