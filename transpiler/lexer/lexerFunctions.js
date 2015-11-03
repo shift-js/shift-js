@@ -487,18 +487,21 @@ module.exports = {
     if (STATE.insideClass.length && STATE.insideClass[STATE.insideClass.length - 1].curly === 0 && STATE.chunk === '{') {
       module.exports.checkFor(STATE, 'CLASS_DEFINITION', STATE.chunk, STATE.tokens);
       STATE.insideClass[STATE.insideClass.length - 1].curly++;
+      STATE.advanceAndClear(1);
       return true;
     }
     if (STATE.insideClass.length && STATE.insideClass[STATE.insideClass.length - 1].curly === 1 && STATE.chunk === '}') {
       module.exports.checkFor(STATE, 'CLASS_DEFINITION', STATE.chunk, STATE.tokens);
       STATE.insideClass.pop();
       module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      STATE.advanceAndClear(1);
       return true;
     }
     if (STATE.insideStruct.length && STATE.insideStruct[STATE.insideStruct.length - 1].curly === 0 &&
       STATE.chunk === '{') {
       module.exports.checkFor(STATE, 'STRUCT_DEFINITION', STATE.chunk, STATE.tokens);
       STATE.insideStruct[STATE.insideStruct.length - 1].curly++;
+      STATE.advanceAndClear(1);
       return true;
     }
     if (STATE.insideStruct.length && STATE.insideStruct[STATE.insideStruct.length - 1].curly === 1 &&
@@ -506,6 +509,7 @@ module.exports = {
       module.exports.checkFor(STATE, 'STRUCT_DEFINITION', STATE.chunk, STATE.tokens);
       STATE.insideStruct.pop();
       module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      STATE.advanceAndClear(1);
       return true;
     }
     if (STATE.tokens.length && (STATE.CLASS_NAMES[STATE.lastToken.value] || 
@@ -515,6 +519,7 @@ module.exports = {
       temp.status = true;
       temp.parens = 1;
       STATE.insideInitialization.push(temp);
+      STATE.advanceAndClear(1);
       return true;
     }
     if (STATE.chunk === ')' && STATE.insideInitialization.length && 
@@ -522,6 +527,7 @@ module.exports = {
       module.exports.checkFor(STATE, 'INITIALIZATION', STATE.chunk, STATE.tokens);
       STATE.insideInitialization.pop();
       module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      STATE.advanceAndClear(1);
       return true;
     }
     return false;

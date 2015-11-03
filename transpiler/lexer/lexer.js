@@ -117,7 +117,7 @@ module.exports = function(code) {
       continue;
     }
 
-    // Tokenizes return arrows
+    // tokenizes return arrows
     if (STATE.currCol === "-" && STATE.nextCol === ">") {
       lexerFunctions.checkFor(STATE, 'FUNCTION_DECLARATION', "->", STATE.tokens);
       if (STATE.insideFunction.length) {
@@ -130,7 +130,7 @@ module.exports = function(code) {
       continue;
     }
 
-    // adding the recently declared function to the FUNCTION_NAMES property, this may not work in all cases by adding incorrectly identified functions
+    // adds the recently declared function to the FUNCTION_NAMES property, this may not work in all cases by adding incorrectly identified functions
     if (STATE.insideFunction.length && STATE.lastFunction.insideParams === true && STATE.chunk === '(') {
       
       // lexerFunctions.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
@@ -141,7 +141,7 @@ module.exports = function(code) {
         STATE.FUNCTION_NAMES[STATE.tokens[len].value] = true;
     }
 
-    // Handles start and end of function invocations
+    // handles start and end of function invocations
     if (lexerFunctions.handleFunctionInvocationStart(STATE)) {
       continue;
     }
@@ -161,7 +161,7 @@ module.exports = function(code) {
       continue;
     }
 
-    // handling the ()'s inside of the function invocation
+    // handles parentheses inside of the function invocation
     if (lexerFunctions.handleFunctionInvocationInside(STATE)) {
       continue;
     }
@@ -170,11 +170,9 @@ module.exports = function(code) {
     if (lexerFunctions.handleFunctionDeclarationStart(STATE)) {
       continue;
     }
-
     if (lexerFunctions.handleFunctionDeclarationInside(STATE)) {
       continue;
     }
-
     if (lexerFunctions.handleFunctionDeclarationEnd(STATE)) {
       continue;
     }
@@ -200,7 +198,6 @@ module.exports = function(code) {
 
     // handles classes and structs
     if (lexerFunctions.handleClassOrStruct(STATE)) {
-      STATE.advanceAndClear(1);
       continue;
     }
 
@@ -222,9 +219,13 @@ module.exports = function(code) {
       STATE.advanceAndClear(1);
       continue;
     }
-    // main evaluation block
+    
+    // main evaluation block that executes if the lexer is not inside a string,
+    // not inside a number, and an appropriate evaluation point has been reached
     if (!STATE.insideString && !STATE.insideNumber &&
       lexerFunctions.checkForEvaluationPoint(STATE)) {
+      
+      
       if (STATE.lastToken && STATE.lastToken.type === 'DOT_SYNTAX' && STATE.TUPLE_ELEMENT_NAMES[STATE.chunk]) {
         lexerFunctions.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_ELEMENT_NAME', STATE.chunk);
       } else if (STATE.insideCollection.length && STATE.lastCollection.type === undefined &&
