@@ -18,7 +18,6 @@ program
   .option('-a, --ast', 'Convert Swift file to AST, saved as a JavaScript file.')
   .option('-w, --watch', 'Watch files for changes, running the selected command when a file is updated.')
   .option('-r, --run', 'Run a Swift file as JavaScript.')
-  .option('-e, --execute [swift]', 'Execute Swift code as JavaScript from the command line. (Not yet implemented)')
   .parse(process.argv);
 
 var actionFlags = ['compile', 'tokenize', 'ast'];
