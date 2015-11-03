@@ -1,5 +1,4 @@
 angular.module('app', [
-  'app.home',
   'app.repl',
   'app.api',
   'ngRoute',
@@ -11,14 +10,31 @@ angular.module('app', [
     $routeProvider
       .when('/home', {
         templateUrl: 'app/components/home/homeView.html',
-        controller: 'HomeController'
+      })
+      .when('/examples', {
+        templateUrl: 'app/components/examples/examplesView.html',
+      })
+      .when('/about', {
+        templateUrl: 'app/components/about/aboutView.html',
       })
       .when('/repl', {
         templateUrl: 'app/components/repl/replView.html',
         controller: 'ReplController'
       })
+      .when('/lexer', {
+        templateUrl: 'app/components/source/lexerView.html',
+      })
+      .when('/parser', {
+        templateUrl: 'app/components/source/parserView.html',
+      })
+      .when('/api', {
+        templateUrl: 'app/components/source/apiView.html',
+      })
+      .when('/cli', {
+        templateUrl: 'app/components/source/cliView.html',
+      })
       .otherwise({
-        redirectTo: '/repl'
+        redirectTo: '/home'
       });
   }
 ])
