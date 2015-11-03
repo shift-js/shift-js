@@ -2,6 +2,7 @@ node_modules
 transpiler/parser/test/newTests.js
 client/lib/**/*
 client/app/components/repl/api.js
+client/app/components/source/**/*
 
 transpiler/lexer/singleTest.js
 transpiler/lexer/singleTest2.js
