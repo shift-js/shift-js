@@ -1,4 +1,4 @@
-var Tuple = require('../../tupleDataStructure/tupleJS');
+var Tuple = require('../../transpiler/dataStructures/tuples/tupleJS');
 var expect = require('chai').expect;
 var t;
 
@@ -9,16 +9,16 @@ describe('Nested Tuple', function() {
       // expect(t.findValue(0)).to.deep.equal("blah");
       // expect(t.findValue(1)).to.deep.equal(2);
       // expect(t.findValue('two')).to.deep.equal(2);
-      // expect(t.findValue(2)).to.deep.equal({ 
+      // expect(t.findValue(2)).to.deep.equal({
       //   '0': { val: 5 },
-      //   '1': 'Tuple' { 
+      //   '1': 'Tuple' {
       //     'tup': {
-      //       '0': { val: 42 } 
+      //       '0': { val: 42 }
       //      }
       //   },
       //   '2': { val: 3, key: 'three' },
-      //   'three': { val: 3, key: 2 } 
-      // }); 
+      //   'three': { val: 3, key: 2 }
+      // });
       // expect(t.findValue(3)).to.deep.equal(undefined);
       // var x = t.findValue(2);
 

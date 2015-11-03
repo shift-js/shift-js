@@ -1,4 +1,4 @@
-var Tuple = require('../../tupleDataStructure/tupleJS');
+var Tuple = require('../../transpiler/dataStructures/tuples/tupleJS');
 var expect = require('chai').expect;
 var t;
 
@@ -159,7 +159,7 @@ describe('Simple Tuple', function() {
       expect(t.findValue(3)).to.deep.equal(undefined);
       expect(t.findValue('four')).to.deep.equal(undefined);
       expect(t.findValue('five')).to.deep.equal(undefined);
-    });  
+    });
 
   it('should rename the key if the correct arguments are passed in', function () {
     t = new Tuple(["blah", {two: 2}, {three: 7}]);
@@ -177,6 +177,6 @@ describe('Simple Tuple', function() {
       expect(t.findValue(2)).to.deep.equal(7);
       expect(t.findValue('three')).to.deep.equal(7);
       expect(t.findValue(3)).to.deep.equal(undefined);
-    }); 
+    });
 
 });
