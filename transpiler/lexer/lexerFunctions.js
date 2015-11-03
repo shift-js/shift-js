@@ -1,19 +1,22 @@
 var lexicalTypes = require("./lexicalTypes");
 
+// number regex
 var NUMBER = /^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i;
+
+// whitespace regex
 var WHITESPACE = /^[^\n\S]+/;
 
 module.exports = {
 
   // helper function to check for whitespace
   checkForWhitespace: function(col) {
-    // return col === ' ';
     return WHITESPACE.test(col);
   },
   
   // default check for point at which to evaluate chunk
   checkForEvaluationPoint: function(STATE) {
     if (
+      
       module.exports.checkForWhitespace(STATE.currCol) ||
       module.exports.checkForWhitespace(STATE.nextCol) ||
       module.exports.checkFor(STATE, 'PUNCTUATION', STATE.currCol) ||
@@ -540,6 +543,7 @@ module.exports = {
         STATE.insideTuple.status = true;
         STATE.insideTuple.startIndex = STATE.tokens.length - 1;
       }
+      STATE.advanceAndClear(1);
       return true;
     }
     return false;
@@ -549,6 +553,7 @@ module.exports = {
     if (STATE.nextCol === ':') {
       module.exports.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_ELEMENT_NAME', STATE.chunk);
       STATE.TUPLE_ELEMENT_NAMES[STATE.chunk] = true;
+      STATE.advanceAndClear(1);
       return true;
     } else if (STATE.currCol === ',') {
       STATE.insideTuple.verified = true;
@@ -566,6 +571,7 @@ module.exports = {
         STATE.insideTuple.status = false;
         STATE.insideTuple.startIndex = undefined;
         STATE.insideTuple.verified = false;
+        STATE.advanceAndClear(1);
         return true;
       } else {
         STATE.tokens[STATE.insideTuple.startIndex].type = 'PUNCTUATION';

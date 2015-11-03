@@ -2,51 +2,53 @@ var lexerFunctions = require("./lexerFunctions");
 
 module.exports = function(code) {
 
+  // state object to store the token stream and other relevant information related to the Swift input
   var STATE = {
-    i: 0,
-    tokens: [],
-    currentTokenLength: 0,
-    chunk: '',
-    currCol: undefined,
-    prevCol: undefined,
-    nextCol: undefined,
-    nextNextCol: undefined,
-    VARIABLE_NAMES: {},
-    FUNCTION_NAMES: {},
-    CLASS_NAMES: {},
-    STRUCT_NAMES: {},
-    TUPLE_ELEMENT_NAMES: {},
-    emptyLine: true,
-    insideString: false,
-    insideNumber: false,
-    insideCollection: [],
-    insideFunction: [],
-    insideClass: [],
-    insideStruct: [],
-    stringInterpolation: {status: false, counter: 0, nestedInvocation: false},
-    substringLookup: false,
-    insideComment: {multi: false, single: false},
-    insideTuple: {status: false, startIndex: undefined},
-    insideInvocation: [],
-    insideInitialization: [],
-    lastToken: undefined,
-    lastCollection: undefined,
-    lastFunction: undefined,
-    variableArrows: [],
-    advance: function(positions) {
+    i: 0,                                                                       // current position in code
+    tokens: [],                                                                 // array to hold token stream
+    chunk: '',                                                                  // current chunk to be evaluated
+    currCol: undefined,                                                         // current column in the code
+    prevCol: undefined,                                                         // current column - 1         
+    nextCol: undefined,                                                         // current column + 1
+    nextNextCol: undefined,                                                     // current column + 2
+    VARIABLE_NAMES: {},                                                         // object to store all variable names
+    FUNCTION_NAMES: {},                                                         // object to store all function names
+    CLASS_NAMES: {},                                                            // object to store all class names
+    STRUCT_NAMES: {},                                                           // object to store all struct names
+    TUPLE_ELEMENT_NAMES: {},                                                    // object to store all tuple element names
+    emptyLine: true,                                                            // tracks whether line is empty to remove unnecessary whitespace
+    insideString: false,                                                        // tracks whether the chunk is a string
+    insideNumber: false,                                                        // tracks whether the chunk is a number
+    insideCollection: [],                                                       // tracks whether the lexer is inside a collection; handles nested collections
+    insideFunction: [],                                                         // tracks whether the lexer is inside a function; handles nested functions
+    insideClass: [],                                                            // tracks whether the lexer is evaluating inside a class
+    insideStruct: [],                                                           // tracks whether the lexer is evaluating inside a struct
+    stringInterpolation: {status: false, counter: 0, nestedInvocation: false},  // tracks whether the lexer is evaluating inside string interpolations  
+    subscriptLookup: false,                                                     // tracks whether square brackets relate to subscript lookup
+    insideComment: {multi: false, single: false},                               // tracks whether the lexer is evaluating inside a comment
+    insideTuple: {status: false, startIndex: undefined},                        // tracks whether the lexer is evaluating inside a tuple
+    insideInvocation: [],                                                       // tracks whether the lexer is evaluating inside a function invocation
+    insideInitialization: [],                                                   // tracks whether the lexer is evaluating inside a struct or class initialization
+    lastToken: undefined,                                                       // reference to last token added to tokens array
+    lastCollection: undefined,                                                  // reference to start of last collection added to tokens array  
+    lastFunction: undefined,                                                    // reference to start of last function added to tokens array 
+    variableArrows: [],                                                         // stores references to return arrows
+    advance: function(positions) {                                              // helper method to advance i n positions
       this.i += positions;
     },
-    clearChunk: function() {
+    clearChunk: function() {                                                    // helper method to clear the chunk
       this.chunk = '';
     },
-    advanceAndClear: function(positions) {
+    advanceAndClear: function(positions) {                                      // helper method to advance i n positions and clear the chunk
       this.i += positions;
       this.chunk = '';
     }
   }
 
+  // main loop that iterated through the input code
   while (code[STATE.i] !== undefined) {
-    //debugger;
+
+    // sets state properties for the iteration
     STATE.chunk += code[STATE.i];
     STATE.currCol = code[STATE.i];
     STATE.prevCol = code[STATE.i - 1];
@@ -55,29 +57,6 @@ module.exports = function(code) {
     STATE.lastToken = STATE.tokens[STATE.tokens.length - 1];
     STATE.lastCollection = STATE.insideCollection[STATE.insideCollection.length - 1];
     STATE.lastFunction = STATE.insideFunction[STATE.insideFunction.length - 1];
-
-    // console.log(STATE.chunk);
-    // console.log(STATE.currCol);
-    // console.log(STATE.nextCol);
-    // console.log(STATE.tokens);
-    // console.log(STATE.emptyLine);
-    // console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1]);
-    
-    // if (STATE.tokens.length !== STATE.currentTokenLength) {
-    //  if (STATE.insideInvocation.length) {
-    //    console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1].name);
-    //    console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1].status);
-    //    console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1].parens);
-    //  }
-    //  STATE.currentTokenLength = STATE.tokens.length;
-  //   // }
-
-    // if (STATE.tokens.length !== STATE.currentTokenLengt //h) {
-    //  if (STATE.insideFunction.l //ength) {
-    //    console.log(STATE.tokens.length, STATE.insideFunction[STATE.insideFunction.length - 1].returnArro // //ws);
-    //  }
-    //  STATE.currentTokenLength = STATE.tokens //.length;
-    // }
 
     // handles new lines
     if (lexerFunctions.handleNewLine(STATE)) {
@@ -138,11 +117,11 @@ module.exports = function(code) {
       continue;
     }
 
-    // Tokenizing return arrow
+    // Tokenizes return arrows
     if (STATE.currCol === "-" && STATE.nextCol === ">") {
       lexerFunctions.checkFor(STATE, 'FUNCTION_DECLARATION', "->", STATE.tokens);
       if (STATE.insideFunction.length) {
-        STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows.push(STATE.tokens.length - 1);
+        STATE.lastFunction.returnArrows.push(STATE.tokens.length - 1);
       } else {
         STATE.variableArrows.push(STATE.tokens.length - 1);
         lexerFunctions.rewriteVariableParensHistory(STATE);
@@ -153,6 +132,7 @@ module.exports = function(code) {
 
     // adding the recently declared function to the FUNCTION_NAMES property, this may not work in all cases by adding incorrectly identified functions
     if (STATE.insideFunction.length && STATE.lastFunction.insideParams === true && STATE.chunk === '(') {
+      
       // lexerFunctions.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
         var len = STATE.tokens.length - 1;
         while (STATE.tokens[len].type !== 'IDENTIFIER') {
@@ -161,28 +141,22 @@ module.exports = function(code) {
         STATE.FUNCTION_NAMES[STATE.tokens[len].value] = true;
     }
 
-    // Handles Function Invocations starting and ending
+    // Handles start and end of function invocations
     if (lexerFunctions.handleFunctionInvocationStart(STATE)) {
       continue;
     }
-
     if (lexerFunctions.handleFunctionInvocationEnd(STATE)) {
       continue;
     }
 
-
-
     // tuple handling
     if (lexerFunctions.checkForTupleStart(STATE)) {
-      STATE.advanceAndClear(1);
       continue;
     }
     if (STATE.insideTuple.status && lexerFunctions.handleTuple(STATE)) {
-      STATE.advanceAndClear(1);
       continue;
     }
     if (lexerFunctions.checkForTupleEnd(STATE)) {
-      STATE.advanceAndClear(1);
       lexerFunctions.handleEndOfFile(STATE.nextCol, STATE.tokens);
       continue;
     }
@@ -256,7 +230,7 @@ module.exports = function(code) {
       } else if (STATE.insideCollection.length && STATE.lastCollection.type === undefined &&
         lexerFunctions.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens)) {
         lexerFunctions.determineCollectionType(STATE);
-      } else if (STATE.insideCollection.length && STATE.currCol === ']' && !STATE.substringLookup) {
+      } else if (STATE.insideCollection.length && STATE.currCol === ']' && !STATE.subscriptLookup) {
         lexerFunctions.checkFor(STATE, 'COLLECTION', STATE.chunk, STATE.tokens, function() {
           STATE.tokens[STATE.tokens.length - 1].type = STATE.lastCollection.type || 'ARRAY_END';
           STATE.insideCollection.pop();
@@ -273,7 +247,7 @@ module.exports = function(code) {
         lexerFunctions.checkFor(STATE, 'TYPE', STATE.chunk, STATE.tokens) ||
         lexerFunctions.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens) ||
         lexerFunctions.checkFor(STATE, 'SUBSCRIPT_LOOKUP', STATE.chunk, STATE.tokens, function() {
-          STATE.substringLookup = !STATE.substringLookup;
+          STATE.subscriptLookup = !STATE.subscriptLookup;
         }) ||
         lexerFunctions.checkFor(STATE, 'OPERATOR', STATE.chunk, STATE.tokens) ||
         lexerFunctions.checkFor(STATE, 'TERMINATOR', STATE.chunk, STATE.tokens) ||
