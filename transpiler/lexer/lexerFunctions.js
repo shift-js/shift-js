@@ -107,6 +107,22 @@ module.exports = {
     return false;
   },
 
+  rewriteVariableParensHistory: function(STATE) {
+    if (STATE.variableArrows.length)
+    var arrowIndex = STATE.variableArrows[STATE.variableArrows.length - 1];
+    var tok = STATE.tokens[arrowIndex];
+    var arr = [];
+    while (tok["value"] !== "var" && tok["value"] !== "let") {
+      arrowIndex--;
+      tok = STATE.tokens[arrowIndex];
+      if (tok["value"] === '(' || tok["value"] === ')') {
+        arr.push({tokenIndex: arrowIndex, tokenType: tok["type"], tokenValue: tok["value"]});
+      }
+    }
+    module.exports.reviseFunctionHistory(arr, STATE);
+    STATE.variableArrows.pop();
+  },
+
   handleFunctionDeclarationInside: function(STATE) {
     if (STATE.insideFunction.length && STATE.chunk === '(' &&
       STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === false) {
