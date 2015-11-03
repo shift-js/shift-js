@@ -118,7 +118,7 @@ module.exports = {
     }
 
     if (STATE.insideFunction.length && STATE.chunk === ')' && 
-      STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true &&
       STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter === 1) {
       module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter--;
