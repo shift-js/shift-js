@@ -1,6 +1,28 @@
+h1, h2, h3, h4, h5, h6, span, .h1 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100;
+}
+
+p, a  {
+  font-family: 'Roboto', sans-serif;
+}
+
 textarea {
   resize: none;
   background-color: #fff !important;
   box-shadow: none !important;
   border-color: #ccc !important;
+}
+.nav, .pagination, .carousel, .panel-title a {
+  cursor: pointer;
+}
+
+#logo{
+  max-height: 40px;
+  margin-top: -10px;
+  margin-right: -20px;
+}
+
+.example {
+  margin: 20px 0 10px;
 }

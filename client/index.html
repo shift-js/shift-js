@@ -3,17 +3,54 @@
   <head>
     <meta charset="utf-8" />
     <title>ShiftJS</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
     <link rel="stylesheet" href="styles/main.css">
   </head>
   <body ng-app="app">
+    <nav ng-controller="DropdownCtrl" class="navbar navbar-default" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
 
+        <button type="button" class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#/home"><img id="logo" alt="Brand" src="assets/logo.png"></a>
+        <a class="navbar-brand" href="#/home">ShiftJS</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-click="navCollapsed = true">
+
+        <ul class="nav navbar-nav">
+          <li><a href="#/repl">Try</a></li>
+          <li class="dropdown" uib-dropdown is-open="status.isopen">
+            <a class="dropdown-toggle" uib-dropdown-toggle ng-disabled="disabled">
+              Annotated Source
+            </a>
+            <ul class="uib-dropdown-menu" role="menu" aria-labelledby="single-button">
+              <li role="menuitem"><a href="#/lexer">Lexer</a></li>
+              <li role="menuitem"><a href="#/parser">Parser</a></li>
+              <li role="menuitem"><a href="#/api">API</a></li>
+              <li role="menuitem"><a href="#/cli">CLI</a></li>
+            </ul>
+          </li>
+          <li><a href="#/examples">Examples</a></li>
+          <li><a href="#/about">About</a></li>
+          <li><a href="https://github.com/shift-js/shift-js">Github</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </nav>
     <div ng-view></div>
 
     <script src="lib/angular/angular.min.js"></script>
     <script src="lib/angular-route/angular-route.js"></script>
-    <script src="app/components/repl/api.js"></script>
+    <script src="lib/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="app/components/repl/replController.js"></script>
+    <script src="app/components/repl/api.js"></script>
     <script src="app/app.js"></script>
   </body>
 </html>
