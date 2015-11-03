@@ -213,26 +213,35 @@ module.exports = function(code) {
       continue;
     }
     
-    // main evaluation block that executes if the lexer is not inside a string,
+    // evaluation block that executes if the lexer is not inside a string,
     // not inside a number, and an appropriate evaluation point has been reached
     if (!STATE.insideString && !STATE.insideNumber &&
       lexerFunctions.checkForEvaluationPoint(STATE)) {
       
-      
+      // identifies tuple elements names following dot syntax lookups
       if (STATE.lastToken && STATE.lastToken.type === 'DOT_SYNTAX' && STATE.TUPLE_ELEMENT_NAMES[STATE.chunk]) {
         lexerFunctions.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_ELEMENT_NAME', STATE.chunk);
+      
+      // invokes helper function to determine whether a collection is an array or dictionary 
+      // upon identification of certain punctuation
       } else if (STATE.insideCollection.length && STATE.lastCollection.type === undefined &&
         lexerFunctions.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens)) {
         lexerFunctions.determineCollectionType(STATE);
+        
+      // handles the last square bracket arrays and dictionaries appropriately 
       } else if (STATE.insideCollection.length && STATE.currCol === ']' && !STATE.subscriptLookup) {
         lexerFunctions.checkFor(STATE, 'COLLECTION', STATE.chunk, STATE.tokens, function() {
           STATE.tokens[STATE.tokens.length - 1].type = STATE.lastCollection.type || 'ARRAY_END';
           STATE.insideCollection.pop();
         });
+        
+      // handles the opens square bracket of arrays and dictionaries
       } else if (STATE.tokens.length && STATE.lastToken.type !== 'IDENTIFIER' &&
         STATE.lastToken.type !== 'SUBSCRIPT_LOOKUP_END' && STATE.currCol === '[') {
         lexerFunctions.checkFor(STATE, 'COLLECTION', STATE.chunk, STATE.tokens, function(){
           STATE.insideCollection.push({type: undefined, location: STATE.tokens.length-1});})
+      
+      // default, fallthrough evaluation of chunk based on lexical precedence
       } else {
         lexerFunctions.checkFor(STATE, 'KEYWORD', STATE.chunk, STATE.tokens) ||
         lexerFunctions.checkFor(STATE, 'NATIVE_METHOD', STATE.chunk, STATE.tokens) ||
@@ -259,13 +268,12 @@ module.exports = function(code) {
 
     }
     STATE.advance(1);
-    // console.log(STATE.tokens);
   }
 
   if (STATE.tokens[STATE.tokens.length - 1].value === '\\n') {
     lexerFunctions.makeToken(undefined, undefined, STATE.tokens, 'TERMINATOR', 'EOF');
   }
-  // console.log(STATE.tokens);
+  
   return STATE.tokens;
 
 };
