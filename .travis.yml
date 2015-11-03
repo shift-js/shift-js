@@ -14,6 +14,6 @@ deploy:
   app:
     develop: shift-js
   run:
-    - "bower install"
+    - "bower install --config.interactive=false"
     - "grunt build"
     - restart
