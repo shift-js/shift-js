@@ -18,7 +18,7 @@ To transpile a single Swift file into a JavaScript file:
 swiftjs someSwiftFile.swift
 ```
 
-To watch a files for changes, running the selected command when a file is updated:
+To watch a file for changes, running the selected command when a file is updated:
 
 ```
 shiftjs -w someSwiftFile.swift
