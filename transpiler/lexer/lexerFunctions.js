@@ -98,6 +98,7 @@ module.exports = {
       temp.curly = 0; // all other { such as for loops are counted as curly
       temp.insideReturnStatement = false; // whether inside original function statement or not
       temp.returnArrows = [];
+      temp.endFunctionParameterDeclarationIndex = -1;
       // temp.index = tokens.length - 1;
       STATE.insideFunction.push(temp);
       STATE.advanceAndClear(2);
@@ -122,6 +123,9 @@ module.exports = {
       STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true &&
       STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter === 1 ) {
       module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      if (STATE.insideFunction[STATE.insideFunction.length - 1].endFunctionParameterDeclarationIndex === -1) {
+        STATE.insideFunction[STATE.insideFunction.length - 1].endFunctionParameterDeclarationIndex = STATE.tokens.length - 1;
+      }
       STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter--;
       STATE.insideFunction[STATE.insideFunction.length - 1].insideParams = "ended";
       STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.shift();
@@ -152,6 +156,7 @@ module.exports = {
         x.push((STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.splice(Math.floor((STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.length)/2),1))[0]);
         arr.push(x);
       }
+
       for (var j = 0; j < len; j++) {
         var y = arr[j];
         var toDo = "PUNCTUATION";
@@ -203,7 +208,71 @@ module.exports = {
       STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement = true;
       //This is the place where we need to go back and count the number of ()'s then figure out what happened
       if (STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows.length >= 2) { // may be needed to be changed to === 2
-        // console.log(STATE.tokens.length, STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows);
+        // console.log(STATE.tokens.length-1,STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows);
+        // var end = STATE.tokens.length-1;
+        // var start = STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows[0];
+        // console.log(start, end);
+
+              var input = [];
+              if (STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows[0] > STATE.insideFunction[STATE.insideFunction.length - 1].endFunctionParameterDeclarationIndex) {
+                var start = STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows[0] ;
+                for (var i = start, end = STATE.tokens.length-1; i < end; i++) {
+                  if (STATE.tokens[i]["value"] === '(' || STATE.tokens[i]["value"] === ')') {
+                    input.push({tokenIndex: i, tokenType: STATE.tokens[i]["type"], tokenValue: STATE.tokens[i]["value"]});
+                  }
+                }
+                // console.log("input: ",input);
+                var arr = [];
+                var len = Math.floor((input.length)/2);
+                var obj = {
+                  "PUNCTUATION": function(tokenIndexStart, tokenIndexEnd) {
+                    STATE.tokens[tokenIndexStart]['type'] = "PUNCTUATION";
+                    STATE.tokens[tokenIndexEnd]['type'] = "PUNCTUATION";
+                  },
+                  "PARAMS": function(tokenIndexStart, tokenIndexEnd) {
+                    STATE.tokens[tokenIndexStart]['type'] = "PARAMS_START";
+                    STATE.tokens[tokenIndexEnd]['type'] = "PARAMS_END";
+                  },
+                  "TUPLE": function(tokenIndexStart, tokenIndexEnd) {
+                    STATE.tokens[tokenIndexStart]['type'] = "TUPLE_START";
+                    STATE.tokens[tokenIndexEnd]['type'] = "TUPLE_END";
+                    for (var q = tokenIndexEnd - 1, enda = tokenIndexStart + 1; q >= enda; q--) {
+                      if (STATE.tokens[q]['value'] === ':') {
+                        STATE.tokens[q-1]['type'] = "TUPLE_ELEMENT_NAME";
+                      }
+                    }
+                  }
+                };
+                for (var j = 0; j < len; j++) {
+                  var x = [];
+                  x.push((input.splice(((input.length)/2 - 1),1))[0]);
+                  x.push((input.splice(Math.floor((input.length)/2),1))[0]);
+                  arr.push(x);
+                }
+                // console.log("arr: ",arr);
+                for (var j = 0; j < len; j++) {
+                  var y = arr[j];
+                  var toDo = "PUNCTUATION";
+                  for (var k = y[1]['tokenIndex'] - 1, z = y[0]['tokenIndex'] + 1; k >= z; k--) {
+                    if (STATE.tokens[k]['type'] === 'RETURN_ARROW') {
+                      toDo = "PUNCTUATION";
+                      break;
+                    } else if (STATE.tokens[k]['value'] === ',') {
+                      toDo = "PARAMS";
+                      break;
+                    } else if (STATE.tokens[k]['value'] === ':') {
+                      toDo = "TUPLE";
+                      break;
+                    } else if (STATE.tokens[k]['type'] === 'TYPE_BOOLEAN' || STATE.tokens[k]['type'] === 'TYPE_STRING' || STATE.tokens[k]['type'] === 'TYPE_NUMBER') {
+                      toDo = "PARAMS";
+                    } else {
+                      toDo = "PUNCTUATION";
+                    }
+                  }
+                  obj[toDo](y[0]['tokenIndex'],y[1]['tokenIndex']);
+                }
+              }
+              
       }
       STATE.advanceAndClear(1);
       return true;

@@ -1365,7 +1365,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions that return functions which are composed of nested functions', function () {
+    it('should handle functions that return functions which are composed of nested functions', function () {
       input = String.raw`func makeIncrementer() -> ((Int) -> Int) {
                                 func addOne(number: Int) -> Int {
                                     func anon(n: Int) -> Int {
@@ -1444,7 +1444,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions that return functions where the return function is specified within parentheses', function () {
+    it('should handle functions that return functions where the return function is specified within parentheses', function () {
       input = String.raw`func makeIncrementer() -> ((Int) -> Int) {
                             func addOne(number: Int) -> Int {
                                 return 1 + number
@@ -1497,7 +1497,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions that return functions where the return function is specified without parentheses', function () {
+    it('should handle functions that return functions where the return function is specified without parentheses', function () {
       input = String.raw`func makeIncrementer() -> (Int) -> Int {
                             func addOne(number: Int) -> Int {
                                 return 1 + number
