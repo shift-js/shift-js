@@ -163,7 +163,7 @@ module.exports = function(code) {
     if (lexerFunctions.handleFunctionDeclarationStart(STATE)) {
       continue;
     }
-    if (lexerFunctions.handleFunctionDeclarationInside(STATE)) {
+    if (lexerFunctions.handleInsideOfFunctionDeclaration(STATE)) {
       continue;
     }
     if (lexerFunctions.handleFunctionDeclarationEnd(STATE)) {
