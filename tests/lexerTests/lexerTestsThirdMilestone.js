@@ -2507,13 +2507,12 @@ describe('Lexer: Third Milestone', function() {
         { type: 'DECLARATION_KEYWORD', value: 'var' },
         { type: 'IDENTIFIER', value: 'mathFunction' },
         { type: 'PUNCTUATION', value: ':' },
-        { type: 'PUNCTUATION', value: '(' }, //TODO make Params_start
+        { type: 'PARAMS_START', value: '(' }, 
         { type: 'TYPE_NUMBER', value: 'Int' },
         { type: 'PUNCTUATION', value: ',' },
         { type: 'TYPE_NUMBER', value: 'Int' },
-        { type: 'PUNCTUATION', value: ')' }, //TODO make Params_end
-        { type: 'OPERATOR', value: '-' }, // Not correct
-        { type: 'OPERATOR', value: '>' },
+        { type: 'PARAMS_END', value: ')' }, 
+        { type: 'RETURN_ARROW', value: '->' }, 
         { type: 'TYPE_NUMBER', value: 'Int' },
         { type: 'OPERATOR', value: '=' },
         { type: 'IDENTIFIER', value: 'addTwoInts' }, //Need to go backward frmo here to var keyword and modify accordingly

@@ -69,13 +69,13 @@ module.exports = function(code) {
     //    console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1].parens);
     //  }
     //  STATE.currentTokenLength = STATE.tokens.length;
-    // }
+  //   // }
 
-    // if (STATE.tokens.length !== STATE.currentTokenLength) {
-    //  if (STATE.insideFunction.length) {
-    //    console.log(STATE.tokens.length, STATE.insideFunction[STATE.insideFunction.length - 1].insideParams);
+    // if (STATE.tokens.length !== STATE.currentTokenLengt //h) {
+    //  if (STATE.insideFunction.l //ength) {
+    //    console.log(STATE.tokens.length, STATE.insideFunction[STATE.insideFunction.length - 1].returnArro // //ws);
     //  }
-    //  STATE.currentTokenLength = STATE.tokens.length;
+    //  STATE.currentTokenLength = STATE.tokens //.length;
     // }
 
     // handles new lines
@@ -140,6 +140,7 @@ module.exports = function(code) {
     // Tokenizing return arrow
     if (STATE.insideFunction.length && STATE.currCol === "-" && STATE.nextCol === ">") {
       lexerFunctions.checkFor(STATE, 'FUNCTION_DECLARATION', "->", STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows.push(STATE.tokens.length - 1);
       STATE.advanceAndClear(2);
       continue;
     }
