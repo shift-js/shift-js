@@ -43,6 +43,9 @@ module.exports = {
       tmp.status = true;
       tmp.parens = 0;
       STATE.insideInvocation.push(tmp);
+      if (STATE.stringInterpolation.status) {
+        STATE.stringInterpolation.nestedInvocation = true;
+      }
       STATE.advanceAndClear(1);
       return true;
     }
@@ -50,11 +53,15 @@ module.exports = {
   },
 
   handleFunctionInvocationEnd: function(STATE) {
-    if (STATE.insideInvocation.length && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).status && STATE.chunk === ')' && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).parens === 0) {
+    if (STATE.insideInvocation.length &&
+        (STATE.insideInvocation[STATE.insideInvocation.length - 1]).status &&
+        STATE.chunk === ')' &&
+        (STATE.insideInvocation[STATE.insideInvocation.length - 1]).parens === 0 && !STATE.insideTuple.status) {
       module.exports.checkFor(STATE, 'FUNCTION_INVOCATION', STATE.chunk, STATE.tokens);
-      var last = STATE.insideInvocation[STATE.insideInvocation.length - 1]; //may be unnecessary
-      last.status = false; //may be unnecessary since poping next
       STATE.insideInvocation.pop();
+      if (STATE.stringInterpolation.nestedInvocation) {
+        STATE.stringInterpolation.nestedInvocation = false;
+      }
       STATE.advanceAndClear(1);
       module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
       return true;
@@ -65,15 +72,13 @@ module.exports = {
   handleFunctionInvocationInside: function(STATE) {
     if (STATE.insideInvocation.length && STATE.chunk === '(' && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).status) {
       module.exports.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens);
-      var last = STATE.insideInvocation[STATE.insideInvocation.length - 1];
-      last.parens++;
+      STATE.insideInvocation[STATE.insideInvocation.length - 1].parens++;
       STATE.advanceAndClear(1);
       return true;
     }
     if (STATE.insideInvocation.length && STATE.chunk === ')' && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).status) {
       module.exports.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens);
-      var last = STATE.insideInvocation[STATE.insideInvocation.length - 1];
-      last.parens--;
+      STATE.insideInvocation[STATE.insideInvocation.length - 1].parens--;
       STATE.advanceAndClear(1);
       return true;
     }
@@ -118,8 +123,6 @@ module.exports = {
       module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter--;
       STATE.insideFunction[STATE.insideFunction.length - 1].insideParams = "ended";
-      // STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.push({tokenIndex: STATE.tokens.length - 1, tokenType: "PARAMS_END", tokenValue: ")"});
-      // START code to look back and revise incorrect ()'s
       STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.shift();
       var arr = [];
       var len = Math.floor((STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.length)/2);
@@ -185,7 +188,7 @@ module.exports = {
     }
 
     if (STATE.insideFunction.length && STATE.chunk === ')' && 
-      STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement === true) {
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement === true && !STATE.insideInitialization.length) {
       module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement = "ended";
       STATE.advanceAndClear(1);
@@ -435,7 +438,8 @@ module.exports = {
   },
 
   checkForStringInterpolationEnd: function(STATE) {
-    if (STATE.stringInterpolation.status && STATE.currCol === ")") {
+    if (STATE.stringInterpolation.status && STATE.currCol === ")" &&
+      !STATE.stringInterpolation.nestedInvocation) {
       STATE.stringInterpolation.status = false;
       module.exports.makeToken("SPECIAL_STRING", ")", STATE.tokens);
       STATE.insideString = true;
@@ -492,9 +496,11 @@ module.exports = {
   checkForTupleStart: function(STATE) {
     if (!STATE.insideTuple.status && STATE.currCol === '(' && ((STATE.lastToken.value === '=' ||
       STATE.lastToken.value === 'return' || STATE.lastToken.value === '->') || (STATE.insideInvocation.length && STATE.insideInvocation[STATE.insideInvocation.length - 1].status)) ) {
-      module.exports.makeToken(undefined, undefined, STATE.tokens,
-        'TUPLE_START', STATE.chunk);
+      module.exports.makeToken(undefined, undefined, STATE.tokens,'TUPLE_START', STATE.chunk);
       // special handling of empty tuples
+      if (STATE.insideInvocation.length && STATE.insideInvocation[STATE.insideInvocation.length - 1].status) {
+        STATE.insideInvocation[STATE.insideInvocation.length - 1].parens++;
+      }
       if (STATE.nextCol === ')') {
         module.exports.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_END', STATE.nextCol);
         module.exports.handleEndOfFile(STATE.nextNextCol, STATE.tokens);
@@ -523,6 +529,9 @@ module.exports = {
     if (STATE.insideTuple.status && STATE.currCol === ')') {
       if (STATE.insideTuple.verified) {
         module.exports.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_END', STATE.chunk);
+        if (STATE.insideInvocation.length && STATE.insideInvocation[STATE.insideInvocation.length - 1].status) {
+          STATE.insideInvocation[STATE.insideInvocation.length - 1].parens--;
+        }
         STATE.insideTuple.status = false;
         STATE.insideTuple.startIndex = undefined;
         STATE.insideTuple.verified = false;

@@ -824,7 +824,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle function invocations with internal parentheses', function () {
+    it('should handle function invocations with internal parentheses', function () {
       input = String.raw`func addOne(input: Int) -> Int {
                               return input + 1
                           }
@@ -2225,7 +2225,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions with mathematical operations and parentheses in their invocation', function () {
+    it('should handle functions with mathematical operations and parentheses in their invocation', function () {
       input = String.raw `func addOne(input: Int) -> Int {
                               return input + 1
                           }
@@ -2271,7 +2271,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions whose invocation contains string interpolation that contains a function invocation returning an int', function () {
+    it('should handle functions whose invocation contains string interpolation that contains a function invocation returning an int', function () {
       input = String.raw`func returnWorld() -> Int {
                               return 2
                           }
@@ -2330,7 +2330,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions whose invocation contains string interpolation that contains a function invocation returning a string', function () {
+    it('should handle functions whose invocation contains string interpolation that contains a function invocation returning a string', function () {
       input = String.raw`func returnWorld() -> String {
                               return "World"
                           }
@@ -2619,7 +2619,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions that has an internal parameter that takes in a tuple and prints out the elements of that tuple ', function () {
+    it('should handle functions that has an internal parameter that takes in a tuple and prints out the elements of that tuple ', function () {
       input = String.raw`func ab(a: (plusFive: Int, timesFive: Int)) {
                                 print(a.plusFive)
                                 print(a.timesFive)
@@ -2641,7 +2641,7 @@ describe('Lexer: Third Milestone', function() {
         { type: 'PUNCTUATION', value: ':' },
         { type: 'TYPE_NUMBER', value: 'Int' },
         { type: 'TUPLE_END', value: ')' },
-        { type: 'PARAMS_START', value: ')' },
+        { type: 'PARAMS_END', value: ')' },
         { type: 'STATEMENTS_START', value: '{' },
         { type: 'TERMINATOR', value: '\\n' },
 
