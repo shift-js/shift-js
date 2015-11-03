@@ -97,6 +97,7 @@ module.exports = {
       temp.statements = 0; //number of statements where by a function statement start with a {
       temp.curly = 0; // all other { such as for loops are counted as curly
       temp.insideReturnStatement = false; // whether inside original function statement or not
+      temp.returnArrows = [];
       // temp.index = tokens.length - 1;
       STATE.insideFunction.push(temp);
       STATE.advanceAndClear(2);
@@ -201,7 +202,9 @@ module.exports = {
       STATE.insideFunction[STATE.insideFunction.length - 1].statements++;
       STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement = true;
       //This is the place where we need to go back and count the number of ()'s then figure out what happened
-
+      if (STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows.length >= 2) { // may be needed to be changed to === 2
+        // console.log(STATE.tokens.length, STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows);
+      }
       STATE.advanceAndClear(1);
       return true;
     }
