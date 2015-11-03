@@ -43,14 +43,15 @@ module.exports = {
     "TYPE_BOOLEAN",
     "TYPE_NUMBER",
     "TYPE_STRING",
-    "RETURN_ARROW"
+    "RETURN_ARROW",
+    "VARIADIC_PARAM"
   ],
   comment : [
     "COMMENT_START",
     "COMMENT",
     "MULTI_LINE_COMMENT_START",
     "MULTI_LINE_COMMENT_END"
-  ]//INVOCATION_START//INVOCATION_END
+  ]
 };
 
 

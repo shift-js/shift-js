@@ -123,11 +123,8 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
       left.callee.name = left.callee.value;
       delete left.callee.value;
     }
-    var wrapper = {
-      type: "ExpressionStatement",
-      expression: left
-    };
-    left = wrapper;
+  } else if(left.type === "ExpressionStatement") {
+    left = left.expression;
   }
 
   return left;

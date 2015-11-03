@@ -5,6 +5,7 @@ var originalScope = {
     var scope = state['scope'];
     var t = this.def[n.value];
     if (typeof t === "object") {
+      console.log(n.value);
       n.error(t.reserved ? "Already reserved." : "Already defined.");
     }
     this.def[n.value] = n;
