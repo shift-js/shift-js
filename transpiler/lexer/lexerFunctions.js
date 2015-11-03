@@ -283,12 +283,14 @@ module.exports = {
     if (STATE.currCol === '\n') {
       module.exports.makeToken(undefined, undefined, STATE.tokens, 'TERMINATOR', '\\n');
       STATE.emptyLine = true;
+      STATE.advanceAndClear(1);
       return true;
     }
     if (STATE.emptyLine && !module.exports.checkForWhitespace(STATE.currCol)) {
       STATE.emptyLine = false;
     }
     if (STATE.emptyLine && STATE.lastToken && STATE.lastToken.value === '\\n') {
+      STATE.advanceAndClear(1);
       return true;
     }
     return false;
@@ -329,12 +331,14 @@ module.exports = {
       STATE.insideComment.multi = true;
       STATE.chunk += STATE.nextCol;
       module.exports.checkFor(STATE, 'COMMENT', STATE.chunk, STATE.tokens);
+      STATE.advanceAndClear(2);
       return true;
     }
     else if (STATE.currCol === '/' && STATE.nextCol === '/' && !(STATE.insideComment.multi && STATE.insideComment.single)) {
       STATE.insideComment.single = true;
       STATE.chunk += STATE.nextCol;
       module.exports.checkFor(STATE, 'COMMENT', STATE.chunk, STATE.tokens);
+      STATE.advanceAndClear(2);
       return true;
     }
     return false;
@@ -370,6 +374,7 @@ module.exports = {
 
   checkIfInsideComment: function(STATE) {
     if (STATE.insideComment.multi || STATE.insideComment.single) {
+      STATE.advance(1);
       return true;
     }
     return false;
@@ -416,12 +421,12 @@ module.exports = {
     if (NUMBER.test(STATE.chunk) && !STATE.insideString && !STATE.insideNumber) {
       STATE.insideNumber = true;
     }
-    // have an _ in the input
+    // handles numbers written with underscores
     if (STATE.insideNumber && STATE.nextCol === '_') {
       return "skip";
     }
 
-    //have an integer or decimal
+    // handles integers or floating point values with decimals
     if (STATE.insideNumber && (STATE.nextCol === '\n' ||
       (isNaN(STATE.nextCol) && (STATE.nextCol !== '.') && (STATE.nextNextCol !== '.')))) {
       STATE.insideNumber = false;
@@ -430,7 +435,7 @@ module.exports = {
       return true;
     }
 
-    //have a range
+    // handles whether period following a number is a decimal point or range operator
     if (STATE.insideNumber && (STATE.nextCol === '.') && (STATE.nextNextCol === '.')) {
       STATE.insideNumber = false;
       module.exports.makeToken(undefined, STATE.chunk, STATE.tokens, 'NUMBER', STATE.chunk.trim());
@@ -445,14 +450,17 @@ module.exports = {
       if (STATE.currCol === '.' && STATE.nextCol === '.' && STATE.nextNextCol === '.') {
         if (STATE.insideFunction.length && STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true) {
           module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', '...', STATE.tokens);
+          STATE.advanceAndClear(3);
           return true;
         } else {
           module.exports.checkFor(STATE, 'RANGE', '...', STATE.tokens);
+          STATE.advanceAndClear(3);
           return true;
         }
       }
       if (STATE.currCol === '.' && STATE.nextCol === '.' && STATE.nextNextCol === '<') {
         module.exports.checkFor(STATE, 'RANGE', '..<', STATE.tokens);
+        STATE.advanceAndClear(3);
         return true;
       }
     }
@@ -467,6 +475,7 @@ module.exports = {
       }
       module.exports.makeToken("SPECIAL_STRING", "\\(", STATE.tokens);
       STATE.insideString = false;
+      STATE.advanceAndClear(3);
       return true;
     }
   },
@@ -477,6 +486,8 @@ module.exports = {
       STATE.stringInterpolation.status = false;
       module.exports.makeToken("SPECIAL_STRING", ")", STATE.tokens);
       STATE.insideString = true;
+      STATE.advanceAndClear(1);
+      STATE.chunk = '"';
       return true;
     }
   },

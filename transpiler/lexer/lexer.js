@@ -60,20 +60,17 @@ module.exports = function(code) {
 
     // handles new lines
     if (lexerFunctions.handleNewLine(STATE)) {
-      STATE.advanceAndClear(1);
       continue
     }
 
     // handles comments
     if (lexerFunctions.checkForCommentStart(STATE)) {
-      STATE.advanceAndClear(2);
       continue;
     }
     if (lexerFunctions.handleComment(STATE)) {
       continue;
     }
     if (lexerFunctions.checkIfInsideComment(STATE)) {
-      STATE.advance(1);
       continue;
     }
 
@@ -102,18 +99,14 @@ module.exports = function(code) {
 
     // handles ranges
     if (lexerFunctions.handleRange(STATE)) {
-      STATE.advanceAndClear(3);
       continue;
     }
 
     // handles string interpolation
     if (lexerFunctions.checkForStringInterpolationStart(STATE)) {
-      STATE.advanceAndClear(3);
       continue;
     }
     if(lexerFunctions.checkForStringInterpolationEnd(STATE)) {
-      STATE.advanceAndClear(1);
-      STATE.chunk = '"';
       continue;
     }
 
