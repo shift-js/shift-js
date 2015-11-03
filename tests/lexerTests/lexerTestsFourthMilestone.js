@@ -948,7 +948,7 @@ describe('Lexer: Fourth Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle basic struct mutating methods that assign to self', function () {
+    it('should handle basic struct mutating methods that assign to self', function () {
       input = String.raw`struct Counter {
                               var total = 0
                               mutating func increment() {
@@ -1449,7 +1449,7 @@ describe('Lexer: Fourth Milestone', function() {
 
   describe('Native Methods and Type Properties', function () {
 
-    xit('should handle calls to print', function () {
+    it('should handle calls to print', function () {
       input = String.raw`var name = "Joe"
                          var arr = [1,2]
                          var tup = (1,2)

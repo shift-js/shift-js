@@ -23,7 +23,7 @@ module.exports = function(code) {
     insideFunction: [],
     insideClass: [],
     insideStruct: [],
-    stringInterpolation: {status: false, counter: 0},
+    stringInterpolation: {status: false, counter: 0, nestedInvocation: false},
     substringLookup: false,
     insideComment: {multi: false, single: false},
     insideTuple: {status: false, startIndex: undefined},
@@ -60,17 +60,23 @@ module.exports = function(code) {
     // console.log(STATE.nextCol);
     // console.log(STATE.tokens);
     // console.log(STATE.emptyLine);
+    // console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1]);
     
     // if (STATE.tokens.length !== STATE.currentTokenLength) {
-    //  if (STATE.insideFunction.length) {
-    //    console.log(STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens);
-    //    console.log(STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter);
-    //    console.log(STATE.insideFunction[STATE.insideFunction.length - 1].insideParams);
+    //  if (STATE.insideInvocation.length) {
+    //    console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1].name);
+    //    console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1].status);
+    //    console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1].parens);
     //  }
     //  STATE.currentTokenLength = STATE.tokens.length;
     // }
-    
-    
+
+    // if (STATE.tokens.length !== STATE.currentTokenLength) {
+    //  if (STATE.insideFunction.length) {
+    //    console.log(STATE.tokens.length, STATE.insideFunction[STATE.insideFunction.length - 1].insideParams);
+    //  }
+    //  STATE.currentTokenLength = STATE.tokens.length;
+    // }
 
     // handles new lines
     if (lexerFunctions.handleNewLine(STATE)) {
