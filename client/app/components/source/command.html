@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>command.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="command.html">
+                  command.js
+                </a>
+              
+                
+                <a class="source" href="api.html">
+                  api.js
+                </a>
+              
+                
+                <a class="source" href="lexer.html">
+                  lexer.js
+                </a>
+              
+                
+                <a class="source" href="parser.html">
+                  parser.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>command.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>#! /usr/bin/env node
+
+
+(function() {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>External dependencies.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> program = <span class="hljs-built_in">require</span>(<span class="hljs-string">'commander'</span>);
+  <span class="hljs-keyword">var</span> <span class="hljs-built_in">Promise</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">'bluebird'</span>);
+  <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">Promise</span>.promisifyAll(<span class="hljs-built_in">require</span>(<span class="hljs-string">"fs"</span>));
+  <span class="hljs-keyword">var</span> chokidar = <span class="hljs-built_in">require</span>(<span class="hljs-string">'chokidar'</span>);
+  <span class="hljs-keyword">var</span> vm = <span class="hljs-built_in">require</span>(<span class="hljs-string">'vm'</span>);
+  <span class="hljs-keyword">var</span> shift = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./transpiler/api.js'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Declares all the valid option flags with help descriptions.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  program
+    .version(<span class="hljs-string">'0.0.1'</span>)
+    .usage(<span class="hljs-string">'[options] [files]'</span>)
+    .option(<span class="hljs-string">'-c, --compile'</span>, <span class="hljs-string">'Compile Swift file to JavaScript file.'</span>)
+    .option(<span class="hljs-string">'-t, --tokenize'</span>, <span class="hljs-string">'Convert Swift file to tokens, saved as a JavaScript file.'</span>)
+    .option(<span class="hljs-string">'-a, --ast'</span>, <span class="hljs-string">'Convert Swift file to AST, saved as a JavaScript file.'</span>)
+    .option(<span class="hljs-string">'-w, --watch'</span>, <span class="hljs-string">'Watch files for changes, running the selected command when a file is updated.'</span>)
+    .option(<span class="hljs-string">'-r, --run'</span>, <span class="hljs-string">'Run a Swift file as JavaScript.'</span>)
+    .parse(process.argv);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Checks for action flags to determine what action will be called.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> actionFlags = [<span class="hljs-string">'compile'</span>, <span class="hljs-string">'tokenize'</span>, <span class="hljs-string">'ast'</span>];
+  <span class="hljs-keyword">var</span> action = <span class="hljs-string">'compile'</span>;
+  actionFlags.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">flag</span>) </span>{
+    <span class="hljs-keyword">if</span> (program[flag]) {
+      <span class="hljs-keyword">if</span> (action !== <span class="hljs-string">'compile'</span>) <span class="hljs-keyword">throw</span> <span class="hljs-string">'Cannot use multiple action flags.'</span>
+      action = flag;
+    }
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Applies appropriate actions to each Swift file input by the user.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> execute = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">paths</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.reduce(paths, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">list, filePath</span>) </span>{
+      <span class="hljs-keyword">return</span> fs.statAsync(filePath)
+        .then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">stats</span>) </span>{
+          <span class="hljs-keyword">if</span> (stats.isDirectory()) {
+            <span class="hljs-keyword">return</span> fetch(filePath);
+          }
+          <span class="hljs-keyword">if</span> (filePath.slice(-<span class="hljs-number">6</span>) === <span class="hljs-string">'.swift'</span>) {
+            <span class="hljs-keyword">return</span> applyAction(filePath);
+          }
+        }).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+          <span class="hljs-keyword">return</span> data ? list.concat(data) : list;
+        });
+    }, [])
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Fetches files and subdirectories from a parent directory.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> fetch = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">filePath</span>) </span>{
+    <span class="hljs-keyword">return</span> fs.readdirAsync(filePath)
+      .then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">files</span>) </span>{
+        <span class="hljs-keyword">return</span> run(<span class="hljs-built_in">Promise</span>.map(files, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fileName</span>) </span>{
+          <span class="hljs-keyword">return</span> filePath + <span class="hljs-string">'/'</span> + fileName;
+        }));
+      });
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Applies the selected action to the input Swift file</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> applyAction = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">file</span>) </span>{
+    <span class="hljs-keyword">return</span> fs.readFileAsync(file)
+      .then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>{
+        <span class="hljs-keyword">var</span> swift = data.toString();
+        <span class="hljs-keyword">var</span> output = shift[action](swift);
+        <span class="hljs-keyword">var</span> suffix = <span class="hljs-string">""</span>;
+        <span class="hljs-keyword">if</span> (program.tokenize) {
+          suffix = <span class="hljs-string">"Tokens"</span>;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (program.ast) {
+          suffix = <span class="hljs-string">"AST"</span>;
+        }
+        <span class="hljs-keyword">var</span> newFile = file.slice(<span class="hljs-number">0</span>, -<span class="hljs-number">6</span>) + suffix + <span class="hljs-string">'.js'</span>;
+        <span class="hljs-keyword">if</span> (program.run) {
+          vm.runInThisContext(output);
+          <span class="hljs-keyword">return</span>;
+        }
+        <span class="hljs-keyword">return</span> fs.writeFileAsync(newFile, output)
+          .then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
+            <span class="hljs-built_in">console</span>.log(newFile + <span class="hljs-string">' saved.'</span>)
+            <span class="hljs-keyword">return</span> file;
+          });
+      })
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Watches files for changes, and applies the selected action when a file is updated.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> watch = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">files</span>) </span>{
+    <span class="hljs-keyword">var</span> watcher = chokidar.watch(files);
+    watcher.on(<span class="hljs-string">'change'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path</span>) </span>{
+      <span class="hljs-built_in">console</span>.log(path, <span class="hljs-string">'changed'</span>);
+      applyAction(path)
+    });
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Runs the program.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> start = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">if</span> (program.run) {
+      <span class="hljs-keyword">if</span> (file.slice(-<span class="hljs-number">6</span>) !== <span class="hljs-string">'.swift'</span>) {
+        applyAction(program.args[<span class="hljs-number">0</span>]);
+      }
+    } <span class="hljs-keyword">else</span> {
+      execute(program.args)
+        .then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">allFiles</span>) </span>{
+          <span class="hljs-keyword">if</span> (!allFiles.length) {
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'No swift files found.'</span>);
+            <span class="hljs-keyword">return</span>;
+          }
+          <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'All files converted'</span>);
+          <span class="hljs-keyword">if</span> (program.watch) {
+            watch(allFiles)
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Watching files'</span>);
+          }
+        });
+    }
+  }
+
+  start();
+})();</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

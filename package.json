@@ -1,5 +1,5 @@
 {
-  "name": "shift.js",
+  "name": "shift-js",
   "version": "0.1.0",
   "description": "Swift to JavaScript Transpiler",
   "engines": {
@@ -14,7 +14,7 @@
   },
   "preferGlobal": true,
   "bin": {
-    "shift.js": "index.js"
+    "shift.js": "command.js"
   },
   "repository": {
     "type": "git",
@@ -56,7 +56,9 @@
     "grunt": "^0.4.5",
     "grunt-browserify": "^4.0.1",
     "grunt-cli": "^0.1.13",
+    "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-jshint": "^0.11.3",
+    "grunt-docco": "^0.4.0",
     "grunt-mocha-test": "^0.12.7",
     "grunt-shell": "^1.1.2",
     "mocha": "^2.3.3"

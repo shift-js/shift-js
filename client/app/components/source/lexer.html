@@ -1,0 +1,2828 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>lexer.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="command.html">
+                  command.js
+                </a>
+              
+                
+                <a class="source" href="api.html">
+                  api.js
+                </a>
+              
+                
+                <a class="source" href="lexer.html">
+                  lexer.js
+                </a>
+              
+                
+                <a class="source" href="parser.html">
+                  parser.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>lexer.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = {
+  deepEqual: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a,b</span>) </span>{
+    <span class="hljs-keyword">if</span> (a === b) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (a == <span class="hljs-literal">null</span> || <span class="hljs-keyword">typeof</span> a != <span class="hljs-string">"object"</span> || b == <span class="hljs-literal">null</span> || <span class="hljs-keyword">typeof</span> b != <span class="hljs-string">"object"</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-keyword">var</span> propsInA = <span class="hljs-number">0</span>, propsInB = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> prop <span class="hljs-keyword">in</span> a) {
+      propsInA += <span class="hljs-number">1</span>;
+    }
+    <span class="hljs-keyword">for</span> (prop <span class="hljs-keyword">in</span> b) {
+      propsInB += <span class="hljs-number">1</span>;
+      <span class="hljs-keyword">if</span> (!(prop <span class="hljs-keyword">in</span> a) || !(<span class="hljs-built_in">module</span>.exports.deepEqual(a[prop],b[prop]))) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      }
+    }
+    <span class="hljs-keyword">return</span> propsInA === propsInB;
+  },
+  diff: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a,b</span>) </span>{
+    <span class="hljs-keyword">var</span> results = [];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">Math</span>.max(a.length,b.length); i++) {
+      <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">module</span>.exports.deepEqual(a[i],b[i])) {
+        results.push({<span class="hljs-string">'index'</span>: i, <span class="hljs-string">'actual output'</span>: a[i], <span class="hljs-string">'expected answer'</span>: b[i]});
+      }
+    }
+    <span class="hljs-keyword">return</span> results;
+  }
+};
+
+<span class="hljs-keyword">var</span> lexerFunctions = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./lexerFunctions"</span>);
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">code</span>) </span>{
+
+  <span class="hljs-keyword">var</span> STATE = {
+    i: <span class="hljs-number">0</span>,
+    tokens: [],
+    currentTokenLength: <span class="hljs-number">0</span>,
+    chunk: <span class="hljs-string">''</span>,
+    currCol: <span class="hljs-literal">undefined</span>,
+    prevCol: <span class="hljs-literal">undefined</span>,
+    nextCol: <span class="hljs-literal">undefined</span>,
+    nextNextCol: <span class="hljs-literal">undefined</span>,
+    VARIABLE_NAMES: {},
+    FUNCTION_NAMES: {},
+    CLASS_NAMES: {},
+    STRUCT_NAMES: {},
+    TUPLE_ELEMENT_NAMES: {},
+    emptyLine: <span class="hljs-literal">true</span>,
+    insideString: <span class="hljs-literal">false</span>,
+    insideNumber: <span class="hljs-literal">false</span>,
+    insideCollection: [],
+    insideFunction: [],
+    insideClass: [],
+    insideStruct: [],
+    stringInterpolation: {status: <span class="hljs-literal">false</span>, counter: <span class="hljs-number">0</span>, nestedInvocation: <span class="hljs-literal">false</span>},
+    substringLookup: <span class="hljs-literal">false</span>,
+    insideComment: {multi: <span class="hljs-literal">false</span>, single: <span class="hljs-literal">false</span>},
+    insideTuple: {status: <span class="hljs-literal">false</span>, startIndex: <span class="hljs-literal">undefined</span>},
+    insideInvocation: [],
+    insideInitialization: [],
+    lastToken: <span class="hljs-literal">undefined</span>,
+    lastCollection: <span class="hljs-literal">undefined</span>,
+    lastFunction: <span class="hljs-literal">undefined</span>,
+    variableArrows: [],
+    advance: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">positions</span>) </span>{
+      <span class="hljs-keyword">this</span>.i += positions;
+    },
+    clearChunk: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.chunk = <span class="hljs-string">''</span>;
+    },
+    advanceAndClear: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">positions</span>) </span>{
+      <span class="hljs-keyword">this</span>.i += positions;
+      <span class="hljs-keyword">this</span>.chunk = <span class="hljs-string">''</span>;
+    }
+  }
+
+  <span class="hljs-keyword">while</span> (code[STATE.i] !== <span class="hljs-literal">undefined</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>debugger;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    STATE.chunk += code[STATE.i];
+    STATE.currCol = code[STATE.i];
+    STATE.prevCol = code[STATE.i - <span class="hljs-number">1</span>];
+    STATE.nextCol = code[STATE.i + <span class="hljs-number">1</span>];
+    STATE.nextNextCol = code[STATE.i + <span class="hljs-number">2</span>];
+    STATE.lastToken = STATE.tokens[STATE.tokens.length - <span class="hljs-number">1</span>];
+    STATE.lastCollection = STATE.insideCollection[STATE.insideCollection.length - <span class="hljs-number">1</span>];
+    STATE.lastFunction = STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>console.log(STATE.chunk);
+console.log(STATE.currCol);
+console.log(STATE.nextCol);
+console.log(STATE.tokens);
+console.log(STATE.emptyLine);
+console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1]);</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>if (STATE.tokens.length !== STATE.currentTokenLength) {
+ if (STATE.insideInvocation.length) {
+   console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1].name);
+   console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1].status);
+   console.log(STATE.insideInvocation[STATE.insideInvocation.length - 1].parens);
+ }
+ STATE.currentTokenLength = STATE.tokens.length;
+  // }</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>if (STATE.tokens.length !== STATE.currentTokenLengt //h) {
+ if (STATE.insideFunction.l //ength) {
+   console.log(STATE.tokens.length, STATE.insideFunction[STATE.insideFunction.length - 1].returnArro // //ws);
+ }
+ STATE.currentTokenLength = STATE.tokens //.length;
+}</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>handles new lines</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.handleNewLine(STATE)) {
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">continue</span>
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>handles comments</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.checkForCommentStart(STATE)) {
+      STATE.advanceAndClear(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">continue</span>;
+    }
+    <span class="hljs-keyword">if</span> (lexerFunctions.handleComment(STATE)) {
+      <span class="hljs-keyword">continue</span>;
+    }
+    <span class="hljs-keyword">if</span> (lexerFunctions.checkIfInsideComment(STATE)) {
+      STATE.advance(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>ignores chunks that are solely whitespace</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.checkForWhitespace(STATE.chunk)) {
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>tracks whether inside a string</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (STATE.currCol === <span class="hljs-string">'"'</span> &amp;&amp; STATE.insideString) {
+      STATE.insideString = <span class="hljs-literal">false</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.currCol === <span class="hljs-string">'"'</span>) {
+      STATE.insideString = <span class="hljs-literal">true</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>handles numbers</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.handleNumber(STATE) === <span class="hljs-literal">true</span>) {
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">continue</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (lexerFunctions.handleNumber(STATE) === <span class="hljs-string">"skip"</span>){
+      lexerFunctions.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      STATE.advance(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>handles ranges</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.handleRange(STATE)) {
+      STATE.advanceAndClear(<span class="hljs-number">3</span>);
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>handles string interpolation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.checkForStringInterpolationStart(STATE)) {
+      STATE.advanceAndClear(<span class="hljs-number">3</span>);
+      <span class="hljs-keyword">continue</span>;
+    }
+    <span class="hljs-keyword">if</span>(lexerFunctions.checkForStringInterpolationEnd(STATE)) {
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      STATE.chunk = <span class="hljs-string">'"'</span>;
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Tokenizing return arrow</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (STATE.currCol === <span class="hljs-string">"-"</span> &amp;&amp; STATE.nextCol === <span class="hljs-string">"&gt;"</span>) {
+      lexerFunctions.checkFor(STATE, <span class="hljs-string">'FUNCTION_DECLARATION'</span>, <span class="hljs-string">"-&gt;"</span>, STATE.tokens);
+      <span class="hljs-keyword">if</span> (STATE.insideFunction.length) {
+        STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].returnArrows.push(STATE.tokens.length - <span class="hljs-number">1</span>);
+      } <span class="hljs-keyword">else</span> {
+        STATE.variableArrows.push(STATE.tokens.length - <span class="hljs-number">1</span>);
+        lexerFunctions.rewriteVariableParensHistory(STATE);
+      }
+      STATE.advanceAndClear(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>adding the recently declared function to the FUNCTION_NAMES property, this may not work in all cases by adding incorrectly identified functions</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (STATE.insideFunction.length &amp;&amp; STATE.lastFunction.insideParams === <span class="hljs-literal">true</span> &amp;&amp; STATE.chunk === <span class="hljs-string">'('</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>lexerFunctions.checkFor(STATE, ‘FUNCTION_DECLARATION’, STATE.chunk, STATE.tokens);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> len = STATE.tokens.length - <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">while</span> (STATE.tokens[len].type !== <span class="hljs-string">'IDENTIFIER'</span>) {
+          len--;
+        }
+        STATE.FUNCTION_NAMES[STATE.tokens[len].value] = <span class="hljs-literal">true</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Handles Function Invocations starting and ending</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.handleFunctionInvocationStart(STATE)) {
+      <span class="hljs-keyword">continue</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (lexerFunctions.handleFunctionInvocationEnd(STATE)) {
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>tuple handling</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.checkForTupleStart(STATE)) {
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">continue</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.insideTuple.status &amp;&amp; lexerFunctions.handleTuple(STATE)) {
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">continue</span>;
+    }
+    <span class="hljs-keyword">if</span> (lexerFunctions.checkForTupleEnd(STATE)) {
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      lexerFunctions.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>handling the ()’s inside of the function invocation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.handleFunctionInvocationInside(STATE)) {
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>handling functions declarations</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.handleFunctionDeclarationStart(STATE)) {
+      <span class="hljs-keyword">continue</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (lexerFunctions.handleFunctionDeclarationInside(STATE)) {
+      <span class="hljs-keyword">continue</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (lexerFunctions.handleFunctionDeclarationEnd(STATE)) {
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>collection initializer handling</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (STATE.tokens.length &amp;&amp; STATE.currCol === <span class="hljs-string">'('</span> &amp;&amp;
+      (STATE.lastToken.type === <span class="hljs-string">'ARRAY_END'</span> || STATE.lastToken.type === <span class="hljs-string">'DICTIONARY_END'</span>)) {
+      lexerFunctions.checkFor(STATE, <span class="hljs-string">'FUNCTION_INVOCATION'</span>, STATE.currCol, STATE.tokens);
+      <span class="hljs-keyword">var</span> tmp = {};
+      tmp.name = STATE.lastToken.value;
+      tmp.status = <span class="hljs-literal">true</span>;
+      tmp.parens = <span class="hljs-number">0</span>;
+      STATE.insideInvocation.push(tmp);
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>handles colons functioning as inheritance operators</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (STATE.tokens.length &gt; <span class="hljs-number">2</span> &amp;&amp; STATE.tokens[STATE.tokens.length - <span class="hljs-number">2</span>].value === <span class="hljs-string">':'</span> &amp;&amp;
+      STATE.CLASS_NAMES[STATE.lastToken.value] &amp;&amp; STATE.CLASS_NAMES[STATE.tokens[STATE.tokens.length - <span class="hljs-number">3</span>].value]) {
+      STATE.tokens[STATE.tokens.length - <span class="hljs-number">2</span>].type = <span class="hljs-string">'INHERITANCE_OPERATOR'</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>handles classes and structs</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (lexerFunctions.handleClassOrStruct(STATE)) {
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>handles parentheses inside class and struct initialization</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (STATE.chunk === <span class="hljs-string">'('</span> &amp;&amp; STATE.insideInitialization.length &amp;&amp;
+      STATE.insideInitialization[STATE.insideInitialization.length - <span class="hljs-number">1</span>].parens &gt;= <span class="hljs-number">1</span>) {
+      STATE.insideInitialization[STATE.insideInitialization.length - <span class="hljs-number">1</span>].parens++;
+    }
+    <span class="hljs-keyword">if</span> (STATE.chunk === <span class="hljs-string">')'</span> &amp;&amp; STATE.insideInitialization.length) {
+      STATE.insideInitialization[STATE.insideInitialization.length - <span class="hljs-number">1</span>].parens--;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>handles property access and method calls via dot notation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (STATE.currCol === <span class="hljs-string">'.'</span> &amp;&amp; !lexerFunctions.checkForWhitespace(STATE.prevCol) &amp;&amp;
+      !lexerFunctions.checkForWhitespace(STATE.nextCol) &amp;&amp; (
+        STATE.lastToken.type === <span class="hljs-string">'IDENTIFIER'</span> || STATE.lastToken.value === <span class="hljs-string">'self'</span> ||
+        STATE.lastToken.type === <span class="hljs-string">'TYPE_PROPERTY'</span>)) {
+      lexerFunctions.makeToken(<span class="hljs-literal">undefined</span>, STATE.chunk, STATE.tokens, <span class="hljs-string">'DOT_SYNTAX'</span>, <span class="hljs-string">'.'</span>);
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">continue</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>main evaluation block</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!STATE.insideString &amp;&amp; !STATE.insideNumber &amp;&amp;
+      lexerFunctions.checkForEvaluationPoint(STATE)) {
+      <span class="hljs-keyword">if</span> (STATE.lastToken &amp;&amp; STATE.lastToken.type === <span class="hljs-string">'DOT_SYNTAX'</span> &amp;&amp; STATE.TUPLE_ELEMENT_NAMES[STATE.chunk]) {
+        lexerFunctions.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, STATE.tokens, <span class="hljs-string">'TUPLE_ELEMENT_NAME'</span>, STATE.chunk);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.insideCollection.length &amp;&amp; STATE.lastCollection.type === <span class="hljs-literal">undefined</span> &amp;&amp;
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'PUNCTUATION'</span>, STATE.chunk, STATE.tokens)) {
+        lexerFunctions.determineCollectionType(STATE);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.insideCollection.length &amp;&amp; STATE.currCol === <span class="hljs-string">']'</span> &amp;&amp; !STATE.substringLookup) {
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'COLLECTION'</span>, STATE.chunk, STATE.tokens, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+          STATE.tokens[STATE.tokens.length - <span class="hljs-number">1</span>].type = STATE.lastCollection.type || <span class="hljs-string">'ARRAY_END'</span>;
+          STATE.insideCollection.pop();
+        });
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.tokens.length &amp;&amp; STATE.lastToken.type !== <span class="hljs-string">'IDENTIFIER'</span> &amp;&amp;
+        STATE.lastToken.type !== <span class="hljs-string">'SUBSCRIPT_LOOKUP_END'</span> &amp;&amp; STATE.currCol === <span class="hljs-string">'['</span>) {
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'COLLECTION'</span>, STATE.chunk, STATE.tokens, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+          STATE.insideCollection.push({type: <span class="hljs-literal">undefined</span>, location: STATE.tokens.length-<span class="hljs-number">1</span>});})
+      } <span class="hljs-keyword">else</span> {
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'KEYWORD'</span>, STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'NATIVE_METHOD'</span>, STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'METHOD_ARGUMENT_NAME'</span>, STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'TYPE_PROPERTY'</span>, STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'TYPE'</span>, STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'PUNCTUATION'</span>, STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'SUBSCRIPT_LOOKUP'</span>, STATE.chunk, STATE.tokens, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+          STATE.substringLookup = !STATE.substringLookup;
+        }) ||
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'OPERATOR'</span>, STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkFor(STATE, <span class="hljs-string">'TERMINATOR'</span>, STATE.chunk, STATE.tokens) ||
+        lexerFunctions.checkForIdentifier(STATE) ||
+        lexerFunctions.checkForLiteral(STATE.chunk, STATE.tokens);
+      }
+
+      STATE.clearChunk();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>special evaluation point handling</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (lexerFunctions.checkForWhitespace(STATE.nextCol)) {
+        STATE.advance(<span class="hljs-number">1</span>);
+      }
+      lexerFunctions.handleEndOfFile(STATE.nextCol, STATE.tokens);
+
+    }
+    STATE.advance(<span class="hljs-number">1</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>console.log(STATE.tokens);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  }
+
+  <span class="hljs-keyword">if</span> (STATE.tokens[STATE.tokens.length - <span class="hljs-number">1</span>].value === <span class="hljs-string">'\\n'</span>) {
+    lexerFunctions.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, STATE.tokens, <span class="hljs-string">'TERMINATOR'</span>, <span class="hljs-string">'EOF'</span>);
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>console.log(STATE.tokens);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> STATE.tokens;
+
+};
+
+<span class="hljs-keyword">var</span> lexicalTypes = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./lexicalTypes"</span>);
+
+<span class="hljs-keyword">var</span> NUMBER = <span class="hljs-regexp">/^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i</span>;
+<span class="hljs-keyword">var</span> WHITESPACE = <span class="hljs-regexp">/^[^\n\S]+/</span>;
+
+<span class="hljs-built_in">module</span>.exports = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>helper function to check for whitespace</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkForWhitespace: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col</span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>return col === ‘ ‘;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> WHITESPACE.test(col);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>default check for point at which to evaluate chunk</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkForEvaluationPoint: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (
+      <span class="hljs-built_in">module</span>.exports.checkForWhitespace(STATE.currCol) ||
+      <span class="hljs-built_in">module</span>.exports.checkForWhitespace(STATE.nextCol) ||
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'PUNCTUATION'</span>, STATE.currCol) ||
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'PUNCTUATION'</span>, STATE.nextCol) ||
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'OPERATOR'</span>, STATE.nextCol) ||
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'OPERATOR'</span>, STATE.currCol) ||
+      STATE.nextCol === <span class="hljs-string">'"'</span> || STATE.nextCol === <span class="hljs-string">']'</span> || STATE.currCol === <span class="hljs-string">'['</span> ||
+      STATE.currCol === <span class="hljs-string">']'</span> || STATE.nextCol === <span class="hljs-string">'['</span> || STATE.nextCol === <span class="hljs-string">'\n'</span> ||
+      STATE.nextCol === <span class="hljs-literal">undefined</span>
+
+    ) {
+
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>helper function to handle function invocation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleFunctionInvocationStart: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.chunk === <span class="hljs-string">'('</span> &amp;&amp; ((STATE.FUNCTION_NAMES[STATE.lastToken.value] &amp;&amp;
+      STATE.tokens[STATE.tokens.length - <span class="hljs-number">2</span>].value !== <span class="hljs-string">'func'</span>) || STATE.lastToken.type === <span class="hljs-string">'NATIVE_METHOD'</span> || STATE.lastToken.type === <span class="hljs-string">'TYPE_STRING'</span> ||
+      STATE.lastToken.type === <span class="hljs-string">'TYPE_NUMBER'</span>)) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'FUNCTION_INVOCATION'</span>, STATE.chunk, STATE.tokens);
+      <span class="hljs-keyword">var</span> tmp = {};
+      tmp.name = STATE.lastToken.value;
+      tmp.status = <span class="hljs-literal">true</span>;
+      tmp.parens = <span class="hljs-number">0</span>;
+      STATE.insideInvocation.push(tmp);
+      <span class="hljs-keyword">if</span> (STATE.stringInterpolation.status) {
+        STATE.stringInterpolation.nestedInvocation = <span class="hljs-literal">true</span>;
+      }
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  handleFunctionInvocationEnd: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.insideInvocation.length &amp;&amp;
+        (STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>]).status &amp;&amp;
+        STATE.chunk === <span class="hljs-string">')'</span> &amp;&amp;
+        (STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>]).parens === <span class="hljs-number">0</span> &amp;&amp; !STATE.insideTuple.status) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'FUNCTION_INVOCATION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideInvocation.pop();
+      <span class="hljs-keyword">if</span> (STATE.stringInterpolation.nestedInvocation) {
+        STATE.stringInterpolation.nestedInvocation = <span class="hljs-literal">false</span>;
+      }
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  handleFunctionInvocationInside: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.insideInvocation.length &amp;&amp; STATE.chunk === <span class="hljs-string">'('</span> &amp;&amp; (STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>]).status) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'PUNCTUATION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>].parens++;
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.insideInvocation.length &amp;&amp; STATE.chunk === <span class="hljs-string">')'</span> &amp;&amp; (STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>]).status) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'PUNCTUATION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>].parens--;
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>helper function to handle function declarations</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleFunctionDeclarationStart: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.chunk === <span class="hljs-string">'func'</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'KEYWORD'</span>, STATE.chunk, STATE.tokens);
+      <span class="hljs-keyword">var</span> temp = {};
+      temp.status = <span class="hljs-literal">true</span>; <span class="hljs-comment">// whether inside of a function declaration or not</span>
+      temp.insideParams = <span class="hljs-literal">false</span>; <span class="hljs-comment">// 3-valued statement for whether not started, inside, or ended function parameters declaration</span>
+      temp.paramsParens = []; <span class="hljs-comment">// handles the parenthesis in the parameters of the parent function</span>
+      temp.paramsCounter = <span class="hljs-number">0</span>; <span class="hljs-comment">// add's 1 if encountered ( and subtracts 1 if encounter )</span>
+      temp.statements = <span class="hljs-number">0</span>; <span class="hljs-comment">//number of statements where by a function statement start with a {</span>
+      temp.curly = <span class="hljs-number">0</span>; <span class="hljs-comment">// all other { such as for loops are counted as curly</span>
+      temp.insideReturnStatement = <span class="hljs-literal">false</span>; <span class="hljs-comment">// whether inside original function statement or not</span>
+      temp.returnArrows = [];
+      temp.endFunctionParameterDeclarationIndex = -<span class="hljs-number">1</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>temp.index = tokens.length - 1;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      STATE.insideFunction.push(temp);
+      STATE.advanceAndClear(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  rewriteVariableParensHistory: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.variableArrows.length)
+    <span class="hljs-keyword">var</span> arrowIndex = STATE.variableArrows[STATE.variableArrows.length - <span class="hljs-number">1</span>];
+    <span class="hljs-keyword">var</span> tok = STATE.tokens[arrowIndex];
+    <span class="hljs-keyword">var</span> arr = [];
+    <span class="hljs-keyword">while</span> (tok[<span class="hljs-string">"value"</span>] !== <span class="hljs-string">"var"</span> &amp;&amp; tok[<span class="hljs-string">"value"</span>] !== <span class="hljs-string">"let"</span>) {
+      arrowIndex--;
+      tok = STATE.tokens[arrowIndex];
+      <span class="hljs-keyword">if</span> (tok[<span class="hljs-string">"value"</span>] === <span class="hljs-string">'('</span> || tok[<span class="hljs-string">"value"</span>] === <span class="hljs-string">')'</span>) {
+        arr.push({tokenIndex: arrowIndex, tokenType: tok[<span class="hljs-string">"type"</span>], tokenValue: tok[<span class="hljs-string">"value"</span>]});
+      }
+    }
+    <span class="hljs-built_in">module</span>.exports.reviseFunctionHistory(arr, STATE);
+    STATE.variableArrows.pop();
+  },
+
+  handleFunctionDeclarationInside: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.insideFunction.length &amp;&amp; STATE.chunk === <span class="hljs-string">'('</span> &amp;&amp;
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideParams === <span class="hljs-literal">false</span>) {
+      STATE.FUNCTION_NAMES[STATE.lastToken.value] = <span class="hljs-literal">true</span>;
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'FUNCTION_DECLARATION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideParams = <span class="hljs-literal">true</span>;
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].paramsParens.push({tokenIndex: STATE.tokens.length - <span class="hljs-number">1</span>, tokenType: <span class="hljs-string">"PARAMS_START"</span>, tokenValue: <span class="hljs-string">"("</span>});
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].paramsCounter++;
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (STATE.insideFunction.length &amp;&amp; STATE.chunk === <span class="hljs-string">')'</span> &amp;&amp; 
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideParams === <span class="hljs-literal">true</span> &amp;&amp;
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].paramsCounter === <span class="hljs-number">1</span> ) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'FUNCTION_DECLARATION'</span>, STATE.chunk, STATE.tokens);
+      <span class="hljs-keyword">if</span> (STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].endFunctionParameterDeclarationIndex === -<span class="hljs-number">1</span>) {
+        STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].endFunctionParameterDeclarationIndex = STATE.tokens.length - <span class="hljs-number">1</span>;
+      }
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].paramsCounter--;
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideParams = <span class="hljs-string">"ended"</span>;
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].paramsParens.shift();
+      <span class="hljs-built_in">module</span>.exports.reviseFunctionHistory(STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].paramsParens, STATE);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>END code to look back and revise incorrect ()’s</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (STATE.insideFunction.length &amp;&amp; STATE.chunk === <span class="hljs-string">')'</span> &amp;&amp; 
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideReturnStatement === <span class="hljs-literal">true</span> &amp;&amp; !STATE.insideInitialization.length) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'FUNCTION_DECLARATION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideReturnStatement = <span class="hljs-string">"ended"</span>;
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (STATE.insideFunction.length &amp;&amp; STATE.chunk === <span class="hljs-string">'{'</span> &amp;&amp; 
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].statements === <span class="hljs-number">0</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'FUNCTION_DECLARATION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].statements++;
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideReturnStatement = <span class="hljs-literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>This is the place where we need to go back and count the number of ()’s then figure out what happened</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].returnArrows.length &gt;= <span class="hljs-number">2</span>) { <span class="hljs-comment">// may be needed to be changed to === 2</span>
+        <span class="hljs-keyword">var</span> input = [];
+        <span class="hljs-keyword">if</span> (STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].returnArrows[<span class="hljs-number">0</span>] &gt; STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].endFunctionParameterDeclarationIndex) {
+          <span class="hljs-keyword">var</span> start = STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].returnArrows[<span class="hljs-number">0</span>] ;
+          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = start, end = STATE.tokens.length-<span class="hljs-number">1</span>; i &lt; end; i++) {
+            <span class="hljs-keyword">if</span> (STATE.tokens[i][<span class="hljs-string">"value"</span>] === <span class="hljs-string">'('</span> || STATE.tokens[i][<span class="hljs-string">"value"</span>] === <span class="hljs-string">')'</span>) {
+              input.push({tokenIndex: i, tokenType: STATE.tokens[i][<span class="hljs-string">"type"</span>], tokenValue: STATE.tokens[i][<span class="hljs-string">"value"</span>]});
+            }
+          }
+          <span class="hljs-built_in">module</span>.exports.reviseFunctionHistory(input, STATE);
+        }
+      }
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.insideFunction.length &amp;&amp; STATE.chunk === <span class="hljs-string">'{'</span> &amp;&amp; 
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].statements === <span class="hljs-number">1</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'PUNCTUATION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].curly++;
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.insideFunction.length &amp;&amp; STATE.chunk === <span class="hljs-string">'}'</span> &amp;&amp; 
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].statements === <span class="hljs-number">1</span> &amp;&amp; 
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].curly &gt; <span class="hljs-number">0</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'PUNCTUATION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].curly--;
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  handleFunctionDeclarationEnd: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.insideFunction.length &amp;&amp; STATE.chunk === <span class="hljs-string">'}'</span> &amp;&amp; 
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].statements === <span class="hljs-number">1</span> &amp;&amp; 
+      STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].curly === <span class="hljs-number">0</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'FUNCTION_DECLARATION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideFunction.pop();
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  reviseFunctionHistory: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">inputArray, STATE</span>) </span>{
+    <span class="hljs-keyword">var</span> arr = [];
+    <span class="hljs-keyword">var</span> len = <span class="hljs-built_in">Math</span>.floor((inputArray.length)/<span class="hljs-number">2</span>);
+    <span class="hljs-keyword">var</span> obj = {
+      <span class="hljs-string">"PUNCTUATION"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">tokenIndexStart, tokenIndexEnd</span>) </span>{
+        STATE.tokens[tokenIndexStart][<span class="hljs-string">'type'</span>] = <span class="hljs-string">"PUNCTUATION"</span>;
+        STATE.tokens[tokenIndexEnd][<span class="hljs-string">'type'</span>] = <span class="hljs-string">"PUNCTUATION"</span>;
+      },
+      <span class="hljs-string">"PARAMS"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">tokenIndexStart, tokenIndexEnd</span>) </span>{
+        STATE.tokens[tokenIndexStart][<span class="hljs-string">'type'</span>] = <span class="hljs-string">"PARAMS_START"</span>;
+        STATE.tokens[tokenIndexEnd][<span class="hljs-string">'type'</span>] = <span class="hljs-string">"PARAMS_END"</span>;
+      },
+      <span class="hljs-string">"TUPLE"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">tokenIndexStart, tokenIndexEnd</span>) </span>{
+        STATE.tokens[tokenIndexStart][<span class="hljs-string">'type'</span>] = <span class="hljs-string">"TUPLE_START"</span>;
+        STATE.tokens[tokenIndexEnd][<span class="hljs-string">'type'</span>] = <span class="hljs-string">"TUPLE_END"</span>;
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> q = tokenIndexEnd - <span class="hljs-number">1</span>, enda = tokenIndexStart + <span class="hljs-number">1</span>; q &gt;= enda; q--) {
+          <span class="hljs-keyword">if</span> (STATE.tokens[q][<span class="hljs-string">'value'</span>] === <span class="hljs-string">':'</span>) {
+            STATE.tokens[q-<span class="hljs-number">1</span>][<span class="hljs-string">'type'</span>] = <span class="hljs-string">"TUPLE_ELEMENT_NAME"</span>;
+          }
+        }
+      }
+    };
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; len; j++) {
+      <span class="hljs-keyword">var</span> x = [];
+      x.push((inputArray.splice(((inputArray.length)/<span class="hljs-number">2</span> - <span class="hljs-number">1</span>),<span class="hljs-number">1</span>))[<span class="hljs-number">0</span>]);
+      x.push((inputArray.splice(<span class="hljs-built_in">Math</span>.floor((inputArray.length)/<span class="hljs-number">2</span>),<span class="hljs-number">1</span>))[<span class="hljs-number">0</span>]);
+      arr.push(x);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>console.log(“arr: “,arr);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; len; j++) {
+      <span class="hljs-keyword">var</span> y = arr[j];
+      <span class="hljs-keyword">var</span> toDo = <span class="hljs-string">"PUNCTUATION"</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> k = y[<span class="hljs-number">1</span>][<span class="hljs-string">'tokenIndex'</span>] - <span class="hljs-number">1</span>, z = y[<span class="hljs-number">0</span>][<span class="hljs-string">'tokenIndex'</span>] + <span class="hljs-number">1</span>; k &gt;= z; k--) {
+        <span class="hljs-keyword">if</span> (STATE.tokens[k][<span class="hljs-string">'type'</span>] === <span class="hljs-string">'RETURN_ARROW'</span>) {
+          toDo = <span class="hljs-string">"PUNCTUATION"</span>;
+          <span class="hljs-keyword">break</span>;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.tokens[k][<span class="hljs-string">'value'</span>] === <span class="hljs-string">','</span>) {
+          toDo = <span class="hljs-string">"PARAMS"</span>;
+          <span class="hljs-keyword">break</span>;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.tokens[k][<span class="hljs-string">'value'</span>] === <span class="hljs-string">':'</span>) {
+          toDo = <span class="hljs-string">"TUPLE"</span>;
+          <span class="hljs-keyword">break</span>;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.tokens[k][<span class="hljs-string">'type'</span>] === <span class="hljs-string">'TYPE_BOOLEAN'</span> || STATE.tokens[k][<span class="hljs-string">'type'</span>] === <span class="hljs-string">'TYPE_STRING'</span> || STATE.tokens[k][<span class="hljs-string">'type'</span>] === <span class="hljs-string">'TYPE_NUMBER'</span>) {
+          toDo = <span class="hljs-string">"PARAMS"</span>;
+        } <span class="hljs-keyword">else</span> {
+          toDo = <span class="hljs-string">"PUNCTUATION"</span>;
+        }
+      }
+      obj[toDo](y[<span class="hljs-number">0</span>][<span class="hljs-string">'tokenIndex'</span>],y[<span class="hljs-number">1</span>][<span class="hljs-string">'tokenIndex'</span>]);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>helper function to make token and add to tokens array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  makeToken: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">lexicalType, chunk, tokens, type, value</span>) </span>{
+    <span class="hljs-keyword">if</span> (tokens) {
+      <span class="hljs-keyword">var</span> obj = {};
+      obj.type = type || lexicalTypes[lexicalType][chunk];
+      obj.value = value || chunk.trim();
+      tokens.push(obj);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>helper function to handle new lines</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleNewLine: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.currCol === <span class="hljs-string">'\n'</span>) {
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, STATE.tokens, <span class="hljs-string">'TERMINATOR'</span>, <span class="hljs-string">'\\n'</span>);
+      STATE.emptyLine = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.emptyLine &amp;&amp; !<span class="hljs-built_in">module</span>.exports.checkForWhitespace(STATE.currCol)) {
+      STATE.emptyLine = <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.emptyLine &amp;&amp; STATE.lastToken &amp;&amp; STATE.lastToken.value === <span class="hljs-string">'\\n'</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>checks for string and boolean values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkForLiteral: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">chunk, tokens, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (chunk) {
+      chunk = <span class="hljs-built_in">JSON</span>.parse(chunk.trim());
+    }
+    <span class="hljs-keyword">var</span> type = <span class="hljs-keyword">typeof</span> chunk;
+    <span class="hljs-keyword">var</span> obj = {
+      <span class="hljs-string">'boolean'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">chunk, tokens</span>) </span>{
+        <span class="hljs-keyword">if</span> (tokens) {
+          <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, chunk, tokens, <span class="hljs-string">'BOOLEAN'</span>, <span class="hljs-built_in">JSON</span>.stringify(chunk));
+        }
+        <span class="hljs-keyword">if</span> (cb) {cb(chunk, tokens)}
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      },
+      <span class="hljs-string">'string'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">chunk, tokens</span>) </span>{
+        <span class="hljs-keyword">if</span> (tokens) {
+          <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, chunk, tokens, <span class="hljs-string">'STRING'</span>, chunk);
+        }
+        <span class="hljs-keyword">if</span> (cb) {cb(chunk, tokens)}
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      },
+    };
+    <span class="hljs-keyword">if</span> (obj[type] === <span class="hljs-literal">undefined</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    } <span class="hljs-keyword">else</span> {
+      obj[type](chunk, tokens);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>handles start of multi-line and single-line comments</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkForCommentStart: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.currCol === <span class="hljs-string">'/'</span> &amp;&amp; STATE.nextCol === <span class="hljs-string">'*'</span> &amp;&amp; !(STATE.insideComment.multi &amp;&amp; STATE.insideComment.single)) {
+      STATE.insideComment.multi = <span class="hljs-literal">true</span>;
+      STATE.chunk += STATE.nextCol;
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'COMMENT'</span>, STATE.chunk, STATE.tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.currCol === <span class="hljs-string">'/'</span> &amp;&amp; STATE.nextCol === <span class="hljs-string">'/'</span> &amp;&amp; !(STATE.insideComment.multi &amp;&amp; STATE.insideComment.single)) {
+      STATE.insideComment.single = <span class="hljs-literal">true</span>;
+      STATE.chunk += STATE.nextCol;
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'COMMENT'</span>, STATE.chunk, STATE.tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>tokenizes comment contents and handles end of single and multi-line comments</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleComment: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.insideComment.multi) {
+      <span class="hljs-keyword">if</span> (STATE.chunk === <span class="hljs-string">'*/'</span>) {
+        <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'COMMENT'</span>, STATE.chunk, STATE.tokens);
+        STATE.insideComment.multi = <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">if</span> (STATE.nextCol === <span class="hljs-string">'\n'</span>) {
+          STATE.advanceAndClear(<span class="hljs-number">1</span>);
+        } <span class="hljs-keyword">else</span> {
+          STATE.advanceAndClear(<span class="hljs-number">2</span>);
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((STATE.nextCol === <span class="hljs-string">'*'</span> &amp;&amp; STATE.nextNextCol === <span class="hljs-string">'/'</span>) || STATE.nextCol === <span class="hljs-string">'\n'</span>) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, STATE.tokens, <span class="hljs-string">'COMMENT'</span>, STATE.chunk);
+        STATE.advanceAndClear(<span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      }
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.insideComment.single &amp;&amp; (STATE.nextCol === <span class="hljs-literal">undefined</span> || STATE.nextCol === <span class="hljs-string">'\n'</span>)) {
+      STATE.insideComment.single = <span class="hljs-literal">false</span>;
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, STATE.tokens, <span class="hljs-string">'COMMENT'</span>, STATE.chunk);
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  checkIfInsideComment: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.insideComment.multi || STATE.insideComment.single) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>main helper function to check whether chunk is a Swift lexical type</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkFor: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE, lexicalType, chunk, tokens, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (chunk) {
+      chunk = chunk.trim();
+    }
+    <span class="hljs-keyword">if</span>(lexicalTypes[lexicalType][chunk]){
+      <span class="hljs-keyword">if</span> (tokens) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(lexicalType, chunk, tokens);
+        <span class="hljs-keyword">var</span> recentFunc = STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>];
+        <span class="hljs-keyword">if</span> (lexicalType === <span class="hljs-string">"PUNCTUATION"</span> &amp;&amp;
+            chunk === <span class="hljs-string">"("</span> &amp;&amp;
+            STATE.insideFunction.length &amp;&amp;
+            STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideParams === <span class="hljs-literal">true</span> &amp;&amp;
+            recentFunc.paramsParens.length &amp;&amp;
+            recentFunc.paramsParens[recentFunc.paramsParens.length - <span class="hljs-number">1</span>][<span class="hljs-string">"tokenIndex"</span>] !== STATE.tokens.length - <span class="hljs-number">1</span>) {
+          recentFunc.paramsCounter++;
+          recentFunc.paramsParens.push({tokenIndex: STATE.tokens.length - <span class="hljs-number">1</span>, tokenType: <span class="hljs-string">"PUNCTUATION"</span>, tokenValue: <span class="hljs-string">"("</span>});
+        }
+        <span class="hljs-keyword">if</span> (lexicalType === <span class="hljs-string">"PUNCTUATION"</span> &amp;&amp;
+            chunk === <span class="hljs-string">")"</span> &amp;&amp;
+            STATE.insideFunction.length &amp;&amp;
+            STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideParams === <span class="hljs-literal">true</span> &amp;&amp;
+            recentFunc.paramsParens.length &amp;&amp;
+            recentFunc.paramsParens[recentFunc.paramsParens.length - <span class="hljs-number">1</span>][<span class="hljs-string">"tokenIndex"</span>] !== STATE.tokens.length - <span class="hljs-number">1</span>) {
+          STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].paramsCounter--;
+          STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].paramsParens.push({tokenIndex: STATE.tokens.length - <span class="hljs-number">1</span>, tokenType: <span class="hljs-string">"PUNCTUATION"</span>, tokenValue: <span class="hljs-string">")"</span>});
+        }
+        <span class="hljs-keyword">if</span> (cb) {
+          cb();
+        }
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>helper function to handle numbers, including numbers written with underscores</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleNumber: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (NUMBER.test(STATE.chunk) &amp;&amp; !STATE.insideString &amp;&amp; !STATE.insideNumber) {
+      STATE.insideNumber = <span class="hljs-literal">true</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>have an _ in the input</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (STATE.insideNumber &amp;&amp; STATE.nextCol === <span class="hljs-string">'_'</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-string">"skip"</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p>have an integer or decimal</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (STATE.insideNumber &amp;&amp; (STATE.nextCol === <span class="hljs-string">'\n'</span> ||
+      (<span class="hljs-built_in">isNaN</span>(STATE.nextCol) &amp;&amp; (STATE.nextCol !== <span class="hljs-string">'.'</span>) &amp;&amp; (STATE.nextNextCol !== <span class="hljs-string">'.'</span>)))) {
+      STATE.insideNumber = <span class="hljs-literal">false</span>;
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, STATE.chunk, STATE.tokens, <span class="hljs-string">'NUMBER'</span>, STATE.chunk.trim());
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p>have a range</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (STATE.insideNumber &amp;&amp; (STATE.nextCol === <span class="hljs-string">'.'</span>) &amp;&amp; (STATE.nextNextCol === <span class="hljs-string">'.'</span>)) {
+      STATE.insideNumber = <span class="hljs-literal">false</span>;
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, STATE.chunk, STATE.tokens, <span class="hljs-string">'NUMBER'</span>, STATE.chunk.trim());
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>helper function to handle range operators</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleRange: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (!STATE.insideString &amp;&amp; !<span class="hljs-built_in">module</span>.exports.checkIfInsideComment(STATE)) {
+      <span class="hljs-keyword">if</span> (STATE.currCol === <span class="hljs-string">'.'</span> &amp;&amp; STATE.nextCol === <span class="hljs-string">'.'</span> &amp;&amp; STATE.nextNextCol === <span class="hljs-string">'.'</span>) {
+        <span class="hljs-keyword">if</span> (STATE.insideFunction.length &amp;&amp; STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideParams === <span class="hljs-literal">true</span>) {
+          <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'FUNCTION_DECLARATION'</span>, <span class="hljs-string">'...'</span>, STATE.tokens);
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'RANGE'</span>, <span class="hljs-string">'...'</span>, STATE.tokens);
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        }
+      }
+      <span class="hljs-keyword">if</span> (STATE.currCol === <span class="hljs-string">'.'</span> &amp;&amp; STATE.nextCol === <span class="hljs-string">'.'</span> &amp;&amp; STATE.nextNextCol === <span class="hljs-string">'&lt;'</span>) {
+        <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'RANGE'</span>, <span class="hljs-string">'..&lt;'</span>, STATE.tokens);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  checkForStringInterpolationStart: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (!STATE.stringInterpolation.status &amp;&amp; STATE.nextCol === <span class="hljs-string">'\\'</span> &amp;&amp; STATE.nextNextCol === <span class="hljs-string">'('</span>) {
+      STATE.stringInterpolation.status = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">if</span> (STATE.chunk !== <span class="hljs-string">""</span>) {
+        <span class="hljs-built_in">module</span>.exports.checkForLiteral(STATE.chunk + <span class="hljs-string">'"'</span>, STATE.tokens);
+      }
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-string">"SPECIAL_STRING"</span>, <span class="hljs-string">"\\("</span>, STATE.tokens);
+      STATE.insideString = <span class="hljs-literal">false</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+  },
+
+  checkForStringInterpolationEnd: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.stringInterpolation.status &amp;&amp; STATE.currCol === <span class="hljs-string">")"</span> &amp;&amp;
+      !STATE.stringInterpolation.nestedInvocation) {
+      STATE.stringInterpolation.status = <span class="hljs-literal">false</span>;
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-string">"SPECIAL_STRING"</span>, <span class="hljs-string">")"</span>, STATE.tokens);
+      STATE.insideString = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p>handles classes and structures</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleClassOrStruct: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.insideClass.length &amp;&amp; STATE.insideClass[STATE.insideClass.length - <span class="hljs-number">1</span>].curly === <span class="hljs-number">0</span> &amp;&amp; STATE.chunk === <span class="hljs-string">'{'</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'CLASS_DEFINITION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideClass[STATE.insideClass.length - <span class="hljs-number">1</span>].curly++;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.insideClass.length &amp;&amp; STATE.insideClass[STATE.insideClass.length - <span class="hljs-number">1</span>].curly === <span class="hljs-number">1</span> &amp;&amp; STATE.chunk === <span class="hljs-string">'}'</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'CLASS_DEFINITION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideClass.pop();
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.insideStruct.length &amp;&amp; STATE.insideStruct[STATE.insideStruct.length - <span class="hljs-number">1</span>].curly === <span class="hljs-number">0</span> &amp;&amp;
+      STATE.chunk === <span class="hljs-string">'{'</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'STRUCT_DEFINITION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideStruct[STATE.insideStruct.length - <span class="hljs-number">1</span>].curly++;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.insideStruct.length &amp;&amp; STATE.insideStruct[STATE.insideStruct.length - <span class="hljs-number">1</span>].curly === <span class="hljs-number">1</span> &amp;&amp;
+      STATE.chunk === <span class="hljs-string">'}'</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'STRUCT_DEFINITION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideStruct.pop();
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.tokens.length &amp;&amp; (STATE.CLASS_NAMES[STATE.lastToken.value] || 
+      STATE.STRUCT_NAMES[STATE.lastToken.value]) &amp;&amp; STATE.chunk === <span class="hljs-string">'('</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'INITIALIZATION'</span>, STATE.chunk, STATE.tokens)
+      <span class="hljs-keyword">var</span> temp = {};
+      temp.status = <span class="hljs-literal">true</span>;
+      temp.parens = <span class="hljs-number">1</span>;
+      STATE.insideInitialization.push(temp);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (STATE.chunk === <span class="hljs-string">')'</span> &amp;&amp; STATE.insideInitialization.length &amp;&amp; 
+      STATE.insideInitialization[STATE.insideInitialization.length - <span class="hljs-number">1</span>].parens === <span class="hljs-number">1</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(STATE, <span class="hljs-string">'INITIALIZATION'</span>, STATE.chunk, STATE.tokens);
+      STATE.insideInitialization.pop();
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+  
+  checkForTupleStart: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (!STATE.insideTuple.status &amp;&amp; STATE.currCol === <span class="hljs-string">'('</span> &amp;&amp; ((STATE.lastToken.value === <span class="hljs-string">'='</span> ||
+      STATE.lastToken.value === <span class="hljs-string">'return'</span> || STATE.lastToken.value === <span class="hljs-string">'-&gt;'</span>) || (STATE.insideInvocation.length &amp;&amp; STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>].status)) ) {
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, STATE.tokens,<span class="hljs-string">'TUPLE_START'</span>, STATE.chunk);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p>special handling of empty tuples</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (STATE.insideInvocation.length &amp;&amp; STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>].status) {
+        STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>].parens++;
+      }
+      <span class="hljs-keyword">if</span> (STATE.nextCol === <span class="hljs-string">')'</span>) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, STATE.tokens, <span class="hljs-string">'TUPLE_END'</span>, STATE.nextCol);
+        <span class="hljs-built_in">module</span>.exports.handleEndOfFile(STATE.nextNextCol, STATE.tokens);
+        STATE.advanceAndClear(<span class="hljs-number">1</span>);
+      } <span class="hljs-keyword">else</span> {
+        STATE.insideTuple.status = <span class="hljs-literal">true</span>;
+        STATE.insideTuple.startIndex = STATE.tokens.length - <span class="hljs-number">1</span>;
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  handleTuple: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.nextCol === <span class="hljs-string">':'</span>) {
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, STATE.tokens, <span class="hljs-string">'TUPLE_ELEMENT_NAME'</span>, STATE.chunk);
+      STATE.TUPLE_ELEMENT_NAMES[STATE.chunk] = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.currCol === <span class="hljs-string">','</span>) {
+      STATE.insideTuple.verified = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    }
+  },
+
+  checkForTupleEnd: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.insideTuple.status &amp;&amp; STATE.currCol === <span class="hljs-string">')'</span>) {
+      <span class="hljs-keyword">if</span> (STATE.insideTuple.verified) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, STATE.tokens, <span class="hljs-string">'TUPLE_END'</span>, STATE.chunk);
+        <span class="hljs-keyword">if</span> (STATE.insideInvocation.length &amp;&amp; STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>].status) {
+          STATE.insideInvocation[STATE.insideInvocation.length - <span class="hljs-number">1</span>].parens--;
+        }
+        STATE.insideTuple.status = <span class="hljs-literal">false</span>;
+        STATE.insideTuple.startIndex = <span class="hljs-literal">undefined</span>;
+        STATE.insideTuple.verified = <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> {
+        STATE.tokens[STATE.insideTuple.startIndex].type = <span class="hljs-string">'PUNCTUATION'</span>;
+        STATE.insideTuple.status = <span class="hljs-literal">false</span>;
+        STATE.insideTuple.startIndex = <span class="hljs-literal">undefined</span>;
+        STATE.insideTuple.verified = <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      }
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p>helper function to check for identifiers</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkForIdentifier: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.VARIABLE_NAMES[STATE.chunk]) {
+      <span class="hljs-keyword">if</span> (STATE.tokens) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, STATE.chunk, STATE.tokens, <span class="hljs-string">'IDENTIFIER'</span>, STATE.chunk);
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (STATE.lastToken &amp;&amp; (STATE.lastToken.type === <span class="hljs-string">'DECLARATION_KEYWORD'</span> ||
+      STATE.lastToken.value === <span class="hljs-string">'for'</span> ||</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p>special condition for multiple variables of the same type declared on a single line</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      (STATE.lastToken.value === <span class="hljs-string">','</span> &amp;&amp; STATE.VARIABLE_NAMES[STATE.tokens[STATE.tokens.length -<span class="hljs-number">2</span>].value] &amp;&amp; !STATE.insideInvocation.length) ||</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <p>special conditions to handle for-in loops that iterate over dictionaries</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      (STATE.lastToken.value === <span class="hljs-string">'('</span> &amp;&amp; STATE.tokens[STATE.tokens.length - <span class="hljs-number">2</span>].value === <span class="hljs-string">'for'</span>) ||
+      (STATE.lastToken.value === <span class="hljs-string">','</span> &amp;&amp; STATE.tokens[STATE.tokens.length - <span class="hljs-number">3</span>].value) === <span class="hljs-string">'('</span> &amp;&amp;
+      STATE.tokens[STATE.tokens.length - <span class="hljs-number">4</span>].value === <span class="hljs-string">'for'</span> || (STATE.insideFunction.length &amp;&amp; STATE.insideFunction[STATE.insideFunction.length - <span class="hljs-number">1</span>].insideParams === <span class="hljs-literal">true</span> &amp;&amp; STATE.lastToken.value !== <span class="hljs-string">'='</span>))) {
+      <span class="hljs-keyword">if</span> (STATE.tokens) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, STATE.chunk, STATE.tokens, <span class="hljs-string">'IDENTIFIER'</span>, STATE.chunk);
+      }
+      STATE.VARIABLE_NAMES[STATE.chunk] = <span class="hljs-literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <p>special conditions to handle identifiers for classes and structs</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (STATE.tokens[STATE.tokens.length - <span class="hljs-number">2</span>].value === <span class="hljs-string">'class'</span>) {
+        <span class="hljs-keyword">var</span> temp = {};
+        temp.status = <span class="hljs-literal">true</span>;
+        temp.curly = <span class="hljs-number">0</span>;
+        STATE.insideClass.push(temp);
+        STATE.CLASS_NAMES[STATE.chunk] = <span class="hljs-literal">true</span>;
+      }
+      <span class="hljs-keyword">if</span> (STATE.tokens[STATE.tokens.length - <span class="hljs-number">2</span>].value === <span class="hljs-string">'struct'</span>) {
+        <span class="hljs-keyword">var</span> temp = {};
+        temp.status = <span class="hljs-literal">true</span>;
+        temp.curly = <span class="hljs-number">0</span>;
+        STATE.insideStruct.push(temp);
+        STATE.STRUCT_NAMES[STATE.chunk] = <span class="hljs-literal">true</span>;
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  determineCollectionType: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">STATE, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (STATE.tokens[STATE.tokens.length - <span class="hljs-number">1</span>].value === <span class="hljs-string">':'</span>) {
+      STATE.tokens[STATE.insideCollection[STATE.insideCollection.length - <span class="hljs-number">1</span>].location].type = <span class="hljs-string">'DICTIONARY_START'</span>;
+      STATE.insideCollection[STATE.insideCollection.length - <span class="hljs-number">1</span>].type = <span class="hljs-string">'DICTIONARY_END'</span>;
+    } <span class="hljs-keyword">else</span> {
+      STATE.insideCollection[STATE.insideCollection.length - <span class="hljs-number">1</span>].type  = <span class="hljs-string">'ARRAY_END'</span>;
+    }
+    <span class="hljs-keyword">if</span> (cb) {
+      cb();
+    }
+  },
+
+  handleEndOfFile: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col, tokens</span>) </span>{
+    <span class="hljs-keyword">if</span> (col === <span class="hljs-literal">undefined</span>) <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, tokens, <span class="hljs-string">'TERMINATOR'</span>, <span class="hljs-string">'EOF'</span>);
+  }
+
+};
+
+<span class="hljs-built_in">module</span>.exports = {
+
+  CLASS_DEFINITION: {
+    <span class="hljs-string">'{'</span>: <span class="hljs-string">'CLASS_DEFINITION_START'</span>,
+    <span class="hljs-string">'}'</span>: <span class="hljs-string">'CLASS_DEFINITION_END'</span>,
+  },
+
+  COLLECTION: {
+    <span class="hljs-string">'['</span>: <span class="hljs-string">'ARRAY_START'</span>,
+    <span class="hljs-string">']'</span>: <span class="hljs-string">'COLLECTION_END'</span>,
+  },
+
+  COMMENT: {
+    <span class="hljs-string">'//'</span>: <span class="hljs-string">'COMMENT_START'</span>,
+    <span class="hljs-string">'/*'</span>: <span class="hljs-string">'MULTI_LINE_COMMENT_START'</span>,
+    <span class="hljs-string">'*/'</span>: <span class="hljs-string">'MULTI_LINE_COMMENT_END'</span> ,
+  },
+
+  FUNCTION_DECLARATION: {
+    <span class="hljs-string">'('</span>: <span class="hljs-string">'PARAMS_START'</span>,
+    <span class="hljs-string">')'</span>: <span class="hljs-string">'PARAMS_END'</span>,
+    <span class="hljs-string">'{'</span>: <span class="hljs-string">'STATEMENTS_START'</span>,
+    <span class="hljs-string">'}'</span>: <span class="hljs-string">'STATEMENTS_END'</span>,
+    <span class="hljs-string">'-&gt;'</span>: <span class="hljs-string">'RETURN_ARROW'</span>,
+    <span class="hljs-string">'...'</span>: <span class="hljs-string">'VARIADIC_PARAM'</span>,
+  },
+
+  FUNCTION_INVOCATION: {
+    <span class="hljs-string">'('</span>: <span class="hljs-string">'INVOCATION_START'</span>,
+    <span class="hljs-string">')'</span>: <span class="hljs-string">'INVOCATION_END'</span>,
+  },
+
+  INITIALIZATION: {
+    <span class="hljs-string">'('</span>: <span class="hljs-string">'INITIALIZATION_START'</span>,
+    <span class="hljs-string">')'</span>: <span class="hljs-string">'INITIALIZATION_END'</span>,
+  },
+
+  KEYWORD: {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-55">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-55">&#182;</a>
+              </div>
+              <p>keywords used in declarations</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'class'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'deinit'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'enum'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'extension'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'func'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'import'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'init'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'inout'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'internal'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'let'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'operator'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'private'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'protocol'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'public'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'static'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'struct'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'subscript'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'typealias'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,
+    <span class="hljs-string">'var'</span>: <span class="hljs-string">'DECLARATION_KEYWORD'</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-56">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-56">&#182;</a>
+              </div>
+              <p>keywords used in statements</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'break'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'case'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'continue'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'default'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'defer'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'do'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'else'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'fallthrough'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'for'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'guard'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'if'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'in'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'repeat'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'return'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'switch'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'where'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,
+    <span class="hljs-string">'while'</span>: <span class="hljs-string">'STATEMENT_KEYWORD'</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <p>keywords used in expressions and types</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'as'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'catch'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'dynamicType'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'is'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'nil'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'rethrows'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'super'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'self'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'Self'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'throw'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'throws'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'try'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'__COLUMN__'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'__FILE__'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'__FUNCTION__'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,
+    <span class="hljs-string">'__LINE__'</span>: <span class="hljs-string">'EXPRESSION_OR_TYPE_KEYWORD'</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <p>keywords used in patterns</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'_'</span>: <span class="hljs-string">'PATTERN_KEYWORD'</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <p>keywords reserved in particular contexts</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-string">'associativity'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'convenience'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'dynamic'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'didSet'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'final'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'get'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'infix'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'indirect'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'lazy'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'left'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'mutating'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'none'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'nonmutating'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'optional'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'override'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'postfix'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'precedence'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'prefix'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'Protocol'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'required'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'right'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'set'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'Type'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'unowned'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'weak'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+    <span class="hljs-string">'willSet'</span>: <span class="hljs-string">'CONTEXT_SPECIFIC_KEYWORD'</span>,
+
+  },
+
+  METHOD_ARGUMENT_NAME: {
+    <span class="hljs-string">'at'</span>: <span class="hljs-string">'METHOD_ARGUMENT_NAME'</span>,
+    <span class="hljs-string">'atIndex'</span>: <span class="hljs-string">'METHOD_ARGUMENT_NAME'</span>,
+    <span class="hljs-string">'forKey'</span>: <span class="hljs-string">'METHOD_ARGUMENT_NAME'</span>,
+    <span class="hljs-string">'repeatedValue'</span>: <span class="hljs-string">'METHOD_ARGUMENT_NAME'</span>,
+  },
+
+  NATIVE_METHOD: {
+    <span class="hljs-string">'abs'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'advancedBy'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'append'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'contains'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'distanceTo'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'dropFirst'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'dropLast'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'elementsEqual'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'hasPrefix'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'hasSuffix'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'insert'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'insertContentsOf'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'maxElement'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'minElement'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'predecessor'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'popLast'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'print'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'removeAtIndex'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'removeAll'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'removeFirst'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'removeLast'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'removeRange'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'removeValueForKey'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'replaceRange'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'successor'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'startsWith'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+    <span class="hljs-string">'updateValue'</span>: <span class="hljs-string">'NATIVE_METHOD'</span>,
+  },
+
+  OPERATOR: {
+    <span class="hljs-string">'/'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'='</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'-'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'+'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'!'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'*'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'%'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'&lt;'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'&gt;'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'&amp;'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'|'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'^'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'?'</span>: <span class="hljs-string">'OPERATOR'</span>,
+    <span class="hljs-string">'~'</span>: <span class="hljs-string">'OPERATOR'</span>,
+  },
+
+  PUNCTUATION: {
+    <span class="hljs-string">'('</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+    <span class="hljs-string">')'</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+    <span class="hljs-string">'{'</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+    <span class="hljs-string">'}'</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+    <span class="hljs-string">'.'</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+    <span class="hljs-string">','</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+    <span class="hljs-string">':'</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+    <span class="hljs-string">';'</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+    <span class="hljs-string">'@'</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+    <span class="hljs-string">'#'</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+    <span class="hljs-string">'`'</span>: <span class="hljs-string">'PUNCTUATION'</span>,
+  },
+
+  RANGE: {
+    <span class="hljs-string">'...'</span>: <span class="hljs-string">'CLOSED_RANGE'</span>,
+    <span class="hljs-string">'..&lt;'</span>: <span class="hljs-string">'HALF_OPEN_RANGE'</span>,
+  },
+
+  SUBSCRIPT_LOOKUP: {
+    <span class="hljs-string">'['</span>: <span class="hljs-string">'SUBSCRIPT_LOOKUP_START'</span>,
+    <span class="hljs-string">']'</span>: <span class="hljs-string">'SUBSCRIPT_LOOKUP_END'</span>,
+  },
+
+  SPECIAL_STRING: {
+    <span class="hljs-string">'\\('</span>: <span class="hljs-string">"STRING_INTERPOLATION_START"</span>,
+    <span class="hljs-string">')'</span>: <span class="hljs-string">"STRING_INTERPOLATION_END"</span>,
+  },
+
+  STRUCT_DEFINITION: {
+    <span class="hljs-string">'{'</span>: <span class="hljs-string">'STRUCT_DEFINITION_START'</span>,
+    <span class="hljs-string">'}'</span>: <span class="hljs-string">'STRUCT_DEFINITION_END'</span>,
+  },
+
+  TERMINATOR: {
+    <span class="hljs-string">'EOF'</span>: <span class="hljs-string">'TERMINATOR'</span>,
+    <span class="hljs-string">'\\n'</span>: <span class="hljs-string">'TERMINATOR'</span>,
+    <span class="hljs-string">'\\r'</span>: <span class="hljs-string">'TERMINATOR'</span>,
+    <span class="hljs-string">'\\t'</span>: <span class="hljs-string">'TAB'</span>,
+  },
+
+  TYPE: {
+    <span class="hljs-string">'Character'</span>: <span class="hljs-string">'TYPE_STRING'</span>,
+    <span class="hljs-string">'Double'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'Float'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'Bool'</span>: <span class="hljs-string">'TYPE_BOOLEAN'</span>,
+    <span class="hljs-string">'Int'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'Int8'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'Int16'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'Int32'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'Int64'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'String'</span>: <span class="hljs-string">'TYPE_STRING'</span>,
+    <span class="hljs-string">'UInt'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'UInt8'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'UInt16'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'UInt32'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+    <span class="hljs-string">'UInt64'</span>: <span class="hljs-string">'TYPE_NUMBER'</span>,
+  },
+
+  TYPE_PROPERTY: {
+    <span class="hljs-string">'characters'</span>: <span class="hljs-string">'TYPE_PROPERTY'</span>,
+    <span class="hljs-string">'count'</span>: <span class="hljs-string">'TYPE_PROPERTY'</span>,
+    <span class="hljs-string">'description'</span>: <span class="hljs-string">'TYPE_PROPERTY'</span>,
+    <span class="hljs-string">'endIndex'</span>: <span class="hljs-string">'TYPE_PROPERTY'</span>,
+    <span class="hljs-string">'lowercaseString'</span>: <span class="hljs-string">'TYPE_PROPERTY'</span>,
+    <span class="hljs-string">'isEmpty'</span>: <span class="hljs-string">'TYPE_PROPERTY'</span>,
+    <span class="hljs-string">'startIndex'</span>: <span class="hljs-string">'TYPE_PROPERTY'</span>,
+    <span class="hljs-string">'uppercaseString'</span>: <span class="hljs-string">'TYPE_PROPERTY'</span>,
+  },
+
+};
+
+<span class="hljs-keyword">var</span> lexicalTypes = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./lexicalTypes"</span>);
+
+<span class="hljs-keyword">var</span> NUMBER = <span class="hljs-regexp">/^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i</span>;
+
+<span class="hljs-built_in">module</span>.exports = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <p>helper function to check for whitespace</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkForWhitespace: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">chunk</span>) </span>{
+    <span class="hljs-keyword">return</span> chunk === <span class="hljs-string">' '</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-61">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-61">&#182;</a>
+              </div>
+              <p>default check for point at which to evaluate chunk</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkForEvaluationPoint: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">currCol, nextCol</span>) </span>{
+    <span class="hljs-keyword">if</span> (
+
+      <span class="hljs-built_in">module</span>.exports.checkForWhitespace(currCol) ||
+      <span class="hljs-built_in">module</span>.exports.checkForWhitespace(nextCol) ||
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'PUNCTUATION'</span>, nextCol) ||
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'PUNCTUATION'</span>, currCol) ||
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'OPERATOR'</span>, nextCol) ||
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'OPERATOR'</span>, currCol) ||
+      nextCol === <span class="hljs-string">'"'</span> || nextCol === <span class="hljs-string">']'</span> || currCol === <span class="hljs-string">'['</span> ||
+      currCol === <span class="hljs-string">']'</span> || nextCol === <span class="hljs-string">'['</span> || nextCol === <span class="hljs-string">'\n'</span> ||
+      nextCol === <span class="hljs-literal">undefined</span>
+
+    ) {
+
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-62">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-62">&#182;</a>
+              </div>
+              <p>helper function to handle function invocation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleFunctionInvocation: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">chunk, nextCol, tokens, lastToken, FUNCTION_NAMES, insideInvocation</span>) </span>{
+    <span class="hljs-keyword">if</span> (chunk === <span class="hljs-string">'('</span> &amp;&amp; ((FUNCTION_NAMES[lastToken.value] &amp;&amp; 
+      tokens[tokens.length - <span class="hljs-number">2</span>].value !== <span class="hljs-string">'func'</span>) || lastToken.type === <span class="hljs-string">'NATIVE_METHOD'</span>)) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'FUNCTION_INVOCATION'</span>, chunk, tokens);
+      <span class="hljs-keyword">var</span> tmp = {};
+      tmp.name = lastToken.value;
+      tmp.status = <span class="hljs-literal">true</span>;
+      tmp.parens = <span class="hljs-number">0</span>;
+      insideInvocation.push(tmp);
+      <span class="hljs-keyword">return</span> <span class="hljs-string">"cb1"</span>;
+    }
+    
+    <span class="hljs-keyword">if</span> (insideInvocation.length &amp;&amp; (insideInvocation[insideInvocation.length - <span class="hljs-number">1</span>]).status &amp;&amp; chunk === <span class="hljs-string">')'</span> &amp;&amp; 
+      (insideInvocation[insideInvocation.length - <span class="hljs-number">1</span>]).parens === <span class="hljs-number">0</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'FUNCTION_INVOCATION'</span>, chunk, tokens);
+      <span class="hljs-keyword">var</span> last = insideInvocation[insideInvocation.length - <span class="hljs-number">1</span>]; <span class="hljs-comment">//may be unnecessary</span>
+      last.status = <span class="hljs-literal">false</span>; <span class="hljs-comment">//may be unnecessary since poping next</span>
+      insideInvocation.pop();
+      <span class="hljs-keyword">return</span> <span class="hljs-string">"cb2"</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (insideInvocation.length &amp;&amp; chunk === <span class="hljs-string">'('</span> &amp;&amp; (insideInvocation[insideInvocation.length - <span class="hljs-number">1</span>]).status) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'PUNCTUATION'</span>, chunk, tokens);
+      <span class="hljs-keyword">var</span> last = insideInvocation[insideInvocation.length - <span class="hljs-number">1</span>];
+      last.parens++;
+      <span class="hljs-keyword">return</span> <span class="hljs-string">"cb1"</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (insideInvocation.length &amp;&amp; chunk === <span class="hljs-string">')'</span> &amp;&amp; (insideInvocation[insideInvocation.length - <span class="hljs-number">1</span>]).status) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'PUNCTUATION'</span>, chunk, tokens);
+      <span class="hljs-keyword">var</span> last = insideInvocation[insideInvocation.length - <span class="hljs-number">1</span>];
+      last.parens--;
+      <span class="hljs-keyword">return</span> <span class="hljs-string">"cb1"</span>;
+    }
+    
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-63">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-63">&#182;</a>
+              </div>
+              <p>helper function to make token and add to tokens array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  makeToken: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">lexicalType, chunk, tokens, type, value</span>) </span>{
+    <span class="hljs-keyword">if</span> (tokens) {
+      <span class="hljs-keyword">var</span> obj = {};
+      obj.type = type || lexicalTypes[lexicalType][chunk];
+      obj.value = value || chunk.trim();
+      tokens.push(obj);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-64">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <p>helper function to handle new lines</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleNewLine: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">emptyLine, tokens, lastToken, currCol</span>) </span>{
+    <span class="hljs-keyword">if</span> (currCol === <span class="hljs-string">'\n'</span>) {
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, tokens, <span class="hljs-string">'TERMINATOR'</span>, <span class="hljs-string">'\\n'</span>);
+      emptyLine.status = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (emptyLine.status &amp;&amp; !<span class="hljs-built_in">module</span>.exports.checkForWhitespace(currCol)) {
+      emptyLine.status = <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-keyword">if</span> (emptyLine.status &amp;&amp; lastToken &amp;&amp; lastToken.value === <span class="hljs-string">'\\n'</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-65">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <p>checks for string and boolean values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkForLiteral: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">chunk, tokens, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (chunk) {
+      chunk = <span class="hljs-built_in">JSON</span>.parse(chunk.trim());
+    }
+    <span class="hljs-keyword">var</span> type = <span class="hljs-keyword">typeof</span> chunk;
+    <span class="hljs-keyword">var</span> obj = {
+      <span class="hljs-string">'boolean'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">chunk, tokens</span>) </span>{
+        <span class="hljs-keyword">if</span> (tokens) {
+          <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, chunk, tokens, <span class="hljs-string">'BOOLEAN'</span>, <span class="hljs-built_in">JSON</span>.stringify(chunk));
+        }
+        <span class="hljs-keyword">if</span> (cb) {cb(chunk, tokens)}
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      },
+      <span class="hljs-string">'string'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">chunk, tokens</span>) </span>{
+        <span class="hljs-keyword">if</span> (tokens) {
+          <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, chunk, tokens, <span class="hljs-string">'STRING'</span>, chunk);
+        }
+        <span class="hljs-keyword">if</span> (cb) {cb(chunk, tokens)}
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      },
+    };
+    <span class="hljs-keyword">if</span> (obj[type] === <span class="hljs-literal">undefined</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    } <span class="hljs-keyword">else</span> {
+      obj[type](chunk, tokens);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-66">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-66">&#182;</a>
+              </div>
+              <p>handles start of multi-line and single-line comments</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkForCommentStart: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">insideComment, chunk, tokens, currCol,
+                                 nextCol</span>) </span>{
+    <span class="hljs-keyword">if</span> (currCol === <span class="hljs-string">'/'</span> &amp;&amp; nextCol === <span class="hljs-string">'*'</span> &amp;&amp; !(insideComment.multi &amp;&amp; insideComment.single)) {
+      insideComment.multi = <span class="hljs-literal">true</span>;
+      chunk += nextCol;
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'COMMENT'</span>, chunk, tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (currCol === <span class="hljs-string">'/'</span> &amp;&amp; nextCol === <span class="hljs-string">'/'</span> &amp;&amp; !(insideComment.multi &amp;&amp; insideComment.single)) {
+      insideComment.single = <span class="hljs-literal">true</span>;
+      chunk += nextCol;
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'COMMENT'</span>, chunk, tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-67">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <p>tokenizes comment contents and handles end of single and multi-line comments</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleComment: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">insideComment, chunk, tokens, currCol, nextCol, nextNextCol, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (insideComment.multi) {
+      <span class="hljs-keyword">if</span> (chunk === <span class="hljs-string">'*/'</span>) {
+        <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'COMMENT'</span>, chunk, tokens);
+        insideComment.multi = <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">if</span> (nextCol === <span class="hljs-string">'\n'</span>) {
+          cb(<span class="hljs-number">1</span>);
+        } <span class="hljs-keyword">else</span> {
+          cb(<span class="hljs-number">2</span>);
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((nextCol === <span class="hljs-string">'*'</span> &amp;&amp; nextNextCol === <span class="hljs-string">'/'</span>) || nextCol === <span class="hljs-string">'\n'</span>) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, tokens, <span class="hljs-string">'COMMENT'</span>, chunk);
+        cb(<span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      }
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (insideComment.single &amp;&amp; (nextCol === <span class="hljs-literal">undefined</span> || nextCol === <span class="hljs-string">'\n'</span>)) {
+      insideComment.single = <span class="hljs-literal">false</span>;
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, tokens, <span class="hljs-string">'COMMENT'</span>, chunk);
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(nextCol, tokens);
+      cb(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  checkIfInsideComment: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">insideComment</span>) </span>{
+    <span class="hljs-keyword">if</span> (insideComment.multi || insideComment.single) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-68">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-68">&#182;</a>
+              </div>
+              <p>main helper function to check whether chunk is a Swift lexical type</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkFor: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">lexicalType, chunk, tokens, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (chunk) {
+      chunk = chunk.trim();
+    }
+    <span class="hljs-keyword">if</span>(lexicalTypes[lexicalType][chunk]){
+      <span class="hljs-keyword">if</span> (tokens) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(lexicalType, chunk, tokens);
+        <span class="hljs-keyword">if</span> (cb) {
+          cb();
+        }
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-69">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-69">&#182;</a>
+              </div>
+              <p>helper function to handle numbers, including numbers written with underscores</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleNumber: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">insideString, insideNumber, chunk, tokens, nextCol, nextNextCol, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (NUMBER.test(chunk) &amp;&amp; !insideString.status &amp;&amp; !insideNumber.status) {
+      insideNumber.status = <span class="hljs-literal">true</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-70">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-70">&#182;</a>
+              </div>
+              <p>have an _ in the input</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (insideNumber.status &amp;&amp; nextCol === <span class="hljs-string">'_'</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-string">"skip"</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-71">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-71">&#182;</a>
+              </div>
+              <p>have an integer or decimal</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (insideNumber.status &amp;&amp; (nextCol === <span class="hljs-string">'\n'</span> ||
+      (<span class="hljs-built_in">isNaN</span>(nextCol) &amp;&amp; (nextCol !== <span class="hljs-string">'.'</span>) &amp;&amp; (nextNextCol !== <span class="hljs-string">'.'</span>)))) {
+      insideNumber.status = <span class="hljs-literal">false</span>;
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, chunk, tokens, <span class="hljs-string">'NUMBER'</span>, chunk.trim());
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(nextCol, tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-72">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <p>have a range</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (insideNumber.status &amp;&amp; (nextCol === <span class="hljs-string">'.'</span>) &amp;&amp; (nextNextCol === <span class="hljs-string">'.'</span>)) {
+      insideNumber.status = <span class="hljs-literal">false</span>;
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, chunk, tokens, <span class="hljs-string">'NUMBER'</span>, chunk.trim());
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(nextCol, tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-73">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-73">&#182;</a>
+              </div>
+              <p>helper function to handle range operators</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleRange: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">insideString, insideFunction, insideComment, 
+                        tokens, currCol, nextCol, nextNextCol</span>) </span>{
+    <span class="hljs-keyword">if</span> (!insideString.status &amp;&amp; !<span class="hljs-built_in">module</span>.exports.checkIfInsideComment(insideComment)) {
+      <span class="hljs-keyword">if</span> (currCol === <span class="hljs-string">'.'</span> &amp;&amp; nextCol === <span class="hljs-string">'.'</span> &amp;&amp; nextNextCol === <span class="hljs-string">'.'</span>) {
+        <span class="hljs-keyword">if</span> (insideFunction.length &amp;&amp; insideFunction[insideFunction.length - <span class="hljs-number">1</span>].insideParams === <span class="hljs-literal">true</span>) {
+          <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'FUNCTION_DECLARATION'</span>, <span class="hljs-string">'...'</span>, tokens);
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'RANGE'</span>, <span class="hljs-string">'...'</span>, tokens);
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        }
+      }
+      <span class="hljs-keyword">if</span> (currCol === <span class="hljs-string">'.'</span> &amp;&amp; nextCol === <span class="hljs-string">'.'</span> &amp;&amp; nextNextCol === <span class="hljs-string">'&lt;'</span>) {
+        <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'RANGE'</span>, <span class="hljs-string">'..&lt;'</span>, tokens);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  checkForStringInterpolationStart: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">stringInterpolation, insideString,
+                                             chunk, tokens, nextCol, nextNextCol</span>) </span>{
+    <span class="hljs-keyword">if</span> (!stringInterpolation.status &amp;&amp; nextCol === <span class="hljs-string">'\\'</span> &amp;&amp; nextNextCol === <span class="hljs-string">'('</span>) {
+      stringInterpolation.status = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">if</span> (chunk !== <span class="hljs-string">""</span>) {
+        <span class="hljs-built_in">module</span>.exports.checkForLiteral(chunk + <span class="hljs-string">'"'</span>, tokens);
+      }
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-string">"SPECIAL_STRING"</span>, <span class="hljs-string">"\\("</span>, tokens);
+      insideString.status = <span class="hljs-literal">false</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+  },
+
+  checkForStringInterpolationEnd: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">stringInterpolation, insideString,
+                                           tokens, currCol</span>) </span>{
+    <span class="hljs-keyword">if</span> (stringInterpolation.status &amp;&amp; currCol === <span class="hljs-string">")"</span>) {
+      stringInterpolation.status = <span class="hljs-literal">false</span>;
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-string">"SPECIAL_STRING"</span>, <span class="hljs-string">")"</span>, tokens);
+      insideString.status = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-74">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <p>handles classes and structures</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  handleClassOrStruct: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">insideClass, insideStruct, insideInitialization,
+                                chunk, tokens, lastToken, nextCol, CLASS_NAMES,
+                                STRUCT_NAMES</span>) </span>{
+    <span class="hljs-keyword">if</span> (insideClass.length &amp;&amp; insideClass[insideClass.length - <span class="hljs-number">1</span>].curly === <span class="hljs-number">0</span> &amp;&amp;
+      chunk === <span class="hljs-string">'{'</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'CLASS_DEFINITION'</span>, chunk, tokens);
+      insideClass[insideClass.length - <span class="hljs-number">1</span>].curly++;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (insideClass.length &amp;&amp; insideClass[insideClass.length - <span class="hljs-number">1</span>].curly === <span class="hljs-number">1</span> &amp;&amp;
+      chunk === <span class="hljs-string">'}'</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'CLASS_DEFINITION'</span>, chunk, tokens);
+      insideClass.pop();
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(nextCol, tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (insideStruct.length &amp;&amp; insideStruct[insideStruct.length - <span class="hljs-number">1</span>].curly === <span class="hljs-number">0</span> &amp;&amp;
+      chunk === <span class="hljs-string">'{'</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'STRUCT_DEFINITION'</span>, chunk, tokens);
+      insideStruct[insideStruct.length - <span class="hljs-number">1</span>].curly++;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (insideStruct.length &amp;&amp; insideStruct[insideStruct.length - <span class="hljs-number">1</span>].curly === <span class="hljs-number">1</span> &amp;&amp;
+      chunk === <span class="hljs-string">'}'</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'STRUCT_DEFINITION'</span>, chunk, tokens);
+      insideStruct.pop();
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(nextCol, tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (tokens.length &amp;&amp; (CLASS_NAMES[lastToken.value] || 
+      STRUCT_NAMES[lastToken.value]) &amp;&amp; chunk === <span class="hljs-string">'('</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'INITIALIZATION'</span>, chunk, tokens)
+      <span class="hljs-keyword">var</span> temp = {};
+      temp.status = <span class="hljs-literal">true</span>;
+      temp.parens = <span class="hljs-number">1</span>;
+      insideInitialization.push(temp);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">if</span> (chunk === <span class="hljs-string">')'</span> &amp;&amp; insideInitialization.length &amp;&amp; 
+      insideInitialization[insideInitialization.length - <span class="hljs-number">1</span>].parens === <span class="hljs-number">1</span>) {
+      <span class="hljs-built_in">module</span>.exports.checkFor(<span class="hljs-string">'INITIALIZATION'</span>, chunk, tokens);
+      insideInitialization.pop();
+      <span class="hljs-built_in">module</span>.exports.handleEndOfFile(nextCol, tokens);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+  
+  checkForTupleStart: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">insideTuple, chunk, tokens, lastToken,
+                               currCol, nextCol, nextNextCol, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (!insideTuple.status &amp;&amp; currCol === <span class="hljs-string">'('</span> &amp;&amp; (lastToken.value === <span class="hljs-string">'='</span> ||
+      lastToken.value === <span class="hljs-string">'return'</span> || lastToken.value === <span class="hljs-string">'-&gt;'</span>) ) {
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, tokens,
+        <span class="hljs-string">'TUPLE_START'</span>, chunk);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <p>special handling of empty tuples</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (nextCol === <span class="hljs-string">')'</span>) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, tokens, <span class="hljs-string">'TUPLE_END'</span>, nextCol);
+        <span class="hljs-built_in">module</span>.exports.handleEndOfFile(nextNextCol, tokens);
+        cb(<span class="hljs-number">1</span>);
+      } <span class="hljs-keyword">else</span> {
+        insideTuple.status = <span class="hljs-literal">true</span>;
+        insideTuple.startIndex = tokens.length - <span class="hljs-number">1</span>;
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  handleTuple: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">insideTuple, chunk, tokens, currCol, nextCol, TUPLE_ELEMENT_NAMES</span>) </span>{
+    <span class="hljs-keyword">if</span> (nextCol === <span class="hljs-string">':'</span>) {
+      <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, tokens, <span class="hljs-string">'TUPLE_ELEMENT_NAME'</span>, chunk);
+      TUPLE_ELEMENT_NAMES[chunk] = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (currCol === <span class="hljs-string">','</span>) {
+      insideTuple.verified = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    }
+  },
+
+  checkForTupleEnd: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">insideTuple, chunk, tokens, currCol</span>) </span>{
+    <span class="hljs-keyword">if</span> (insideTuple.status &amp;&amp; currCol === <span class="hljs-string">')'</span>) {
+      <span class="hljs-keyword">if</span> (insideTuple.verified) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, tokens, <span class="hljs-string">'TUPLE_END'</span>, chunk);
+        insideTuple.status = <span class="hljs-literal">false</span>;
+        insideTuple.startIndex = <span class="hljs-literal">undefined</span>;
+        insideTuple.verified = <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> {
+        tokens[insideTuple.startIndex].type = <span class="hljs-string">'PUNCTUATION'</span>;
+        insideTuple.status = <span class="hljs-literal">false</span>;
+        insideTuple.startIndex = <span class="hljs-literal">undefined</span>;
+        insideTuple.verified = <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      }
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-76">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              <p>helper function to check for identifiers</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  checkForIdentifier: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">chunk, tokens, lastToken, VARIABLE_NAMES, insideFunction, insideClass, insideStruct, CLASS_NAMES, STRUCT_NAMES</span>) </span>{
+    <span class="hljs-keyword">if</span> (VARIABLE_NAMES[chunk]) {
+      <span class="hljs-keyword">if</span> (tokens) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, chunk, tokens, <span class="hljs-string">'IDENTIFIER'</span>, chunk);
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (lastToken &amp;&amp; (lastToken.type === <span class="hljs-string">'DECLARATION_KEYWORD'</span> ||
+      lastToken.value === <span class="hljs-string">'for'</span> ||</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-77">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-77">&#182;</a>
+              </div>
+              <p>special condition for multiple variables of the same type declared on a single line</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      (lastToken.value === <span class="hljs-string">','</span> &amp;&amp; VARIABLE_NAMES[tokens[tokens.length -<span class="hljs-number">2</span>].value]) ||</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-78">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-78">&#182;</a>
+              </div>
+              <p>special conditions to handle for-in loops that iterate over dictionaries</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      (lastToken.value === <span class="hljs-string">'('</span> &amp;&amp; tokens[tokens.length - <span class="hljs-number">2</span>].value === <span class="hljs-string">'for'</span>) ||
+      (lastToken.value === <span class="hljs-string">','</span> &amp;&amp; tokens[tokens.length - <span class="hljs-number">3</span>].value) === <span class="hljs-string">'('</span> &amp;&amp;
+      tokens[tokens.length - <span class="hljs-number">4</span>].value === <span class="hljs-string">'for'</span> || (insideFunction.length &amp;&amp; insideFunction[insideFunction.length - <span class="hljs-number">1</span>].insideParams === <span class="hljs-literal">true</span> &amp;&amp; lastToken.value !== <span class="hljs-string">'='</span>))) {
+      <span class="hljs-keyword">if</span> (tokens) {
+        <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, chunk, tokens, <span class="hljs-string">'IDENTIFIER'</span>, chunk);
+      }
+      VARIABLE_NAMES[chunk] = <span class="hljs-literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-79">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-79">&#182;</a>
+              </div>
+              <p>special conditions to handle identifiers for classes and structs</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (tokens[tokens.length - <span class="hljs-number">2</span>].value === <span class="hljs-string">'class'</span>) {
+        <span class="hljs-keyword">var</span> temp = {};
+        temp.status = <span class="hljs-literal">true</span>;
+        temp.curly = <span class="hljs-number">0</span>;
+        insideClass.push(temp);
+        CLASS_NAMES[chunk] = <span class="hljs-literal">true</span>;
+      }
+      <span class="hljs-keyword">if</span> (tokens[tokens.length - <span class="hljs-number">2</span>].value === <span class="hljs-string">'struct'</span>) {
+        <span class="hljs-keyword">var</span> temp = {};
+        temp.status = <span class="hljs-literal">true</span>;
+        temp.curly = <span class="hljs-number">0</span>;
+        insideStruct.push(temp);
+        STRUCT_NAMES[chunk] = <span class="hljs-literal">true</span>;
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  },
+
+  determineCollectionType: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">collectionInformation, tokens, cb</span>) </span>{
+    <span class="hljs-keyword">if</span> (tokens[tokens.length - <span class="hljs-number">1</span>].value === <span class="hljs-string">':'</span>) {
+      tokens[collectionInformation[collectionInformation.length - <span class="hljs-number">1</span>].location].type = <span class="hljs-string">'DICTIONARY_START'</span>;
+      collectionInformation[collectionInformation.length - <span class="hljs-number">1</span>].type = <span class="hljs-string">'DICTIONARY_END'</span>;
+    } <span class="hljs-keyword">else</span> {
+      collectionInformation[collectionInformation.length - <span class="hljs-number">1</span>].type  = <span class="hljs-string">'ARRAY_END'</span>;
+    }
+    <span class="hljs-keyword">if</span> (cb) {
+      cb();
+    }
+  },
+
+  handleEndOfFile: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col, tokens</span>) </span>{
+    <span class="hljs-keyword">if</span> (col === <span class="hljs-literal">undefined</span>) <span class="hljs-built_in">module</span>.exports.makeToken(<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, tokens, <span class="hljs-string">'TERMINATOR'</span>, <span class="hljs-string">'EOF'</span>);
+  }
+
+};
+
+<span class="hljs-keyword">var</span> lexer     = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./lexer"</span>);
+<span class="hljs-keyword">var</span> deepEqual = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./helperFunctions"</span>).deepEqual;
+<span class="hljs-keyword">var</span> diff      = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./helperFunctions"</span>).diff;
+
+<span class="hljs-keyword">var</span> swiftCode = <span class="hljs-built_in">String</span>.raw<span class="hljs-string">`func addTwoInts(a: Int, b: Int) -&gt; Int {
+                                return a+b
+                            }
+
+                            var mathFunction: (Int, Int) -&gt; Int = addTwoInts
+
+                            print(mathFunction(2,3))`</span>;
+
+
+<span class="hljs-keyword">var</span> swiftCodeAnswers = [
+        { type: <span class="hljs-string">'DECLARATION_KEYWORD'</span>, value: <span class="hljs-string">'func'</span> },
+        { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'addTwoInts'</span> },
+        { type: <span class="hljs-string">'PARAMS_START'</span>, value: <span class="hljs-string">'('</span> },
+        { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'a'</span> },
+        { type: <span class="hljs-string">'PUNCTUATION'</span>, value: <span class="hljs-string">':'</span> },
+        { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+        { type: <span class="hljs-string">'PUNCTUATION'</span>, value: <span class="hljs-string">','</span> },
+        { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'b'</span> },
+        { type: <span class="hljs-string">'PUNCTUATION'</span>, value: <span class="hljs-string">':'</span> },
+        { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+        { type: <span class="hljs-string">'PARAMS_END'</span>, value: <span class="hljs-string">')'</span> },
+        { type: <span class="hljs-string">'RETURN_ARROW'</span>, value: <span class="hljs-string">'-&gt;'</span> },
+        { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+        { type: <span class="hljs-string">'STATEMENTS_START'</span>, value: <span class="hljs-string">'{'</span> },
+        { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+        { type: <span class="hljs-string">'STATEMENT_KEYWORD'</span>, value: <span class="hljs-string">'return'</span> },
+        { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'a'</span> },
+        { type: <span class="hljs-string">'OPERATOR'</span>, value: <span class="hljs-string">'+'</span> },
+        { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'b'</span> },
+        { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+        { type: <span class="hljs-string">'STATEMENTS_END'</span>, value: <span class="hljs-string">'}'</span> },
+        { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+        { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+        { type: <span class="hljs-string">'DECLARATION_KEYWORD'</span>, value: <span class="hljs-string">'var'</span> },
+        { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'mathFunction'</span> },
+        { type: <span class="hljs-string">'PUNCTUATION'</span>, value: <span class="hljs-string">':'</span> },
+        { type: <span class="hljs-string">'PARAMS_START'</span>, value: <span class="hljs-string">'('</span> }, 
+        { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+        { type: <span class="hljs-string">'PUNCTUATION'</span>, value: <span class="hljs-string">','</span> },
+        { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+        { type: <span class="hljs-string">'PARAMS_END'</span>, value: <span class="hljs-string">')'</span> }, 
+        { type: <span class="hljs-string">'RETURN_ARROW'</span>, value: <span class="hljs-string">'-&gt;'</span> }, 
+        { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+        { type: <span class="hljs-string">'OPERATOR'</span>, value: <span class="hljs-string">'='</span> },
+        { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'addTwoInts'</span> }, <span class="hljs-comment">//Need to go backward frmo here to var keyword and modify accordingly</span>
+        { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+        { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+        { type: <span class="hljs-string">'NATIVE_METHOD'</span>, value: <span class="hljs-string">'print'</span> },
+        { type: <span class="hljs-string">'INVOCATION_START'</span>, value: <span class="hljs-string">'('</span> },
+        { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'mathFunction'</span> },
+        { type: <span class="hljs-string">'TUPLE_START'</span>, value: <span class="hljs-string">'('</span> },
+        { type: <span class="hljs-string">'NUMBER'</span>, value: <span class="hljs-string">'2'</span> },
+        { type: <span class="hljs-string">'PUNCTUATION'</span>, value: <span class="hljs-string">','</span> },
+        { type: <span class="hljs-string">'NUMBER'</span>, value: <span class="hljs-string">'3'</span> },
+        { type: <span class="hljs-string">'TUPLE_END'</span>, value: <span class="hljs-string">')'</span> },
+        { type: <span class="hljs-string">'INVOCATION_END'</span>, value: <span class="hljs-string">')'</span> },
+        { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'EOF'</span> }
+        ];
+
+<span class="hljs-keyword">var</span> ans          = lexer(swiftCode);
+<span class="hljs-keyword">var</span> i            = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">var</span> mapped       = ans.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">obj</span>)</span>{
+    obj[<span class="hljs-string">'index'</span>] = i;
+    i++;
+    <span class="hljs-keyword">return</span> obj;
+});
+<span class="hljs-built_in">console</span>.log(ans);
+<span class="hljs-built_in">console</span>.log(diff(lexer(swiftCode),swiftCodeAnswers));
+<span class="hljs-built_in">console</span>.log(deepEqual(lexer(swiftCode),swiftCodeAnswers));
+
+it(<span class="hljs-string">'should handle functions that return functions which are composed of nested functions'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      input = <span class="hljs-built_in">String</span>.raw<span class="hljs-string">`func makeIncrementer() -&gt; ((Int) -&gt; Int) {
+                                func addOne(number: Int) -&gt; Int {
+                                    func anon(n: Int) -&gt; Int {
+                                        return 1 + n
+                                    }
+                                    return anon(number)
+                                }
+                                return addOne
+                            }`</span>;
+      output = [ 
+          { type: <span class="hljs-string">'DECLARATION_KEYWORD'</span>, value: <span class="hljs-string">'func'</span> },
+          { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'makeIncrementer'</span> },
+          { type: <span class="hljs-string">'PARAMS_START'</span>, value: <span class="hljs-string">'('</span> },
+          { type: <span class="hljs-string">'PARAMS_END'</span>, value: <span class="hljs-string">')'</span> },
+          { type: <span class="hljs-string">'RETURN_ARROW'</span>, value: <span class="hljs-string">'-&gt;'</span> },
+          { type: <span class="hljs-string">'PUNCTUATION'</span>, value: <span class="hljs-string">'('</span> },
+          { type: <span class="hljs-string">'PARAMS_START'</span>, value: <span class="hljs-string">'('</span> },
+          { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+          { type: <span class="hljs-string">'PARAMS_END'</span>, value: <span class="hljs-string">')'</span> },
+          { type: <span class="hljs-string">'RETURN_ARROW'</span>, value: <span class="hljs-string">'-&gt;'</span> },
+          { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+          { type: <span class="hljs-string">'PUNCTUATION'</span>, value: <span class="hljs-string">')'</span> },
+          { type: <span class="hljs-string">'STATEMENTS_START'</span>, value: <span class="hljs-string">'{'</span> },
+          { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+          { type: <span class="hljs-string">'DECLARATION_KEYWORD'</span>, value: <span class="hljs-string">'func'</span> },
+          { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'addOne'</span> },
+          { type: <span class="hljs-string">'PARAMS_START'</span>, value: <span class="hljs-string">'('</span> },
+          { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'number'</span> },
+          { type: <span class="hljs-string">'PUNCTUATION'</span>, value: <span class="hljs-string">':'</span> },
+          { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+          { type: <span class="hljs-string">'PARAMS_END'</span>, value: <span class="hljs-string">')'</span> },
+          { type: <span class="hljs-string">'RETURN_ARROW'</span>, value: <span class="hljs-string">'-&gt;'</span> },
+          { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+          { type: <span class="hljs-string">'STATEMENTS_START'</span>, value: <span class="hljs-string">'{'</span> },
+          { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+          { type: <span class="hljs-string">'DECLARATION_KEYWORD'</span>, value: <span class="hljs-string">'func'</span> },
+          { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'anon'</span> },
+          { type: <span class="hljs-string">'PARAMS_START'</span>, value: <span class="hljs-string">'('</span> },
+          { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'n'</span> },
+          { type: <span class="hljs-string">'PUNCTUATION'</span>, value: <span class="hljs-string">':'</span> },
+          { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+          { type: <span class="hljs-string">'PARAMS_END'</span>, value: <span class="hljs-string">')'</span> },
+          { type: <span class="hljs-string">'RETURN_ARROW'</span>, value: <span class="hljs-string">'-&gt;'</span> },
+          { type: <span class="hljs-string">'TYPE_NUMBER'</span>, value: <span class="hljs-string">'Int'</span> },
+          { type: <span class="hljs-string">'STATEMENTS_START'</span>, value: <span class="hljs-string">'{'</span> },
+          { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+          { type: <span class="hljs-string">'STATEMENT_KEYWORD'</span>, value: <span class="hljs-string">'return'</span> },
+          { type: <span class="hljs-string">'NUMBER'</span>, value: <span class="hljs-string">'1'</span> },
+          { type: <span class="hljs-string">'OPERATOR'</span>, value: <span class="hljs-string">'+'</span> },
+          { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'n'</span> },
+          { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+          { type: <span class="hljs-string">'STATEMENTS_END'</span>, value: <span class="hljs-string">'}'</span> },
+          { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+          { type: <span class="hljs-string">'STATEMENT_KEYWORD'</span>, value: <span class="hljs-string">'return'</span> },
+          { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'anon'</span> },
+          { type: <span class="hljs-string">'INVOCATION_START'</span>, value: <span class="hljs-string">'('</span> },
+          { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'number'</span> },
+          { type: <span class="hljs-string">'INVOCATION_END'</span>, value: <span class="hljs-string">')'</span> },
+          { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+          { type: <span class="hljs-string">'STATEMENTS_END'</span>, value: <span class="hljs-string">'}'</span> },
+          { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+
+          { type: <span class="hljs-string">'STATEMENT_KEYWORD'</span>, value: <span class="hljs-string">'return'</span> },
+          { type: <span class="hljs-string">'IDENTIFIER'</span>, value: <span class="hljs-string">'addOne'</span> },
+          { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'\\n'</span> },
+          
+          { type: <span class="hljs-string">'STATEMENTS_END'</span>, value: <span class="hljs-string">'}'</span> },
+          { type: <span class="hljs-string">'TERMINATOR'</span>, value: <span class="hljs-string">'EOF'</span> } 
+          ];
+      expect(lexer(input)).to.deep.equal(output);
+    });</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

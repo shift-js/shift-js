@@ -21,18 +21,6 @@ angular.module('app', [
         templateUrl: 'app/components/repl/replView.html',
         controller: 'ReplController'
       })
-      .when('/lexer', {
-        templateUrl: 'app/components/source/lexerView.html',
-      })
-      .when('/parser', {
-        templateUrl: 'app/components/source/parserView.html',
-      })
-      .when('/api', {
-        templateUrl: 'app/components/source/apiView.html',
-      })
-      .when('/cli', {
-        templateUrl: 'app/components/source/cliView.html',
-      })
       .otherwise({
         redirectTo: '/home'
       });

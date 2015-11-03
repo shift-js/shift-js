@@ -10,6 +10,29 @@ module.exports = function(grunt) {
       }
     },
 
+    concat: {
+      basic_and_extras: {
+        files: {
+          'transpiler/dist/lexer.js': ['transpiler/lexer/*.js'],
+          'transpiler/dist/parser.js': ['transpiler/parser/*.js'],
+        }
+      }
+    },
+
+    docco: {
+      docs: {
+        src: [
+          'transpiler/api.js',
+          'transpiler/dist/lexer.js',
+          'transpiler/dist/parser.js',
+          'command.js'
+        ],
+        options: {
+          output: 'client/app/components/source/'
+        }
+      }
+    },
+
     mochaTest: {
       tuple: {
         options: {
@@ -131,6 +154,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-docco');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
   grunt.registerTask('test', [
     // 'jshint',
@@ -174,13 +199,20 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'test',
     'browserify',
-    'test'
+    'concat',
+    'docco'
+  ]);
+
+  grunt.registerTask('docs', [
+    'concat',
+    'docco'
   ]);
 
   grunt.registerTask('heroku:development', [
     'shell:bower',
-    'build'
+    'build',
+    'docs'
   ]);
-
 };
