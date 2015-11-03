@@ -32,6 +32,7 @@ module.exports = function(code) {
     lastToken: undefined,
     lastCollection: undefined,
     lastFunction: undefined,
+    variableArrows: [],
     advance: function(positions) {
       this.i += positions;
     },
@@ -138,9 +139,14 @@ module.exports = function(code) {
     }
 
     // Tokenizing return arrow
-    if (STATE.insideFunction.length && STATE.currCol === "-" && STATE.nextCol === ">") {
+    if (STATE.currCol === "-" && STATE.nextCol === ">") {
       lexerFunctions.checkFor(STATE, 'FUNCTION_DECLARATION', "->", STATE.tokens);
-      STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows.push(STATE.tokens.length - 1);
+      if (STATE.insideFunction.length) {
+        STATE.insideFunction[STATE.insideFunction.length - 1].returnArrows.push(STATE.tokens.length - 1);
+      } else {
+        STATE.variableArrows.push(STATE.tokens.length - 1);
+        lexerFunctions.rewriteVariableParensHistory(STATE);
+      }
       STATE.advanceAndClear(2);
       continue;
     }

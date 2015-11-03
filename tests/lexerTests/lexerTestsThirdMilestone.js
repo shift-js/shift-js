@@ -2522,11 +2522,11 @@ describe('Lexer: Third Milestone', function() {
         { type: 'NATIVE_METHOD', value: 'print' },
         { type: 'INVOCATION_START', value: '(' },
         { type: 'IDENTIFIER', value: 'mathFunction' },
-        { type: 'PUNCTUATION', value: '(' },
+        { type: 'TUPLE_START', value: '(' },
         { type: 'NUMBER', value: '2' },
         { type: 'PUNCTUATION', value: ',' },
         { type: 'NUMBER', value: '3' },
-        { type: 'PUNCTUATION', value: ')' },
+        { type: 'TUPLE_END', value: ')' },
         { type: 'INVOCATION_END', value: ')' },
         { type: 'TERMINATOR', value: 'EOF' }
         ];
