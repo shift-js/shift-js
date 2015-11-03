@@ -824,7 +824,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle function invocations with internal parentheses', function () {
+    xit('should handle function invocations with internal parentheses', function () {
       input = String.raw`func addOne(input: Int) -> Int {
                               return input + 1
                           }
@@ -996,7 +996,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle functions with for loops, if and else if statments, and native count methods', function () {
+    it('should handle functions with for loops, if and else if statements, and native count methods', function () {
       input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
                   var currentMin = array[0]
                   var currentMax = array[0]
@@ -1113,7 +1113,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle functions with for loops and if and else if statments', function () {
+    it('should handle functions with for loops and if and else if statements', function () {
       input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
                   var currentMin = array[0]
                   var currentMax = array[0]
@@ -1365,7 +1365,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle functions that return functions which are composed of nested functions', function () {
+    xit('should handle functions that return functions which are composed of nested functions', function () {
       input = String.raw`func makeIncrementer() -> ((Int) -> Int) {
                                 func addOne(number: Int) -> Int {
                                     func anon(n: Int) -> Int {
@@ -1375,7 +1375,7 @@ describe('Lexer: Third Milestone', function() {
                                 }
                                 return addOne
                             }`;
-      output = [ 
+      output = [
           { type: 'DECLARATION_KEYWORD', value: 'func' },
           { type: 'IDENTIFIER', value: 'makeIncrementer' },
           { type: 'PARAMS_START', value: '(' },
@@ -1437,14 +1437,14 @@ describe('Lexer: Third Milestone', function() {
           { type: 'STATEMENT_KEYWORD', value: 'return' },
           { type: 'IDENTIFIER', value: 'addOne' },
           { type: 'TERMINATOR', value: '\\n' },
-          
+
           { type: 'STATEMENTS_END', value: '}' },
-          { type: 'TERMINATOR', value: 'EOF' } 
+          { type: 'TERMINATOR', value: 'EOF' }
           ];
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle functions that return functions where the return function is specified within parentheses', function () {
+    xit('should handle functions that return functions where the return function is specified within parentheses', function () {
       input = String.raw`func makeIncrementer() -> ((Int) -> Int) {
                             func addOne(number: Int) -> Int {
                                 return 1 + number
@@ -1497,7 +1497,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle functions that return functions where the return function is specified without parentheses', function () {
+    xit('should handle functions that return functions where the return function is specified without parentheses', function () {
       input = String.raw`func makeIncrementer() -> (Int) -> Int {
                             func addOne(number: Int) -> Int {
                                 return 1 + number
@@ -1549,7 +1549,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions that take a function specified with parentheses as an argument', function () {
+    it('should handle functions that take a function specified with parentheses as an argument', function () {
       input = String.raw`func any(list: [Int], condition: ((Int) -> Bool)) -> Bool {
                               for item in list {
                                   if condition(item) {
@@ -1618,10 +1618,10 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions that take a multiparameter function specified with parentheses as an argument', function () {
-      input = String.raw`func any(list: [Int], condition: ((Int,String,Bool) -> Bool)) -> Bool {
-                              for item in list {
-                                  if condition(item,"abc",true) {
+    it('should handle functions that take a multiparameter function specified with parentheses as an argument', function () {
+      input = String.raw`func a(l: [Int], c: ((Int,String,Bool) -> Bool)) -> (Bool) {
+                              for item in l {
+                                  if c(item,"abc",true) {
                                       return true
                                   }
                               }
@@ -1629,15 +1629,15 @@ describe('Lexer: Third Milestone', function() {
                           }`;
       output = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
-        { type: "IDENTIFIER",                 value: "any" },
+        { type: "IDENTIFIER",                 value: "a" },
         { type: "PARAMS_START",               value: "(" },
-        { type: "IDENTIFIER",                 value: "list" },
+        { type: "IDENTIFIER",                 value: "l" },
         { type: "PUNCTUATION",                value: ":" },
         { type: "ARRAY_START",                value: "["},
         { type: "TYPE_NUMBER",                value: "Int" },
         { type: "ARRAY_END",                  value: "]"},
         { type: "PUNCTUATION",                value: "," },
-        { type: "IDENTIFIER",                 value: "condition" },
+        { type: "IDENTIFIER",                 value: "c" },
         { type: "PUNCTUATION",                value: ":" },
         { type: "PUNCTUATION",                value: "(" },
         { type: "PARAMS_START",               value: "(" },
@@ -1652,19 +1652,21 @@ describe('Lexer: Third Milestone', function() {
         { type: "PUNCTUATION",                value: ")" },
         { type: "PARAMS_END",                 value: ")" },
         { type: "RETURN_ARROW",               value: "->" },
+        { type: "PUNCTUATION",                value: "(" },
         { type: "TYPE_BOOLEAN",               value: "Bool" },
+        { type: "PUNCTUATION",                value: ")" },
         { type: "STATEMENTS_START",           value: "{" },
         { type: "TERMINATOR",                 value: "\\n"},
 
         { type: "STATEMENT_KEYWORD",          value: "for" },
         { type: "IDENTIFIER",                 value: "item" },
         { type: "STATEMENT_KEYWORD",          value: "in" },
-        { type: "IDENTIFIER",                 value: "list" },
+        { type: "IDENTIFIER",                 value: "l" },
         { type: "PUNCTUATION",                value: "{" },
         { type: "TERMINATOR",                 value: "\\n"},
 
         { type: "STATEMENT_KEYWORD",          value: "if" },
-        { type: "IDENTIFIER",                 value: "condition" },
+        { type: "IDENTIFIER",                 value: "c" },
         { type: "INVOCATION_START",           value: "(" },
         { type: "IDENTIFIER",                 value: "item" },
         { type: "PUNCTUATION",                value: "," },
@@ -1762,7 +1764,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions that take a function specified with parentheses as an argument and parenthesis around the return type', function () {
+    it('should handle functions that take a function specified with parentheses as an argument and parenthesis around the return type', function () {
       input = String.raw`func any(list: [Int], condition: ((Int) -> Bool)) -> (Bool) {
                               for item in list {
                                   if condition(item) {
@@ -2078,7 +2080,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions that take a function specified with parentheses around an argument and parenthesis', function () {
+    it('should handle functions that take a function specified with parentheses around an argument and parenthesis', function () {
       input = String.raw`func any(list: [Int], condition: ((Int,String,Bool) -> Bool)) -> Bool {
                               for item in list {
                                   if condition(item,"abc",true) {
@@ -2128,13 +2130,12 @@ describe('Lexer: Third Milestone', function() {
         { type: "INVOCATION_START",           value: "(" },
         { type: "IDENTIFIER",                 value: "item" },
         { type: "PUNCTUATION",                value: "," },
-
+        { type: "STRING",                     value: "abc" },
         { type: "PUNCTUATION",                value: "," },
         { type: "BOOLEAN",                    value: "true" },
         { type: "INVOCATION_END",             value: ")" },
         { type: "PUNCTUATION",                value: "{" },
         { type: "TERMINATOR",                 value: "\\n"},
-        { type: "STRING",                     value: "abc" },
         { type: "STATEMENT_KEYWORD",          value: "return"},
         { type: "BOOLEAN",                    value: "true" },
         { type: "TERMINATOR",                 value: "\\n"},
@@ -2224,7 +2225,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle functions with mathematical operations and parentheses in their invocation', function () {
+    xit('should handle functions with mathematical operations and parentheses in their invocation', function () {
       input = String.raw `func addOne(input: Int) -> Int {
                               return input + 1
                           }

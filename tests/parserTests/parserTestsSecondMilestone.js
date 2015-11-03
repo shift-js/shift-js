@@ -5605,7 +5605,7 @@ describe('Parser: Second Milestone', function() {
         { type: "INVOCATION_END",             value: ")" },
         { type: "TERMINATOR",                 value: "EOF" },
       ];
-      output= {
+      output = {
         "type": "Program",
         "body": [
           {
@@ -5642,7 +5642,7 @@ describe('Parser: Second Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    it('should convert print to cosole.log with multiple parentheses', function() {
+    it('should convert print to console.log with multiple parentheses', function() {
       input = [
         { type: "NATIVE_METHOD",              value: "print"},
         { type: "INVOCATION_START",           value: "(" },
@@ -5659,7 +5659,6 @@ describe('Parser: Second Milestone', function() {
       ];
 
       output = {
-
         "type": "Program",
         "body": [
           {
@@ -6058,5 +6057,5 @@ describe('Parser: Second Milestone', function() {
       };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
-  })
+  });
 });

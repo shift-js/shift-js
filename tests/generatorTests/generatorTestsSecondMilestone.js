@@ -2717,7 +2717,8 @@ describe('Generator: Second Milestone', function() {
     //               }`;
     xit('handle for-in loops that iterate over a range', function () {
       input = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      output = ``;
+      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
     });
 
     // input = String.raw`let interestingNumbers = [
@@ -2733,9 +2734,335 @@ describe('Generator: Second Milestone', function() {
     //                       }
     //                   }
     //               }`;
-    xit('should handle for-in loops that iterate over items in a dictionary', function () {
-      input = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+    it('should handle for-in loops that iterate over items in a dictionary', function () {
+      input = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "interestingNumbers"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": "Prime",
+                        "raw": "\"Prime\""
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "ArrayExpression",
+                        "elements": [
+                          {
+                            "type": "Literal",
+                            "value": 2,
+                            "raw": "2"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 3,
+                            "raw": "3"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 5,
+                            "raw": "5"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 7,
+                            "raw": "7"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 11,
+                            "raw": "11"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 13,
+                            "raw": "13"
+                          }
+                        ]
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": "Fibonacci",
+                        "raw": "\"Fibonacci\""
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "ArrayExpression",
+                        "elements": [
+                          {
+                            "type": "Literal",
+                            "value": 1,
+                            "raw": "1"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 1,
+                            "raw": "1"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 2,
+                            "raw": "2"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 3,
+                            "raw": "3"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 5,
+                            "raw": "5"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 8,
+                            "raw": "8"
+                          }
+                        ]
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": "Square",
+                        "raw": "\"Square\""
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "ArrayExpression",
+                        "elements": [
+                          {
+                            "type": "Literal",
+                            "value": 1,
+                            "raw": "1"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 4,
+                            "raw": "4"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 9,
+                            "raw": "9"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 16,
+                            "raw": "16"
+                          },
+                          {
+                            "type": "Literal",
+                            "value": 25,
+                            "raw": "25"
+                          }
+                        ]
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "largest"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 0,
+                  "raw": "0"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ForInStatement",
+            "left": {
+              "type": "VariableDeclaration",
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "id": {
+                    "type": "Identifier",
+                    "name": "kind"
+                  },
+                  "init": null
+                }
+              ],
+              "kind": "var"
+            },
+            "right": {
+              "type": "Identifier",
+              "name": "interestingNumbers"
+            },
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "VariableDeclaration",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "id": {
+                        "type": "Identifier",
+                        "name": "numbers"
+                      },
+                      "init": {
+                        "type": "MemberExpression",
+                        "computed": true,
+                        "object": {
+                          "type": "Identifier",
+                          "name": "interestingNumbers"
+                        },
+                        "property": {
+                          "type": "Identifier",
+                          "name": "kind"
+                        }
+                      }
+                    }
+                  ],
+                  "kind": "var"
+                },
+                {
+                  "type": "ForInStatement",
+                  "left": {
+                    "type": "VariableDeclaration",
+                    "declarations": [
+                      {
+                        "type": "VariableDeclarator",
+                        "id": {
+                          "type": "Identifier",
+                          "name": "number"
+                        },
+                        "init": null
+                      }
+                    ],
+                    "kind": "var"
+                  },
+                  "right": {
+                    "type": "Identifier",
+                    "name": "numbers"
+                  },
+                  "body": {
+                    "type": "BlockStatement",
+                    "body": [
+                      {
+                        "type": "IfStatement",
+                        "test": {
+                          "type": "BinaryExpression",
+                          "operator": ">",
+                          "left": {
+                            "type": "Identifier",
+                            "name": "number"
+                          },
+                          "right": {
+                            "type": "Identifier",
+                            "name": "largest"
+                          }
+                        },
+                        "consequent": {
+                          "type": "BlockStatement",
+                          "body": [
+                            {
+                              "type": "ExpressionStatement",
+                              "expression": {
+                                "type": "AssignmentExpression",
+                                "operator": "=",
+                                "left": {
+                                  "type": "Identifier",
+                                  "name": "largest"
+                                },
+                                "right": {
+                                  "type": "Identifier",
+                                  "name": "number"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "alternate": null
+                      }
+                    ]
+                  },
+                  "each": false
+                }
+              ]
+            },
+            "each": false
+          }
+        ],
+        "sourceType": "module"
+      };
+      output = `var interestingNumbers = {
+                'Prime': [
+                  2,
+                  3,
+                  5,
+                  7,
+                  11,
+                  13
+                ],
+                'Fibonacci': [
+                  1,
+                  1,
+                  2,
+                  3,
+                  5,
+                  8
+                ],
+                'Square': [
+                  1,
+                  4,
+                  9,
+                  16,
+                  25
+                ]
+              };
+              var largest = 0;
+              for (var kind in interestingNumbers) {
+                var numbers = interestingNumbers[kind];
+                for (var number in numbers) {
+                  if (number > largest) {
+                    largest = number;
+                  }
+                }
+              }`;
+      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
     });
   });
 
@@ -3783,7 +4110,7 @@ describe('Generator: Second Milestone', function() {
     //         typeOfScore = ""
     //     }
     //  }
-    xit('should handle complex control flow with erratic spacing and inconsistent use of semicolons and parenthesis', function () {
+    it('should handle complex control flow with erratic spacing and inconsistent use of semicolons and parenthesis', function () {
       input = {
         "type": "Program",
         "body": [
@@ -4108,6 +4435,390 @@ describe('Generator: Second Milestone', function() {
                         typeOfScore = '';
                     }
                 }`;
+      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
+    });
+  });
+
+  describe('Swift #print method', function() {
+    it('should convert print to console.log base case', function() {
+      input = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+
+              "type": "CallExpression",
+              "callee": {
+
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "Literal",
+                  "value": "Hello",
+                  "raw": '"Hello"'
+                }
+              ]
+            }
+          }
+        ],
+        "sourceType": "module"
+      }
+      output = `console.log('Hello');`;
+      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
+    });
+
+    it('should convert print to console.log with multiple parentheses', function() {
+      input = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "BinaryExpression",
+                  "operator": "*",
+                  "left": {
+                    "type": "Literal",
+                    "value": 5,
+                    "raw": "5"
+                  },
+                  "right": {
+                    "type": "BinaryExpression",
+                    "operator": "+",
+                    "left": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      output = `console.log(5 * (1 + 1));`;
+      expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
+    });
+
+
+
+    /*
+     var name = "Joe";
+     var arr = [1, 2];
+     var tup = {
+     0: 1,
+     1: 2
+     };
+
+     console.log('Hello, ' + name + '');
+     console.log(5 * (1 + 1));
+     console.log(arr[1]);
+     console.log(tup[0]);
+
+     TODO BUG BUG tup.0 doesn't work but tup[0] does. Fix
+     */
+    it('should handle calls to print multiline', function() {
+      input = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "name"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": "Joe",
+                  "raw": "\"Joe\""
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "arr"
+                },
+                "init": {
+                  "type": "ArrayExpression",
+                  "elements": [
+                    {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 2,
+                      "raw": "2"
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "tup"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": 0,
+                        "raw": "0"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": 2,
+                        "raw": "2"
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "BinaryExpression",
+                  "operator": "+",
+                  "left": {
+                    "type": "BinaryExpression",
+                    "operator": "+",
+                    "left": {
+                      "type": "Literal",
+                      "value": "Hello, ",
+                      "raw": '"Hello, "'
+                    },
+                    "right": {
+                      "type": "Identifier",
+                      "name": "name"
+                    }
+                  },
+                  "right": {
+                    "type": "Literal",
+                    "value": "",
+                    "raw": "''"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "BinaryExpression",
+                  "operator": "*",
+                  "left": {
+                    "type": "Literal",
+                    "value": 5,
+                    "raw": "5"
+                  },
+                  "right": {
+                    "type": "BinaryExpression",
+                    "operator": "+",
+                    "left": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "MemberExpression",
+                  "computed": true,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "arr"
+                  },
+                  "property": {
+                    "type": "Literal",
+                    "value": 1,
+                    "raw": "1"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "MemberExpression",
+                  "computed": true,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "tup"
+                  },
+                  "property": {
+                    "type": "Literal",
+                    "value": 0,
+                    "raw": "0"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      output = `var name = 'Joe';
+                var arr = [
+                  1,
+                  2
+                ];
+                var tup = {
+                  0: 1,
+                  1: 2
+                };
+                console.log('Hello, ' + name + '');
+                console.log(5 * (1 + 1));
+                console.log(arr[1]);
+                console.log(tup[0]);`;
       expect(removeIndentation(generator(input))).to.equal(removeIndentation(output));
     });
   });

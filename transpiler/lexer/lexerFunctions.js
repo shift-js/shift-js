@@ -16,10 +16,10 @@ module.exports = {
     if (
       module.exports.checkForWhitespace(STATE.currCol) ||
       module.exports.checkForWhitespace(STATE.nextCol) ||
-      module.exports.checkFor('PUNCTUATION', STATE.nextCol) ||
-      module.exports.checkFor('PUNCTUATION', STATE.currCol) ||
-      module.exports.checkFor('OPERATOR', STATE.nextCol) ||
-      module.exports.checkFor('OPERATOR', STATE.currCol) ||
+      module.exports.checkFor(STATE, 'PUNCTUATION', STATE.currCol) ||
+      module.exports.checkFor(STATE, 'PUNCTUATION', STATE.nextCol) ||
+      module.exports.checkFor(STATE, 'OPERATOR', STATE.nextCol) ||
+      module.exports.checkFor(STATE, 'OPERATOR', STATE.currCol) ||
       STATE.nextCol === '"' || STATE.nextCol === ']' || STATE.currCol === '[' ||
       STATE.currCol === ']' || STATE.nextCol === '[' || STATE.nextCol === '\n' ||
       STATE.nextCol === undefined
@@ -37,7 +37,7 @@ module.exports = {
     if (STATE.chunk === '(' && ((STATE.FUNCTION_NAMES[STATE.lastToken.value] &&
       STATE.tokens[STATE.tokens.length - 2].value !== 'func') || STATE.lastToken.type === 'NATIVE_METHOD' || STATE.lastToken.type === 'TYPE_STRING' ||
       STATE.lastToken.type === 'TYPE_NUMBER')) {
-      module.exports.checkFor('FUNCTION_INVOCATION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'FUNCTION_INVOCATION', STATE.chunk, STATE.tokens);
       var tmp = {};
       tmp.name = STATE.lastToken.value;
       tmp.status = true;
@@ -51,7 +51,7 @@ module.exports = {
 
   handleFunctionInvocationEnd: function(STATE) {
     if (STATE.insideInvocation.length && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).status && STATE.chunk === ')' && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).parens === 0) {
-      module.exports.checkFor('FUNCTION_INVOCATION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'FUNCTION_INVOCATION', STATE.chunk, STATE.tokens);
       var last = STATE.insideInvocation[STATE.insideInvocation.length - 1]; //may be unnecessary
       last.status = false; //may be unnecessary since poping next
       STATE.insideInvocation.pop();
@@ -64,14 +64,14 @@ module.exports = {
 
   handleFunctionInvocationInside: function(STATE) {
     if (STATE.insideInvocation.length && STATE.chunk === '(' && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).status) {
-      module.exports.checkFor('PUNCTUATION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens);
       var last = STATE.insideInvocation[STATE.insideInvocation.length - 1];
       last.parens++;
       STATE.advanceAndClear(1);
       return true;
     }
     if (STATE.insideInvocation.length && STATE.chunk === ')' && (STATE.insideInvocation[STATE.insideInvocation.length - 1]).status) {
-      module.exports.checkFor('PUNCTUATION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens);
       var last = STATE.insideInvocation[STATE.insideInvocation.length - 1];
       last.parens--;
       STATE.advanceAndClear(1);
@@ -83,11 +83,12 @@ module.exports = {
   // helper function to handle function declarations
   handleFunctionDeclarationStart: function(STATE) {
     if (STATE.chunk === 'func') {
-      module.exports.checkFor('KEYWORD', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'KEYWORD', STATE.chunk, STATE.tokens);
       var temp = {};
       temp.status = true; // whether inside of a function declaration or not
       temp.insideParams = false; // 3-valued statement for whether not started, inside, or ended function parameters declaration
-      temp.paramsParens = 0; // handles the parenthesis in the parameters of the parent function
+      temp.paramsParens = []; // handles the parenthesis in the parameters of the parent function
+      temp.paramsCounter = 0; // add's 1 if encountered ( and subtracts 1 if encounter )
       temp.statements = 0; //number of statements where by a function statement start with a {
       temp.curly = 0; // all other { such as for loops are counted as curly
       temp.insideReturnStatement = false; // whether inside original function statement or not
@@ -103,20 +104,78 @@ module.exports = {
     if (STATE.insideFunction.length && STATE.chunk === '(' &&
       STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === false) {
       STATE.FUNCTION_NAMES[STATE.lastToken.value] = true;
-      module.exports.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction[STATE.insideFunction.length - 1].insideParams = true;
+      STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.push({tokenIndex: STATE.tokens.length - 1, tokenType: "PARAMS_START", tokenValue: "("});
+      STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter++;
       STATE.advanceAndClear(1);
       return true;
     }
 
     if (STATE.insideFunction.length && STATE.chunk === ')' && 
-      STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true) {
-      module.exports.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter === 1 ) {
+      module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter--;
       STATE.insideFunction[STATE.insideFunction.length - 1].insideParams = "ended";
+      // STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.push({tokenIndex: STATE.tokens.length - 1, tokenType: "PARAMS_END", tokenValue: ")"});
+      // START code to look back and revise incorrect ()'s
+      STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.shift();
+      var arr = [];
+      var len = Math.floor((STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.length)/2);
+      var obj = {
+        "PUNCTUATION": function(tokenIndexStart, tokenIndexEnd) {
+          STATE.tokens[tokenIndexStart]['type'] = "PUNCTUATION";
+          STATE.tokens[tokenIndexEnd]['type'] = "PUNCTUATION";
+        },
+        "PARAMS": function(tokenIndexStart, tokenIndexEnd) {
+          STATE.tokens[tokenIndexStart]['type'] = "PARAMS_START";
+          STATE.tokens[tokenIndexEnd]['type'] = "PARAMS_END";
+        },
+        "TUPLE": function(tokenIndexStart, tokenIndexEnd) {
+          STATE.tokens[tokenIndexStart]['type'] = "TUPLE_START";
+          STATE.tokens[tokenIndexEnd]['type'] = "TUPLE_END";
+          for (var q = tokenIndexEnd - 1, enda = tokenIndexStart + 1; q >= enda; q--) {
+            if (STATE.tokens[q]['value'] === ':') {
+              STATE.tokens[q-1]['type'] = "TUPLE_ELEMENT_NAME";
+            }
+          }
+        }
+      };
+      for (var j = 0; j < len; j++) {
+        var x = [];
+        x.push((STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.splice(((STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.length)/2 - 1),1))[0]);
+        x.push((STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.splice(Math.floor((STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.length)/2),1))[0]);
+        arr.push(x);
+      }
+      for (var j = 0; j < len; j++) {
+        var y = arr[j];
+        var toDo = "PUNCTUATION";
+        for (var k = y[1]['tokenIndex'] - 1, z = y[0]['tokenIndex'] + 1; k >= z; k--) {
+          if (STATE.tokens[k]['type'] === 'RETURN_ARROW') {
+            toDo = "PUNCTUATION";
+            break;
+          } else if (STATE.tokens[k]['value'] === ',') {
+            toDo = "PARAMS";
+            break;
+          } else if (STATE.tokens[k]['value'] === ':') {
+            toDo = "TUPLE";
+            break;
+          } else if (STATE.tokens[k]['type'] === 'TYPE_BOOLEAN' || STATE.tokens[k]['type'] === 'TYPE_STRING' || STATE.tokens[k]['type'] === 'TYPE_NUMBER') {
+            toDo = "PARAMS";
+          } else {
+            toDo = "PUNCTUATION";
+          }
+        }
+        obj[toDo](y[0]['tokenIndex'],y[1]['tokenIndex']);
+      }
+      // END code to look back and revise incorrect ()'s
+      
       STATE.advanceAndClear(1);
       return true;
     }
 
+    // fix this such that it goes back by every 2 tokens instead of only 2 tokens back
     if (STATE.tokens.length >= 2 && 
       STATE.tokens[STATE.tokens.length - 2].type === 'PUNCTUATION' &&
       STATE.tokens[STATE.tokens.length - 2].value === '(' && 
@@ -127,7 +186,7 @@ module.exports = {
 
     if (STATE.insideFunction.length && STATE.chunk === ')' && 
       STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement === true) {
-      module.exports.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement = "ended";
       STATE.advanceAndClear(1);
       return true;
@@ -135,15 +194,15 @@ module.exports = {
 
     if (STATE.insideFunction.length && STATE.chunk === '{' && 
       STATE.insideFunction[STATE.insideFunction.length - 1].statements === 0) {
-      module.exports.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction[STATE.insideFunction.length - 1].statements++;
-      STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement = "ended";
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement = true;
       STATE.advanceAndClear(1);
       return true;
     }
     if (STATE.insideFunction.length && STATE.chunk === '{' && 
       STATE.insideFunction[STATE.insideFunction.length - 1].statements === 1) {
-      module.exports.checkFor('PUNCTUATION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction[STATE.insideFunction.length - 1].curly++;
       STATE.advanceAndClear(1);
       return true;
@@ -151,7 +210,7 @@ module.exports = {
     if (STATE.insideFunction.length && STATE.chunk === '}' && 
       STATE.insideFunction[STATE.insideFunction.length - 1].statements === 1 && 
       STATE.insideFunction[STATE.insideFunction.length - 1].curly > 0) {
-      module.exports.checkFor('PUNCTUATION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction[STATE.insideFunction.length - 1].curly--;
       STATE.advanceAndClear(1);
       return true;
@@ -163,8 +222,7 @@ module.exports = {
     if (STATE.insideFunction.length && STATE.chunk === '}' && 
       STATE.insideFunction[STATE.insideFunction.length - 1].statements === 1 && 
       STATE.insideFunction[STATE.insideFunction.length - 1].curly === 0) {
-      module.exports.checkFor('FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
-      STATE.insideFunction[STATE.insideFunction.length - 1].statements--;
+      module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction.pop();
       STATE.advanceAndClear(1);
       module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
@@ -233,13 +291,13 @@ module.exports = {
     if (STATE.currCol === '/' && STATE.nextCol === '*' && !(STATE.insideComment.multi && STATE.insideComment.single)) {
       STATE.insideComment.multi = true;
       STATE.chunk += STATE.nextCol;
-      module.exports.checkFor('COMMENT', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'COMMENT', STATE.chunk, STATE.tokens);
       return true;
     }
     else if (STATE.currCol === '/' && STATE.nextCol === '/' && !(STATE.insideComment.multi && STATE.insideComment.single)) {
       STATE.insideComment.single = true;
       STATE.chunk += STATE.nextCol;
-      module.exports.checkFor('COMMENT', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'COMMENT', STATE.chunk, STATE.tokens);
       return true;
     }
     return false;
@@ -249,7 +307,7 @@ module.exports = {
   handleComment: function(STATE, cb) {
     if (STATE.insideComment.multi) {
       if (STATE.chunk === '*/') {
-        module.exports.checkFor('COMMENT', STATE.chunk, STATE.tokens);
+        module.exports.checkFor(STATE, 'COMMENT', STATE.chunk, STATE.tokens);
         STATE.insideComment.multi = false;
         if (STATE.nextCol === '\n') {
           STATE.advanceAndClear(1);
@@ -281,13 +339,32 @@ module.exports = {
   },
 
   // main helper function to check whether chunk is a Swift lexical type
-  checkFor: function(lexicalType, chunk, tokens, cb) {
+  checkFor: function(STATE, lexicalType, chunk, tokens, cb) {
     if (chunk) {
       chunk = chunk.trim();
     }
     if(lexicalTypes[lexicalType][chunk]){
       if (tokens) {
         module.exports.makeToken(lexicalType, chunk, tokens);
+        var recentFunc = STATE.insideFunction[STATE.insideFunction.length - 1];
+        if (lexicalType === "PUNCTUATION" &&
+            chunk === "(" &&
+            STATE.insideFunction.length &&
+            STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true &&
+            recentFunc.paramsParens.length &&
+            recentFunc.paramsParens[recentFunc.paramsParens.length - 1]["tokenIndex"] !== STATE.tokens.length - 1) {
+          recentFunc.paramsCounter++;
+          recentFunc.paramsParens.push({tokenIndex: STATE.tokens.length - 1, tokenType: "PUNCTUATION", tokenValue: "("});
+        }
+        if (lexicalType === "PUNCTUATION" &&
+            chunk === ")" &&
+            STATE.insideFunction.length &&
+            STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true &&
+            recentFunc.paramsParens.length &&
+            recentFunc.paramsParens[recentFunc.paramsParens.length - 1]["tokenIndex"] !== STATE.tokens.length - 1) {
+          STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter--;
+          STATE.insideFunction[STATE.insideFunction.length - 1].paramsParens.push({tokenIndex: STATE.tokens.length - 1, tokenType: "PUNCTUATION", tokenValue: ")"});
+        }
         if (cb) {
           cb();
         }
@@ -330,15 +407,15 @@ module.exports = {
     if (!STATE.insideString && !module.exports.checkIfInsideComment(STATE)) {
       if (STATE.currCol === '.' && STATE.nextCol === '.' && STATE.nextNextCol === '.') {
         if (STATE.insideFunction.length && STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true) {
-          module.exports.checkFor('FUNCTION_DECLARATION', '...', STATE.tokens);
+          module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', '...', STATE.tokens);
           return true;
         } else {
-          module.exports.checkFor('RANGE', '...', STATE.tokens);
+          module.exports.checkFor(STATE, 'RANGE', '...', STATE.tokens);
           return true;
         }
       }
       if (STATE.currCol === '.' && STATE.nextCol === '.' && STATE.nextNextCol === '<') {
-        module.exports.checkFor('RANGE', '..<', STATE.tokens);
+        module.exports.checkFor(STATE, 'RANGE', '..<', STATE.tokens);
         return true;
       }
     }
@@ -370,32 +447,32 @@ module.exports = {
   // handles classes and structures
   handleClassOrStruct: function(STATE) {
     if (STATE.insideClass.length && STATE.insideClass[STATE.insideClass.length - 1].curly === 0 && STATE.chunk === '{') {
-      module.exports.checkFor('CLASS_DEFINITION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'CLASS_DEFINITION', STATE.chunk, STATE.tokens);
       STATE.insideClass[STATE.insideClass.length - 1].curly++;
       return true;
     }
     if (STATE.insideClass.length && STATE.insideClass[STATE.insideClass.length - 1].curly === 1 && STATE.chunk === '}') {
-      module.exports.checkFor('CLASS_DEFINITION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'CLASS_DEFINITION', STATE.chunk, STATE.tokens);
       STATE.insideClass.pop();
       module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
       return true;
     }
     if (STATE.insideStruct.length && STATE.insideStruct[STATE.insideStruct.length - 1].curly === 0 &&
       STATE.chunk === '{') {
-      module.exports.checkFor('STRUCT_DEFINITION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'STRUCT_DEFINITION', STATE.chunk, STATE.tokens);
       STATE.insideStruct[STATE.insideStruct.length - 1].curly++;
       return true;
     }
     if (STATE.insideStruct.length && STATE.insideStruct[STATE.insideStruct.length - 1].curly === 1 &&
       STATE.chunk === '}') {
-      module.exports.checkFor('STRUCT_DEFINITION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'STRUCT_DEFINITION', STATE.chunk, STATE.tokens);
       STATE.insideStruct.pop();
       module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
       return true;
     }
     if (STATE.tokens.length && (STATE.CLASS_NAMES[STATE.lastToken.value] || 
       STATE.STRUCT_NAMES[STATE.lastToken.value]) && STATE.chunk === '(') {
-      module.exports.checkFor('INITIALIZATION', STATE.chunk, STATE.tokens)
+      module.exports.checkFor(STATE, 'INITIALIZATION', STATE.chunk, STATE.tokens)
       var temp = {};
       temp.status = true;
       temp.parens = 1;
@@ -404,7 +481,7 @@ module.exports = {
     }
     if (STATE.chunk === ')' && STATE.insideInitialization.length && 
       STATE.insideInitialization[STATE.insideInitialization.length - 1].parens === 1) {
-      module.exports.checkFor('INITIALIZATION', STATE.chunk, STATE.tokens);
+      module.exports.checkFor(STATE, 'INITIALIZATION', STATE.chunk, STATE.tokens);
       STATE.insideInitialization.pop();
       module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
       return true;
@@ -413,8 +490,8 @@ module.exports = {
   },
   
   checkForTupleStart: function(STATE) {
-    if (!STATE.insideTuple.status && STATE.currCol === '(' && (STATE.lastToken.value === '=' ||
-      STATE.lastToken.value === 'return' || STATE.lastToken.value === '->') ) {
+    if (!STATE.insideTuple.status && STATE.currCol === '(' && ((STATE.lastToken.value === '=' ||
+      STATE.lastToken.value === 'return' || STATE.lastToken.value === '->') || (STATE.insideInvocation.length && STATE.insideInvocation[STATE.insideInvocation.length - 1].status)) ) {
       module.exports.makeToken(undefined, undefined, STATE.tokens,
         'TUPLE_START', STATE.chunk);
       // special handling of empty tuples
@@ -471,7 +548,7 @@ module.exports = {
       STATE.lastToken.value === 'for' ||
       
       // special condition for multiple variables of the same type declared on a single line
-      (STATE.lastToken.value === ',' && STATE.VARIABLE_NAMES[STATE.tokens[STATE.tokens.length -2].value]) ||
+      (STATE.lastToken.value === ',' && STATE.VARIABLE_NAMES[STATE.tokens[STATE.tokens.length -2].value] && !STATE.insideInvocation.length) ||
 
         // special conditions to handle for-in loops that iterate over dictionaries
       (STATE.lastToken.value === '(' && STATE.tokens[STATE.tokens.length - 2].value === 'for') ||

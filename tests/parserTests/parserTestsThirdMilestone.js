@@ -1690,11 +1690,11 @@ describe('Parser: Third Milestone', function() {
     //                     }
     //                     addOne(((17 * 4) - 3) * 5)`;
     /** AST Explorer input:
-    function addOne(input) {
+     function addOne(input) {
       return input + 1;
     }
-    addOne(((17 * 4) - 3) * 5);
-    */
+     addOne(((17 * 4) - 3) * 5);
+     */
     it('should handle function invocations with internal parentheses', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
@@ -1850,7 +1850,7 @@ describe('Parser: Third Milestone', function() {
     //               returnTuple(5)`;
     /** AST Explorer input:
 
-    */
+     */
     xit('should handle functions that return tuples', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
@@ -2221,7 +2221,7 @@ describe('Parser: Third Milestone', function() {
     //               }
     //               sumOf(1,2,3)`;
     /** AST Explorer input:
-    function sumOf() {
+     function sumOf() {
       var numbers = Array.prototype.slice.call(arguments[arguments.length - 1]);
       var sum = 0;
       for (var number in numbers) {
@@ -2229,8 +2229,8 @@ describe('Parser: Third Milestone', function() {
       }
       return sum;
     }
-    sumOf(1,2,3);
-    */
+     sumOf(1,2,3);
+     */
 
     it('should handle functions that have variadic parameters', function () {
       input = [
@@ -2487,13 +2487,13 @@ describe('Parser: Third Milestone', function() {
     //                       return addOne
     //                   }`;
     /** AST Explorer input:
-    function makeIncrementer() {
+     function makeIncrementer() {
       function addOne(number) {
         return 1 + number;
       }
       return addOne;
     }
-    */
+     */
     it('should handle functions that return functions where the return function is specified within parentheses', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
@@ -2614,13 +2614,13 @@ describe('Parser: Third Milestone', function() {
     //                       return addOne
     //                   }`;
     /** AST Explorer input:
-    function makeIncrementer() {
+     function makeIncrementer() {
       function addOne(number) {
         return 1 + number;
       }
       return addOne;
     }
-    */
+     */
     it('should handle functions that return functions where the return function is specified without parentheses', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
@@ -2742,7 +2742,7 @@ describe('Parser: Third Milestone', function() {
     //                         return false
     //                     }`;
     /** AST Explorer input:
-    function any(list, condition) {
+     function any(list, condition) {
       for (var item in list) {
         if (condition(item)) {
           return true;
@@ -2750,7 +2750,7 @@ describe('Parser: Third Milestone', function() {
       }
       return false;
     }
-    */
+     */
     it('should handle functions that take a function specified with parentheses as an argument', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
@@ -2917,7 +2917,7 @@ describe('Parser: Third Milestone', function() {
     //                         return false
     //                     }`;
     /** AST Explorer input:
-    function any(list, condition) {
+     function any(list, condition) {
       for (var item in list) {
         if (condition(item)) {
           return true;
@@ -2925,7 +2925,7 @@ describe('Parser: Third Milestone', function() {
       }
       return false;
     }
-    */
+     */
     it('should handle functions that take a function specified without parentheses as an argument', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
@@ -3089,14 +3089,14 @@ describe('Parser: Third Milestone', function() {
     //                     }
     //                     printInput("Hello, \(returnWorld())!")`;
     /** AST Explorer input:
-    function returnWorld() {
+     function returnWorld() {
       return "World";
     }
-    function printInput(input) {
+     function printInput(input) {
       console.log(input);
     }
-    printInput("Hello, " + returnWorld() + "!");
-    */
+     printInput("Hello, " + returnWorld() + "!");
+     */
     it('should handle functions whose invocation contains string interpolation that contains a function invocation', function () {
       input = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
