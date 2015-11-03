@@ -20,7 +20,7 @@
   * <steinert.donald@gmail.com>
   * Project Founder, Project Owner
   
-* Max Yazbin
+* Max Yazhbin
   * <https://github.com/myazhbin>
   * <myazhbin@gmail.com>
   * Project Founder, Scrum Master
