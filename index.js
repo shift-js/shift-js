@@ -18,8 +18,6 @@ program
   .option('-a, --ast', 'Convert Swift file to AST, saved as a JavaScript file.')
   .option('-w, --watch', 'Watch files for changes, running the selected command when a file is updated.')
   .option('-r, --run', 'Run a Swift file as JavaScript.')
-  // execute still needs implemented
-  .option('-e, --execute [swift]', 'Execute Swift code as JavaScript from the command line. (Not yet implemented)')
   .parse(process.argv);
 
 var actionFlags = ['compile', 'tokenize', 'ast'];
@@ -30,8 +28,6 @@ actionFlags.forEach(function(flag) {
     action = flag;
   }
 });
-
-
 
 var run = function(paths) {
   return Promise.reduce(paths, function(list, filePath) {
@@ -59,7 +55,6 @@ var fetch = function(filePath) {
 };
 
 var applyAction = function(file) {
-  // todo: refactor (if statement is used only for --run)
   if (file.slice(-6) !== '.swift') return;
   return fs.readFileAsync(file)
     .then(function (data) {
