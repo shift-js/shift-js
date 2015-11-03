@@ -121,7 +121,7 @@ module.exports = function(grunt) {
         command: 'git pull --rebase origin develop'
       },
       bower: {
-        command: 'bower install'
+        command: './node_modules/bower/bin/bower install'
       }
     }
 
