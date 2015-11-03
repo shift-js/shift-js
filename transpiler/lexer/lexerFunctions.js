@@ -200,6 +200,8 @@ module.exports = {
       module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction[STATE.insideFunction.length - 1].statements++;
       STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement = true;
+      //This is the place where we need to go back and count the number of ()'s then figure out what happened
+
       STATE.advanceAndClear(1);
       return true;
     }
