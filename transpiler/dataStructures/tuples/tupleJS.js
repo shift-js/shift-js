@@ -56,18 +56,18 @@ function Tuple(tuple) {
 
 };
 
-Tuple.prototype._tupleToObject = function() {
-  if (this instanceof Tuple) {
-    return this.tup;
-  }
-  return false;
-};
+// Tuple.prototype._tupleToObject = function() {
+//   if (this instanceof Tuple) {
+//     return this.tup;
+//   }
+//   return false;
+// };
 
-Tuple.prototype.findLocation = function(keyOrIndex) {
-  var result = [];
-  //recursive IIFE here
-  return result;
-}
+// Tuple.prototype.findLocation = function(keyOrIndex) {
+//   var result = [];
+//   //recursive IIFE here
+//   return result;
+// }
 
 // make findValue has an optional level taking in the level as a # or a string such as "all"
 //
@@ -117,26 +117,26 @@ Tuple.prototype.modifyVal = function(keyOrIndex, newVal) {
   
 // };
 
-Tuple.prototype.renameElement = function(oldKey, newKey) {
-  //partially implimented
-  if (!isNaN(oldKey) || !isNaN(newKey)) {
-    return false;
-  }
-  var x = this.tup[oldKey];
-  if (x === undefined) {
-    return false;
-  }
+// Tuple.prototype.renameElement = function(oldKey, newKey) {
+//   //partially implimented
+//   if (!isNaN(oldKey) || !isNaN(newKey)) {
+//     return false;
+//   }
+//   var x = this.tup[oldKey];
+//   if (x === undefined) {
+//     return false;
+//   }
 
-  if (oldKey !== newKey && typeof oldKey === "string" && typeof newKey === "string") {
-    var val = x['val'];
-    var index = x['key'];
-    this.tup[index]['key'] = newKey;
-    this.tup[newKey] = x;
-    delete this.tup[oldKey];
-    return true;
-  }
-  return false;
-};
+//   if (oldKey !== newKey && typeof oldKey === "string" && typeof newKey === "string") {
+//     var val = x['val'];
+//     var index = x['key'];
+//     this.tup[index]['key'] = newKey;
+//     this.tup[newKey] = x;
+//     delete this.tup[oldKey];
+//     return true;
+//   }
+//   return false;
+// };
 
 Tuple.prototype.constructor = Tuple;
 

@@ -153,15 +153,6 @@ module.exports = {
       return true;
     }
 
-    // fix this such that it goes back by every 2 tokens instead of only 2 tokens back
-    if (STATE.tokens.length >= 2 && 
-      STATE.tokens[STATE.tokens.length - 2].type === 'PUNCTUATION' &&
-      STATE.tokens[STATE.tokens.length - 2].value === '(' && 
-      STATE.lastFunction && 
-      STATE.lastFunction.insideReturnStatement === true) {
-      STATE.tokens[STATE.tokens.length - 2].type = 'PARAMS_START';
-    }
-
     if (STATE.insideFunction.length && STATE.chunk === ')' && 
       STATE.insideFunction[STATE.insideFunction.length - 1].insideReturnStatement === true && !STATE.insideInitialization.length) {
       module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
