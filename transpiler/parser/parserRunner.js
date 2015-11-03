@@ -10,36 +10,36 @@ var expected = {
       "type": "FunctionDeclaration",
       "id": {
         "type": "Identifier",
-        "name": "addSevenInts"
+        "name": "returnWorld"
+      },
+      "params": [],
+      "defaults": [],
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "ReturnStatement",
+            "argument": {
+              "type": "Literal",
+              "value": "World",
+              "raw": "\"World\""
+            }
+          }
+        ]
+      },
+      "generator": false,
+      "expression": false
+    },
+    {
+      "type": "FunctionDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "printInput"
       },
       "params": [
         {
           "type": "Identifier",
-          "name": "first"
-        },
-        {
-          "type": "Identifier",
-          "name": "second"
-        },
-        {
-          "type": "Identifier",
-          "name": "third"
-        },
-        {
-          "type": "Identifier",
-          "name": "fourth"
-        },
-        {
-          "type": "Identifier",
-          "name": "fifth"
-        },
-        {
-          "type": "Identifier",
-          "name": "sixth"
-        },
-        {
-          "type": "Identifier",
-          "name": "seventh"
+          "name": "input"
         }
       ],
       "defaults": [],
@@ -49,71 +49,25 @@ var expected = {
           {
             "type": "ExpressionStatement",
             "expression": {
-              "type": "AssignmentExpression",
-              "operator": "=",
-              "left": {
-                "type": "Identifier",
-                "name": "sum"
-              },
-              "right": {
-                "type": "BinaryExpression",
-                "operator": "+",
-                "left": {
-                  "type": "BinaryExpression",
-                  "operator": "+",
-                  "left": {
-                    "type": "BinaryExpression",
-                    "operator": "+",
-                    "left": {
-                      "type": "BinaryExpression",
-                      "operator": "+",
-                      "left": {
-                        "type": "BinaryExpression",
-                        "operator": "+",
-                        "left": {
-                          "type": "BinaryExpression",
-                          "operator": "+",
-                          "left": {
-                            "type": "Identifier",
-                            "name": "first"
-                          },
-                          "right": {
-                            "type": "Identifier",
-                            "name": "second"
-                          }
-                        },
-                        "right": {
-                          "type": "Identifier",
-                          "name": "third"
-                        }
-                      },
-                      "right": {
-                        "type": "Identifier",
-                        "name": "fourth"
-                      }
-                    },
-                    "right": {
-                      "type": "Identifier",
-                      "name": "fifth"
-                    }
-                  },
-                  "right": {
-                    "type": "Identifier",
-                    "name": "sixth"
-                  }
-                },
-                "right": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
                   "type": "Identifier",
-                  "name": "seventh"
+                  "name": "console"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "log"
                 }
-              }
-            }
-          },
-          {
-            "type": "ReturnStatement",
-            "argument": {
-              "type": "Identifier",
-              "name": "sum"
+              },
+              "arguments": [
+                {
+                  "type": "Identifier",
+                  "name": "input"
+                }
+              ]
             }
           }
         ]
@@ -127,43 +81,34 @@ var expected = {
         "type": "CallExpression",
         "callee": {
           "type": "Identifier",
-          "name": "addSevenInts"
+          "name": "printInput"
         },
         "arguments": [
           {
-            "type": "Literal",
-            "value": 143242134,
-            "raw": "143242134"
-          },
-          {
-            "type": "Literal",
-            "value": 34543,
-            "raw": "34543"
-          },
-          {
-            "type": "Literal",
-            "value": 4,
-            "raw": "4"
-          },
-          {
-            "type": "Literal",
-            "value": 6,
-            "raw": "6"
-          },
-          {
-            "type": "Literal",
-            "value": 0,
-            "raw": "0"
-          },
-          {
-            "type": "Literal",
-            "value": 56,
-            "raw": "56"
-          },
-          {
-            "type": "Literal",
-            "value": 5,
-            "raw": "5"
+            "type": "BinaryExpression",
+            "operator": "+",
+            "left": {
+              "type": "BinaryExpression",
+              "operator": "+",
+              "left": {
+                "type": "Literal",
+                "value": "Hello, ",
+                "raw": "\"Hello, \""
+              },
+              "right": {
+                "type": "CallExpression",
+                "callee": {
+                  "type": "Identifier",
+                  "name": "returnWorld"
+                },
+                "arguments": []
+              }
+            },
+            "right": {
+              "type": "Literal",
+              "value": "!",
+              "raw": "\"!\""
+            }
           }
         ]
       }
@@ -171,101 +116,53 @@ var expected = {
   ],
   "sourceType": "module"
 };
-
-
 var tokenStream = [
-  { type: "DECLARATION_KEYWORD",        value: "func"},
-  { type: "IDENTIFIER",                 value: "addSevenInts" },
-  { type: "PARAMS_START",               value: "(" },
-  { type: "IDENTIFIER",                 value: "first" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "TYPE_NUMBER",                value: "Int" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "second" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "TYPE_NUMBER",                value: "Int" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "third" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "TYPE_NUMBER",                value: "Int" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "fourth" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "TYPE_NUMBER",                value: "Int" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "fifth" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "TYPE_NUMBER",                value: "Int" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "sixth" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "TYPE_NUMBER",                value: "Int" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "seventh" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "TYPE_NUMBER",                value: "Int" },
-  { type: "PARAMS_END",                 value: ")" },
-  { type: "RETURN_ARROW",               value: "->" },
+  { type: 'DECLARATION_KEYWORD', value: 'func' },
+  { type: 'IDENTIFIER', value: 'returnWorld' },
+  { type: 'PARAMS_START', value: '(' },
+  { type: 'PARAMS_END', value: ')' },
+  { type: 'RETURN_ARROW', value: '->' },
+  { type: 'TYPE_STRING', value: 'String' },
+  { type: 'STATEMENTS_START', value: '{' },
+  { type: 'TERMINATOR', value: '\\n' },
 
-  { type: "TYPE_NUMBER",                value: "Int" },
-  { type: "STATEMENTS_START",           value: "{" },
-  { type: "TERMINATOR",                 value: "\\n"},
+  { type: 'STATEMENT_KEYWORD', value: 'return' },
+  { type: 'STRING', value: 'World' },
+  { type: 'TERMINATOR', value: '\\n' },
 
-  { type: "DECLARATION_KEYWORD",        value: "let" },
-  { type: "IDENTIFIER",                 value: "sum" },
-  { type: "OPERATOR",                   value: "=" },
-  { type: "IDENTIFIER",                 value: "first" },
-  { type: "OPERATOR",                   value: "+" },
-  { type: "IDENTIFIER",                 value: "second" },
-  { type: "OPERATOR",                   value: "+" },
-  { type: "IDENTIFIER",                 value: "third" },
-  { type: "OPERATOR",                   value: "+" },
-  { type: "IDENTIFIER",                 value: "fourth" },
-  { type: "OPERATOR",                   value: "+" },
-  { type: "IDENTIFIER",                 value: "fifth" },
-  { type: "OPERATOR",                   value: "+" },
-  { type: "IDENTIFIER",                 value: "sixth" },
-  { type: "OPERATOR",                   value: "+" },
-  { type: "IDENTIFIER",                 value: "seventh" },
-  { type: "TERMINATOR",                 value: "\\n"},
+  { type: 'STATEMENTS_END', value: '}' },
+  { type: 'TERMINATOR', value: '\\n' },
 
-  { type: "STATEMENT_KEYWORD",          value: "return"},
-  { type: "IDENTIFIER",                 value: "sum" },
-  { type: "TERMINATOR",                 value: "\\n"},
+  { type: 'DECLARATION_KEYWORD', value: 'func' },
+  { type: 'IDENTIFIER', value: 'printInput' },
+  { type: 'PARAMS_START', value: '(' },
+  { type: 'IDENTIFIER', value: 'input' },
+  { type: 'PUNCTUATION', value: ':' },
+  { type: 'TYPE_STRING', value: 'String' },
+  { type: 'PARAMS_END', value: ')' },
+  { type: 'STATEMENTS_START', value: '{' },
+  { type: 'TERMINATOR', value: '\\n' },
 
-  { type: "STATEMENTS_END",             value: "}" },
-  { type: "TERMINATOR",                 value: "\\n"},
+  { type: 'NATIVE_METHOD', value: 'print' },
+  { type: 'INVOCATION_START', value: '(' },
+  { type: 'IDENTIFIER', value: 'input' },
+  { type: 'INVOCATION_END', value: ')' },
+  { type: 'TERMINATOR', value: '\\n' },
 
-  { type: "IDENTIFIER",                 value: "addSevenInts" },
-  { type: "INVOCATION_START",           value: "(" },
-  { type: "NUMBER",                     value: "143242134" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "second" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "NUMBER",                     value: "34543" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "third" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "NUMBER",                     value: "4" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "fourth" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "NUMBER",                     value: "6" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "fifth" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "NUMBER",                     value: "0" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "sixth" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "NUMBER",                     value: "56" },
-  { type: "PUNCTUATION",                value: "," },
-  { type: "IDENTIFIER",                 value: "seventh" },
-  { type: "PUNCTUATION",                value: ":" },
-  { type: "NUMBER",                     value: "5" },
-  { type: "INVOCATION_END",             value: ")" },
-  { type: "TERMINATOR",                 value: "EOF"}
+  { type: 'STATEMENTS_END', value: '}' },
+  { type: 'TERMINATOR', value: '\\n' },
 
+  { type: 'IDENTIFIER', value: 'printInput' },
+  { type: 'INVOCATION_START', value: '(' },
+  { type: 'STRING', value: 'Hello, ' },
+  { type: 'STRING_INTERPOLATION_START', value: '\\(' },
+  { type: 'IDENTIFIER', value: 'returnWorld' },
+  { type: 'INVOCATION_START', value: '(' },
+  { type: 'INVOCATION_END', value: ')' },
+  { type: 'STRING_INTERPOLATION_END', value: ')' },
+  { type: 'STRING', value: '!' },
+  { type: 'INVOCATION_END', value: ')' },
+  { type: 'TERMINATOR', value: 'EOF' }
 ];
 var parser = makeParse();
 

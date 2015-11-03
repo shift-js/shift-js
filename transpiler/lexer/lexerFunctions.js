@@ -113,7 +113,7 @@ module.exports = {
     }
 
     if (STATE.insideFunction.length && STATE.chunk === ')' && 
-      STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true && 
+      STATE.insideFunction[STATE.insideFunction.length - 1].insideParams === true &&
       STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter === 1 ) {
       module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
       STATE.insideFunction[STATE.insideFunction.length - 1].paramsCounter--;
@@ -170,7 +170,7 @@ module.exports = {
         obj[toDo](y[0]['tokenIndex'],y[1]['tokenIndex']);
       }
       // END code to look back and revise incorrect ()'s
-      
+
       STATE.advanceAndClear(1);
       return true;
     }

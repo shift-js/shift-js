@@ -16,6 +16,8 @@ var statements = require('./statements');
 var rearrangeTokensDynamicDictionaryAssignment = require('./rearrangeTokensDynamicDictionaryAssignment');
 var rearrangeTokensDictionaryKeyValueIteration = require('./rearrangeTokensDictionaryKeyValueIteration');
 var rearrangeTokensPrintToConsoleLog = require('./rearrangeTokensPrintToConsoleLog');
+var rearrangeTokensVariadicParams = require('./rearrangeTokensVariadicParams');
+var rearrangeTokensAddParens = require('./rearrangeTokensAddParens');
 
 var makeParser = function() {
 
@@ -37,14 +39,32 @@ var makeParser = function() {
     var intermediaryTokenStream = helpers.cleanUpTokenStream(inputTokens);
     var intermediary = rearrangeTokensDynamicDictionaryAssignment(intermediaryTokenStream);
     var intermediary2 = rearrangeTokensPrintToConsoleLog(intermediary);
-    state.tokens = rearrangeTokensDictionaryKeyValueIteration(intermediary2);
+    var intermediary3 = rearrangeTokensDictionaryKeyValueIteration(intermediary2);
+    var intermediary4 = rearrangeTokensVariadicParams(intermediary3);
+    state.tokens = rearrangeTokensAddParens(intermediary4);
     state.scope = newScope(state, originalScope);
 
     /* Define globally accessible objects */
+    /* console */
     var identifierSymbol = state.symbolTable["(name)"];
     var identifierToken = Object.create(identifierSymbol);
     identifierToken.type = "Identifier";
     identifierToken.value = "console";
+    state.scope.define(state, identifierToken);
+
+    /* Array */
+    var identifierSymbol = state.symbolTable["(name)"];
+    var identifierToken = Object.create(identifierSymbol);
+    identifierToken.type = "Identifier";
+    identifierToken.value = "Array";
+    state.scope.define(state, identifierToken);
+
+    /* arguments */
+    var identifierSymbol = state.symbolTable["(name)"];
+    var identifierToken = Object.create(identifierSymbol);
+    identifierToken.type = "Identifier";
+    identifierToken.value = "arguments";
+
     state.scope.define(state, identifierToken);
 
     state = advance(state);
@@ -69,6 +89,20 @@ var makeParser = function() {
     } else {
       bodyNodes = [];
     }
+
+    if(bodyNodes.length >= 1) {
+      for(var q=0; q<bodyNodes.length; q++) {
+        var n = bodyNodes[q];
+        if(n.type === "CallExpression"){
+          var expressionStmtWrapper = {
+            type: "ExpressionStatement",
+            expression: n
+          }
+          bodyNodes[q] = expressionStmtWrapper;
+        }
+      }
+    }
+
 
     var result = {
       type: 'Program',

@@ -79,13 +79,30 @@ var declarations = {
     infix(state, "%", 60);
 
     infix(state, ".", 80, function(left) {
-      this.first = left;
+      //this.first = left;//TODO other change
+      this.type = "MemberExpression";
+      this.computed = false;
+      this.object = left;// object: { value: 'Array', type: 'IDENTIFIER' },
+      if(this.object.type === "IDENTIFIER") {
+        this.object.type = "Identifier";
+        this.object.name = this.object.value;
+        delete this.object.value;
+      } else if(this.object.type === "MemberExpression") {
+        delete this.value;
+      }
+
+      // want  object: { type: 'Identifier', name: 'Array' },
       if (state.token.type !== "IDENTIFIER") {
         state.token.error("Expected a property name.");
       }
-      state.token.arity = "literal";
-      this.second = state.token;
-      this.arity = "binary";
+      if(state.token.type === "IDENTIFIER") {
+        state.token.type = "Identifier";
+        state.token.name = state.token.value;
+        delete state.token.value;
+      }
+      delete this.name;
+      delete this.value;//'.'
+      this.property = state.token;
       state = advance(state);
       return this;
     });
@@ -111,12 +128,15 @@ var declarations = {
         this.type = "MemberExpression";
         this.computed = false;
         delete this.value;
-        this.object = left.first;
-        this.object.name = this.object.value;
+        this.object = left.object;
+
+        //this.object.name = this.object.value;//TODO Add logic, sometimes necessary
         delete this.object.value;
-        this.object.type = "Identifier";
-        this.property = left.second;
-        this.property.name = this.property.value;
+        //this.object.type = "Identifier";//TODO Needs to go (at least in this case)
+        this.property = left.property;
+        if(!this.property.name) {
+          this.property.name = this.property.value;
+        }
         delete this.property.value;
         this.property.type = "Identifier";
         delete this.property.arity;
@@ -147,7 +167,15 @@ var declarations = {
 
       if (state.token.id !== ")") {
         while (true) {
+
+          var lookAheadOne = state.tokens[state.index];
+          if(lookAheadOne.value === ":") {
+            state = advance(state);
+            state = advance(state);
+          }
+
           a.push(expression(state, 0));
+
           if (state.token.id !== ",") {
             break;
           }
@@ -198,8 +226,18 @@ var declarations = {
           a.push(state.token);
           state = advance(state);
           if (state.token.id === ":") {
-            state = advance(state);
-            state = advance(state);
+
+            while (true) {
+              if (state.token.value !== ',' && state.token.value !== '{') {
+                state = advance(state);
+              } else {
+                break;
+              }
+            }
+
+            //state = advance(state);
+            //state = advance(state);
+
           }
           if (state.token.id !== ",") {
             break;
@@ -208,10 +246,18 @@ var declarations = {
         }
       }
 
-      state = advance(state, ")");
+      if(state.token.value === ")") {
+        state = advance(state, ")");
+      }
       if(state.token.value === "->") {
         state = advance(state);
-        state = advance(state);
+        while (true) {
+          if (state.token.value !== '{') {
+            state = advance(state);
+          } else {
+            break;
+          }
+        }
       }
 
       state = advance(state, "{");
@@ -260,9 +306,26 @@ var declarations = {
       state = advance(state, "}");
 
       var fnBodyArray = Array.isArray(fnBody) ? fnBody : [fnBody];
+
+      if(fnBodyArray.length>0) {
+        for(var w=0; w<fnBodyArray.length; w++) {
+          var bodyStmt = fnBodyArray[w];
+          if(bodyStmt.type === "CallExpression") {
+            var expressionStmtWrapper = {
+              type: 'ExpressionStatement',
+              expression: bodyStmt
+            };
+            fnBodyArray[w] = expressionStmtWrapper;
+          }
+        }
+      }
+
       this.type = "FunctionDeclaration";
       delete this.value;
-      this.id = { type: "Identifier", name: this.name };
+      this.id = {
+        type: "Identifier",
+        name: this.name
+      };
       delete this.name;
       this.params = a;
       this.defaults = [];
@@ -568,36 +631,12 @@ var declarations = {
 
     stmt(state, "if", function() {
 
-      /* Determine whether the conditional for this
-       if statement is surrounded by parentheses */
-      var parenthetical = false;
-      var allTokens = state.tokens.slice();
-      var indexOfNextToken = state.index;
-      var startIndexOfNextBlock = 0;
-
-      for(var t=indexOfNextToken; t<allTokens.length; t++) {
-        if(allTokens[t].value === "{") {
-          startIndexOfNextBlock = t;
-          break;
-        }
+      state = advance(state, "(");
+      this.test = expression(state, 0);
+      if(this.test.type === "ExpressionStatement") {
+        this.test = this.test.expression;
       }
-      if(startIndexOfNextBlock > 0 && allTokens[startIndexOfNextBlock - 1].value === ")") {
-        parenthetical = true;
-      }
-
-      if(parenthetical) {
-        state = advance(state, "(");//This parens isn't actual wrapping the conditional.
-        this.test = expression(state, 0);
-        if(this.test.type === "ExpressionStatement") {
-          this.test = this.test.expression;
-        }
-        state = advance(state, ")");
-      } else {
-        this.test = expression(state, 0, true);
-        if(this.test.type === "ExpressionStatement") {
-          this.test = this.test.expression;
-        }
-      }
+      state = advance(state, ")");
 
       this.consequent = block(state);
 

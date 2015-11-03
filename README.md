@@ -28,7 +28,7 @@ For a full list of commands:
 
 ```
 shiftjs -h
-``` 
+```
 
 ## Develpoment
 

@@ -1267,7 +1267,7 @@ describe('Parser: Third Milestone', function() {
     }
      greet("Bob", "Tuesday");
      */
-    xit('should handle functions with string interpolation', function () {
+    it('should handle functions with string interpolation', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
         { type: "IDENTIFIER",                 value: "greet" },
@@ -1413,12 +1413,12 @@ describe('Parser: Third Milestone', function() {
     //               addSevenInts(143242134, second: 34543, third: 4, fourth: 6, fifth: 0, sixth: 56, seventh: 5)`;
     /** AST Explorer input:
      function addSevenInts(first, second, third, fourth, fifth, sixth, seventh) {
-      sum = first + second + third + fourth + fifth + sixth + seventh;
+      var sum = first + second + third + fourth + fifth + sixth + seventh;
       return sum;
     }
      addSevenInts(143242134, 34543, 4, 6, 0, 56, 5);
      */
-    xit('should handle functions with many arguments', function () {
+    it('should handle functions with many arguments', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
         { type: "IDENTIFIER",                 value: "addSevenInts" },
@@ -1511,7 +1511,6 @@ describe('Parser: Third Milestone', function() {
         { type: "NUMBER",                     value: "5" },
         { type: "INVOCATION_END",             value: ")" },
         { type: "TERMINATOR",                 value: "EOF"}
-
       ];
       output = {
         "type": "Program",
@@ -1557,18 +1556,15 @@ describe('Parser: Third Milestone', function() {
               "type": "BlockStatement",
               "body": [
                 {
-                  "type": "ExpressionStatement",
-                  "expression": {
-                    "type": "AssignmentExpression",
-                    "operator": "=",
-                    "left": {
-                      "type": "Identifier",
-                      "name": "sum"
-                    },
-                    "right": {
-                      "type": "BinaryExpression",
-                      "operator": "+",
-                      "left": {
+                  "type": "VariableDeclaration",
+                  "declarations": [
+                    {
+                      "type": "VariableDeclarator",
+                      "id": {
+                        "type": "Identifier",
+                        "name": "sum"
+                      },
+                      "init": {
                         "type": "BinaryExpression",
                         "operator": "+",
                         "left": {
@@ -1584,40 +1580,45 @@ describe('Parser: Third Milestone', function() {
                                 "type": "BinaryExpression",
                                 "operator": "+",
                                 "left": {
-                                  "type": "Identifier",
-                                  "name": "first"
+                                  "type": "BinaryExpression",
+                                  "operator": "+",
+                                  "left": {
+                                    "type": "Identifier",
+                                    "name": "first"
+                                  },
+                                  "right": {
+                                    "type": "Identifier",
+                                    "name": "second"
+                                  }
                                 },
                                 "right": {
                                   "type": "Identifier",
-                                  "name": "second"
+                                  "name": "third"
                                 }
                               },
                               "right": {
                                 "type": "Identifier",
-                                "name": "third"
+                                "name": "fourth"
                               }
                             },
                             "right": {
                               "type": "Identifier",
-                              "name": "fourth"
+                              "name": "fifth"
                             }
                           },
                           "right": {
                             "type": "Identifier",
-                            "name": "fifth"
+                            "name": "sixth"
                           }
                         },
                         "right": {
                           "type": "Identifier",
-                          "name": "sixth"
+                          "name": "seventh"
                         }
-                      },
-                      "right": {
-                        "type": "Identifier",
-                        "name": "seventh"
                       }
                     }
-                  }
+                  ],
+                  "kind": "var"
                 },
                 {
                   "type": "ReturnStatement",
@@ -1688,12 +1689,13 @@ describe('Parser: Third Milestone', function() {
     //                         return input + 1
     //                     }
     //                     addOne(((17 * 4) - 3) * 5)`;
-    // AST Explorer input:
-    // var addOne = function(input) {
-    //   return input + 1
-    // }
-    // addOne(((17 * 4) - 3) * 5)
-    xit('should handle function invocations with internal parentheses', function () {
+    /** AST Explorer input:
+     function addOne(input) {
+      return input + 1;
+    }
+     addOne(((17 * 4) - 3) * 5);
+     */
+    it('should handle function invocations with internal parentheses', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
         { type: "IDENTIFIER",                 value: "addOne" },
@@ -1733,34 +1735,43 @@ describe('Parser: Third Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = {
+
         "type": "Program",
         "body": [
           {
+
             "type": "FunctionDeclaration",
             "id": {
+
               "type": "Identifier",
               "name": "addOne"
             },
             "params": [
               {
+
                 "type": "Identifier",
                 "name": "input"
               }
             ],
             "defaults": [],
             "body": {
+
               "type": "BlockStatement",
               "body": [
                 {
+
                   "type": "ReturnStatement",
                   "argument": {
+
                     "type": "BinaryExpression",
                     "operator": "+",
                     "left": {
+
                       "type": "Identifier",
                       "name": "input"
                     },
                     "right": {
+
                       "type": "Literal",
                       "value": 1,
                       "raw": "1"
@@ -1773,29 +1784,37 @@ describe('Parser: Third Milestone', function() {
             "expression": false
           },
           {
+
             "type": "ExpressionStatement",
             "expression": {
+
               "type": "CallExpression",
               "callee": {
+
                 "type": "Identifier",
                 "name": "addOne"
               },
               "arguments": [
                 {
+
                   "type": "BinaryExpression",
                   "operator": "*",
                   "left": {
+
                     "type": "BinaryExpression",
                     "operator": "-",
                     "left": {
+
                       "type": "BinaryExpression",
                       "operator": "*",
                       "left": {
+
                         "type": "Literal",
                         "value": 17,
                         "raw": "17"
                       },
                       "right": {
+
                         "type": "Literal",
                         "value": 4,
                         "raw": "4"
@@ -1808,6 +1827,7 @@ describe('Parser: Third Milestone', function() {
                     }
                   },
                   "right": {
+
                     "type": "Literal",
                     "value": 5,
                     "raw": "5"
@@ -1825,10 +1845,12 @@ describe('Parser: Third Milestone', function() {
     // input = String.raw`func returnTuple(num: Int) -> (plusFive: Int, timesFive: Int) {
     //                   let plusFiveResult = num + 5
     //                   let timesFiveResult = num * 5
-    //                   return (plusFiveResult, timesFiveResult)
+    //                   return (plusFiveResult, timesFiveResult) // return new Tuple(plusFive);
     //               }
     //               returnTuple(5)`;
-    // AST Explorer input:
+    /** AST Explorer input:
+
+     */
     xit('should handle functions that return tuples', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
@@ -1964,8 +1986,8 @@ describe('Parser: Third Milestone', function() {
     //             return (currentMin, currentMax)
     //         }`;
     // AST Explorer input:
-
-    xit('should handle functions with for loops, if and else if statements, and native count methods', function () {
+    //function minMax()
+    xit('should handle functions with for loops, if and else if statments, and native count methods', function () {
       input = [
         { type: "DECLARATION_KEYWORD",          value: "func"},
         { type: "IDENTIFIER",                   value: "minMax" },
@@ -2085,7 +2107,7 @@ describe('Parser: Third Milestone', function() {
     //         }`;
     // AST Explorer input:
 
-    xit('should handle functions with for loops and if and else if statements', function () {
+    xit('should handle functions with for loops and if and else if statments', function () {
       input = [
         { type: "DECLARATION_KEYWORD",            value: "func"},
         { type: "IDENTIFIER",                     value: "minMax" },
@@ -2198,18 +2220,19 @@ describe('Parser: Third Milestone', function() {
     //                   return sum
     //               }
     //               sumOf(1,2,3)`;
-    // AST Explorer input:
-    // function sumOf() {
-    //   var numbers = Array.prototype.slice.call(arguments);
-    //   var sum = 0;
-    //   for (var number in numbers) {
-    //     sum += number;
-    //   }
-    //   return sum;
-    // }
-    // sumOf(1, 2, 3);
+    /** AST Explorer input:
+     function sumOf() {
+      var numbers = Array.prototype.slice.call(arguments[arguments.length - 1]);
+      var sum = 0;
+      for (var number in numbers) {
+        sum += number;
+      }
+      return sum;
+    }
+     sumOf(1,2,3);
+     */
 
-    xit('should handle functions that have variadic parameters', function () {
+    it('should handle functions that have variadic parameters', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
         { type: "IDENTIFIER",                 value: "sumOf" },
@@ -2318,8 +2341,33 @@ describe('Parser: Third Milestone', function() {
                         },
                         "arguments": [
                           {
-                            "type": "Identifier",
-                            "name": "arguments"
+                            "type": "MemberExpression",
+                            "computed": true,
+                            "object": {
+                              "type": "Identifier",
+                              "name": "arguments"
+                            },
+                            "property": {
+                              "type": "BinaryExpression",
+                              "operator": "-",
+                              "left": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                  "type": "Identifier",
+                                  "name": "arguments"
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "length"
+                                }
+                              },
+                              "right": {
+                                "type": "Literal",
+                                "value": 1,
+                                "raw": "1"
+                              }
+                            }
                           }
                         ]
                       }
@@ -2438,14 +2486,15 @@ describe('Parser: Third Milestone', function() {
     //                       }
     //                       return addOne
     //                   }`;
-    // AST Explorer input:
-    // function makeIncrementer() {
-    //   function addOne(number) {
-    //     return 1 + number;
-    //   }
-    //   return addOne;
-    // }
-    xit('should handle functions that return functions where the return function is specified within parentheses', function () {
+    /** AST Explorer input:
+     function makeIncrementer() {
+      function addOne(number) {
+        return 1 + number;
+      }
+      return addOne;
+    }
+     */
+    it('should handle functions that return functions where the return function is specified within parentheses', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
         { type: "IDENTIFIER",                 value: "makeIncrementer" },
@@ -2564,14 +2613,15 @@ describe('Parser: Third Milestone', function() {
     //                       }
     //                       return addOne
     //                   }`;
-    // AST Explorer input:
-    // var makeIncrementer = function() {
-    //   var addOne = function(number) {
-    //     return 1 + number
-    //   }
-    //   return addOne
-    // }
-    xit('should handle functions that return functions where the return function is specified without parentheses', function () {
+    /** AST Explorer input:
+     function makeIncrementer() {
+      function addOne(number) {
+        return 1 + number;
+      }
+      return addOne;
+    }
+     */
+    it('should handle functions that return functions where the return function is specified without parentheses', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
         { type: "IDENTIFIER",                 value: "makeIncrementer" },
@@ -2691,16 +2741,17 @@ describe('Parser: Third Milestone', function() {
     //                         }
     //                         return false
     //                     }`;
-    // AST Explorer input:
-    // var any = function(list, condition) {
-    //   for (var item in list) {
-    //     if (condition(item)) {
-    //       return true
-    //     }
-    //   }
-    //   return false
-    // }
-    xit('should handle functions that take a function specified with parentheses as an argument', function () {
+    /** AST Explorer input:
+     function any(list, condition) {
+      for (var item in list) {
+        if (condition(item)) {
+          return true;
+        }
+      }
+      return false;
+    }
+     */
+    it('should handle functions that take a function specified with parentheses as an argument', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
         { type: "IDENTIFIER",                 value: "any" },
@@ -2865,16 +2916,17 @@ describe('Parser: Third Milestone', function() {
     //                         }
     //                         return false
     //                     }`;
-    // AST Explorer input:
-    // var any = function(list, condition) {
-    //   for (var item in list) {
-    //     if (condition(item)) {
-    //       return true
-    //     }
-    //   }
-    //   return false
-    // }
-    xit('should handle functions that take a function specified without parentheses as an argument', function () {
+    /** AST Explorer input:
+     function any(list, condition) {
+      for (var item in list) {
+        if (condition(item)) {
+          return true;
+        }
+      }
+      return false;
+    }
+     */
+    it('should handle functions that take a function specified without parentheses as an argument', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "func"},
         { type: "IDENTIFIER",                 value: "any" },
@@ -3036,15 +3088,16 @@ describe('Parser: Third Milestone', function() {
     //                         print(input)
     //                     }
     //                     printInput("Hello, \(returnWorld())!")`;
-    // AST Explorer input:
-    // var returnWorld = function() {
-    //   return "World"
-    // }
-    // var printInput = function(input) {
-    //   print(input)
-    // }
-    // printInput("Hello, " + returnWorld() + "!")
-    xit('should handle functions whose invocation contains string interpolation that contains a function invocation returning a string', function () {
+    /** AST Explorer input:
+     function returnWorld() {
+      return "World";
+    }
+     function printInput(input) {
+      console.log(input);
+    }
+     printInput("Hello, " + returnWorld() + "!");
+     */
+    it('should handle functions whose invocation contains string interpolation that contains a function invocation', function () {
       input = [
         { type: 'DECLARATION_KEYWORD', value: 'func' },
         { type: 'IDENTIFIER', value: 'returnWorld' },
@@ -3112,7 +3165,7 @@ describe('Parser: Third Milestone', function() {
                   "argument": {
                     "type": "Literal",
                     "value": "World",
-                    "raw": "'World'"
+                    "raw": "\"World\""
                   }
                 }
               ]
@@ -3141,8 +3194,16 @@ describe('Parser: Third Milestone', function() {
                   "expression": {
                     "type": "CallExpression",
                     "callee": {
-                      "type": "Identifier",
-                      "name": "print"
+                      "type": "MemberExpression",
+                      "computed": false,
+                      "object": {
+                        "type": "Identifier",
+                        "name": "console"
+                      },
+                      "property": {
+                        "type": "Identifier",
+                        "name": "log"
+                      }
                     },
                     "arguments": [
                       {
@@ -3175,7 +3236,7 @@ describe('Parser: Third Milestone', function() {
                     "left": {
                       "type": "Literal",
                       "value": "Hello, ",
-                      "raw": "'Hello, '"
+                      "raw": "\"Hello, \""
                     },
                     "right": {
                       "type": "CallExpression",
@@ -3189,7 +3250,7 @@ describe('Parser: Third Milestone', function() {
                   "right": {
                     "type": "Literal",
                     "value": "!",
-                    "raw": "'!'"
+                    "raw": "\"!\""
                   }
                 }
               ]
