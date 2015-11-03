@@ -119,6 +119,9 @@ module.exports = function(grunt) {
     shell: {
       rebase: {
         command: 'git pull --rebase origin develop'
+      },
+      bower: {
+        command: 'bower install'
       }
     }
 
@@ -175,6 +178,9 @@ module.exports = function(grunt) {
     'test'
   ]);
 
-  grunt.registerTask('heroku:development', 'build');
+  grunt.registerTask('heroku:development', [
+    'shell:bower',
+    'build'
+  ]);
 
 };
