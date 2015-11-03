@@ -175,6 +175,6 @@ module.exports = function(grunt) {
     'test'
   ]);
 
-  grunt.registerTask('heroku:development', 'clean less mincss uglify');
+  grunt.registerTask('heroku:development', 'build');
 
 };
