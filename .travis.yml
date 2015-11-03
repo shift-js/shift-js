@@ -5,9 +5,15 @@ before_install:
 - npm install -g grunt-cli
 install:
 - npm install
+before_script:
+- grunt build
 deploy:
   provider: heroku
   api_key:
     secure: ThXqo9ACcoBCK6o8i/N+zXvqe9jirrlwn4nKWIm2rBXqhGNiRcjY23oFTQ+f9LhE3tsNFDtEcoAU4amXIpFDWusmT5txPWe1cGSle1Tgi4l9M31JCxo7okO4mgh+3BIb7/xwdhAS4KpqaLUWccue07UrqhD5kyCEkIjTOQ1PSEtYufotJartnz+wXhMpTKTs/GoYGiujOcQIPshilFIpOGoZQ3W9Ar0RYq511bwdFSGBF0BNTlFTE9UxeuDLoXFN6cd4K1qt32ukOtsQodXVWXD+zwgcTJtjsj2ziKVPO9EOZC8ljeawqA48I2ojkiD2Q2+2aeXJGH8vhVxIcf8ZGRigVaZGStQ9QF+CJb+lejb/OR1yi/hU+zJs86oPIqwkNTkszOuARtuUGRDyBssPnEVJQDGnJiCjJDy7YTynjuUcYBP0a8CpJ64+t8QEelyWm1E2oYmW4wYmjUAHg+d1weA1dtx5/tJhHhL43EcB3O5Pp5jI1mEfpio0FSyyAGcgFlCD1yH4Dqh6X+3QAUQCc3ojLdrvm3QrXJIt1L83xzSo8aGV8K3Z9hYRjp0bsbwlSMCGAoY+qYf1m3M/aRIK69jL0CmPh+VQhexzbJFjQMd0+OP6quc0mFrw8GjZfoiyZsX8uDUmSpDxkTZclN7zC607orKJA8NnOSZT0kxRvGQ=
   app:
     develop: shift-js
+  run:
+    - "bower install"
+    - "grunt build"
+    - restart

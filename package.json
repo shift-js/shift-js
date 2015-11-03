@@ -1,26 +1,44 @@
 {
   "name": "shift-js",
-  "version": "0.0.1",
-  "description": "Swift to JS Transpiler",
+  "version": "0.1.0",
+  "description": "Swift to JavaScript Transpiler",
   "engines": {
     "node": "4.2.1"
   },
-  "main": "index.js",
+  "directories": {
+    "lib": "./transpiler"
+  },
   "scripts": {
-    "start": "node index.js",
-    "test": "grunt test",
-    "postinstall": "bower install && grunt build"
+    "start": "node server.js",
+    "test": "grunt test"
+  },
+  "preferGlobal": true,
+  "bin": {
+    "shift.js": "index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shift-js/shift-js.git"
   },
-  "author": "",
+  "keywords": [
+    "swift",
+    "javascript",
+    "js",
+    "transpiler",
+    "compiler"
+  ],
+  "contributors": [
+    "Don Steinert <steinert.donald@gmail.com>",
+    "Max Yazhbin <myazhbin@gmail.com>",
+    "Verlon Smith <vsmith@gmail.com>",
+    "Rex Suter <rex.suter@gmail.com>",
+    "David Churchill <dchurchill92@gmail.com>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/shift-js/shift-js/issues"
   },
-  "homepage": "https://github.com/shift-js/shift-js#readme",
+  "homepage": "https://shiftjs.com",
   "dependencies": {
     "bluebird": "^2.10.2",
     "chokidar": "^1.2.0",
@@ -29,7 +47,6 @@
     "escodegen": "^1.7.0",
     "esprima-ast-utils": "0.0.6",
     "express": "^4.13.3",
-    "grunt-shell": "^1.1.2",
     "ramda": "^0.18.0"
   },
   "devDependencies": {
@@ -41,9 +58,7 @@
     "grunt-cli": "^0.1.13",
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-mocha-test": "^0.12.7",
+    "grunt-shell": "^1.1.2",
     "mocha": "^2.3.3"
-  },
-  "bin": {
-    "shiftjs": "shift.js"
   }
 }

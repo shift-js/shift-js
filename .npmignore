@@ -1,0 +1,12 @@
+.git*
+.jshintrc
+.bowerrc
+.travis.yml
+.DS_Store
+Gruntfile.js
+Procfile
+bower.json
+server.js
+client/
+docs/
+tests/
