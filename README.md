@@ -104,7 +104,7 @@ Each Swift language feature should have corresponding lexer, parser, generator, 
 
 3. Tests are very important for this project. Write tests that show the bug was fixed or that the feature works as expected.
 
-4. Send a
+4. Send a pull request.
 
 Please refer to CONTRIBUTING.md and STYLEGUIDE.md in ```docs/``` for detailed contributing guidelines.
 
