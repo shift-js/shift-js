@@ -212,7 +212,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('heroku:development', [
     'shell:bower',
-    'build',
-    'docs'
+    'build'
   ]);
 };
