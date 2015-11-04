@@ -29,7 +29,11 @@ var declarations = {
     symbol(state, originalSymbol, "]");
     symbol(state, originalSymbol, "}");
     symbol(state, originalSymbol, ",");
+<<<<<<< HEAD
     symbol(state, originalSymbol, "else").nud = helpers.itself;
+=======
+    symbol(state, originalSymbol, "else");
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
     symbol(state, originalSymbol, "(literal)").nud = helpers.itself;
     symbol(state, originalSymbol, "this").nud = function() {
       state.scope.reserve(this);
@@ -131,7 +135,10 @@ var declarations = {
         this.object = left.object;
 
         //this.object.name = this.object.value;//TODO Add logic, sometimes necessary
+<<<<<<< HEAD
         console.log(this.object.value);
+=======
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
         delete this.object.value;
         //this.object.type = "Identifier";//TODO Needs to go (at least in this case)
         this.property = left.property;
@@ -202,6 +209,7 @@ var declarations = {
       return e;
     });
 
+<<<<<<< HEAD
     prefix(state, "new", function() {
 
       //state = advance(state);
@@ -225,6 +233,8 @@ var declarations = {
       return newExpressionStmt;
     });
 
+=======
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
     prefix(state, "func", function() {
       var a = [];
       state.scope = newScope(state, originalScope);
@@ -250,6 +260,10 @@ var declarations = {
           a.push(state.token);
           state = advance(state);
           if (state.token.id === ":") {
+<<<<<<< HEAD
+=======
+
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
             while (true) {
               if (state.token.value !== ',' && state.token.value !== '{') {
                 state = advance(state);
@@ -257,6 +271,13 @@ var declarations = {
                 break;
               }
             }
+<<<<<<< HEAD
+=======
+
+            //state = advance(state);
+            //state = advance(state);
+
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
           }
           if (state.token.id !== ",") {
             break;
@@ -360,6 +381,7 @@ var declarations = {
 
     prefix(state, "[", function() {
       var a = [];
+<<<<<<< HEAD
 
       /* Handle Array initializer syntax */
       if(state.tokens[state.index].type === "ARRAY_END") {
@@ -376,17 +398,31 @@ var declarations = {
         }
       }
 
+=======
+      if (state.token.id !== "]") {
+        while (true) {
+          a.push(expression(state, 0));
+          if (state.token.id !== ",") {
+            break;
+          }
+          state = advance(state, ",");
+        }
+      }
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
       state = advance(state, "]");
       this.type = "ArrayExpression";
       delete this.value;
       delete this.raw;
       this.elements = a;
+<<<<<<< HEAD
 
       if(state.token.value === "(" && state.tokens[state.index].value === ")") {
         state = advance(state);
         state = advance(state);
       }
 
+=======
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
       return this;
     });
 
@@ -402,6 +438,7 @@ var declarations = {
         }
       }
 
+<<<<<<< HEAD
       if(state.tokens[state.index-1] && state.tokens[state.index+2]) {
         var firstTypeDeclaration = (state.tokens[state.index-1].type.indexOf("TYPE") > -1);
         var secondTypeDeclaration = (state.tokens[state.index+1].type.indexOf("TYPE") > -1);
@@ -424,6 +461,12 @@ var declarations = {
           properties: []
         };
       }
+=======
+      /**
+       * Currently only handles collections
+       * TODO Extend to also include function bodies?
+       */
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
 
       var tmpLookAhead = state.tokens[state.index];
       if(tmpLookAhead.type === "DICTIONARY_END") {
@@ -552,6 +595,10 @@ var declarations = {
         state = advance(state, ")");
       }
 
+<<<<<<< HEAD
+=======
+      this.type = "unary";
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
       delete this.value;
       this.type = "ObjectExpression";
       this.properties = a;
@@ -685,13 +732,17 @@ var declarations = {
       if(this.test.type === "ExpressionStatement") {
         this.test = this.test.expression;
       }
+<<<<<<< HEAD
       if (state.token.value === '\\n') {
         state = advance(state);
       }
+=======
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
       state = advance(state, ")");
 
       this.consequent = block(state);
 
+<<<<<<< HEAD
       while (true) {
         if (state.token.value === '\\n') {
           state = advance(state);
@@ -700,6 +751,8 @@ var declarations = {
         }
       }
 
+=======
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
       /* block directly followed by else or else if statement? */
       if (state.token.id === "else") {
         state.scope.reserve(state.token);
@@ -755,7 +808,10 @@ var declarations = {
     });
 
     stmt(state, "break", function() {
+<<<<<<< HEAD
       this.type = "BreakStatement"
+=======
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
       state = advance(state, ";");
       if (state.token.id !== "}") {
         state.token.error("Unreachable statement.");
@@ -763,6 +819,7 @@ var declarations = {
       return this;
     });
 
+<<<<<<< HEAD
     //stmt(state, "switch", function() {
     //  this.type = "SwitchStatement";
     //  state = advance(state);
@@ -830,6 +887,8 @@ var declarations = {
     //  return this;
     //});
 
+=======
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
     stmt(state, "while", function() {
       this.type = "WhileStatement";
       if(state.tokens[state.index-1].value === "(") {

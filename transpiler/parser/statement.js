@@ -72,6 +72,7 @@ var statement = function(state) {
     state = advance(state);
   }
 
+<<<<<<< HEAD
   //if (state.token.value === '{') {
   //  state = advance(state, '{');
   //}
@@ -83,6 +84,8 @@ var statement = function(state) {
   //  }
   //}
 
+=======
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
   if(state.token.value === "EOF") {
     return v;
   } if(v.type === "FunctionDeclaration") {
