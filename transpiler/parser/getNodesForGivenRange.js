@@ -52,12 +52,12 @@ var getNodesForGivenRange = function(key, start, end) {
         "arguments": [
           {
             "type": "Literal",
-            "value": start,
+            "value": parseFloat(start),//TODO May need to handle doubles ex: 2.3
             "raw": ""+start
           },
           {
             "type": "Literal",
-            "value": end,
+            "value": parseFloat(end),//TODO May need to handle doubles ex: 2.3
             "raw": ""+end
           }
         ]

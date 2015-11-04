@@ -29,7 +29,7 @@ var declarations = {
     symbol(state, originalSymbol, "]");
     symbol(state, originalSymbol, "}");
     symbol(state, originalSymbol, ",");
-    symbol(state, originalSymbol, "else");
+    symbol(state, originalSymbol, "else").nud = helpers.itself;
     symbol(state, originalSymbol, "(literal)").nud = helpers.itself;
     symbol(state, originalSymbol, "this").nud = function() {
       state.scope.reserve(this);
@@ -202,6 +202,29 @@ var declarations = {
       return e;
     });
 
+    prefix(state, "new", function() {
+
+      //state = advance(state);
+
+      var newExpressionStmt = {};
+      newExpressionStmt.type = "NewExpression";
+
+
+      newExpressionStmt.callee = state.token;
+
+      state = advance(state);
+      var tmpVarArgs = expression(state);
+      if(!Array.isArray(tmpVarArgs)) {
+        tmpVarArgs = [tmpVarArgs];
+      }
+
+      newExpressionStmt.arguments = tmpVarArgs;
+
+
+
+      return newExpressionStmt;
+    });
+
     prefix(state, "func", function() {
       var a = [];
       state.scope = newScope(state, originalScope);
@@ -227,7 +250,6 @@ var declarations = {
           a.push(state.token);
           state = advance(state);
           if (state.token.id === ":") {
-
             while (true) {
               if (state.token.value !== ',' && state.token.value !== '{') {
                 state = advance(state);
@@ -235,10 +257,6 @@ var declarations = {
                 break;
               }
             }
-
-            //state = advance(state);
-            //state = advance(state);
-
           }
           if (state.token.id !== ",") {
             break;
@@ -667,9 +685,20 @@ var declarations = {
       if(this.test.type === "ExpressionStatement") {
         this.test = this.test.expression;
       }
+      if (state.token.value === '\\n') {
+        state = advance(state);
+      }
       state = advance(state, ")");
 
       this.consequent = block(state);
+
+      while (true) {
+        if (state.token.value === '\\n') {
+          state = advance(state);
+        } else {
+          break;
+        }
+      }
 
       /* block directly followed by else or else if statement? */
       if (state.token.id === "else") {
@@ -726,12 +755,80 @@ var declarations = {
     });
 
     stmt(state, "break", function() {
+      this.type = "BreakStatement"
       state = advance(state, ";");
       if (state.token.id !== "}") {
         state.token.error("Unreachable statement.");
       }
       return this;
     });
+
+    //stmt(state, "switch", function() {
+    //  this.type = "SwitchStatement";
+    //  state = advance(state);
+    //  this.discriminant = {
+    //    type: "Identifier",
+    //    name: "x" // this is a placeholder
+    //  };
+    //
+    //  this.cases = [
+    //    {
+    //      type: "SwitchCase",
+    //      test: {
+    //        type: "Literal",
+    //        value: 1,// these are just placeholders
+    //        raw: "1"// these are just placeholders
+    //      },
+    //      consequent: [{
+    //
+    //        type: "ExpressionStatement",
+    //        expression: {
+    //          type: "AssignmentExpression",
+    //          operator: "+=",
+    //          left: {
+    //            type: "Identifier",
+    //            name: "y"
+    //          },
+    //          right: {
+    //            type: "Literal",
+    //            value: "positive", //these are placeholders
+    //            raw: "\"positive\"" // these are placeholders
+    //          }
+    //        }
+    //      },
+    //        {
+    //          type: "BreakStatement",
+    //          label: null
+    //        }
+    //      ]
+    //    }
+    //  ];
+    //
+    //  //state = advance(state);
+    //  if (state.token.value === '\\n') {
+    //    state = advance(state);
+    //  }
+    //  if (state.token.value === '{') {
+    //    this.body = block(state);
+    //  }
+    //  //if (state.token.id === "case") {
+    //  //  state.scope.reserve(state.token);
+    //  //  state = advance(state, "case");
+    //  //  this.alternate = state.token.id === "if" ? statement(state) : block(state);
+    //  //}
+    //  //} else {
+    //  //  this.alternate = null;
+    //  //}
+    //  //if (state.token.id !== "}") {
+    //  //  state.token.error("Unreachable statement.");
+    //  //}
+    //  return this;
+    //})
+
+    //stmt(state, 'case', function() {
+    //  this.type = 'SwitchCase';
+    //  return this;
+    //});
 
     stmt(state, "while", function() {
       this.type = "WhileStatement";

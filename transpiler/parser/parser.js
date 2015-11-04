@@ -21,6 +21,9 @@ var rearrangeTokensAddParens = require('./rearrangeTokensAddParens');
 var rangeFunctionInjector = require('./rangeFunctionInjector');
 var getNodesForGivenRange = require('./getNodesForGivenRange');
 var rearrangeTokensRanges = require('./rearrangeTokensRanges');
+var rearrangeTokensTuples = require('./rearrangeTokensTuples');
+var minimalTupleSource = require('../../tupleDataStructure/minimalTupleSource');
+
 
 var makeParser = function() {
 
@@ -39,12 +42,16 @@ var makeParser = function() {
   declarations.constants(state);
 
   var parseTokenStream = function(inputTokens) {
+
     var intermediaryTokenStream = helpers.cleanUpTokenStream(inputTokens);
     var intermediary = rearrangeTokensDynamicDictionaryAssignment(intermediaryTokenStream);
     var intermediary2 = rearrangeTokensPrintToConsoleLog(intermediary);
     var intermediary3 = rearrangeTokensDictionaryKeyValueIteration(intermediary2);
     var intermediary4 = rearrangeTokensVariadicParams(intermediary3);
-    state.tokens = rearrangeTokensAddParens(intermediary4);
+    var intermediary5 = rearrangeTokensAddParens(intermediary4);
+    var intermediary6 = rearrangeTokensTuples(intermediary5);
+    var preRangeMutatedTokens = intermediary5.slice();
+    state.tokens = rearrangeTokensRanges(intermediary6);
     state.scope = newScope(state, originalScope);
 
     /* Define globally accessible objects */
@@ -67,8 +74,22 @@ var makeParser = function() {
     var identifierToken = Object.create(identifierSymbol);
     identifierToken.type = "Identifier";
     identifierToken.value = "arguments";
-
     state.scope.define(state, identifierToken);
+
+    /* sJs namespace*/
+    var identifierSymbolSJS = state.symbolTable["(name)"];
+    var identifierTokenSJS = Object.create(identifierSymbolSJS);
+    identifierTokenSJS.type = "Identifier";
+    identifierTokenSJS.value = "sJs";
+    state.scope.define(state, identifierTokenSJS);
+
+    /* Tuple namespace*/
+    var identifierSymbolSJS = state.symbolTable["(name)"];
+    var identifierTokenSJS = Object.create(identifierSymbolSJS);
+    identifierTokenSJS.type = "Identifier";
+    identifierTokenSJS.value = "Tuple";
+    state.scope.define(state, identifierTokenSJS);
+
 
     state = advance(state);
 
@@ -106,29 +127,52 @@ var makeParser = function() {
       }
     }
 
-    ///* check token stream for closed_range token */
-    //var includeRangeFunctionInjection = false;
-    //var range = {};
-    //for(var h=0; h<state.tokens.length; h++) {
-    //  if(state.tokens[h].type === "CLOSED_RANGE") {
-    //    includeRangeFunctionInjection = true;
-    //    range.startIndex = h-1;
-    //    range.startValue = state.tokens[range.startIndex].value;
-    //    range.endIndex = h+1;
-    //    range.endValue = state.tokens[range.endIndex].value;
-    //    range.concatKey = range.startValue + "to" + range.endValue;
-    //  }
-    //}
-    //
-    //var specificRangeAssignment = getNodesForGivenRange(range.concatKey, range.startValue, range.endValue);
-    //bodyNodes.unshift(specificRangeAssignment);
-    //bodyNodes.unshift(rangeFunctionInjector);
-    //
-    //var identifierSymbolSJS = state.symbolTable["(name)"];
-    //var identifierTokenSJS = Object.create(identifierSymbolSJS);
-    //identifierTokenSJS.type = "Identifier";
-    //identifierTokenSJS.value = "sJs";
-    //state.scope.define(state, identifierTokenSJS);
+
+    /* check token stream for closed_range token */
+    var includesRange = false;
+    var includesTuple = false;
+    var range = {};
+    var container = [];
+    for (var h = 0; h < preRangeMutatedTokens.length; h++) {
+      if (preRangeMutatedTokens[h].type.indexOf("RANGE") > -1) {
+        includesRange = true;
+        range.startIndex = h - 1;
+        range.startValue = preRangeMutatedTokens[range.startIndex].value;
+        range.endIndex = h + 1;
+        range.endValue = preRangeMutatedTokens[range.endIndex].value;
+
+        if (preRangeMutatedTokens[h].type === "CLOSED_RANGE") {
+          range.startValue = preRangeMutatedTokens[range.startIndex].value;
+          range.endValue = preRangeMutatedTokens[range.endIndex].value;
+          range.concatKey = range.startValue + "to" + range.endValue;
+          var specificRangeAssignment = getNodesForGivenRange(range.concatKey, range.startValue, range.endValue);
+          container.push(specificRangeAssignment);
+        } else if (preRangeMutatedTokens[h].type === "HALF_OPEN_RANGE") {
+          range.startValue = preRangeMutatedTokens[range.startIndex].value;
+          range.endValue = preRangeMutatedTokens[range.endIndex].value - 1;
+          range.concatKey = range.startValue + "to" + range.endValue;
+          var specificRangeAssignment = getNodesForGivenRange(range.concatKey, range.startValue, range.endValue);
+          container.push(specificRangeAssignment);
+        }
+
+      } else if(preRangeMutatedTokens[h].value === "Tuple") {
+        includesTuple = true;
+      }
+
+    }
+
+    if(includesRange) {
+      for (var i = container.length - 1; i >= 0; i--) {
+        bodyNodes.unshift(container[i]);
+      }
+      bodyNodes.unshift(rangeFunctionInjector);
+    }
+    if(includesTuple) {
+      for(var i=minimalTupleSource.length - 1; i >= 0; i--) {
+        bodyNodes.unshift(minimalTupleSource[i]);
+      }
+    }
+
 
     var result = {
       type: 'Program',
