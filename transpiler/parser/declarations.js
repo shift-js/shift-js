@@ -29,7 +29,7 @@ var declarations = {
     symbol(state, originalSymbol, "]");
     symbol(state, originalSymbol, "}");
     symbol(state, originalSymbol, ",");
-    symbol(state, originalSymbol, "else");
+    symbol(state, originalSymbol, "else").nud = helpers.itself;
     symbol(state, originalSymbol, "(literal)").nud = helpers.itself;
     symbol(state, originalSymbol, "this").nud = function() {
       state.scope.reserve(this);
@@ -131,6 +131,7 @@ var declarations = {
         this.object = left.object;
 
         //this.object.name = this.object.value;//TODO Add logic, sometimes necessary
+        console.log(this.object.value);
         delete this.object.value;
         //this.object.type = "Identifier";//TODO Needs to go (at least in this case)
         this.property = left.property;
@@ -201,6 +202,29 @@ var declarations = {
       return e;
     });
 
+    prefix(state, "new", function() {
+
+      //state = advance(state);
+
+      var newExpressionStmt = {};
+      newExpressionStmt.type = "NewExpression";
+
+
+      newExpressionStmt.callee = state.token;
+
+      state = advance(state);
+      var tmpVarArgs = expression(state);
+      if(!Array.isArray(tmpVarArgs)) {
+        tmpVarArgs = [tmpVarArgs];
+      }
+
+      newExpressionStmt.arguments = tmpVarArgs;
+
+
+
+      return newExpressionStmt;
+    });
+
     prefix(state, "func", function() {
       var a = [];
       state.scope = newScope(state, originalScope);
@@ -226,7 +250,6 @@ var declarations = {
           a.push(state.token);
           state = advance(state);
           if (state.token.id === ":") {
-
             while (true) {
               if (state.token.value !== ',' && state.token.value !== '{') {
                 state = advance(state);
@@ -234,10 +257,6 @@ var declarations = {
                 break;
               }
             }
-
-            //state = advance(state);
-            //state = advance(state);
-
           }
           if (state.token.id !== ",") {
             break;
@@ -341,20 +360,33 @@ var declarations = {
 
     prefix(state, "[", function() {
       var a = [];
-      if (state.token.id !== "]") {
-        while (true) {
-          a.push(expression(state, 0));
-          if (state.token.id !== ",") {
-            break;
+
+      /* Handle Array initializer syntax */
+      if(state.tokens[state.index].type === "ARRAY_END") {
+        state = advance(state);
+      } else {
+        if (state.token.id !== "]") {
+          while (true) {
+            a.push(expression(state, 0));
+            if (state.token.id !== ",") {
+              break;
+            }
+            state = advance(state, ",");
           }
-          state = advance(state, ",");
         }
       }
+
       state = advance(state, "]");
       this.type = "ArrayExpression";
       delete this.value;
       delete this.raw;
       this.elements = a;
+
+      if(state.token.value === "(" && state.tokens[state.index].value === ")") {
+        state = advance(state);
+        state = advance(state);
+      }
+
       return this;
     });
 
@@ -370,10 +402,28 @@ var declarations = {
         }
       }
 
-      /**
-       * Currently only handles collections
-       * TODO Extend to also include function bodies?
-       */
+      if(state.tokens[state.index-1] && state.tokens[state.index+2]) {
+        var firstTypeDeclaration = (state.tokens[state.index-1].type.indexOf("TYPE") > -1);
+        var secondTypeDeclaration = (state.tokens[state.index+1].type.indexOf("TYPE") > -1);
+        var dictionaryEnd = (state.tokens[state.index+2].type === "DICTIONARY_END");
+      }
+
+      /* Check for Dictionary initializer syntax */
+      if(firstTypeDeclaration && secondTypeDeclaration && dictionaryEnd) {
+        while(true) {
+          if(state.token.value === "]") {
+            state = advance(state, "]");
+            break;
+          }
+          state = advance(state);
+        }
+        state = advance(state, "(");
+        state = advance(state, ")");
+        return {
+          type: "ObjectExpression",
+          properties: []
+        };
+      }
 
       var tmpLookAhead = state.tokens[state.index];
       if(tmpLookAhead.type === "DICTIONARY_END") {
@@ -502,7 +552,6 @@ var declarations = {
         state = advance(state, ")");
       }
 
-      this.type = "unary";
       delete this.value;
       this.type = "ObjectExpression";
       this.properties = a;
@@ -636,9 +685,20 @@ var declarations = {
       if(this.test.type === "ExpressionStatement") {
         this.test = this.test.expression;
       }
+      if (state.token.value === '\\n') {
+        state = advance(state);
+      }
       state = advance(state, ")");
 
       this.consequent = block(state);
+
+      while (true) {
+        if (state.token.value === '\\n') {
+          state = advance(state);
+        } else {
+          break;
+        }
+      }
 
       /* block directly followed by else or else if statement? */
       if (state.token.id === "else") {

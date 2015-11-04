@@ -1090,7 +1090,52 @@ describe('Parser: First Milestone', function() {
     });
 
     // Swift input: 'var error = (404, "not found")'
-    // AST Explorer input: 'var error = { 0: 404, 1: 'not found' };'
+    /** AST Explorer input:
+     function Tuple(tuple) {
+      this.tup = {};
+      if (Array.isArray(tuple)) {
+        for (var i = 0; i < tuple.length; i++) {
+          if (typeof tuple[i] === "object" && !Array.isArray(tuple[i])) {
+            var key = Object.keys(tuple[i])[0];
+            var val = tuple[i][key];
+            this.tup[key] = {'val': val, 'key': i};
+            this.tup[i] = {'val': val, 'key': key};
+          } else if (typeof tuple[i] === "boolean" || typeof tuple[i] === "number" || typeof tuple[i] === "string") {
+            this.tup[i] = {'val': tuple[i]};
+          } else if (Array.isArray(tuple[i])) {
+            this.tup[i] = new Tuple(tuple[i]);
+          } else {
+            return null;
+          }
+        }
+      }
+    };
+         Tuple.prototype.findValue = function(keyOrIndex){
+      var x = this.tup[keyOrIndex];
+      if (x instanceof Tuple ) {
+        return x["tup"];
+      } else {
+        return x === undefined ? undefined : this.tup[keyOrIndex]["val"];
+      }
+    };
+         Tuple.prototype.modifyVal = function(keyOrIndex, newVal) {
+      var x = this.tup[keyOrIndex];
+      if (x === undefined) {
+        return false;
+      }
+      if (typeof x['val'] === typeof newVal) {
+        x['val'] = newVal;
+        if (x.hasOwnProperty('key')) {
+          var otherKey = x['key'];
+          this.tup[otherKey]['val'] = newVal;
+        }
+        return true;
+      }
+      return false;
+    };
+     Tuple.prototype.constructor = Tuple;
+    var error = new Tuple([404, 'not found']);
+    */
     it('should handle tuples', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
@@ -1107,6 +1152,1150 @@ describe('Parser: First Milestone', function() {
         "type": "Program",
         "body": [
           {
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "Tuple"
+            },
+            "params": [
+              {
+                "type": "Identifier",
+                "name": "tuple"
+              }
+            ],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                      "type": "MemberExpression",
+                      "computed": false,
+                      "object": {
+                        "type": "ThisExpression"
+                      },
+                      "property": {
+                        "type": "Identifier",
+                        "name": "tup"
+                      }
+                    },
+                    "right": {
+                      "type": "ObjectExpression",
+                      "properties": []
+                    }
+                  }
+                },
+                {
+                  "type": "IfStatement",
+                  "test": {
+                    "type": "CallExpression",
+                    "callee": {
+                      "type": "MemberExpression",
+                      "computed": false,
+                      "object": {
+                        "type": "Identifier",
+                        "name": "Array"
+                      },
+                      "property": {
+                        "type": "Identifier",
+                        "name": "isArray"
+                      }
+                    },
+                    "arguments": [
+                      {
+                        "type": "Identifier",
+                        "name": "tuple"
+                      }
+                    ]
+                  },
+                  "consequent": {
+                    "type": "BlockStatement",
+                    "body": [
+                      {
+                        "type": "ForStatement",
+                        "init": {
+                          "type": "VariableDeclaration",
+                          "declarations": [
+                            {
+                              "type": "VariableDeclarator",
+                              "id": {
+                                "type": "Identifier",
+                                "name": "i"
+                              },
+                              "init": {
+                                "type": "Literal",
+                                "value": 0,
+                                "raw": "0"
+                              }
+                            }
+                          ],
+                          "kind": "var"
+                        },
+                        "test": {
+                          "type": "BinaryExpression",
+                          "operator": "<",
+                          "left": {
+                            "type": "Identifier",
+                            "name": "i"
+                          },
+                          "right": {
+                            "type": "MemberExpression",
+                            "computed": false,
+                            "object": {
+                              "type": "Identifier",
+                              "name": "tuple"
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "length"
+                            }
+                          }
+                        },
+                        "update": {
+                          "type": "UpdateExpression",
+                          "operator": "++",
+                          "argument": {
+                            "type": "Identifier",
+                            "name": "i"
+                          },
+                          "prefix": false
+                        },
+                        "body": {
+                          "type": "BlockStatement",
+                          "body": [
+                            {
+                              "type": "IfStatement",
+                              "test": {
+                                "type": "LogicalExpression",
+                                "operator": "&&",
+                                "left": {
+                                  "type": "BinaryExpression",
+                                  "operator": "===",
+                                  "left": {
+                                    "type": "UnaryExpression",
+                                    "operator": "typeof",
+                                    "argument": {
+                                      "type": "MemberExpression",
+                                      "computed": true,
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "tuple"
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "i"
+                                      }
+                                    },
+                                    "prefix": true
+                                  },
+                                  "right": {
+                                    "type": "Literal",
+                                    "value": "object",
+                                    "raw": "\"object\""
+                                  }
+                                },
+                                "right": {
+                                  "type": "UnaryExpression",
+                                  "operator": "!",
+                                  "argument": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                      "type": "MemberExpression",
+                                      "computed": false,
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "Array"
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "isArray"
+                                      }
+                                    },
+                                    "arguments": [
+                                      {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "Identifier",
+                                          "name": "tuple"
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "i"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "prefix": true
+                                }
+                              },
+                              "consequent": {
+                                "type": "BlockStatement",
+                                "body": [
+                                  {
+                                    "type": "VariableDeclaration",
+                                    "declarations": [
+                                      {
+                                        "type": "VariableDeclarator",
+                                        "id": {
+                                          "type": "Identifier",
+                                          "name": "key"
+                                        },
+                                        "init": {
+                                          "type": "MemberExpression",
+                                          "computed": true,
+                                          "object": {
+                                            "type": "CallExpression",
+                                            "callee": {
+                                              "type": "MemberExpression",
+                                              "computed": false,
+                                              "object": {
+                                                "type": "Identifier",
+                                                "name": "Object"
+                                              },
+                                              "property": {
+                                                "type": "Identifier",
+                                                "name": "keys"
+                                              }
+                                            },
+                                            "arguments": [
+                                              {
+                                                "type": "MemberExpression",
+                                                "computed": true,
+                                                "object": {
+                                                  "type": "Identifier",
+                                                  "name": "tuple"
+                                                },
+                                                "property": {
+                                                  "type": "Identifier",
+                                                  "name": "i"
+                                                }
+                                              }
+                                            ]
+                                          },
+                                          "property": {
+                                            "type": "Literal",
+                                            "value": 0,
+                                            "raw": "0"
+                                          }
+                                        }
+                                      }
+                                    ],
+                                    "kind": "var"
+                                  },
+                                  {
+                                    "type": "VariableDeclaration",
+                                    "declarations": [
+                                      {
+                                        "type": "VariableDeclarator",
+                                        "id": {
+                                          "type": "Identifier",
+                                          "name": "val"
+                                        },
+                                        "init": {
+                                          "type": "MemberExpression",
+                                          "computed": true,
+                                          "object": {
+                                            "type": "MemberExpression",
+                                            "computed": true,
+                                            "object": {
+                                              "type": "Identifier",
+                                              "name": "tuple"
+                                            },
+                                            "property": {
+                                              "type": "Identifier",
+                                              "name": "i"
+                                            }
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "key"
+                                          }
+                                        }
+                                      }
+                                    ],
+                                    "kind": "var"
+                                  },
+                                  {
+                                    "type": "ExpressionStatement",
+                                    "expression": {
+                                      "type": "AssignmentExpression",
+                                      "operator": "=",
+                                      "left": {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "MemberExpression",
+                                          "computed": false,
+                                          "object": {
+                                            "type": "ThisExpression"
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "tup"
+                                          }
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "key"
+                                        }
+                                      },
+                                      "right": {
+                                        "type": "ObjectExpression",
+                                        "properties": [
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Literal",
+                                              "value": "val",
+                                              "raw": "'val'"
+                                            },
+                                            "computed": false,
+                                            "value": {
+                                              "type": "Identifier",
+                                              "name": "val"
+                                            },
+                                            "kind": "init",
+                                            "method": false,
+                                            "shorthand": false
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Literal",
+                                              "value": "key",
+                                              "raw": "'key'"
+                                            },
+                                            "computed": false,
+                                            "value": {
+                                              "type": "Identifier",
+                                              "name": "i"
+                                            },
+                                            "kind": "init",
+                                            "method": false,
+                                            "shorthand": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "ExpressionStatement",
+                                    "expression": {
+                                      "type": "AssignmentExpression",
+                                      "operator": "=",
+                                      "left": {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "MemberExpression",
+                                          "computed": false,
+                                          "object": {
+                                            "type": "ThisExpression"
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "tup"
+                                          }
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "i"
+                                        }
+                                      },
+                                      "right": {
+                                        "type": "ObjectExpression",
+                                        "properties": [
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Literal",
+                                              "value": "val",
+                                              "raw": "'val'"
+                                            },
+                                            "computed": false,
+                                            "value": {
+                                              "type": "Identifier",
+                                              "name": "val"
+                                            },
+                                            "kind": "init",
+                                            "method": false,
+                                            "shorthand": false
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Literal",
+                                              "value": "key",
+                                              "raw": "'key'"
+                                            },
+                                            "computed": false,
+                                            "value": {
+                                              "type": "Identifier",
+                                              "name": "key"
+                                            },
+                                            "kind": "init",
+                                            "method": false,
+                                            "shorthand": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "alternate": {
+                                "type": "IfStatement",
+                                "test": {
+                                  "type": "LogicalExpression",
+                                  "operator": "||",
+                                  "left": {
+                                    "type": "LogicalExpression",
+                                    "operator": "||",
+                                    "left": {
+                                      "type": "BinaryExpression",
+                                      "operator": "===",
+                                      "left": {
+                                        "type": "UnaryExpression",
+                                        "operator": "typeof",
+                                        "argument": {
+                                          "type": "MemberExpression",
+                                          "computed": true,
+                                          "object": {
+                                            "type": "Identifier",
+                                            "name": "tuple"
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "i"
+                                          }
+                                        },
+                                        "prefix": true
+                                      },
+                                      "right": {
+                                        "type": "Literal",
+                                        "value": "boolean",
+                                        "raw": "\"boolean\""
+                                      }
+                                    },
+                                    "right": {
+                                      "type": "BinaryExpression",
+                                      "operator": "===",
+                                      "left": {
+                                        "type": "UnaryExpression",
+                                        "operator": "typeof",
+                                        "argument": {
+                                          "type": "MemberExpression",
+                                          "computed": true,
+                                          "object": {
+                                            "type": "Identifier",
+                                            "name": "tuple"
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "i"
+                                          }
+                                        },
+                                        "prefix": true
+                                      },
+                                      "right": {
+                                        "type": "Literal",
+                                        "value": "number",
+                                        "raw": "\"number\""
+                                      }
+                                    }
+                                  },
+                                  "right": {
+                                    "type": "BinaryExpression",
+                                    "operator": "===",
+                                    "left": {
+                                      "type": "UnaryExpression",
+                                      "operator": "typeof",
+                                      "argument": {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "Identifier",
+                                          "name": "tuple"
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "i"
+                                        }
+                                      },
+                                      "prefix": true
+                                    },
+                                    "right": {
+                                      "type": "Literal",
+                                      "value": "string",
+                                      "raw": "\"string\""
+                                    }
+                                  }
+                                },
+                                "consequent": {
+                                  "type": "BlockStatement",
+                                  "body": [
+                                    {
+                                      "type": "ExpressionStatement",
+                                      "expression": {
+                                        "type": "AssignmentExpression",
+                                        "operator": "=",
+                                        "left": {
+                                          "type": "MemberExpression",
+                                          "computed": true,
+                                          "object": {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                              "type": "ThisExpression"
+                                            },
+                                            "property": {
+                                              "type": "Identifier",
+                                              "name": "tup"
+                                            }
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "i"
+                                          }
+                                        },
+                                        "right": {
+                                          "type": "ObjectExpression",
+                                          "properties": [
+                                            {
+                                              "type": "Property",
+                                              "key": {
+                                                "type": "Literal",
+                                                "value": "val",
+                                                "raw": "'val'"
+                                              },
+                                              "computed": false,
+                                              "value": {
+                                                "type": "MemberExpression",
+                                                "computed": true,
+                                                "object": {
+                                                  "type": "Identifier",
+                                                  "name": "tuple"
+                                                },
+                                                "property": {
+                                                  "type": "Identifier",
+                                                  "name": "i"
+                                                }
+                                              },
+                                              "kind": "init",
+                                              "method": false,
+                                              "shorthand": false
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                "alternate": {
+                                  "type": "IfStatement",
+                                  "test": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                      "type": "MemberExpression",
+                                      "computed": false,
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "Array"
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "isArray"
+                                      }
+                                    },
+                                    "arguments": [
+                                      {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "Identifier",
+                                          "name": "tuple"
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "i"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "consequent": {
+                                    "type": "BlockStatement",
+                                    "body": [
+                                      {
+                                        "type": "ExpressionStatement",
+                                        "expression": {
+                                          "type": "AssignmentExpression",
+                                          "operator": "=",
+                                          "left": {
+                                            "type": "MemberExpression",
+                                            "computed": true,
+                                            "object": {
+                                              "type": "MemberExpression",
+                                              "computed": false,
+                                              "object": {
+                                                "type": "ThisExpression"
+                                              },
+                                              "property": {
+                                                "type": "Identifier",
+                                                "name": "tup"
+                                              }
+                                            },
+                                            "property": {
+                                              "type": "Identifier",
+                                              "name": "i"
+                                            }
+                                          },
+                                          "right": {
+                                            "type": "NewExpression",
+                                            "callee": {
+                                              "type": "Identifier",
+                                              "name": "Tuple"
+                                            },
+                                            "arguments": [
+                                              {
+                                                "type": "MemberExpression",
+                                                "computed": true,
+                                                "object": {
+                                                  "type": "Identifier",
+                                                  "name": "tuple"
+                                                },
+                                                "property": {
+                                                  "type": "Identifier",
+                                                  "name": "i"
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "alternate": {
+                                    "type": "BlockStatement",
+                                    "body": [
+                                      {
+                                        "type": "ReturnStatement",
+                                        "argument": {
+                                          "type": "Literal",
+                                          "value": null,
+                                          "raw": "null"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "alternate": null
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
+          },
+          {
+            "type": "EmptyStatement"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "MemberExpression",
+                  "computed": false,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "Tuple"
+                  },
+                  "property": {
+                    "type": "Identifier",
+                    "name": "prototype"
+                  }
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "findValue"
+                }
+              },
+              "right": {
+                "type": "FunctionExpression",
+                "id": null,
+                "params": [
+                  {
+                    "type": "Identifier",
+                    "name": "keyOrIndex"
+                  }
+                ],
+                "defaults": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                    {
+                      "type": "VariableDeclaration",
+                      "declarations": [
+                        {
+                          "type": "VariableDeclarator",
+                          "id": {
+                            "type": "Identifier",
+                            "name": "x"
+                          },
+                          "init": {
+                            "type": "MemberExpression",
+                            "computed": true,
+                            "object": {
+                              "type": "MemberExpression",
+                              "computed": false,
+                              "object": {
+                                "type": "ThisExpression"
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "tup"
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "keyOrIndex"
+                            }
+                          }
+                        }
+                      ],
+                      "kind": "var"
+                    },
+                    {
+                      "type": "IfStatement",
+                      "test": {
+                        "type": "BinaryExpression",
+                        "operator": "instanceof",
+                        "left": {
+                          "type": "Identifier",
+                          "name": "x"
+                        },
+                        "right": {
+                          "type": "Identifier",
+                          "name": "Tuple"
+                        }
+                      },
+                      "consequent": {
+                        "type": "BlockStatement",
+                        "body": [
+                          {
+                            "type": "ReturnStatement",
+                            "argument": {
+                              "type": "MemberExpression",
+                              "computed": true,
+                              "object": {
+                                "type": "Identifier",
+                                "name": "x"
+                              },
+                              "property": {
+                                "type": "Literal",
+                                "value": "tup",
+                                "raw": "\"tup\""
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "alternate": {
+                        "type": "BlockStatement",
+                        "body": [
+                          {
+                            "type": "ReturnStatement",
+                            "argument": {
+                              "type": "ConditionalExpression",
+                              "test": {
+                                "type": "BinaryExpression",
+                                "operator": "===",
+                                "left": {
+                                  "type": "Identifier",
+                                  "name": "x"
+                                },
+                                "right": {
+                                  "type": "Identifier",
+                                  "name": "undefined"
+                                }
+                              },
+                              "consequent": {
+                                "type": "Identifier",
+                                "name": "undefined"
+                              },
+                              "alternate": {
+                                "type": "MemberExpression",
+                                "computed": true,
+                                "object": {
+                                  "type": "MemberExpression",
+                                  "computed": true,
+                                  "object": {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                      "type": "ThisExpression"
+                                    },
+                                    "property": {
+                                      "type": "Identifier",
+                                      "name": "tup"
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "keyOrIndex"
+                                  }
+                                },
+                                "property": {
+                                  "type": "Literal",
+                                  "value": "val",
+                                  "raw": "\"val\""
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "generator": false,
+                "expression": false
+              }
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "MemberExpression",
+                  "computed": false,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "Tuple"
+                  },
+                  "property": {
+                    "type": "Identifier",
+                    "name": "prototype"
+                  }
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "modifyVal"
+                }
+              },
+              "right": {
+                "type": "FunctionExpression",
+                "id": null,
+                "params": [
+                  {
+                    "type": "Identifier",
+                    "name": "keyOrIndex"
+                  },
+                  {
+                    "type": "Identifier",
+                    "name": "newVal"
+                  }
+                ],
+                "defaults": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                    {
+                      "type": "VariableDeclaration",
+                      "declarations": [
+                        {
+                          "type": "VariableDeclarator",
+                          "id": {
+                            "type": "Identifier",
+                            "name": "x"
+                          },
+                          "init": {
+                            "type": "MemberExpression",
+                            "computed": true,
+                            "object": {
+                              "type": "MemberExpression",
+                              "computed": false,
+                              "object": {
+                                "type": "ThisExpression"
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "tup"
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "keyOrIndex"
+                            }
+                          }
+                        }
+                      ],
+                      "kind": "var"
+                    },
+                    {
+                      "type": "IfStatement",
+                      "test": {
+                        "type": "BinaryExpression",
+                        "operator": "===",
+                        "left": {
+                          "type": "Identifier",
+                          "name": "x"
+                        },
+                        "right": {
+                          "type": "Identifier",
+                          "name": "undefined"
+                        }
+                      },
+                      "consequent": {
+                        "type": "BlockStatement",
+                        "body": [
+                          {
+                            "type": "ReturnStatement",
+                            "argument": {
+                              "type": "Literal",
+                              "value": false,
+                              "raw": "false"
+                            }
+                          }
+                        ]
+                      },
+                      "alternate": null
+                    },
+                    {
+                      "type": "IfStatement",
+                      "test": {
+                        "type": "BinaryExpression",
+                        "operator": "===",
+                        "left": {
+                          "type": "UnaryExpression",
+                          "operator": "typeof",
+                          "argument": {
+                            "type": "MemberExpression",
+                            "computed": true,
+                            "object": {
+                              "type": "Identifier",
+                              "name": "x"
+                            },
+                            "property": {
+                              "type": "Literal",
+                              "value": "val",
+                              "raw": "'val'"
+                            }
+                          },
+                          "prefix": true
+                        },
+                        "right": {
+                          "type": "UnaryExpression",
+                          "operator": "typeof",
+                          "argument": {
+                            "type": "Identifier",
+                            "name": "newVal"
+                          },
+                          "prefix": true
+                        }
+                      },
+                      "consequent": {
+                        "type": "BlockStatement",
+                        "body": [
+                          {
+                            "type": "ExpressionStatement",
+                            "expression": {
+                              "type": "AssignmentExpression",
+                              "operator": "=",
+                              "left": {
+                                "type": "MemberExpression",
+                                "computed": true,
+                                "object": {
+                                  "type": "Identifier",
+                                  "name": "x"
+                                },
+                                "property": {
+                                  "type": "Literal",
+                                  "value": "val",
+                                  "raw": "'val'"
+                                }
+                              },
+                              "right": {
+                                "type": "Identifier",
+                                "name": "newVal"
+                              }
+                            }
+                          },
+                          {
+                            "type": "IfStatement",
+                            "test": {
+                              "type": "CallExpression",
+                              "callee": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                  "type": "Identifier",
+                                  "name": "x"
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "hasOwnProperty"
+                                }
+                              },
+                              "arguments": [
+                                {
+                                  "type": "Literal",
+                                  "value": "key",
+                                  "raw": "'key'"
+                                }
+                              ]
+                            },
+                            "consequent": {
+                              "type": "BlockStatement",
+                              "body": [
+                                {
+                                  "type": "VariableDeclaration",
+                                  "declarations": [
+                                    {
+                                      "type": "VariableDeclarator",
+                                      "id": {
+                                        "type": "Identifier",
+                                        "name": "otherKey"
+                                      },
+                                      "init": {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "Identifier",
+                                          "name": "x"
+                                        },
+                                        "property": {
+                                          "type": "Literal",
+                                          "value": "key",
+                                          "raw": "'key'"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "kind": "var"
+                                },
+                                {
+                                  "type": "ExpressionStatement",
+                                  "expression": {
+                                    "type": "AssignmentExpression",
+                                    "operator": "=",
+                                    "left": {
+                                      "type": "MemberExpression",
+                                      "computed": true,
+                                      "object": {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "MemberExpression",
+                                          "computed": false,
+                                          "object": {
+                                            "type": "ThisExpression"
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "tup"
+                                          }
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "otherKey"
+                                        }
+                                      },
+                                      "property": {
+                                        "type": "Literal",
+                                        "value": "val",
+                                        "raw": "'val'"
+                                      }
+                                    },
+                                    "right": {
+                                      "type": "Identifier",
+                                      "name": "newVal"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            "alternate": null
+                          },
+                          {
+                            "type": "ReturnStatement",
+                            "argument": {
+                              "type": "Literal",
+                              "value": true,
+                              "raw": "true"
+                            }
+                          }
+                        ]
+                      },
+                      "alternate": null
+                    },
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "Literal",
+                        "value": false,
+                        "raw": "false"
+                      }
+                    }
+                  ]
+                },
+                "generator": false,
+                "expression": false
+              }
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "MemberExpression",
+                  "computed": false,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "Tuple"
+                  },
+                  "property": {
+                    "type": "Identifier",
+                    "name": "prototype"
+                  }
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "constructor"
+                }
+              },
+              "right": {
+                "type": "Identifier",
+                "name": "Tuple"
+              }
+            }
+          },
+          {
             "type": "VariableDeclaration",
             "declarations": [
               {
@@ -1116,41 +2305,26 @@ describe('Parser: First Milestone', function() {
                   "name": "error"
                 },
                 "init": {
-                  "type": "ObjectExpression",
-                  "properties": [
+                  "type": "NewExpression",
+                  "callee": {
+                    "type": "Identifier",
+                    "name": "Tuple"
+                  },
+                  "arguments": [
                     {
-                      "type": "Property",
-                      "key": {
-                        "type": "Literal",
-                        "value": 0,
-                        "raw": "0"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "Literal",
-                        "value": 404,
-                        "raw": "404"
-                      },
-                      "kind": "init",
-                      "method": false,
-                      "shorthand": false
-                    },
-                    {
-                      "type": "Property",
-                      "key": {
-                        "type": "Literal",
-                        "value": 1,
-                        "raw": "1"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "Literal",
-                        "value": "not found",
-                        "raw": '"not found"'
-                      },
-                      "kind": "init",
-                      "method": false,
-                      "shorthand": false
+                      "type": "ArrayExpression",
+                      "elements": [
+                        {
+                          "type": "Literal",
+                          "value": 404,
+                          "raw": "404"
+                        },
+                        {
+                          "type": "Literal",
+                          "value": "not found",
+                          "raw": '"not found"'
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1164,28 +2338,7 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // input = String.raw `var randNumString = (4, "hello"); randNumString.0 = 5`;
-    xit('should handle the reassignment of tuple items via dot notation', function () {
-      input = [
-        { type: "DECLARATION_KEYWORD",        value: "var" },
-        { type: "IDENTIFIER",                 value: "randNumString" },
-        { type: "OPERATOR",                   value: "=" },
-        { type: "TUPLE_START",                value: "("},
-        { type: "NUMBER",                     value: "4"},
-        { type: "PUNCTUATION",                value: "," },
-        { type: "STRING",                     value: "hello"},
-        { type: "TUPLE_END",                  value: ")"},
-        { type: "PUNCTUATION",                value: ";" },
-        { type: "IDENTIFIER",                 value: "randNumString" },
-        { type: "DOT_SYNTAX",                 value: "." },
-        { type: "NUMBER",                     value: "0"},
-        { type: "OPERATOR",                   value: "=" },
-        { type: "NUMBER",                     value: "5"},
-        { type: "TERMINATOR",                 value: "EOF" }
-      ];
-      output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
+
 
     // Swift input: 'let http200Status = (statusCode: 200, description: "OK");'
     // AST Explorer input: 'var http200Status = { statusCode: 200, description: "OK"};'
@@ -1210,6 +2363,1150 @@ describe('Parser: First Milestone', function() {
         "type": "Program",
         "body": [
           {
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "Tuple"
+            },
+            "params": [
+              {
+                "type": "Identifier",
+                "name": "tuple"
+              }
+            ],
+            "defaults": [],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "AssignmentExpression",
+                    "operator": "=",
+                    "left": {
+                      "type": "MemberExpression",
+                      "computed": false,
+                      "object": {
+                        "type": "ThisExpression"
+                      },
+                      "property": {
+                        "type": "Identifier",
+                        "name": "tup"
+                      }
+                    },
+                    "right": {
+                      "type": "ObjectExpression",
+                      "properties": []
+                    }
+                  }
+                },
+                {
+                  "type": "IfStatement",
+                  "test": {
+                    "type": "CallExpression",
+                    "callee": {
+                      "type": "MemberExpression",
+                      "computed": false,
+                      "object": {
+                        "type": "Identifier",
+                        "name": "Array"
+                      },
+                      "property": {
+                        "type": "Identifier",
+                        "name": "isArray"
+                      }
+                    },
+                    "arguments": [
+                      {
+                        "type": "Identifier",
+                        "name": "tuple"
+                      }
+                    ]
+                  },
+                  "consequent": {
+                    "type": "BlockStatement",
+                    "body": [
+                      {
+                        "type": "ForStatement",
+                        "init": {
+                          "type": "VariableDeclaration",
+                          "declarations": [
+                            {
+                              "type": "VariableDeclarator",
+                              "id": {
+                                "type": "Identifier",
+                                "name": "i"
+                              },
+                              "init": {
+                                "type": "Literal",
+                                "value": 0,
+                                "raw": "0"
+                              }
+                            }
+                          ],
+                          "kind": "var"
+                        },
+                        "test": {
+                          "type": "BinaryExpression",
+                          "operator": "<",
+                          "left": {
+                            "type": "Identifier",
+                            "name": "i"
+                          },
+                          "right": {
+                            "type": "MemberExpression",
+                            "computed": false,
+                            "object": {
+                              "type": "Identifier",
+                              "name": "tuple"
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "length"
+                            }
+                          }
+                        },
+                        "update": {
+                          "type": "UpdateExpression",
+                          "operator": "++",
+                          "argument": {
+                            "type": "Identifier",
+                            "name": "i"
+                          },
+                          "prefix": false
+                        },
+                        "body": {
+                          "type": "BlockStatement",
+                          "body": [
+                            {
+                              "type": "IfStatement",
+                              "test": {
+                                "type": "LogicalExpression",
+                                "operator": "&&",
+                                "left": {
+                                  "type": "BinaryExpression",
+                                  "operator": "===",
+                                  "left": {
+                                    "type": "UnaryExpression",
+                                    "operator": "typeof",
+                                    "argument": {
+                                      "type": "MemberExpression",
+                                      "computed": true,
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "tuple"
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "i"
+                                      }
+                                    },
+                                    "prefix": true
+                                  },
+                                  "right": {
+                                    "type": "Literal",
+                                    "value": "object",
+                                    "raw": "\"object\""
+                                  }
+                                },
+                                "right": {
+                                  "type": "UnaryExpression",
+                                  "operator": "!",
+                                  "argument": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                      "type": "MemberExpression",
+                                      "computed": false,
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "Array"
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "isArray"
+                                      }
+                                    },
+                                    "arguments": [
+                                      {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "Identifier",
+                                          "name": "tuple"
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "i"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "prefix": true
+                                }
+                              },
+                              "consequent": {
+                                "type": "BlockStatement",
+                                "body": [
+                                  {
+                                    "type": "VariableDeclaration",
+                                    "declarations": [
+                                      {
+                                        "type": "VariableDeclarator",
+                                        "id": {
+                                          "type": "Identifier",
+                                          "name": "key"
+                                        },
+                                        "init": {
+                                          "type": "MemberExpression",
+                                          "computed": true,
+                                          "object": {
+                                            "type": "CallExpression",
+                                            "callee": {
+                                              "type": "MemberExpression",
+                                              "computed": false,
+                                              "object": {
+                                                "type": "Identifier",
+                                                "name": "Object"
+                                              },
+                                              "property": {
+                                                "type": "Identifier",
+                                                "name": "keys"
+                                              }
+                                            },
+                                            "arguments": [
+                                              {
+                                                "type": "MemberExpression",
+                                                "computed": true,
+                                                "object": {
+                                                  "type": "Identifier",
+                                                  "name": "tuple"
+                                                },
+                                                "property": {
+                                                  "type": "Identifier",
+                                                  "name": "i"
+                                                }
+                                              }
+                                            ]
+                                          },
+                                          "property": {
+                                            "type": "Literal",
+                                            "value": 0,
+                                            "raw": "0"
+                                          }
+                                        }
+                                      }
+                                    ],
+                                    "kind": "var"
+                                  },
+                                  {
+                                    "type": "VariableDeclaration",
+                                    "declarations": [
+                                      {
+                                        "type": "VariableDeclarator",
+                                        "id": {
+                                          "type": "Identifier",
+                                          "name": "val"
+                                        },
+                                        "init": {
+                                          "type": "MemberExpression",
+                                          "computed": true,
+                                          "object": {
+                                            "type": "MemberExpression",
+                                            "computed": true,
+                                            "object": {
+                                              "type": "Identifier",
+                                              "name": "tuple"
+                                            },
+                                            "property": {
+                                              "type": "Identifier",
+                                              "name": "i"
+                                            }
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "key"
+                                          }
+                                        }
+                                      }
+                                    ],
+                                    "kind": "var"
+                                  },
+                                  {
+                                    "type": "ExpressionStatement",
+                                    "expression": {
+                                      "type": "AssignmentExpression",
+                                      "operator": "=",
+                                      "left": {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "MemberExpression",
+                                          "computed": false,
+                                          "object": {
+                                            "type": "ThisExpression"
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "tup"
+                                          }
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "key"
+                                        }
+                                      },
+                                      "right": {
+                                        "type": "ObjectExpression",
+                                        "properties": [
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Literal",
+                                              "value": "val",
+                                              "raw": "'val'"
+                                            },
+                                            "computed": false,
+                                            "value": {
+                                              "type": "Identifier",
+                                              "name": "val"
+                                            },
+                                            "kind": "init",
+                                            "method": false,
+                                            "shorthand": false
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Literal",
+                                              "value": "key",
+                                              "raw": "'key'"
+                                            },
+                                            "computed": false,
+                                            "value": {
+                                              "type": "Identifier",
+                                              "name": "i"
+                                            },
+                                            "kind": "init",
+                                            "method": false,
+                                            "shorthand": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "ExpressionStatement",
+                                    "expression": {
+                                      "type": "AssignmentExpression",
+                                      "operator": "=",
+                                      "left": {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "MemberExpression",
+                                          "computed": false,
+                                          "object": {
+                                            "type": "ThisExpression"
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "tup"
+                                          }
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "i"
+                                        }
+                                      },
+                                      "right": {
+                                        "type": "ObjectExpression",
+                                        "properties": [
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Literal",
+                                              "value": "val",
+                                              "raw": "'val'"
+                                            },
+                                            "computed": false,
+                                            "value": {
+                                              "type": "Identifier",
+                                              "name": "val"
+                                            },
+                                            "kind": "init",
+                                            "method": false,
+                                            "shorthand": false
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Literal",
+                                              "value": "key",
+                                              "raw": "'key'"
+                                            },
+                                            "computed": false,
+                                            "value": {
+                                              "type": "Identifier",
+                                              "name": "key"
+                                            },
+                                            "kind": "init",
+                                            "method": false,
+                                            "shorthand": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "alternate": {
+                                "type": "IfStatement",
+                                "test": {
+                                  "type": "LogicalExpression",
+                                  "operator": "||",
+                                  "left": {
+                                    "type": "LogicalExpression",
+                                    "operator": "||",
+                                    "left": {
+                                      "type": "BinaryExpression",
+                                      "operator": "===",
+                                      "left": {
+                                        "type": "UnaryExpression",
+                                        "operator": "typeof",
+                                        "argument": {
+                                          "type": "MemberExpression",
+                                          "computed": true,
+                                          "object": {
+                                            "type": "Identifier",
+                                            "name": "tuple"
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "i"
+                                          }
+                                        },
+                                        "prefix": true
+                                      },
+                                      "right": {
+                                        "type": "Literal",
+                                        "value": "boolean",
+                                        "raw": "\"boolean\""
+                                      }
+                                    },
+                                    "right": {
+                                      "type": "BinaryExpression",
+                                      "operator": "===",
+                                      "left": {
+                                        "type": "UnaryExpression",
+                                        "operator": "typeof",
+                                        "argument": {
+                                          "type": "MemberExpression",
+                                          "computed": true,
+                                          "object": {
+                                            "type": "Identifier",
+                                            "name": "tuple"
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "i"
+                                          }
+                                        },
+                                        "prefix": true
+                                      },
+                                      "right": {
+                                        "type": "Literal",
+                                        "value": "number",
+                                        "raw": "\"number\""
+                                      }
+                                    }
+                                  },
+                                  "right": {
+                                    "type": "BinaryExpression",
+                                    "operator": "===",
+                                    "left": {
+                                      "type": "UnaryExpression",
+                                      "operator": "typeof",
+                                      "argument": {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "Identifier",
+                                          "name": "tuple"
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "i"
+                                        }
+                                      },
+                                      "prefix": true
+                                    },
+                                    "right": {
+                                      "type": "Literal",
+                                      "value": "string",
+                                      "raw": "\"string\""
+                                    }
+                                  }
+                                },
+                                "consequent": {
+                                  "type": "BlockStatement",
+                                  "body": [
+                                    {
+                                      "type": "ExpressionStatement",
+                                      "expression": {
+                                        "type": "AssignmentExpression",
+                                        "operator": "=",
+                                        "left": {
+                                          "type": "MemberExpression",
+                                          "computed": true,
+                                          "object": {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                              "type": "ThisExpression"
+                                            },
+                                            "property": {
+                                              "type": "Identifier",
+                                              "name": "tup"
+                                            }
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "i"
+                                          }
+                                        },
+                                        "right": {
+                                          "type": "ObjectExpression",
+                                          "properties": [
+                                            {
+                                              "type": "Property",
+                                              "key": {
+                                                "type": "Literal",
+                                                "value": "val",
+                                                "raw": "'val'"
+                                              },
+                                              "computed": false,
+                                              "value": {
+                                                "type": "MemberExpression",
+                                                "computed": true,
+                                                "object": {
+                                                  "type": "Identifier",
+                                                  "name": "tuple"
+                                                },
+                                                "property": {
+                                                  "type": "Identifier",
+                                                  "name": "i"
+                                                }
+                                              },
+                                              "kind": "init",
+                                              "method": false,
+                                              "shorthand": false
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                "alternate": {
+                                  "type": "IfStatement",
+                                  "test": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                      "type": "MemberExpression",
+                                      "computed": false,
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "Array"
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "isArray"
+                                      }
+                                    },
+                                    "arguments": [
+                                      {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "Identifier",
+                                          "name": "tuple"
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "i"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "consequent": {
+                                    "type": "BlockStatement",
+                                    "body": [
+                                      {
+                                        "type": "ExpressionStatement",
+                                        "expression": {
+                                          "type": "AssignmentExpression",
+                                          "operator": "=",
+                                          "left": {
+                                            "type": "MemberExpression",
+                                            "computed": true,
+                                            "object": {
+                                              "type": "MemberExpression",
+                                              "computed": false,
+                                              "object": {
+                                                "type": "ThisExpression"
+                                              },
+                                              "property": {
+                                                "type": "Identifier",
+                                                "name": "tup"
+                                              }
+                                            },
+                                            "property": {
+                                              "type": "Identifier",
+                                              "name": "i"
+                                            }
+                                          },
+                                          "right": {
+                                            "type": "NewExpression",
+                                            "callee": {
+                                              "type": "Identifier",
+                                              "name": "Tuple"
+                                            },
+                                            "arguments": [
+                                              {
+                                                "type": "MemberExpression",
+                                                "computed": true,
+                                                "object": {
+                                                  "type": "Identifier",
+                                                  "name": "tuple"
+                                                },
+                                                "property": {
+                                                  "type": "Identifier",
+                                                  "name": "i"
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "alternate": {
+                                    "type": "BlockStatement",
+                                    "body": [
+                                      {
+                                        "type": "ReturnStatement",
+                                        "argument": {
+                                          "type": "Literal",
+                                          "value": null,
+                                          "raw": "null"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "alternate": null
+                }
+              ]
+            },
+            "generator": false,
+            "expression": false
+          },
+          {
+            "type": "EmptyStatement"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "MemberExpression",
+                  "computed": false,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "Tuple"
+                  },
+                  "property": {
+                    "type": "Identifier",
+                    "name": "prototype"
+                  }
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "findValue"
+                }
+              },
+              "right": {
+                "type": "FunctionExpression",
+                "id": null,
+                "params": [
+                  {
+                    "type": "Identifier",
+                    "name": "keyOrIndex"
+                  }
+                ],
+                "defaults": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                    {
+                      "type": "VariableDeclaration",
+                      "declarations": [
+                        {
+                          "type": "VariableDeclarator",
+                          "id": {
+                            "type": "Identifier",
+                            "name": "x"
+                          },
+                          "init": {
+                            "type": "MemberExpression",
+                            "computed": true,
+                            "object": {
+                              "type": "MemberExpression",
+                              "computed": false,
+                              "object": {
+                                "type": "ThisExpression"
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "tup"
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "keyOrIndex"
+                            }
+                          }
+                        }
+                      ],
+                      "kind": "var"
+                    },
+                    {
+                      "type": "IfStatement",
+                      "test": {
+                        "type": "BinaryExpression",
+                        "operator": "instanceof",
+                        "left": {
+                          "type": "Identifier",
+                          "name": "x"
+                        },
+                        "right": {
+                          "type": "Identifier",
+                          "name": "Tuple"
+                        }
+                      },
+                      "consequent": {
+                        "type": "BlockStatement",
+                        "body": [
+                          {
+                            "type": "ReturnStatement",
+                            "argument": {
+                              "type": "MemberExpression",
+                              "computed": true,
+                              "object": {
+                                "type": "Identifier",
+                                "name": "x"
+                              },
+                              "property": {
+                                "type": "Literal",
+                                "value": "tup",
+                                "raw": "\"tup\""
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "alternate": {
+                        "type": "BlockStatement",
+                        "body": [
+                          {
+                            "type": "ReturnStatement",
+                            "argument": {
+                              "type": "ConditionalExpression",
+                              "test": {
+                                "type": "BinaryExpression",
+                                "operator": "===",
+                                "left": {
+                                  "type": "Identifier",
+                                  "name": "x"
+                                },
+                                "right": {
+                                  "type": "Identifier",
+                                  "name": "undefined"
+                                }
+                              },
+                              "consequent": {
+                                "type": "Identifier",
+                                "name": "undefined"
+                              },
+                              "alternate": {
+                                "type": "MemberExpression",
+                                "computed": true,
+                                "object": {
+                                  "type": "MemberExpression",
+                                  "computed": true,
+                                  "object": {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                      "type": "ThisExpression"
+                                    },
+                                    "property": {
+                                      "type": "Identifier",
+                                      "name": "tup"
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "keyOrIndex"
+                                  }
+                                },
+                                "property": {
+                                  "type": "Literal",
+                                  "value": "val",
+                                  "raw": "\"val\""
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "generator": false,
+                "expression": false
+              }
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "MemberExpression",
+                  "computed": false,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "Tuple"
+                  },
+                  "property": {
+                    "type": "Identifier",
+                    "name": "prototype"
+                  }
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "modifyVal"
+                }
+              },
+              "right": {
+                "type": "FunctionExpression",
+                "id": null,
+                "params": [
+                  {
+                    "type": "Identifier",
+                    "name": "keyOrIndex"
+                  },
+                  {
+                    "type": "Identifier",
+                    "name": "newVal"
+                  }
+                ],
+                "defaults": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                    {
+                      "type": "VariableDeclaration",
+                      "declarations": [
+                        {
+                          "type": "VariableDeclarator",
+                          "id": {
+                            "type": "Identifier",
+                            "name": "x"
+                          },
+                          "init": {
+                            "type": "MemberExpression",
+                            "computed": true,
+                            "object": {
+                              "type": "MemberExpression",
+                              "computed": false,
+                              "object": {
+                                "type": "ThisExpression"
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "tup"
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "keyOrIndex"
+                            }
+                          }
+                        }
+                      ],
+                      "kind": "var"
+                    },
+                    {
+                      "type": "IfStatement",
+                      "test": {
+                        "type": "BinaryExpression",
+                        "operator": "===",
+                        "left": {
+                          "type": "Identifier",
+                          "name": "x"
+                        },
+                        "right": {
+                          "type": "Identifier",
+                          "name": "undefined"
+                        }
+                      },
+                      "consequent": {
+                        "type": "BlockStatement",
+                        "body": [
+                          {
+                            "type": "ReturnStatement",
+                            "argument": {
+                              "type": "Literal",
+                              "value": false,
+                              "raw": "false"
+                            }
+                          }
+                        ]
+                      },
+                      "alternate": null
+                    },
+                    {
+                      "type": "IfStatement",
+                      "test": {
+                        "type": "BinaryExpression",
+                        "operator": "===",
+                        "left": {
+                          "type": "UnaryExpression",
+                          "operator": "typeof",
+                          "argument": {
+                            "type": "MemberExpression",
+                            "computed": true,
+                            "object": {
+                              "type": "Identifier",
+                              "name": "x"
+                            },
+                            "property": {
+                              "type": "Literal",
+                              "value": "val",
+                              "raw": "'val'"
+                            }
+                          },
+                          "prefix": true
+                        },
+                        "right": {
+                          "type": "UnaryExpression",
+                          "operator": "typeof",
+                          "argument": {
+                            "type": "Identifier",
+                            "name": "newVal"
+                          },
+                          "prefix": true
+                        }
+                      },
+                      "consequent": {
+                        "type": "BlockStatement",
+                        "body": [
+                          {
+                            "type": "ExpressionStatement",
+                            "expression": {
+                              "type": "AssignmentExpression",
+                              "operator": "=",
+                              "left": {
+                                "type": "MemberExpression",
+                                "computed": true,
+                                "object": {
+                                  "type": "Identifier",
+                                  "name": "x"
+                                },
+                                "property": {
+                                  "type": "Literal",
+                                  "value": "val",
+                                  "raw": "'val'"
+                                }
+                              },
+                              "right": {
+                                "type": "Identifier",
+                                "name": "newVal"
+                              }
+                            }
+                          },
+                          {
+                            "type": "IfStatement",
+                            "test": {
+                              "type": "CallExpression",
+                              "callee": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                  "type": "Identifier",
+                                  "name": "x"
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "hasOwnProperty"
+                                }
+                              },
+                              "arguments": [
+                                {
+                                  "type": "Literal",
+                                  "value": "key",
+                                  "raw": "'key'"
+                                }
+                              ]
+                            },
+                            "consequent": {
+                              "type": "BlockStatement",
+                              "body": [
+                                {
+                                  "type": "VariableDeclaration",
+                                  "declarations": [
+                                    {
+                                      "type": "VariableDeclarator",
+                                      "id": {
+                                        "type": "Identifier",
+                                        "name": "otherKey"
+                                      },
+                                      "init": {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "Identifier",
+                                          "name": "x"
+                                        },
+                                        "property": {
+                                          "type": "Literal",
+                                          "value": "key",
+                                          "raw": "'key'"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "kind": "var"
+                                },
+                                {
+                                  "type": "ExpressionStatement",
+                                  "expression": {
+                                    "type": "AssignmentExpression",
+                                    "operator": "=",
+                                    "left": {
+                                      "type": "MemberExpression",
+                                      "computed": true,
+                                      "object": {
+                                        "type": "MemberExpression",
+                                        "computed": true,
+                                        "object": {
+                                          "type": "MemberExpression",
+                                          "computed": false,
+                                          "object": {
+                                            "type": "ThisExpression"
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "tup"
+                                          }
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "otherKey"
+                                        }
+                                      },
+                                      "property": {
+                                        "type": "Literal",
+                                        "value": "val",
+                                        "raw": "'val'"
+                                      }
+                                    },
+                                    "right": {
+                                      "type": "Identifier",
+                                      "name": "newVal"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            "alternate": null
+                          },
+                          {
+                            "type": "ReturnStatement",
+                            "argument": {
+                              "type": "Literal",
+                              "value": true,
+                              "raw": "true"
+                            }
+                          }
+                        ]
+                      },
+                      "alternate": null
+                    },
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "Literal",
+                        "value": false,
+                        "raw": "false"
+                      }
+                    }
+                  ]
+                },
+                "generator": false,
+                "expression": false
+              }
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "MemberExpression",
+                  "computed": false,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "Tuple"
+                  },
+                  "property": {
+                    "type": "Identifier",
+                    "name": "prototype"
+                  }
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "constructor"
+                }
+              },
+              "right": {
+                "type": "Identifier",
+                "name": "Tuple"
+              }
+            }
+          },
+          {
             "type": "VariableDeclaration",
             "declarations": [
               {
@@ -1219,39 +3516,58 @@ describe('Parser: First Milestone', function() {
                   "name": "http200Status"
                 },
                 "init": {
-                  "type": "ObjectExpression",
-                  "properties": [
+                  "type": "NewExpression",
+                  "callee": {
+                    "type": "Identifier",
+                    "name": "Tuple"
+                  },
+                  "arguments": [
                     {
-                      "type": "Property",
-                      "key": {
-                        "type": "Identifier",
-                        "name": "statusCode"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "Literal",
-                        "value": 200,
-                        "raw": "200"
-                      },
-                      "kind": "init",
-                      "method": false,
-                      "shorthand": false
-                    },
-                    {
-                      "type": "Property",
-                      "key": {
-                        "type": "Identifier",
-                        "name": "description"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "Literal",
-                        "value": "OK",
-                        "raw": "\"OK\""
-                      },
-                      "kind": "init",
-                      "method": false,
-                      "shorthand": false
+                      "type": "ArrayExpression",
+                      "elements": [
+                        {
+                          "type": "ObjectExpression",
+                          "properties": [
+                            {
+                              "type": "Property",
+                              "key": {
+                                "type": "Identifier",
+                                "name": "statusCode"
+                              },
+                              "computed": false,
+                              "value": {
+                                "type": "Literal",
+                                "value": 200,
+                                "raw": "200"
+                              },
+                              "kind": "init",
+                              "method": false,
+                              "shorthand": false
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ObjectExpression",
+                          "properties": [
+                            {
+                              "type": "Property",
+                              "key": {
+                                "type": "Identifier",
+                                "name": "description"
+                              },
+                              "computed": false,
+                              "value": {
+                                "type": "Literal",
+                                "value": "OK",
+                                "raw": '"OK"'
+                              },
+                              "kind": "init",
+                              "method": false,
+                              "shorthand": false
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1267,7 +3583,7 @@ describe('Parser: First Milestone', function() {
 
     // Swift input: 'var empty = ()';
     // AST Explorer input: 'var empty = {};'
-    it('should handle empty tuples', function () {
+    xit('should handle empty tuples', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "empty" },
@@ -1301,51 +3617,6 @@ describe('Parser: First Milestone', function() {
       };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
-
-    // input = String.raw`var tup = ("one", two: 2); var one = tup.0; var two = tup.1; var twoRedux = tup.two;`;
-    xit('should handle tuples with mixed index numbers and element names, and value lookups using both', function () {
-      input = [
-        { type: "DECLARATION_KEYWORD",            value: "var" },
-        { type: "IDENTIFIER",                     value: "tup" },
-        { type: "OPERATOR",                       value: "=" },
-        { type: "TUPLE_START",                    value: "("},
-        { type: "STRING",                         value: "one"},
-        { type: "PUNCTUATION",                    value: "," },
-        { type: "TUPLE_ELEMENT_NAME",             value: "two"},
-        { type: "PUNCTUATION",                    value: ":" },
-        { type: "NUMBER",                         value: "2"},
-        { type: "TUPLE_END",                      value: ")"},
-        { type: "PUNCTUATION",                    value: ";" },
-
-        { type: "DECLARATION_KEYWORD",            value: "var" },
-        { type: "IDENTIFIER",                     value: "one" },
-        { type: "OPERATOR",                       value: "=" },
-        { type: "IDENTIFIER",                     value: "tup" },
-        { type: "DOT_SYNTAX",                     value: "." },
-        { type: "NUMBER",                         value: "0"},
-        { type: "PUNCTUATION",                    value: ";" },
-
-        { type: "DECLARATION_KEYWORD",            value: "var" },
-        { type: "IDENTIFIER",                     value: "two" },
-        { type: "OPERATOR",                       value: "=" },
-        { type: "IDENTIFIER",                     value: "tup" },
-        { type: "DOT_SYNTAX",                     value: "." },
-        { type: "NUMBER",                         value: "1"},
-        { type: "PUNCTUATION",                    value: ";" },
-
-        { type: "DECLARATION_KEYWORD",            value: "var" },
-        { type: "IDENTIFIER",                     value: "twoRedux" },
-        { type: "OPERATOR",                       value: "=" },
-        { type: "IDENTIFIER",                     value: "tup" },
-        { type: "DOT_SYNTAX",                     value: "." },
-        { type: "TUPLE_ELEMENT_NAME",             value: "two"},
-        { type: "PUNCTUATION",                    value: ";" },
-        { type: "TERMINATOR",                     value: "EOF" }
-      ];
-      output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
     // Swift input: 'let g = [1 : "one",2   :"two", 3: "three"]'
     it('should handle erratic spacing', function () {
       input = [

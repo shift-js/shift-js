@@ -3386,6 +3386,11 @@ describe('Parser: Second Milestone', function() {
     //               for i in 0..<5 {
     //                   sum += i
     //               }`;
+
+    /* AST Explorer:
+    var sum = 0;
+    for (var i in 0
+     */
     xit('handle for-in loops that iterate over a range', function () {
       input = [
         { type: 'DECLARATION_KEYWORD',            value: 'var' },
@@ -5153,7 +5158,7 @@ describe('Parser: Second Milestone', function() {
     //         typeOfScore = ""
     //     }
     //  }
-    xit('should handle complex control flow with erratic spacing and inconsistent use of semicolons and parenthesis', function () {
+    it('should handle complex control flow with erratic spacing and inconsistent use of semicolons and parenthesis', function () {
       input = [
         { type: 'TERMINATOR',                  value: '\\n' },
         { type: 'TERMINATOR',                  value: '\\n' },
