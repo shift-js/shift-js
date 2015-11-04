@@ -18,15 +18,12 @@ var rearrangeTokensDictionaryKeyValueIteration = require('./rearrangeTokensDicti
 var rearrangeTokensPrintToConsoleLog = require('./rearrangeTokensPrintToConsoleLog');
 var rearrangeTokensVariadicParams = require('./rearrangeTokensVariadicParams');
 var rearrangeTokensAddParens = require('./rearrangeTokensAddParens');
-<<<<<<< HEAD
 var rangeFunctionInjector = require('./rangeFunctionInjector');
 var getNodesForGivenRange = require('./getNodesForGivenRange');
 var rearrangeTokensRanges = require('./rearrangeTokensRanges');
 var rearrangeTokensTuples = require('./rearrangeTokensTuples');
 var minimalTupleSource = require('../../tupleDataStructure/minimalTupleSource');
 
-=======
->>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
 
 var makeParser = function() {
 
@@ -45,23 +42,16 @@ var makeParser = function() {
   declarations.constants(state);
 
   var parseTokenStream = function(inputTokens) {
-<<<<<<< HEAD
 
-=======
->>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
     var intermediaryTokenStream = helpers.cleanUpTokenStream(inputTokens);
     var intermediary = rearrangeTokensDynamicDictionaryAssignment(intermediaryTokenStream);
     var intermediary2 = rearrangeTokensPrintToConsoleLog(intermediary);
     var intermediary3 = rearrangeTokensDictionaryKeyValueIteration(intermediary2);
     var intermediary4 = rearrangeTokensVariadicParams(intermediary3);
-<<<<<<< HEAD
     var intermediary5 = rearrangeTokensAddParens(intermediary4);
     var intermediary6 = rearrangeTokensTuples(intermediary5);
     var preRangeMutatedTokens = intermediary5.slice();
     state.tokens = rearrangeTokensRanges(intermediary6);
-=======
-    state.tokens = rearrangeTokensAddParens(intermediary4);
->>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
     state.scope = newScope(state, originalScope);
 
     /* Define globally accessible objects */
@@ -84,7 +74,6 @@ var makeParser = function() {
     var identifierToken = Object.create(identifierSymbol);
     identifierToken.type = "Identifier";
     identifierToken.value = "arguments";
-<<<<<<< HEAD
     state.scope.define(state, identifierToken);
 
     /* sJs namespace*/
@@ -101,10 +90,6 @@ var makeParser = function() {
     identifierTokenSJS.value = "Tuple";
     state.scope.define(state, identifierTokenSJS);
 
-=======
-
-    state.scope.define(state, identifierToken);
->>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
 
     state = advance(state);
 
@@ -143,7 +128,6 @@ var makeParser = function() {
     }
 
 
-<<<<<<< HEAD
     /* check token stream for closed_range token */
     var includesRange = false;
     var includesTuple = false;
@@ -190,8 +174,6 @@ var makeParser = function() {
     }
 
 
-=======
->>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
     var result = {
       type: 'Program',
       sourceType: 'module',

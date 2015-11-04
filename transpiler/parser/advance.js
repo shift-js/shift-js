@@ -8,12 +8,9 @@ var advance = function(state, id) {
 
   var a, o, t, v;
 
-<<<<<<< HEAD
 
 
 
-=======
->>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
   if (id && state.token.id !== id) {
     state.token.error("Expected '" + id + "'.");
   }
@@ -57,10 +54,7 @@ var advance = function(state, id) {
   } else if(tokenTypes.comment.hasItem(a)) {
     //
   } else {
-<<<<<<< HEAD
     console.log(t);
-=======
->>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
     t.error("Unexpected token.");
   }
 

@@ -55,15 +55,12 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
     state.token.type = "Identifier";
     delete state.token.value;
     t.argument = state.token;
-<<<<<<< HEAD
   } else if (t.value === "new") {
     if(left.callee.type === "IDENTIFIER") {
       left.callee.type = "Identifier";
       left.callee.name = left.callee.value;
       delete left.callee.value;
     }
-=======
->>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
   }
 
   /**
@@ -84,15 +81,7 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
   else if (left.type === "literal" && helpers.isNum(left.value)) {
     left.type = "Literal";
     left.raw = left.value;
-<<<<<<< HEAD
     left.value = parseFloat(left.value);
-=======
-    if (left.value.indexOf('.')) {
-      left.value = parseFloat(left.value);
-    } else {
-      left.value = parseInt(left.value);
-    }
->>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
   }
   else if (left.type === "literal" && helpers.isBool(left.value)) {
     left.type = "Literal";
