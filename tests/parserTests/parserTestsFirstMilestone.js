@@ -315,11 +315,16 @@ describe('Parser: First Milestone', function() {
     });
 
     // Swift input: 'var empty = [String]();'
+<<<<<<< HEAD
     /**
     AST Explorer input:
     var empty = [];
     */
     it('should handle initializer syntax for arrays', function () {
+=======
+    // AST Explorer input: 'var empty = [];'
+    xit('should handle initializer syntax for arrays', function () {
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "empty" },
@@ -360,7 +365,11 @@ describe('Parser: First Milestone', function() {
 
     // Swift input: 'var empty = [String:UInt16]();'
     // AST Explorer input: 'var empty = {};'
+<<<<<<< HEAD
     it('should handle initializer syntax for dictionaries', function () {
+=======
+    xit('should handle initializer syntax for dictionaries', function () {
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "empty" },
@@ -618,6 +627,7 @@ describe('Parser: First Milestone', function() {
     });
 
     // Swift input: 'var error = (404, "not found")'
+<<<<<<< HEAD
     /** AST Explorer input:
 
      function Tuple(tuple) {
@@ -666,6 +676,9 @@ describe('Parser: First Milestone', function() {
      Tuple.prototype.constructor = Tuple;
     var error = new Tuple([404, 'not found']);
     */
+=======
+    // AST Explorer input: 'var error = { 0: 404, 1: 'not found' };'
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
     it('should handle tuples', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
@@ -682,6 +695,7 @@ describe('Parser: First Milestone', function() {
         "type": "Program",
         "body": [
           {
+<<<<<<< HEAD
             "type": "FunctionDeclaration",
             "id": {
               "type": "Identifier",
@@ -5125,12 +5139,275 @@ describe('Parser: First Milestone', function() {
                       "kind": "init",
                       "method": false,
                       "shorthand": false
+=======
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "error"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": 0,
+                        "raw": "0"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": 404,
+                        "raw": "404"
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": "not found",
+                        "raw": '"not found"'
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
                     }
                   ]
                 }
               }
             ],
             "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+
+
+    // Swift input: 'let http200Status = (statusCode: 200, description: "OK");'
+    // AST Explorer input: 'var http200Status = { statusCode: 200, description: "OK"};'
+    it('should handle tuples with element names', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",        value: "let" },
+        { type: "IDENTIFIER",                 value: "http200Status" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "TUPLE_START",                value: "("},
+        { type: "TUPLE_ELEMENT_NAME",         value: "statusCode"},
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "NUMBER",                     value: "200"},
+        { type: "PUNCTUATION",                value: "," },
+        { type: "TUPLE_ELEMENT_NAME",         value: "description"},
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "OK"},
+        { type: "TUPLE_END",                  value: ")"},
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "http200Status"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "name": "statusCode"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": 200,
+                        "raw": "200"
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "name": "description"
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": "OK",
+                        "raw": "\"OK\""
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'var empty = ()';
+    // AST Explorer input: 'var empty = {};'
+    it('should handle empty tuples', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "empty" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "TUPLE_START",                value: "("},
+        { type: "TUPLE_END",                  value: ")"},
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "empty"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": []
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'let g = [1 : "one",2   :"two", 3: "three"]'
+    it('should handle erratic spacing', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "let" },
+        { type: "IDENTIFIER",           value: "g" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "DICTIONARY_START",     value: "[" },
+        { type: "NUMBER",               value: "1" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "STRING",               value: "one" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "NUMBER",               value: "2" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "STRING",               value: "two" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "NUMBER",               value: "3" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "STRING",               value: "three" },
+        { type: "DICTIONARY_END",       value: "]" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "g"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "method": false,
+                      "shorthand": false,
+                      "computed": false,
+                      "key": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      },
+                      "value": {
+                        "type": "Literal",
+                        "value": "one",
+                        "raw": "\"one\""
+                      },
+                      "kind": "init"
+                    },
+                    {
+                      "type": "Property",
+                      "method": false,
+                      "shorthand": false,
+                      "computed": false,
+                      "key": {
+                        "type": "Literal",
+                        "value": 2,
+                        "raw": "2"
+                      },
+                      "value": {
+                        "type": "Literal",
+                        "value": "two",
+                        "raw": "\"two\""
+                      },
+                      "kind": "init"
+                    },
+                    {
+                      "type": "Property",
+                      "method": false,
+                      "shorthand": false,
+                      "computed": false,
+                      "key": {
+                        "type": "Literal",
+                        "value": 3,
+                        "raw": "3"
+                      },
+                      "value": {
+                        "type": "Literal",
+                        "value": "three",
+                        "raw": "\"three\""
+                      },
+                      "kind": "init"
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+<<<<<<< HEAD
           },
           {
 
@@ -5269,6 +5546,88 @@ describe('Parser: First Milestone', function() {
                     "type": "Literal",
                     "value": "1.2to5.3",
                     "raw": '"1.2to5.3"'
+=======
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+  });
+
+  describe('Numeric and boolean operations', function () {
+
+    // Swift input: 'let h = 3.14'
+    it('should handle floating point numbers', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "let" },
+        { type: "IDENTIFIER",           value: "h" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "3.14" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "h"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 3.14,
+                  "raw": "3.14"
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'let i = 5+6'
+    it('should handle unspaced operators', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "let" },
+        { type: "IDENTIFIER",           value: "i" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "5" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "NUMBER",               value: "6" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "i"
+                },
+                "init": {
+                  "type": "BinaryExpression",
+                  "left": {
+                    "type": "Literal",
+                    "value": 5,
+                    "raw": "5"
+                  },
+                  "operator": "+",
+                  "right": {
+                    "type": "Literal",
+                    "value": 6,
+                    "raw": "6"
                   }
                 }
               }
@@ -5281,6 +5640,107 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
+    // Swift input: 'var j = 5 + 6 / 4 - (-16 % 4.2) * 55'
+    it('should handle order of operations', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "j" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "5" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "NUMBER",               value: "6" },
+        { type: "OPERATOR",             value: "/" },
+        { type: "NUMBER",               value: "4" },
+        { type: "OPERATOR",             value: "-" },
+        { type: "PUNCTUATION",          value: "(" },
+        { type: "OPERATOR",             value: "-" },
+        { type: "NUMBER",               value: "16" },
+        { type: "OPERATOR",             value: "%" },
+        { type: "NUMBER",               value: "4.2" },
+        { type: "PUNCTUATION",          value: ")" },
+        { type: "OPERATOR",             value: "*" },
+        { type: "NUMBER",               value: "55" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "j"
+                },
+                "init": {
+                  "type": "BinaryExpression",
+                  "left": {
+                    "type": "BinaryExpression",
+                    "left": {
+                      "type": "Literal",
+                      "value": 5,
+                      "raw": "5"
+                    },
+                    "operator": "+",
+                    "right": {
+                      "type": "BinaryExpression",
+                      "left": {
+                        "type": "Literal",
+                        "value": 6,
+                        "raw": "6"
+                      },
+                      "operator": "/",
+                      "right": {
+                        "type": "Literal",
+                        "value": 4,
+                        "raw": "4"
+                      }
+                    }
+                  },
+                  "operator": "-",
+                  "right": {
+                    "type": "BinaryExpression",
+                    "left": {
+                      "type": "BinaryExpression",
+                      "left": {
+                        "type": "UnaryExpression",
+                        "operator": "-",
+                        "prefix": true,
+                        "argument": {
+                          "type": "Literal",
+                          "value": 16,
+                          "raw": "16"
+                        }
+                      },
+                      "operator": "%",
+                      "right": {
+                        "type": "Literal",
+                        "value": 4.2,
+                        "raw": "4.2"
+                      }
+                    },
+                    "operator": "*",
+                    "right": {
+                      "type": "Literal",
+                      "value": 55,
+                      "raw": "55"
+                    }
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
+                  }
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+<<<<<<< HEAD
     // Swift input: 'var a = 1..<5'
     /* AST Explorer input:
      var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
@@ -5288,11 +5748,122 @@ describe('Parser: First Milestone', function() {
      var a = sJs.range['1to4'];
      */
     it('should handle half-open ranges', function () {
+=======
+    // 'var l = 6 != 7 || (6 == 7 || (6 > 7 || (6 < 7 || (6 >= 7 || 6 <= 7))));'
+    // 'var l = 6 != 7 ||  6 == 7 ||  6 > 7 ||  6 < 7 ||  6 >= 7 || 6 <= 7;';
+    it('should handle comparisons', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "l" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "OPERATOR",             value: "!" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "NUMBER",               value: "6" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "NUMBER",               value: "6" },
+        { type: "OPERATOR",             value: ">" },
+        { type: "NUMBER",               value: "7" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "NUMBER",               value: "6" },
+        { type: "OPERATOR",             value: "<" },
+        { type: "NUMBER",               value: "7" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "NUMBER",               value: "6" },
+        { type: "OPERATOR",             value: ">" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "NUMBER",               value: "6" },
+        { type: "OPERATOR",             value: "<" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        type: 'Program',
+        sourceType: 'module',
+        body:
+          [
+            {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations:
+                [
+                  {
+                    type: 'VariableDeclarator',
+                    id: { type: 'Identifier', name: 'l' },
+                    init: {
+                      type: 'LogicalExpression',
+                      operator: '||',
+                      left: {
+                        type: 'BinaryExpression',
+                        operator: '!=',
+                        left: {
+                          value: 6,
+                          type: 'Literal',
+                          raw: '6' },
+                        right: { value: 7, type: 'Literal', raw: '7' } },
+                      right:
+                      { type: 'LogicalExpression',
+                        operator: '||',
+                        left:
+                        { type: 'BinaryExpression',
+                          operator: '==',
+                          left: { value: 6, type: 'Literal', raw: '6' },
+                          right: { value: 7, type: 'Literal', raw: '7' } },
+                        right:
+                        { type: 'LogicalExpression',
+                          operator: '||',
+                          left:
+                          { type: 'BinaryExpression',
+                            operator: '>',
+                            left: { value: 6, type: 'Literal', raw: '6' },
+                            right: { value: 7, type: 'Literal', raw: '7' } },
+                          right:
+                          { type: 'LogicalExpression',
+                            operator: '||',
+                            left:
+                            { type: 'BinaryExpression',
+                              operator: '<',
+                              left: { value: 6, type: 'Literal', raw: '6' },
+                              right: { value: 7, type: 'Literal', raw: '7' } },
+                            right:
+                            { type: 'LogicalExpression',
+                              operator: '||',
+                              left:
+                              { type: 'BinaryExpression',
+                                operator: '>=',
+                                left: { value: 6, type: 'Literal', raw: '6' },
+                                right: { value: 7, type: 'Literal', raw: '7' } },
+                              right:
+                              { type: 'BinaryExpression',
+                                operator: '<=',
+                                left: { value: 6, type: 'Literal', raw: '6' },
+                                right: { value: 7, type: 'Literal', raw: '7' } } } } } } } } ] } ] };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'var a = 1; var m = ++a; var n = --m;'
+    it('should handle prefix operators', function () {
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "a" },
         { type: "OPERATOR",             value: "=" },
         { type: "NUMBER",               value: "1" },
+<<<<<<< HEAD
         { type: "HALF_OPEN_RANGE",      value: "..<" },
         { type: "NUMBER",               value: "5" },
         { type: "TERMINATOR",           value: "EOF"}
@@ -5493,12 +6064,70 @@ describe('Parser: First Milestone', function() {
                       "shorthand": false
                     }
                   ]
+=======
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "m" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "n" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "-" },
+        { type: "OPERATOR",             value: "-" },
+        { type: "IDENTIFIER",           value: "m" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "a"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 1,
+                  "raw": "1"
                 }
               }
             ],
             "kind": "var"
           },
           {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "m"
+                },
+                "init": {
+                  "type": "UpdateExpression",
+                  "operator": "++",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "a"
+                  },
+                  "prefix": true
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+<<<<<<< HEAD
 
             "type": "ExpressionStatement",
             "expression": {
@@ -5613,6 +6242,23 @@ describe('Parser: First Milestone', function() {
                     "value": "1to4",
                     "raw": '"1to4"'
                   }
+=======
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "n"
+                },
+                "init": {
+                  "type": "UpdateExpression",
+                  "operator": "--",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "m"
+                  },
+                  "prefix": true
                 }
               }
             ],
@@ -5624,6 +6270,229 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
+    // Swift input: 'var a = 1; var m = a++; var n = m--;'
+    it('should handle postfix operators', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "1" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "m" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "n" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "IDENTIFIER",           value: "m" },
+        { type: "OPERATOR",             value: "-" },
+        { type: "OPERATOR",             value: "-" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "a"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 1,
+                  "raw": "1"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "m"
+                },
+                "init": {
+                  "type": "UpdateExpression",
+                  "operator": "++",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "a"
+                  },
+                  "prefix": false
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "n"
+                },
+                "init": {
+                  "type": "UpdateExpression",
+                  "operator": "--",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "m"
+                  },
+                  "prefix": false
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // AST Explorer input: 'var diceRoll = 6; diceRoll == 7;'
+    it('should handle compound comparisons part 1 of 3', function() {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 6,
+                  "raw": "6"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "BinaryExpression",
+              "operator": "==",
+              "left": {
+                "type": "Identifier",
+                "name": "diceRoll"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 7,
+                "raw": "7"
+              }
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // AST Explorer input: 'var diceRoll = 6; ++diceRoll == 7;'
+    it('should handle compound comparisons part 2 of 3', function() {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 6,
+                  "raw": "6"
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
+                }
+              }
+            ],
+            "kind": "var"
+<<<<<<< HEAD
+=======
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "BinaryExpression",
+              "operator": "==",
+              "left": {
+                "type": "UpdateExpression",
+                "operator": "++",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "prefix": true
+              },
+              "right": {
+                "type": "Literal",
+                "value": 7,
+                "raw": "7"
+              }
+            }
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+<<<<<<< HEAD
     // Swift input: 'var a = 1.0..<5.0'
     /*AST Explorer input:
      var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
@@ -6181,12 +7050,145 @@ describe('Parser: First Milestone', function() {
                       "shorthand": false
                     }
                   ]
+=======
+    // AST Explorer input: 'var diceRoll = 6; diceRoll++ == 7;'
+    it('should handle compound comparisons part 3 of 3', function() {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 6,
+                  "raw": "6"
                 }
               }
             ],
             "kind": "var"
           },
           {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "BinaryExpression",
+              "operator": "==",
+              "left": {
+                "type": "UpdateExpression",
+                "operator": "++",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "prefix": false
+              },
+              "right": {
+                "type": "Literal",
+                "value": 7,
+                "raw": "7"
+              }
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'var a = true; var b = !a; var c = -a; var d = +b'
+    it('should handle unary operators', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "a" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "BOOLEAN",                    value: "true" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "b" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "OPERATOR",                   value: "!" },
+        { type: "IDENTIFIER",                 value: "a" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "c" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "OPERATOR",                   value: "-" },
+        { type: "IDENTIFIER",                 value: "a" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "d" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "OPERATOR",                   value: "+" },
+        { type: "IDENTIFIER",                 value: "b" },
+        { type: "TERMINATOR",                 value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "a"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": true,
+                  "raw": "true"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "b"
+                },
+                "init": {
+                  "type": "UnaryExpression",
+                  "operator": "!",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "a"
+                  },
+                  "prefix": true
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+<<<<<<< HEAD
 
             "type": "ExpressionStatement",
             "expression": {
@@ -6300,6 +7302,117 @@ describe('Parser: First Milestone', function() {
                     "type": "Literal",
                     "value": "1.2to4.3",
                     "raw": '"1.2to4.3"'
+=======
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "c"
+                },
+                "init": {
+                  "type": "UnaryExpression",
+                  "operator": "-",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "a"
+                  },
+                  "prefix": true
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "d"
+                },
+                "init": {
+                  "type": "UnaryExpression",
+                  "operator": "+",
+                  "argument": {
+                    "type": "Identifier",
+                    "name": "b"
+                  },
+                  "prefix": true
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'var a = (6 == 7) ? 1 : -1'
+    it('should handle ternary operators', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "a" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "PUNCTUATION",                value: "(" },
+        { type: "NUMBER",                     value: "6" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "NUMBER",                     value: "7" },
+        { type: "PUNCTUATION",                value: ")" },
+        { type: "OPERATOR",                   value: "?" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "OPERATOR",                   value: "-" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "TERMINATOR",                 value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "a"
+                },
+                "init": {
+                  "type": "ConditionalExpression",
+                  "test": {
+                    "type": "BinaryExpression",
+                    "operator": "==",
+                    "left": {
+                      "type": "Literal",
+                      "value": 6,
+                      "raw": "6"
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": 7,
+                      "raw": "7"
+                    }
+                  },
+                  "consequent": {
+                    "type": "Literal",
+                    "value": 1,
+                    "raw": "1"
+                  },
+                  "alternate": {
+                    "type": "UnaryExpression",
+                    "operator": "-",
+                    "argument": {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    "prefix": true
                   }
                 }
               }
@@ -6312,6 +7425,150 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
+    // Swift input: 'var g = 6 == 7 ? true : false;'
+    it('should handle ternary operators without a parenthetical', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "g" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "OPERATOR",             value: "?" },
+        { type: "BOOLEAN",              value: "true" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "BOOLEAN",              value: "false" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "g"
+                },
+                "init": {
+                  "type": "ConditionalExpression",
+                  "test": {
+                    "type": "BinaryExpression",
+                    "operator": "==",
+                    "left": {
+                      "type": "Literal",
+                      "value": 6,
+                      "raw": "6"
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": 7,
+                      "raw": "7"
+                    }
+                  },
+                  "consequent": {
+                    "type": "Literal",
+                    "value": true,
+                    "raw": "true"
+                  },
+                  "alternate": {
+                    "type": "Literal",
+                    "value": false,
+                    "raw": "false"
+                  }
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'let h = false; let i = h ? 1 : 2;'
+    it('should handle ternary operators that include identifiers', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "let" },
+        { type: "IDENTIFIER",           value: "h" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "BOOLEAN",              value: "false" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "DECLARATION_KEYWORD",  value: "let" },
+        { type: "IDENTIFIER",           value: "i" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "IDENTIFIER",           value: "h" },
+        { type: "OPERATOR",             value: "?" },
+        { type: "NUMBER",               value: "1" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "NUMBER",               value: "2" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "h"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": false,
+                  "raw": "false"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "i"
+                },
+                "init": {
+                  "type": "ConditionalExpression",
+                  "test": {
+                    "type": "Identifier",
+                    "name": "h"
+                  },
+                  "consequent": {
+                    "type": "Literal",
+                    "value": 1,
+                    "raw": "1"
+                  },
+                  "alternate": {
+                    "type": "Literal",
+                    "value": 2,
+                    "raw": "2"
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
+                  }
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+<<<<<<< HEAD
     // Swift input: 'var a = 1...5; var b = 2..<6'
     /* AST Explorer input:
      var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
@@ -6323,6 +7580,11 @@ describe('Parser: First Milestone', function() {
      var b = sJs.range['2to5'];
      */
     it('should handle all ranges', function () {
+=======
+    // Swift input: 'var a = 1...5'
+    // AST Explorer input:
+    xit('should handle closed ranges', function () {
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "a" },
@@ -6330,6 +7592,7 @@ describe('Parser: First Milestone', function() {
         { type: "NUMBER",               value: "1" },
         { type: "CLOSED_RANGE",         value: "..." },
         { type: "NUMBER",               value: "5" },
+<<<<<<< HEAD
         { type: "PUNCTUATION",          value: ";"},
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "b" },
@@ -6337,6 +7600,8 @@ describe('Parser: First Milestone', function() {
         { type: "NUMBER",               value: "2" },
         { type: "HALF_OPEN_RANGE",      value: "..<" },
         { type: "NUMBER",               value: "6" },
+=======
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
         { type: "TERMINATOR",           value: "EOF"}
       ];
       output = {
@@ -6526,7 +7791,11 @@ describe('Parser: First Milestone', function() {
                 "property": {
                   "type": "Literal",
                   "value": "1to5",
+<<<<<<< HEAD
                   "raw": '"1to5"'
+=======
+                  "raw": "'1to5'"
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
                 }
               },
               "right": {
@@ -6567,6 +7836,7 @@ describe('Parser: First Milestone', function() {
             }
           },
           {
+<<<<<<< HEAD
             "type": "ExpressionStatement",
             "expression": {
               "type": "AssignmentExpression",
@@ -6630,6 +7900,8 @@ describe('Parser: First Milestone', function() {
             }
           },
           {
+=======
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
             "type": "VariableDeclaration",
             "declarations": [
               {
@@ -6656,6 +7928,7 @@ describe('Parser: First Milestone', function() {
                   "property": {
                     "type": "Literal",
                     "value": "1to5",
+<<<<<<< HEAD
                     "raw": '"1to5"'
                   }
                 }
@@ -6691,6 +7964,9 @@ describe('Parser: First Milestone', function() {
                     "type": "Literal",
                     "value": "2to5",
                     "raw": '"2to5"'
+=======
+                    "raw": "'1to5'"
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
                   }
                 }
               }
@@ -6702,6 +7978,112 @@ describe('Parser: First Milestone', function() {
       };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
+<<<<<<< HEAD
+=======
+
+    // Swift input: 'var a = 1.0...5.0'
+    // AST Explorer input:
+    xit('should handle decimal ending in 0 closed ranges', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "1.0" },
+        { type: "CLOSED_RANGE",         value: "..." },
+        { type: "NUMBER",               value: "5.0" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = "FILL_ME_IN";
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'var a = 1.2...5.3'
+    // AST Explorer input:
+    xit('should handle random decimal closed ranges', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "1.2" },
+        { type: "CLOSED_RANGE",         value: "..." },
+        { type: "NUMBER",               value: "5.3" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = "FILL_ME_IN";
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'var b = 1..<5'
+    // AST Explorer input:
+    xit('should handle half-open ranges', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "b" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "1" },
+        { type: "HALF_OPEN_RANGE",      value: "..<" },
+        { type: "NUMBER",               value: "5" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = "FILL_ME_IN";
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'var a = 1.0..<5.0'
+    // AST Explorer input:
+    xit('should handle decimal ending in 0 half-open ranges', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "1.0" },
+        { type: "HALF_OPEN_RANGE",      value: "..<" },
+        { type: "NUMBER",               value: "5.0" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = "FILL_ME_IN";
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'var a = 1.2..<5.3'
+    // AST Explorer input:
+    xit('should handle random decimal half-open ranges', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "1.2" },
+        { type: "HALF_OPEN_RANGE",      value: "..<" },
+        { type: "NUMBER",               value: "5.3" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = "FILL_ME_IN";
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // Swift input: 'var a = 1...5; var b = 2..<6'
+    // AST Explorer input:
+    xit('should handle all ranges', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "1" },
+        { type: "CLOSED_RANGE",         value: "..." },
+        { type: "NUMBER",               value: "5" },
+        { type: "PUNCTUATION",          value: ";"},
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "b" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "2" },
+        { type: "HALF_OPEN_RANGE",      value: "..<" },
+        { type: "NUMBER",               value: "6" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = "FILL_ME_IN";
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+>>>>>>> b72e81bdbea6c7e6787c72d2edcd094c50720e51
   });
 
   describe('String concatenation and interpolation', function () {
