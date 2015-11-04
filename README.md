@@ -15,19 +15,19 @@ npm install --g shift.js
 To transpile a single Swift file into a JavaScript file:
 
 ```
-shiftjs someSwiftFile.swift
+shift.js someSwiftFile.swift
 ```
 
 To watch a file for changes, running the selected command when a file is updated:
 
 ```
-shiftjs -w someSwiftFile.swift
+shift.js -w someSwiftFile.swift
 ```
 
 For a full list of commands:
 
 ```
-shiftjs -h
+shift.js -h
 ```
 
 ## Develpoment
