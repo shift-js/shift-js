@@ -202,7 +202,7 @@ module.exports = function(grunt) {
     'test',
     'browserify',
     'concat',
-    'docco'
+    'docs'
   ]);
 
   grunt.registerTask('docs', [
