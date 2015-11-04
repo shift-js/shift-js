@@ -72,6 +72,17 @@ var statement = function(state) {
     state = advance(state);
   }
 
+  //if (state.token.value === '{') {
+  //  state = advance(state, '{');
+  //}
+  //while(true) {
+  //  if(state.token.value === "\\n") {
+  //    state = advance(state);
+  //  } else {
+  //    break;
+  //  }
+  //}
+
   if(state.token.value === "EOF") {
     return v;
   } if(v.type === "FunctionDeclaration") {

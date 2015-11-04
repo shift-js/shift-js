@@ -37,6 +37,7 @@ module.exports = {
   ],
   noun : [
     "DECLARATION_KEYWORD",
+    "CLOSED_RANGE",
     "IDENTIFIER",
     "TUPLE_ELEMENT_NAME",
     "STATEMENT_KEYWORD",
@@ -44,7 +45,9 @@ module.exports = {
     "TYPE_NUMBER",
     "TYPE_STRING",
     "RETURN_ARROW",
-    "VARIADIC_PARAM"
+    "HALF_OPEN_RANGE",
+    "VARIADIC_PARAM",
+    "DECLARATION_NEW"
   ],
   comment : [
     "COMMENT_START",

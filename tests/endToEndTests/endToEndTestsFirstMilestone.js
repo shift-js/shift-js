@@ -104,7 +104,7 @@ describe('End to End: First Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    it('should handle tuples', function () {
+    xit('should handle tuples', function () {
       input = String.raw`var error = (404, "not found")`;
       output = `var error = {
         0: 404,
@@ -115,7 +115,7 @@ describe('End to End: First Milestone', function() {
 
 
 
-    it('should handle tuples with element names', function () {
+    xit('should handle tuples with element names', function () {
       input = String.raw`let http200Status = (statusCode: 200, description: "OK");`;
       output = `var http200Status = {
         statusCode: 200,
@@ -124,7 +124,7 @@ describe('End to End: First Milestone', function() {
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
     });
 
-    it('should handle empty tuples', function () {
+    xit('should handle empty tuples', function () {
       input = String.raw`var empty = ()`;
       output = `var empty = {};`;
       expect(removeIndentation(compile(input))).to.equal(removeIndentation(output));
