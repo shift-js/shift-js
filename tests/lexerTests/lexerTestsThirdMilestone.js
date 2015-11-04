@@ -2469,7 +2469,7 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    xit('should handle functions that get assigned to a variable and are invoked later', function () {
+    it('should handle functions that get assigned to a variable and are invoked later', function () {
       input = String.raw`func addTwoInts(a: Int, b: Int) -> Int {
                                 return a+b
                             }
