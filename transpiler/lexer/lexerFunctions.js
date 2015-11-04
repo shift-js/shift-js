@@ -260,10 +260,10 @@ module.exports = {
         arrowIndex--;
         tok = STATE.tokens[arrowIndex];
         if (tok["value"] === '(' || tok["value"] === ')') {
-          arr.push({tokenIndex: arrowIndex, tokenType: tok["type"], tokenValue: tok["value"]});
+          arr.unshift({tokenIndex: arrowIndex, tokenType: tok["type"], tokenValue: tok["value"]});
         }
       }
-      module.exports.reviseFunctionHistory(arr, STATE);
+      module.exports.reviseFunctionHistory(arr, STATE, true);
       STATE.variableArrows.pop();
     } 
   },
@@ -291,7 +291,7 @@ module.exports = {
       STATE.lastFunction.paramsCounter--;
       STATE.lastFunction.insideParams = "ended";
       STATE.lastFunction.paramsParens.shift();
-      module.exports.reviseFunctionHistory(STATE.lastFunction.paramsParens, STATE);
+      module.exports.reviseFunctionHistory(STATE.lastFunction.paramsParens, STATE, false);
       STATE.advanceAndClear(1);
       return true;
     }
@@ -318,7 +318,7 @@ module.exports = {
               input.push({tokenIndex: i, tokenType: STATE.tokens[i]["type"], tokenValue: STATE.tokens[i]["value"]});
             }
           }
-          module.exports.reviseFunctionHistory(input, STATE);
+          module.exports.reviseFunctionHistory(input, STATE), false;
         }
       }
       STATE.advanceAndClear(1);
@@ -356,7 +356,13 @@ module.exports = {
     return false;
   },
 
-  reviseFunctionHistory: function(inputArray, STATE) {
+  reviseFunctionHistory: function(inputArray, STATE, flag) {
+    if (flag === true) {
+      var x = inputArray.shift();
+      var y = inputArray.pop();
+      STATE.tokens[x["tokenIndex"]]["type"] = "PARAMS_START"; 
+      STATE.tokens[y["tokenIndex"]]["type"] = "PARAMS_END"; 
+    }
     var arr = [];
     var len = Math.floor((inputArray.length)/2);
     var obj = {
