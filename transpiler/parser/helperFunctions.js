@@ -152,7 +152,8 @@ var helpers = {
     return input;
   },
   isNum : function(val) {
-    return /^\d+.*$/.test(val);
+    //return /^\d+.*$/.test(val);
+    return !isNaN(parseFloat(val)) && isFinite(val);
   },
   isBool : function(val) {
     return val === 'true' || val === 'false';
