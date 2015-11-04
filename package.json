@@ -1,5 +1,5 @@
 {
-  "name": "shift-js",
+  "name": "shift.js",
   "version": "0.1.0",
   "description": "Swift to JavaScript Transpiler",
   "engines": {
