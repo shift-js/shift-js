@@ -11,7 +11,6 @@ module.exports = {
   // default check for point at which to evaluate chunk
   checkForEvaluationPoint: function(STATE) {
     if (
-      
       module.exports.checkForWhitespace(STATE.currCol) ||
       module.exports.checkForWhitespace(STATE.nextCol) ||
       module.exports.checkFor(STATE, 'PUNCTUATION', STATE.currCol) ||
@@ -21,7 +20,6 @@ module.exports = {
       STATE.nextCol === '"' || STATE.nextCol === '[' || STATE.nextCol === ']' ||
       STATE.currCol === '[' ||  STATE.currCol === ']' || STATE.nextCol === '\n' ||
       STATE.nextCol === undefined
-
     ) {
       return true;
     }
@@ -254,19 +252,20 @@ module.exports = {
   },
 
   rewriteVariableParensHistory: function(STATE) {
-    if (STATE.variableArrows.length)
-    var arrowIndex = STATE.variableArrows[STATE.variableArrows.length - 1];
-    var tok = STATE.tokens[arrowIndex];
-    var arr = [];
-    while (tok["value"] !== "var" && tok["value"] !== "let") {
-      arrowIndex--;
-      tok = STATE.tokens[arrowIndex];
-      if (tok["value"] === '(' || tok["value"] === ')') {
-        arr.push({tokenIndex: arrowIndex, tokenType: tok["type"], tokenValue: tok["value"]});
+    if (STATE.variableArrows.length) {
+      var arrowIndex = STATE.variableArrows[STATE.variableArrows.length - 1];
+      var tok = STATE.tokens[arrowIndex];
+      var arr = [];
+      while (tok["value"] !== "var" && tok["value"] !== "let") {
+        arrowIndex--;
+        tok = STATE.tokens[arrowIndex];
+        if (tok["value"] === '(' || tok["value"] === ')') {
+          arr.push({tokenIndex: arrowIndex, tokenType: tok["type"], tokenValue: tok["value"]});
+        }
       }
-    }
-    module.exports.reviseFunctionHistory(arr, STATE);
-    STATE.variableArrows.pop();
+      module.exports.reviseFunctionHistory(arr, STATE);
+      STATE.variableArrows.pop();
+    } 
   },
 
   // main helper function to handle the inside of function declarations
@@ -293,9 +292,6 @@ module.exports = {
       STATE.lastFunction.insideParams = "ended";
       STATE.lastFunction.paramsParens.shift();
       module.exports.reviseFunctionHistory(STATE.lastFunction.paramsParens, STATE);
-      
-      // END code to look back and revise incorrect ()'s
-
       STATE.advanceAndClear(1);
       return true;
     }
@@ -313,8 +309,7 @@ module.exports = {
       module.exports.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
       STATE.lastFunction.statements++;
       STATE.lastFunction.insideReturnStatement = true;
-      //This is the place where we need to go back and count the number of ()'s then figure out what happened
-      if (STATE.lastFunction.returnArrows.length >= 2) { // may be needed to be changed to === 2
+      if (STATE.lastFunction.returnArrows.length >= 2) {
         var input = [];
         if (STATE.lastFunction.returnArrows[0] > STATE.lastFunction.endFunctionParameterDeclarationIndex) {
           var start = STATE.lastFunction.returnArrows[0] ;
@@ -543,7 +538,6 @@ module.exports = {
       return true;
     }
   },
-  
   
   // handles classes and structures
   handleClassOrStruct: function(STATE) {
