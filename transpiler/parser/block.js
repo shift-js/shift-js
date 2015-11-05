@@ -3,18 +3,18 @@ var advance = require('./advance');
 var block = function(state) {
   var t = state.token;
   state = advance(state, "{");
-  if(state.token.value === "\\n") {
+  if (state.token.value === "\\n") {
     state = advance(state);
   }
   var stdReturnVal = t.std();
   var blockStmtChildNode;
 
-  /* Logic as to whether statement node needs a parent node wrapper */
-  if(Array.isArray(stdReturnVal)) {
+  //Logic as to whether statement node needs a parent node wrapper
+  if (Array.isArray(stdReturnVal)) {
     blockStmtChildNode = stdReturnVal;
-  } else if(["IfStatement", "ReturnStatement", "ForStatement"].hasItem(stdReturnVal.type)) {
+  } else if (["IfStatement", "ReturnStatement", "ForStatement"].hasItem(stdReturnVal.type)) {
     blockStmtChildNode = stdReturnVal;
-  } else if(stdReturnVal.type !== "ExpressionStatement") {
+  } else if (stdReturnVal.type !== "ExpressionStatement") {
     blockStmtChildNode = {
       type: 'ExpressionStatement',
       expression: stdReturnVal

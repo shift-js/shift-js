@@ -16,6 +16,9 @@ var stmt = require('./stmt');
 var statements = require('./statements');
 var statement = require('./statement');
 
+
+// Declarations is where most of the logic of the parser is held
+// Functions are declared here and invoked inside an object then exported to other modules
 var declarations = {
   symbols: function(state) {
     symbol(state, originalSymbol, "EOF");
@@ -79,29 +82,27 @@ var declarations = {
     infix(state, "%", 60);
 
     infix(state, ".", 80, function(left) {
-      //this.first = left;//TODO other change
       this.type = "MemberExpression";
       this.computed = false;
-      this.object = left;// object: { value: 'Array', type: 'IDENTIFIER' },
+      this.object = left;
       if(this.object.type === "IDENTIFIER") {
         this.object.type = "Identifier";
         this.object.name = this.object.value;
         delete this.object.value;
-      } else if(this.object.type === "MemberExpression") {
+      } else if (this.object.type === "MemberExpression") {
         delete this.value;
       }
 
-      // want  object: { type: 'Identifier', name: 'Array' },
       if (state.token.type !== "IDENTIFIER") {
         state.token.error("Expected a property name.");
       }
-      if(state.token.type === "IDENTIFIER") {
+      if (state.token.type === "IDENTIFIER") {
         state.token.type = "Identifier";
         state.token.name = state.token.value;
         delete state.token.value;
       }
       delete this.name;
-      delete this.value;//'.'
+      delete this.value;
       this.property = state.token;
       state = advance(state);
       return this;
@@ -110,7 +111,7 @@ var declarations = {
     infix(state, "[", 80, function(left) {
       this.type = "MemberExpression";
       this.computed = true;
-      if(left.type === 'IDENTIFIER'){
+      if (left.type === 'IDENTIFIER') {
         left.name = left.value;
         left.type = "Identifier";
         delete left.value;
@@ -129,13 +130,9 @@ var declarations = {
         this.computed = false;
         delete this.value;
         this.object = left.object;
-
-        //this.object.name = this.object.value;//TODO Add logic, sometimes necessary
-        console.log(this.object.value);
         delete this.object.value;
-        //this.object.type = "Identifier";//TODO Needs to go (at least in this case)
         this.property = left.property;
-        if(!this.property.name) {
+        if (!this.property.name) {
           this.property.name = this.property.value;
         }
         delete this.property.value;
@@ -158,25 +155,17 @@ var declarations = {
           left.id !== "&&" && left.id !== "||" && left.id !== "?") {
           left.error("Expected a variable name.");
         }
-
         parentParentNode = this;
-
       }
-
-      /*TODO add logic checking for invocation parameter naming, ex (day: "Tuesday")*/
-      // Are swift params order dependent??
 
       if (state.token.id !== ")") {
         while (true) {
-
           var lookAheadOne = state.tokens[state.index];
-          if(lookAheadOne.value === ":") {
+          if (lookAheadOne.value === ":") {
             state = advance(state);
             state = advance(state);
           }
-
           a.push(expression(state, 0));
-
           if (state.token.id !== ",") {
             break;
           }
@@ -203,25 +192,15 @@ var declarations = {
     });
 
     prefix(state, "new", function() {
-
-      //state = advance(state);
-
       var newExpressionStmt = {};
       newExpressionStmt.type = "NewExpression";
-
-
       newExpressionStmt.callee = state.token;
-
       state = advance(state);
       var tmpVarArgs = expression(state);
-      if(!Array.isArray(tmpVarArgs)) {
+      if (!Array.isArray(tmpVarArgs)) {
         tmpVarArgs = [tmpVarArgs];
       }
-
       newExpressionStmt.arguments = tmpVarArgs;
-
-
-
       return newExpressionStmt;
     });
 
@@ -265,22 +244,20 @@ var declarations = {
         }
       }
 
-      if(state.token.value === ")") {
+      if (state.token.value === ")") {
         state = advance(state, ")");
       }
-      if(state.token.value === "->") {
+      if (state.token.value === "->") {
         state = advance(state);
         while (true) {
-          if (state.token.value !== '{') {
+          if (state.token.value !== "{") {
             state = advance(state);
           } else {
             break;
           }
         }
       }
-
       state = advance(state, "{");
-
       while(true) {
         if(state.token.value === "\\n") {
           state = advance(state);
@@ -289,19 +266,14 @@ var declarations = {
         }
       }
 
-      /* TODO Hacky solution to 'let a = a + 1' when a has already been defined as a parameter to function signature. */
-
       var tmpLookAhead = state.tokens[state.index];
-      if(state.token.value === "var") {
-        for(var p=0; p<a.length; p++) {
+      if (state.token.value === "var") {
+        for (var p = 0; p < a.length; p++) {
           var param = a[p];
           var paramIdentity = param.name;
           if(tmpLookAhead.value === paramIdentity) {
-            //TODO delete item from scope so it can be re-added
             state.scope.delete(state, tmpLookAhead);
-            // remove var token from tokens array
             state.tokens.splice(state.index - 1, 1);
-
             var t = state.tokens[state.index - 1];
             var tmpVar = state.scope.find(t.value, state.symbolTable);
             var tmpSymb = Object.create(tmpVar);
@@ -311,22 +283,17 @@ var declarations = {
           }
         }
       }
-
       var fnBody = statements(state);
-
-      while(true) {
-        if(state.token.value === "\\n") {
+      while (true) {
+        if (state.token.value === "\\n") {
           state = advance(state);
         } else {
           break;
         }
       }
-
       state = advance(state, "}");
-
       var fnBodyArray = Array.isArray(fnBody) ? fnBody : [fnBody];
-
-      if(fnBodyArray.length>0) {
+      if (fnBodyArray.length>0) {
         for(var w=0; w<fnBodyArray.length; w++) {
           var bodyStmt = fnBodyArray[w];
           if(bodyStmt.type === "CallExpression") {
@@ -360,8 +327,7 @@ var declarations = {
 
     prefix(state, "[", function() {
       var a = [];
-
-      /* Handle Array initializer syntax */
+      //Handle Array initializer syntax
       if(state.tokens[state.index].type === "ARRAY_END") {
         state = advance(state);
       } else {
@@ -375,7 +341,6 @@ var declarations = {
           }
         }
       }
-
       state = advance(state, "]");
       this.type = "ArrayExpression";
       delete this.value;
@@ -392,8 +357,7 @@ var declarations = {
 
     prefix(state, "{", function() {
       var a = [], n, v;
-
-      while(true) {
+      while (true) {
         if(state.token.value === "\\n") {
           state = advance(state);
         }
@@ -407,11 +371,10 @@ var declarations = {
         var secondTypeDeclaration = (state.tokens[state.index+1].type.indexOf("TYPE") > -1);
         var dictionaryEnd = (state.tokens[state.index+2].type === "DICTIONARY_END");
       }
-
-      /* Check for Dictionary initializer syntax */
+      //Check for Dictionary initializer syntax
       if(firstTypeDeclaration && secondTypeDeclaration && dictionaryEnd) {
-        while(true) {
-          if(state.token.value === "]") {
+        while (true) {
+          if (state.token.value === "]") {
             state = advance(state, "]");
             break;
           }
@@ -434,7 +397,7 @@ var declarations = {
         delete this.raw;
         return this;
       }
-      if(tmpLookAhead.value === ",") {
+      if (tmpLookAhead.value === ",") {
         // Handle Tuples w/out keys
         var a = [];
         if (state.token.id !== "]") {
@@ -469,18 +432,16 @@ var declarations = {
         }
         return this;
       }
-      /* Get all things in dictionary */
+      //Get all things in dictionary
       if ((state.token.id !== "]" &&  state.token.id !== ")") && tmpLookAhead.value !== ",") {
         while (true) {
           n = state.token;
-          /* if  */
           if (n.type !== "IDENTIFIER" && n.type !== "literal" && n.type !== "TUPLE_ELEMENT_NAME") {
             state.token.error("Bad property name.");
           }
           state = advance(state);
           state = advance(state, ":");
           v = expression(state, 0);
-
           var kvMap = {};
           kvMap.type = "Property";
           kvMap.computed = false;
@@ -512,15 +473,11 @@ var declarations = {
           }
           kvMap.key = n;
           kvMap.value = v;
-
-          /* a.push(v); */
           a.push(kvMap);
-
           if (state.token.id !== ",") {
             break;
           }
-
-          while(true) {
+          while (true) {
             if(state.token.value === "\\n") {
               state = advance(state);
             }
@@ -528,10 +485,8 @@ var declarations = {
               break;
             }
           }
-
           state = advance(state, ",");
-
-          while(true) {
+          while (true) {
             if(state.token.value === "\\n") {
               state = advance(state);
             }
@@ -539,19 +494,16 @@ var declarations = {
               break;
             }
           }
-
           if(state.token.type === "DICTIONARY_END") {
             break;
           }
         }
       }
-
       try {
         state = advance(state, "]");//TODO just one here
       } catch(e) {
         state = advance(state, ")");
       }
-
       delete this.value;
       this.type = "ObjectExpression";
       this.properties = a;
@@ -578,13 +530,11 @@ var declarations = {
           n.type = "Identifier";
           n.name = n.value;
         }
-
         state.scope.define(state, n);
         delete n.value;
-
         state = advance(state);
 
-        /* Type Declarations */
+        //Type Declarations
         if(state.token.id === ":") {
           state = advance(state, ":");
           if(state.token.type === "TYPE_STRING") {
@@ -595,12 +545,10 @@ var declarations = {
             state = advance(state);
           }
         }
-
-        /* Assignment to a variable declaration */
+        //Assignment to a variable declaration
         if (state.token.id === "=") {
           t = state.token;
           state = advance(state, "=");
-
           t.type = 'VariableDeclaration';
           t.kind = 'var';
           t.declarations = [{
@@ -608,14 +556,12 @@ var declarations = {
             id: {},
             init: {}
           }];
-
           t.declarations[0].id = n; //TODO FIX
           t.declarations[0].init = expression(state, 0);
           delete t.value;
-
           a.push(t);
         }
-        /* Uninitialized variable declaration */
+        //Uninitialized variable declaration
         else if ([";", ")"].hasItem(state.token.id)) {
           t = state.token;
           t.type = 'VariableDeclaration';
@@ -628,29 +574,23 @@ var declarations = {
           t.declarations[0].id = n;
           t.declarations[0].init = null;
           delete t.value;
-
           a.push(t);
           if(state.token.id === ";") {
             state = advance(state);
           }
           break;
-
         } else if(state.token.type === "TERMINATOR") {
           state = advance(state);
         }
-        //TODO maybe check for newlines here
 
         if(state.token.id === ";") {
           state = advance(state);
         }
-
         if (state.token.id !== ",") {
           break;
         }
         state = advance(state, ",");
       }
-      //TODO outside of the while loop
-
       if([";", "var", "if", "while", "repeat", "for", "++", "--"].hasItem(state.token.value)) {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       } else if(state.token.type === "IDENTIFIER") {
@@ -658,16 +598,11 @@ var declarations = {
       } else if(state.token.value === "\\n") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
-
       state = advance(state);
-
       if(state.token.value === "var") {
         return a.length === 0 ? null : a.length === 1 ? a[0] : a;
       }
-      //if(state.token.value === "\\n") {
-      //  state = advance(state);
-      //}
-      while(true) {
+      while (true) {
         if(state.token.value === "\\n") {
           state = advance(state);
         }
@@ -679,7 +614,6 @@ var declarations = {
     });
 
     stmt(state, "if", function() {
-
       state = advance(state, "(");
       this.test = expression(state, 0);
       if(this.test.type === "ExpressionStatement") {
@@ -689,9 +623,7 @@ var declarations = {
         state = advance(state);
       }
       state = advance(state, ")");
-
       this.consequent = block(state);
-
       while (true) {
         if (state.token.value === '\\n') {
           state = advance(state);
@@ -699,8 +631,7 @@ var declarations = {
           break;
         }
       }
-
-      /* block directly followed by else or else if statement? */
+      //block directly followed by else or else if statement?
       if (state.token.id === "else") {
         state.scope.reserve(state.token);
         state = advance(state, "else");
@@ -708,45 +639,37 @@ var declarations = {
       } else {
         this.alternate = null;
       }
-
       this.type = "IfStatement";
       delete this.value;
       return this;
     });
 
     stmt(state, "return", function() {
-
       if (state.token.id !== ";") {
         this.argument = expression(state, 0);
       }
-
-      while(true) {
+      while (true) {
         if(state.token.value === "\\n") {
           state = advance(state);
         } else {
           break;
         }
       }
-
       if(state.token.id === ";") {
         state = advance(state, ";");
       }
-
-      while(true) {
+      while (true) {
         if(state.token.value === "\\n") {
           state = advance(state);
         } else {
           break;
         }
       }
-
       if (state.token.id !== "}") {
         state.token.error("Unreachable statement.");
       }
-
       this.type = "ReturnStatement";
       delete this.value;
-
       if(this.argument.type === "ExpressionStatement" && this.argument.expression.type === "CallExpression") {
         this.argument = this.argument.expression;
       }
@@ -756,24 +679,11 @@ var declarations = {
 
     stmt(state, "break", function() {
       state = advance(state, ";");
-      /* TODO termination logic is different (for Switch stmts) */
+      //TODO termination logic is different (for Switch stmts)
       if (state.token.id !== "}") {
         state.token.error("Unreachable statement.");
       }
       return this;
-    });
-
-    stmt(state, "switch", function () {
-      /*
-      // switch (conditional) {
-        // 1..n case (comparison):
-          // maybe expression;
-      }
-      */
-    });
-
-    stmt(state, "case", function () {
-
     });
 
     stmt(state, "while", function() {
@@ -792,43 +702,33 @@ var declarations = {
 
     stmt(state, "for", function() {
       this.type = "ForStatement";
-
-      //TODO Refactor For Statements
-
-      /* for( var identifier) 'in' identifier { .. } */
-      /* to distinguish this if from conventional for-loop below */
-      if(state.tokens[state.index-1].value === "(" && state.tokens[state.index+2].value === ")") {
-
+      //to distinguish this if from conventional for-loop below
+      if (state.tokens[state.index-1].value === "(" && state.tokens[state.index+2].value === ")") {
         this.type = "ForInStatement"
         if (state.token.value === "(") {
           state = advance(state);
         }
         this.left = statements(state, 1, true);
-        //state.token.value === "in"
         state = advance(state);
         this.each = false;
         this.right = {};
         this.right.type = "Identifier";
         this.right.name = state.token.value;
         state = advance(state);
-      }
-      /* for( var identifier..;exp;exp) { } */
-      else if(state.tokens[state.index-1].value === "(") {
+      } else if (state.tokens[state.index-1].value === "(") {
         state = advance(state, "(");
         this.init = statements(state, 1);
         this.test = expression(state, 0);
-        if(state.token.value === ";") {
+        if (state.token.value === ";") {
           state = advance(state, ";");
         }
         this.update = expression(state, 0);
         state = advance(state, ")");
       }
-      /* for KEYWORD_DECLARATION IDENTIFIER "IN" IDENTIFIER { } */
+      //for KEYWORD_DECLARATION IDENTIFIER "IN" IDENTIFIER { }
       else if(state.tokens[state.index-1].type === "IDENTIFIER" && state.tokens[state.index+1].type === "IDENTIFIER") {
-
         this.type = "ForInStatement";
-
-        /* Splice in a var keyword */
+        //Splice in a var keyword
         var symbVar = state.symbolTable["var"];
         var tkVar = Object.create(symbVar);
         tkVar.value = "var";
@@ -836,7 +736,7 @@ var declarations = {
         state.tokens.splice(state.index-1, 0, tkVar);
         state.token = state.tokens[state.index-1];
 
-        /* Splice in an end parens */
+        //Splice in an end parens
         var symbEndParen = state.symbolTable[")"];
         var tkEndParen = Object.create(symbEndParen);
         tkEndParen.value = ")";
@@ -850,9 +750,7 @@ var declarations = {
         this.right.type = "Identifier";
         this.right.name = state.token.value;
         state = advance(state);
-
       } else {
-
         this.init = statements(state, 1);
         this.test = expression(state, 0);
         if(state.token.value === ";") {
@@ -860,7 +758,6 @@ var declarations = {
         }
         this.update = expression(state, 0);
       }
-
       this.body = block(state);
       delete this.value;
       return this;
@@ -869,10 +766,10 @@ var declarations = {
     stmt(state, "repeat", function() {
       this.type = "DoWhileStatement";
       this.body = block(state);
-      if(state.token.value === 'while') {
+      if (state.token.value === 'while') {
         state = advance(state);
       }
-      if(state.tokens[state.index-1].value === "(") {
+      if (state.tokens[state.index-1].value === "(") {
         state = advance(state, "(");
         this.test = expression(state, 0);
         state = advance(state, ")");
@@ -880,7 +777,7 @@ var declarations = {
         this.test = expression(state, 0);
       }
       delete this.value;
-      if(state.token.value === ";") {
+      if (state.token.value === ";") {
         state = advance(state);
       }
       return this;
@@ -888,12 +785,7 @@ var declarations = {
 
   },
   constants: function(state) {
-    //constant(state, "true", true);
-    //constant(state, "false", false);
-    //constant(state, "null", null);
-    //constant(state, "pi", 3.141592653589793);
-    //constant(state, "Object", {});
-    //constant(state, "Array", []);
+
   }
 
 

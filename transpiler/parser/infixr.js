@@ -3,16 +3,17 @@ var helpers = require('./helperFunctions');
 var expression = require('./expression');
 var originalSymbol = require('./originalSymbol');
 
+// Handles right associative operations
 var infixr = function(state, id, bp, led) {
   var s = symbol(state, originalSymbol, id, bp);
   s.led = led || function(left) {
       delete this.value;
       this.type = "BinaryExpression";
       this.operator = this.value;
-      if(this.operator === "||") {
+      if (this.operator === "||") {
         this.type = "LogicalExpression";
       }
-      if(left.type === "IDENTIFIER") {
+      if (left.type === "IDENTIFIER") {
         left.type = "Identifier";
         left.name = left.value;
         delete left.value;

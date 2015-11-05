@@ -1,5 +1,6 @@
-var newScope = function(state, originalScope) {
 
+//Stores scoped variables
+var newScope = function(state, originalScope) {
   var s = state.scope;
   state.scope = Object.create(originalScope);
   state.scope.def = {};

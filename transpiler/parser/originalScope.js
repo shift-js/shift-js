@@ -1,5 +1,6 @@
 var helpers = require('./helperFunctions');
 
+// Function that handles the prototype for all scope objects.
 var originalScope = {
   define: function(state, n) {
     var scope = state['scope'];
