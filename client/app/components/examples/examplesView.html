@@ -12,26 +12,26 @@
     </div>
     <div class="col-md-4">
       <pre class="example">
-  var name: String = "Joe"
-  let num: Int = 5;
-  var anotherNum = 6
-  var yetAnotherNum: Float = 4.2;
-  let truth: Bool = false
-  var emptyString: String
-  var first, second, third: String
+ var name: String = "Joe"
+ let num: Int = 5;
+ var anotherNum = 6
+ var yetAnotherNum: Float = 4.2;
+ let truth: Bool = false
+ var emptyString: String
+ var first, second, third: String
 
 
   </pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  var name = 'Joe';
-  var num = 5;
-  var anotherNum = 6;
-  var yetAnotherNum = 4.2;
-  var truth = false;
-  var emptyString;
-  var first, second, third;
+ var name = 'Joe';
+ var num = 5;
+ var anotherNum = 6;
+ var yetAnotherNum = 4.2;
+ var truth = false;
+ var emptyString;
+ var first, second, third;
 
 
   </pre>
@@ -48,20 +48,20 @@
     </div>
     <div class="col-md-4">
       <pre class="example">
-  var answer = (5 * 6) / 4 - (-1 + 4.2) % 2
-  var m = ++answer;
-  var n = m--;
-  var n += answer
-  var b = true && !false || true
+ var ans = (5 * 6) / 4 - (-1 + 4.2) % 2
+ var m = ++ans;
+ var n = m--;
+ var n += ans
+ var b = true && !false || true
   </pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  var answer = 5 * 6 / 4 - (-1 + 4.2) % 2;
-  var m = ++answer;
-  var n = --m;
-  var n += answer
-  var b = true && !false || true
+ var ans = 5 * 6 / 4 - (-1 + 4.2) % 2;
+ var m = ++ans;
+ var n = --m;
+ var n += ans
+ var b = true && !false || true
   </pre>
     </div>
   </div>
@@ -76,98 +76,96 @@
     </div>
     <div class="col-md-4">
       <pre class="example">
-  var e = ["Eggs", "Milk", "Bacon"];
-  var f = e[0]
-  var g = ["one": 1, "two": 2, "three": 3];
-  var h = g["one"]
-  let i = [
-    "array1": [1,2,3],
-    "array2": [4,5,6]
-  ]</pre>
+ var e = ["Eggs", "Milk", "Bacon"];
+ var f = e[0]
+ var g = ["one": 1, "two": 2, "three": 3];
+ var h = g["one"]
+ let i = [
+   "array1": [1,2,3],
+   "array2": [4,5,6]]</pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  var e = ["Eggs", "Milk", "Bacon"];
-  var f = e[0];
-  var g = {'one': 1, 'two': 2, 'three': 3};
-  var h = g['one']
-  var i = {
-    'array1': [1, 2, 3],
-    'array2': [4, 5, 6]
-  };</pre>
+ var e = ["Eggs", "Milk", "Bacon"];
+ var f = e[0];
+ var g = {'one': 1, 'two': 2, 'three': 3};
+ var h = g['one']
+ var i = {
+   'array1': [1, 2, 3],
+   'array2': [4, 5, 6]};</pre>
     </div>
   </div>
   <div class="row">
     <div class="col-md-4">
       <h2>Control Flow</h2>
       <p>
-        ShiftJS offers broad support if...else statements, for/for-in loops, and while/repeat-while
+        ShiftJS offers broad support for if...else statements, for/for-in loops, and while/repeat-while
         loops with optional parentheses. ShiftJS does not fully support block scope or switch statements.
       </p>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  for var i = 1; i <= 100; i++ {
-    if (i % 3 == 0) {
-      if i % 5 == 0 {
-        print("FizzBuzz")
-      } else {
-        print("Fizz")
-      }
-    } else if (i % 5) == 0 {
-      print("Buzz")
-    } else {
-      print(i)
-    }
-  }
-  var foods = ["ham", "cheese"];
-  for food in foods {
-    print("Eats \(food).");
-  }
-  var num = 0;
-  while (num++ < 10) {
-    if (num % 2 == 0) {
-      print("even");
-    } else {
-      print("odd");
-    }
-  }
-  repeat {
-    print("Countdown: \(num)")
-  } while --num > 0
-  print("Blast off!")</pre>
+ for var i = 1; i <= 100; i++ {
+   if (i % 3 == 0) {
+     if i % 5 == 0 {
+       print("FizzBuzz")
+     } else {
+       print("Fizz")
+     }
+   } else if (i % 5) == 0 {
+     print("Buzz")
+   } else {
+     print(i)
+   }
+ }
+ var foods = ["ham", "cheese"];
+ for food in foods {
+   print("Eats \(food).");
+ }
+ var num = 0;
+ while (num++ < 10) {
+   if (num % 2 == 0) {
+     print("even");
+   } else {
+     print("odd");
+   }
+ }
+ repeat {
+   print("Countdown: \(num)")
+ } while --num > 0
+ print("Blast off!")</pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  for (var i = 1; i <= 100; i++) {
-    if (i % 3 == 0) {
-      if (i % 5 == 0) {
-        console.log('FizzBuzz');
-      } else {
-        console.log('Fizz');
-      }
-    } else if (i % 5 == 0) {
-      console.log('Buzz');
-    } else {
-      console.log(i);
-    }
-  }
-  var foods = ['ham', 'cheese'];
-  for (var food in foods) {
-    console.log('Eats ' + food + '.');
-  }
-  var num = 0;
-  while (num++ < 10) {
-    if (num % 2 == 0) {
-      console.log('even');
-    } else {
-      console.log('odd');
-    }
-  }
-  do {
-    console.log('Countdown: ' + num + '');
-  } while (--num > 0);
-  console.log('Blast off!');</pre>
+ for (var i = 1; i <= 100; i++) {
+   if (i % 3 == 0) {
+     if (i % 5 == 0) {
+       console.log('FizzBuzz');
+     } else {
+       console.log('Fizz');
+     }
+   } else if (i % 5 == 0) {
+     console.log('Buzz');
+   } else {
+     console.log(i);
+   }
+ }
+ var foods = ['ham', 'cheese'];
+ for (var food in foods) {
+   console.log('Eats ' + food + '.');
+ }
+ var num = 0;
+ while (num++ < 10) {
+   if (num % 2 == 0) {
+     console.log('even');
+   } else {
+     console.log('odd');
+   }
+ }
+ do {
+   console.log('Countdown: ' + num + '');
+ } while (--num > 0);
+ console.log('Blast off!');</pre>
     </div>
   </div>
   <div class="row">
@@ -181,37 +179,40 @@
     </div>
     <div class="col-md-4">
       <pre class="example">
-  func greet(name: String) -> String {
-    return "Hello \(name)."
-  }
-  greet(name: "Bob")
+ func greet(n:String,d:String)->String{
+  var greet1 = "Hello \(n)."
+  var greet2 = "Today is \(d)."
+  return greet1 + "  " + greet2
+ }
+ greet("Bob", d: 20)
 
-  func newIncrementer() -> ((Int) -> Int) {
-    func addOne(number: Int) -> Int {
-      func anon(n: Int) -> Int {
-        return 1 + n
-      }
-      return anon(number)
+ func newIncrement() -> ((Int)-> Int) {
+  func addOne(number: Int) -> Int {
+    func anon(n: Int) -> Int {
+      return 1 + n
     }
-    return addOne
-  }</pre>
+    return anon(number)
+  }
+  return addOne
+ }</pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  function greet(name) {
-    return 'Hello ' + name + '.';
-  }
-  greet('Bob');
-
-  function newIncrementer() {
-    function addOne(number) {
-      function anon(n) {
-        return 1 + n;
-      }
-      return anon(number);
-    }
-    return addOne;
-  }</pre>
+ function greet(n, d) {
+   var greet1 = 'Hello ' + n + '.';
+   var greet2 = 'Today is ' + d + '.';
+   return greet1 + '  ' + greet2;
+ }
+ greet('Bob', 20);
+ function newIncrement() {
+   function addOne(number) {
+     function anon(n) {
+       return 1 + n;
+     }
+     return anon(number);
+   }
+   return addOne;
+ }</pre>
     </div>
   </div>
   <div class="row">
@@ -221,19 +222,19 @@
     </div>
     <div class="col-md-4">
       <pre class="example">
-  var name = "Sam";
-  var n = "Hi my name is " + name + ".";
-  var planet = "Earth";
-  let o = "Hello \(planet)!";
-  var p = "\(100 - 99), 2, 3"</pre>
+ var name = "Sam";
+ var n = "Hi my name is " + name + ".";
+ var planet = "Earth";
+ let o = "Hello \(planet)!";
+ var p = "\(100 - 99), 2, 3"</pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  var name = "Sam";
-  var n = "Hi my name is " + name + ".";
-  var planet = 'Earth';
-  var o = 'Hello ' + planet + '!';
-  var p = '' + 100 - 99 + ', 2, 3';</pre>
+ var name = "Sam";
+ var n = "Hi my name is " + name + ".";
+ var planet = 'Earth';
+ var o = 'Hello ' + planet + '!';
+ var p = '' + 100 - 99 + ', 2, 3';</pre>
     </div>
   </div>
 </div>
