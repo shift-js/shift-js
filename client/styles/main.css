@@ -1,10 +1,13 @@
-h1, h2, h3, h4, h5, h6, span, .h1 {
+h1, h2, h3, h4, h5, h6, p, a, span {
   font-family: 'Roboto', sans-serif;
-  font-weight: 100;
 }
 
-p, a  {
-  font-family: 'Roboto', sans-serif;
+.jumbotron {
+  margin-top: 20px;
+}
+
+.jumbotron p {
+  font-weight: 400
 }
 
 select {
