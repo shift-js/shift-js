@@ -13,13 +13,13 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
   left = t.nud();
 
   if (t.value === "++" || t.value === "--") {
-    /*Pre-fix operator*/
+    //Pre-fix operator
     left = t;
     if (state.token.value !== "}" && state.token.value !== "==") {
       state = advance(state);
     }
   } else if (state.token.value === "++" || state.token.value === "--") {
-    /*Post-fix operators*/
+    //Post-fix operators
     if (state.token.value === "++") {
       left.type = "Identifier";
       left.name = left.value;
@@ -63,7 +63,7 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
   while (rbp < state.token.lbp) {
     t = state.token;
     state = advance(state);
-    left = t.led(left);//assignments
+    left = t.led(left);
   }
   if (left.type === "IDENTIFIER") {
     left.name = left.value;

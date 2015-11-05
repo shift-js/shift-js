@@ -327,7 +327,7 @@ var declarations = {
 
     prefix(state, "[", function() {
       var a = [];
-      /* Handle Array initializer syntax */
+      //Handle Array initializer syntax
       if(state.tokens[state.index].type === "ARRAY_END") {
         state = advance(state);
       } else {
@@ -371,7 +371,7 @@ var declarations = {
         var secondTypeDeclaration = (state.tokens[state.index+1].type.indexOf("TYPE") > -1);
         var dictionaryEnd = (state.tokens[state.index+2].type === "DICTIONARY_END");
       }
-      /* Check for Dictionary initializer syntax */
+      //Check for Dictionary initializer syntax
       if(firstTypeDeclaration && secondTypeDeclaration && dictionaryEnd) {
         while (true) {
           if (state.token.value === "]") {
@@ -432,7 +432,7 @@ var declarations = {
         }
         return this;
       }
-      /* Get all things in dictionary */
+      //Get all things in dictionary
       if ((state.token.id !== "]" &&  state.token.id !== ")") && tmpLookAhead.value !== ",") {
         while (true) {
           n = state.token;
@@ -534,7 +534,7 @@ var declarations = {
         delete n.value;
         state = advance(state);
 
-        /* Type Declarations */
+        //Type Declarations
         if(state.token.id === ":") {
           state = advance(state, ":");
           if(state.token.type === "TYPE_STRING") {
@@ -545,7 +545,7 @@ var declarations = {
             state = advance(state);
           }
         }
-        /* Assignment to a variable declaration */
+        //Assignment to a variable declaration
         if (state.token.id === "=") {
           t = state.token;
           state = advance(state, "=");
@@ -561,7 +561,7 @@ var declarations = {
           delete t.value;
           a.push(t);
         }
-        /* Uninitialized variable declaration */
+        //Uninitialized variable declaration
         else if ([";", ")"].hasItem(state.token.id)) {
           t = state.token;
           t.type = 'VariableDeclaration';
@@ -631,7 +631,7 @@ var declarations = {
           break;
         }
       }
-      /* block directly followed by else or else if statement? */
+      //block directly followed by else or else if statement?
       if (state.token.id === "else") {
         state.scope.reserve(state.token);
         state = advance(state, "else");
@@ -679,24 +679,11 @@ var declarations = {
 
     stmt(state, "break", function() {
       state = advance(state, ";");
-      /* TODO termination logic is different (for Switch stmts) */
+      //TODO termination logic is different (for Switch stmts)
       if (state.token.id !== "}") {
         state.token.error("Unreachable statement.");
       }
       return this;
-    });
-
-    stmt(state, "switch", function () {
-      /*
-      // switch (conditional) {
-        // 1..n case (comparison):
-          // maybe expression;
-      }
-      */
-    });
-
-    stmt(state, "case", function () {
-
     });
 
     stmt(state, "while", function() {
@@ -715,7 +702,7 @@ var declarations = {
 
     stmt(state, "for", function() {
       this.type = "ForStatement";
-      /* to distinguish this if from conventional for-loop below */
+      //to distinguish this if from conventional for-loop below
       if (state.tokens[state.index-1].value === "(" && state.tokens[state.index+2].value === ")") {
         this.type = "ForInStatement"
         if (state.token.value === "(") {
@@ -738,10 +725,10 @@ var declarations = {
         this.update = expression(state, 0);
         state = advance(state, ")");
       }
-      /* for KEYWORD_DECLARATION IDENTIFIER "IN" IDENTIFIER { } */
+      //for KEYWORD_DECLARATION IDENTIFIER "IN" IDENTIFIER { }
       else if(state.tokens[state.index-1].type === "IDENTIFIER" && state.tokens[state.index+1].type === "IDENTIFIER") {
         this.type = "ForInStatement";
-        /* Splice in a var keyword */
+        //Splice in a var keyword
         var symbVar = state.symbolTable["var"];
         var tkVar = Object.create(symbVar);
         tkVar.value = "var";
@@ -749,7 +736,7 @@ var declarations = {
         state.tokens.splice(state.index-1, 0, tkVar);
         state.token = state.tokens[state.index-1];
 
-        /* Splice in an end parens */
+        //Splice in an end parens
         var symbEndParen = state.symbolTable[")"];
         var tkEndParen = Object.create(symbEndParen);
         tkEndParen.value = ")";

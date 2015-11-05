@@ -124,13 +124,13 @@ var helpers = {
           input[i].value = "-=";
         }
       }
-      /* Remove inline comments */
+      //Remove inline comments
       if (input[i].type === "COMMENT_START") {
         if (input[i + 1].type === "COMMENT") {
           input.splice(i, 2);
         }
       }
-      /* Remove multi-line comments */
+      //Remove multi-line comments
       if (input[i].type === "MULTI_LINE_COMMENT_START") {
 
         for(var j=i; input.length; j++) {
