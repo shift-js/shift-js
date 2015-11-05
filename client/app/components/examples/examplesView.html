@@ -18,7 +18,10 @@
   var yetAnotherNum: Float = 4.2;
   let truth: Bool = false
   var emptyString: String
-  var first, second, third: String</pre>
+  var first, second, third: String
+
+
+  </pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
@@ -28,16 +31,47 @@
   var yetAnotherNum = 4.2;
   var truth = false;
   var emptyString;
-  var first, second, third;</pre>
+  var first, second, third;
+
+
+  </pre>
     </div>
   </div>
   <div class="row">
     <div class="col-md-4">
-      <h2>Dictionaries and Arrays</h2>
+      <h2>Basic Operators</h2>
+      <p>
+        There is full support for mathematical and logical operators.  For math
+        operations, parentheses will be included in the JS output only if they have
+        significance for the order of operations.
+      </p>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var answer = (5 * 6) / 4 - (-1 + 4.2) % 2
+  var m = ++answer;
+  var n = m--;
+  var n += answer
+  var b = true && !false || true
+  </pre>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var answer = 5 * 6 / 4 - (-1 + 4.2) % 2;
+  var m = ++answer;
+  var n = --m;
+  var n += answer
+  var b = true && !false || true
+  </pre>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Arrays and Dictionaries</h2>
       <p>
         Swift arrays are converted to JS arrays, while dictionaries are converted to object
         literals.  Values are accessed via subscript lookup. There is comprehensive support for
-        anested collections.  ShiftJS does not yet support sets.
+        nested collections.  ShiftJS does not yet support sets.
       </p>
     </div>
     <div class="col-md-4">
@@ -65,163 +99,75 @@
   </div>
   <div class="row">
     <div class="col-md-4">
-      <h2>String Interpolation and Concatenation</h2>
-      <p>There is full support for string concatenation and interpolation.</p>
-    </div>
-    <div class="col-md-4">
-      <pre class="example">
-  var name = "Sam";
-  var n = "Hi my name is " + name + ".";
-  var planet = "Earth";
-  let o = "Hello \(planet)!";
-  var p = "\(100 - 99), 2, 3"</pre>
-    </div>
-    <div class="col-md-4">
-      <pre class="example">
-  var name = "Sam";
-  var n = "Hi my name is " + name + ".";
-  var planet = 'Earth';
-  var o = 'Hello ' + planet + '!';
-  var p = '' + 100 - 99 + ', 2, 3';</pre>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4">
-      <h2>Tuples</h2>
-      <p>
-        Tuples are converted to object literals. If element names are not provided,
-        they are assigned numeric keys, indexed from zero, based on their order in the
-        tuple.  There is no support yet for tuples containing nested collections
-      </p>
-    </div>
-    <div class="col-md-4">
-      <pre class="example">
-  var error = (404, "not found")
-  let http = (status: 200, desc: "OK")</pre>
-    </div>
-    <div class="col-md-4">
-      <pre class="example">
-  var error = {0: 404, 1: 'not found'};
-  var http = {status: 200, desc: 'OK'};</pre>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4">
-      <h2>Mathematical and Logical Operators</h2>
-      <p>
-        There is full support for mathematical and logical operators.  For math
-        operations, parentheses will be included in the JS output only if they have
-        significance for the order of operations.
-      </p>
-    </div>
-    <div class="col-md-4">
-      <pre class="example">
-  var answer = (5 * 6) / 4 - (-1 + 4.2) % 2
-  var a = 1; var m = ++a; var n = --m;</pre>
-    </div>
-    <div class="col-md-4">
-      <pre class="example">
-  var answer = 5 * 6 / 4 - (-1 + 4.2) % 2;
-  var a = 1; var m = ++a; var n = --m;</pre>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4">
       <h2>Control Flow</h2>
       <p>
-        Tuples are converted to object literals. If element names are not provided,
-        they are assigned numeric keys, indexed from zero, based on their order in the
-        tuple.  There is no support yet for tuples containing nested collections
+        ShiftJS offers broad support if...else statements, for/for-in loops, and while/repeat-while
+        loops with optional parentheses. ShiftJS does not fully support block scope or switch statements.
       </p>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  var gameInProgress = false;
-  var score = 0;
-  var typeOfScore = ""
-  var PAT = "";
-  while gameInProgress {
-    if (typeOfScore != "") {
-      if typeOfScore == "TD" {
-        score += 6
-      } else if typeOfScore == "PAT" {
-        if PAT == "TD" {
-          score += 2
-        } else {
-          score += 1
-        }
-      } else if (typeOfScore == "FG") {
-        score += 3
+  for var i = 1; i <= 100; i++ {
+    if (i % 3 == 0) {
+      if i % 5 == 0 {
+        print("FizzBuzz")
       } else {
-        score += 2;
+        print("Fizz")
       }
-      typeOfScore = ""
+    } else if (i % 5) == 0 {
+      print("Buzz")
+    } else {
+      print(i)
     }
-  }</pre>
+  }
+  var foods = ["ham", "cheese"];
+  for food in foods {
+    print("Eats \(food).");
+  }
+  var num = 0;
+  while (num++ < 10) {
+    if (num % 2 == 0) {
+      print("even");
+    } else {
+      print("odd");
+    }
+  }
+  repeat {
+    print("Countdown: \(num)")
+  } while --num > 0
+  print("Blast off!")</pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  var gameInProgress = false;
-  var score = 0;
-  var typeOfScore = '';
-  var PAT = '';
-  while (gameInProgress) {
-    if (typeOfScore != '') {
-      if (typeOfScore == 'TD') {
-        score += 6;
-      } else if (typeOfScore == 'PAT') {
-        if (PAT == 'TD') {
-          score += 2;
-        } else {
-          score += 1;
-        }
-      } else if (typeOfScore == 'FG') {
-        score += 3;
+  for (var i = 1; i <= 100; i++) {
+    if (i % 3 == 0) {
+      if (i % 5 == 0) {
+        console.log('FizzBuzz');
       } else {
-        score += 2;
+        console.log('Fizz');
       }
-      typeOfScore = '';
+    } else if (i % 5 == 0) {
+      console.log('Buzz');
+    } else {
+      console.log(i);
     }
-  }</pre>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4">
-      <h2>For-In Loops</h2>
-      <p>There is full support for-in loops</p>
-    </div>
-    <div class="col-md-4">
-      <pre class="example">
-  let interestingNumbers = [
-    "Prime": [2, 3, 5, 7, 11, 13],
-    "Fibonacci": [1, 1, 2, 3, 5, 8],
-    "Square": [1, 4, 9, 16, 25],
-  ]
-  var largest = 0
-  for (kind, numbers) in interestingNumbers {
-    for number in numbers {
-      if number > largest {
-        largest = number
-      }
+  }
+  var foods = ['ham', 'cheese'];
+  for (var food in foods) {
+    console.log('Eats ' + food + '.');
+  }
+  var num = 0;
+  while (num++ < 10) {
+    if (num % 2 == 0) {
+      console.log('even');
+    } else {
+      console.log('odd');
     }
-  }</pre>
-    </div>
-    <div class="col-md-4">
-      <pre class="example">
-  var interestingNumbers = {
-    'Prime': [2, 3, 5, 7, 11, 13],
-    'Fibonacci': [1, 1, 2, 3, 5, 8],
-    'Square': [1, 4, 9, 16, 25]
-  };
-  var largest = 0;
-  for (var kind in interestingNumbers) {
-    var numbers = interestingNumbers[kind];
-    for (var number in numbers) {
-      if (number > largest) {
-        largest = number;
-      }
-    }
-  }</pre>
+  }
+  do {
+    console.log('Countdown: ' + num + '');
+  } while (--num > 0);
+  console.log('Blast off!');</pre>
     </div>
   </div>
   <div class="row">
@@ -266,6 +212,28 @@
     }
     return addOne;
   }</pre>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <h2>String Interpolation and Concatenation</h2>
+      <p>There is full support for string concatenation and interpolation.</p>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var name = "Sam";
+  var n = "Hi my name is " + name + ".";
+  var planet = "Earth";
+  let o = "Hello \(planet)!";
+  var p = "\(100 - 99), 2, 3"</pre>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var name = "Sam";
+  var n = "Hi my name is " + name + ".";
+  var planet = 'Earth';
+  var o = 'Hello ' + planet + '!';
+  var p = '' + 100 - 99 + ', 2, 3';</pre>
     </div>
   </div>
 </div>
