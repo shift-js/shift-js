@@ -63,7 +63,6 @@ npm install
   - The parser is brokend up into over 20 files, that handle different parts of the parsing process.
   - ```parser.js``` is where the different modules come together to build the final tree output.
   - ```rearrange``` are a group of functions that take the original tokens from the lexer and rearrange them in a manner that is conducive to building the AST so that it produces the equivalent JavaScript output of the Swift input.
-  - the AST is converted o JavaScript using Escodegen.
 
 Note about the CLI
 
