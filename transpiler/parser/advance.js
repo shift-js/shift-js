@@ -1,11 +1,8 @@
 var originalScope = require('./originalScope');
 var tokenTypes = require('./tokenTypes');
 
-/**
- * Look forward one token in the collection
- */
 
-// The advance function is used to advance through the tokens
+// The advance function is used to advance through the tokens one at a time
   // without the need of a for loop
 var advance = function(state, id) {
 
