@@ -7,17 +7,25 @@ p, a  {
   font-family: 'Roboto', sans-serif;
 }
 
+select {
+  box-shadow: none !important;
+  border-color: #dce4ec !important;
+}
+
 textarea {
   resize: none;
   background-color: #fff !important;
   box-shadow: none !important;
-  border-color: #ccc !important;
+  border-color: #dce4ec !important;
+  font-family: monospace;
 }
+
+
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
 
-#logo{
+#logo {
   max-height: 40px;
   margin-top: -10px;
   margin-right: -20px;
