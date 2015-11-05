@@ -100,7 +100,7 @@ Each Swift language feature should have corresponding lexer, parser, generator, 
 
 1. [Check for open issues] (https://github.com/shift-js/shift-js/issues>) or open a fresh issue to start a discussion around a feature idea or a bug.
 
-2. [Fork the shift-js repository on Github] (https://github.com/shift-js/shift-js/issues#fork-destination-box) to start making your changes. Cut a namespaced feature branch from develop that is named appropriately for the feature you plan to work on.
+2. Fork the shift-js repository on Github to start making your changes. Cut a namespaced feature branch from develop that is named appropriately for the feature you plan to work on.
 
 3. Tests are very important for this project. Write tests that show the bug was fixed or that the feature works as expected.
 
