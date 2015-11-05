@@ -244,7 +244,7 @@ describe('Lexer: Second milestone', function() {
     });
   });
 
-  describe(' Single-Line While/Repeat-While loops', function() {
+  describe('Single-Line While/Repeat-While loops', function() {
 
     it('should handle single-line while loops with a parenthetical', function() {
       input = String.raw`var i = 10; while (i >= 0) {i--}`;
@@ -1688,6 +1688,122 @@ describe('Lexer: Second milestone', function() {
         { type: 'TERMINATOR',                  value: '\\n' },
         { type: 'TERMINATOR',                  value: 'EOF' }
 
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+  });
+
+  describe('Swift #print method', function() {
+    it('should convert print to console.log base case', function() {
+      input = String.raw`print("Hello")`;
+      output = [
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "Hello" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "EOF" },
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should convert print to console.log with multiple parentheses', function() {
+      input = String.raw`print(5 * (1 + 1))`;
+      output = [
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "NUMBER",                     value: "5" },
+        { type: "OPERATOR",                   value: "*" },
+        { type: "PUNCTUATION",                value: "(" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "OPERATOR",                   value: "+" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: ")" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle calls to print multiline', function() {
+      input = String.raw`var name = "Joe"
+                         var arr = [1, 2]
+                         var tup = (1, 2)
+                         print(name)
+                         print("Hello, \(name)")
+                         print(5 * (1 + 1))
+                         print(arr[1])
+                         print(tup.0)`;
+      output = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "name" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "STRING",                     value: "Joe" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "arr" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "ARRAY_START",                value: "[" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "NUMBER",                     value: "2" },
+        { type: "ARRAY_END",                  value: "]" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "tup" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "TUPLE_START",                value: "(" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "NUMBER",                     value: "2" },
+        { type: "TUPLE_END",                  value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "name" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "Hello, " },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "name" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: "" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "NUMBER",                     value: "5" },
+        { type: "OPERATOR",                   value: "*" },
+        { type: "PUNCTUATION",                value: "(" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "OPERATOR",                   value: "+" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: ")" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "arr" },
+        { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
+
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "tup" },
+        { type: "DOT_SYNTAX",                 value: "." },
+        { type: "NUMBER",                     value: "0"},
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "EOF" }
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
