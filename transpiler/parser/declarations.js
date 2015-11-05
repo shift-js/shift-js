@@ -679,10 +679,24 @@ var declarations = {
 
     stmt(state, "break", function() {
       state = advance(state, ";");
+      /* TODO termination logic is different (for Switch stmts) */
       if (state.token.id !== "}") {
         state.token.error("Unreachable statement.");
       }
       return this;
+    });
+
+    stmt(state, "switch", function () {
+      /*
+      // switch (conditional) {
+        // 1..n case (comparison):
+          // maybe expression;
+      }
+      */
+    });
+
+    stmt(state, "case", function () {
+
     });
 
     stmt(state, "while", function() {

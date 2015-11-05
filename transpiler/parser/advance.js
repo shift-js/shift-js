@@ -4,8 +4,9 @@ var tokenTypes = require('./tokenTypes');
 
 // The advance function is used to advance through the tokens one at a time
   // without the need of a for loop
-var advance = function(state, id) {
 
+
+var advance = function(state, id) {
   var a, o, t, v;
 
   if (id && state.token.id !== id) {
