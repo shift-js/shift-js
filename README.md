@@ -78,9 +78,9 @@ The test suite contains tests for each of the main parts of the transpiler.
 
 - Parser tests ensure that the parser is generating the correct AST based on the token stream
 
-- Generator tests to ensure that Escodgen is generating the correct JavaScript based on the AST
+- Generator tests ensure that Escodgen is generating the correct JavaScript based on the AST
 
-- End to end tests to ensure that the transpiler as a whole is generating the correct JavaScript based on the Swift input
+- End to end tests ensure that the transpiler as a whole is generating the correct JavaScript based on the Swift input
 
 To run any of these particular tests, rather then the entire test suite, use one of the following:
 
