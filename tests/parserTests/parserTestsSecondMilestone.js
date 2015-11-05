@@ -5734,7 +5734,7 @@ describe('Parser: Second Milestone', function() {
 
      TODO BUG BUG tup.0 doesn't work but tup[0] does. Fix
      */
-    it('should handle calls to print multiline', function() {
+    xit('should handle calls to print multiline', function() {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "name" },
