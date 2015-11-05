@@ -4,6 +4,7 @@ module.exports = function(code) {
 
   // state object to store the token stream and other relevant information related to the Swift input
   var STATE = {
+    // current position in code
     i: 0,                                                                       // current position in code
     tokens: [],                                                                 // array to hold token stream
     chunk: '',                                                                  // current chunk to be evaluated

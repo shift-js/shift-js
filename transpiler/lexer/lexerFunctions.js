@@ -6,6 +6,7 @@ var NUMBER = /^0b[01]+|^0o[0-7]+|^0x[\da-f]+|^\d*\.?\d+(?:e[+-]?\d+)?/i;
 // whitespace regex
 var WHITESPACE = /^[^\n\S]+/;
 
+// These helper functions to handle particular lexical parts of Swift.
 module.exports = {
   
   // default check for point at which to evaluate chunk
