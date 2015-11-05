@@ -52,7 +52,7 @@ npm install
 
 ### Code Overview
 
-```/transpiler``` contains the two main components of the transpiler:
+```/transpiler``` contains the two main components of the transpiler and the API:
 
 - Lexer: Generates a stream of tokens representing the lexical parts of the Swift input.  The lexer uses a state object to store the token stream and other relevant information related to the Swift input.  It is organized into three main files: 
   - ```lexer.js``` iterates over the Swift code, separating it into individual parts to be evaluated based on their precedence in Swift.
@@ -64,7 +64,10 @@ npm install
   - ```parser.js``` is where the different modules come together to build the final tree output.
   - ```rearrange``` are a group of functions that take the original tokens from the lexer and rearrange them in a manner that is conducive to building the AST so that it produces the equivalent JavaScript output of the Swift input.
 
-Note about the CLI
+- API: Provides an interface for the CLI and transpiler web app to interact with the core transpiler.
+
+```command.js``` contains the code for the command line interface
+- The CLI uses Commander.js for handling a variety of user inputs, and uses Bluebird for promises.
 
 ### Testing
 
