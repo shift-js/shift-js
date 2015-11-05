@@ -96,6 +96,8 @@ grunt testEndToEnd
 
 Each Swift language feature should have corresponding lexer, parser, generator, and end to end tests.  Please be sure to test your code before making a pull request and to include any new tests when appropriate.
 
+Tests should remain marked as pending until they pass, otherwise Travis CI will fail.
+
 ### Contributing
 
 1. [Check for open issues] (https://github.com/shift-js/shift-js/issues>) or open a fresh issue to start a discussion around a feature idea or a bug.
