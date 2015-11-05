@@ -1,121 +1,270 @@
 <div class="container">
   <div class="row">
     <div class="col-md-4">
-      <h2>Explicit Typing</h2>
-      <p>Lorem ipsum dolor sit amet, ut vis fastidii molestie posidonium, viderer complectitur ex sea, nec te minim invenire. Verear contentiones definitiones est ad, vide officiis est no. Quas epicurei electram no qui, vix exerci persius complectitur no. Ne doctus ullamcorper usu, no eos habeo admodum dissentiunt. Ius dolores partiendo et, ex habeo quaestio corrumpit pro.</p>
+      <h2>Basic Declarations and Assignment</h2>
+      <p>
+        Variables and constants will be converted to their JS equivalent.  Type
+        annotations are ignored, and the let keyword is converted to var.  There
+        is no support for the various number or character types in Swift.  Optionals
+        are not supported.  Semi-colons will be inserted at the end of each line of JS,
+        regardless of the Swift input.
+      </p>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  // Comment
-  var implicitVar = "Hello!"
-
-  // Comment
-  var explicitInt: Int = 42
-  var explicitFloat: Float = 3.14
-  var explicitDouble: Double = 24
-  let explicitString: String = "apples"
-  let explicitBool: Bool = true</pre>
+  var name: String = "Joe"
+  let num: Int = 5;
+  var anotherNum = 6
+  var yetAnotherNum: Float = 4.2;
+  let truth: Bool = false
+  var emptyString: String
+  var first, second, third: String</pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  // Comment
-  var implicitVar = "Hello!";
-
-  // Comment
-  var explicitInt = 42;
-  var explicitFloat = 3.14;
-  var explicitDouble = 24;
-  var explicitString = 'apples';
-  var explicitBool = true;</pre>
+  var name = 'Joe';
+  var num = 5;
+  var anotherNum = 6;
+  var yetAnotherNum = 4.2;
+  var truth = false;
+  var emptyString;
+  var first, second, third;</pre>
     </div>
   </div>
   <div class="row">
     <div class="col-md-4">
-      <h2>String Interpolation</h2>
-      <p>Lorem ipsum dolor sit amet, ut vis fastidii molestie posidonium, viderer complectitur ex sea, nec te minim invenire. Verear contentiones definitiones est ad, vide officiis est no. Quas epicurei electram no qui, vix exerci persius complectitur no. Ne doctus ullamcorper usu, no eos habeo admodum dissentiunt. Ius dolores partiendo et, ex habeo quaestio corrumpit pro.</p>
+      <h2>Dictionaries and Arrays</h2>
+      <p>
+        Swift arrays are converted to JS arrays, while dictionaries are converted to object
+        literals.  Values are accessed via subscript lookup. There is comprehensive support for
+        anested collections.  ShiftJS does not yet support sets.
+      </p>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  // Comment
-  var place = "World"
-  let greeting = "Hello \(place)"
-
-  // Comment
-  var place = "World"
-  let greeting = "Hello \(place)"
-
-  // Comment
-  var place = "World"
-  let greeting = "Hello \(place)"</pre>
+  var e = ["Eggs", "Milk", "Bacon"];
+  var f = e[0]
+  var g = ["one": 1, "two": 2, "three": 3];
+  var h = g["one"]
+  let i = [
+    "array1": [1,2,3],
+    "array2": [4,5,6]
+  ]</pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  // Comment
-  var place = 'World';
-  var greeting = 'Hello ' + place + '';
-
-  // Comment
-  var place = 'World';
-  var greeting = 'Hello ' + place + '';
-
-  // Comment
-  var place = 'World';
-  var greeting = 'Hello ' + place + '';</pre>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4">
-      <h2>Dictionaries</h2>
-      <p>Lorem ipsum dolor sit amet, ut vis fastidii molestie posidonium, viderer complectitur ex sea, nec te minim invenire. Verear contentiones definitiones est ad, vide officiis est no. Quas epicurei electram no qui, vix exerci persius complectitur no.</p>
-    </div>
-    <div class="col-md-4">
-      <pre class="example">
-  // Comment
-  var food = [
-    food1: "eggs",
-    food2: "bacon",
-    food3: "sausage",
-    food4: "waffles"
-  ];</pre>
-    </div>
-    <div class="col-md-4">
-      <pre class="example">
-  // Comment
-  var food = {
-    food1: "eggs",
-    food2: "bacon",
-    food3: "sausage",
-    food4: "waffles"
+  var e = ["Eggs", "Milk", "Bacon"];
+  var f = e[0];
+  var g = {'one': 1, 'two': 2, 'three': 3};
+  var h = g['one']
+  var i = {
+    'array1': [1, 2, 3],
+    'array2': [4, 5, 6]
   };</pre>
     </div>
   </div>
   <div class="row">
     <div class="col-md-4">
-      <h2>Functions</h2>
-      <p>Lorem ipsum dolor sit amet, ut vis fastidii molestie posidonium, viderer complectitur ex sea, nec te minim invenire. Verear contentiones definitiones est ad, vide officiis est no. Quas epicurei electram no qui, vix exerci persius complectitur no.</p>
+      <h2>String Interpolation and Concatenation</h2>
+      <p>There is full support for string concatenation and interpolation.</p>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  // Comment
-  func sayHello() -> String {
-     print("hello, world")
-  }
-
-  // Comment
-  func sayHello() -> String {
-     print("hello, world")
+  var name = "Sam";
+  var n = "Hi my name is " + name + ".";
+  var planet = "Earth";
+  let o = "Hello \(planet)!";
+  var p = "\(100 - 99), 2, 3"</pre>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var name = "Sam";
+  var n = "Hi my name is " + name + ".";
+  var planet = 'Earth';
+  var o = 'Hello ' + planet + '!';
+  var p = '' + 100 - 99 + ', 2, 3';</pre>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Tuples</h2>
+      <p>
+        Tuples are converted to object literals. If element names are not provided,
+        they are assigned numeric keys, indexed from zero, based on their order in the
+        tuple.  There is no support yet for tuples containing nested collections
+      </p>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var error = (404, "not found")
+  let http = (status: 200, desc: "OK")</pre>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var error = {0: 404, 1: 'not found'};
+  var http = {status: 200, desc: 'OK'};</pre>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Mathematical and Logical Operators</h2>
+      <p>
+        There is full support for mathematical and logical operators.  For math
+        operations, parentheses will be included in the JS output only if they have
+        significance for the order of operations.
+      </p>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var answer = (5 * 6) / 4 - (-1 + 4.2) % 2
+  var a = 1; var m = ++a; var n = --m;</pre>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var answer = 5 * 6 / 4 - (-1 + 4.2) % 2;
+  var a = 1; var m = ++a; var n = --m;</pre>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Control Flow</h2>
+      <p>
+        Tuples are converted to object literals. If element names are not provided,
+        they are assigned numeric keys, indexed from zero, based on their order in the
+        tuple.  There is no support yet for tuples containing nested collections
+      </p>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var gameInProgress = false;
+  var score = 0;
+  var typeOfScore = ""
+  var PAT = "";
+  while gameInProgress {
+    if (typeOfScore != "") {
+      if typeOfScore == "TD" {
+        score += 6
+      } else if typeOfScore == "PAT" {
+        if PAT == "TD" {
+          score += 2
+        } else {
+          score += 1
+        }
+      } else if (typeOfScore == "FG") {
+        score += 3
+      } else {
+        score += 2;
+      }
+      typeOfScore = ""
+    }
   }</pre>
     </div>
     <div class="col-md-4">
       <pre class="example">
-  // Comment
-  function sayHello() {
-    console.log('hello, world');
+  var gameInProgress = false;
+  var score = 0;
+  var typeOfScore = '';
+  var PAT = '';
+  while (gameInProgress) {
+    if (typeOfScore != '') {
+      if (typeOfScore == 'TD') {
+        score += 6;
+      } else if (typeOfScore == 'PAT') {
+        if (PAT == 'TD') {
+          score += 2;
+        } else {
+          score += 1;
+        }
+      } else if (typeOfScore == 'FG') {
+        score += 3;
+      } else {
+        score += 2;
+      }
+      typeOfScore = '';
+    }
+  }</pre>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <h2>For-In Loops</h2>
+      <p>There is full support for-in loops</p>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  let interestingNumbers = [
+    "Prime": [2, 3, 5, 7, 11, 13],
+    "Fibonacci": [1, 1, 2, 3, 5, 8],
+    "Square": [1, 4, 9, 16, 25],
+  ]
+  var largest = 0
+  for (kind, numbers) in interestingNumbers {
+    for number in numbers {
+      if number > largest {
+        largest = number
+      }
+    }
+  }</pre>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  var interestingNumbers = {
+    'Prime': [2, 3, 5, 7, 11, 13],
+    'Fibonacci': [1, 1, 2, 3, 5, 8],
+    'Square': [1, 4, 9, 16, 25]
+  };
+  var largest = 0;
+  for (var kind in interestingNumbers) {
+    var numbers = interestingNumbers[kind];
+    for (var number in numbers) {
+      if (number > largest) {
+        largest = number;
+      }
+    }
+  }</pre>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Functions</h2>
+      <p>
+        The transpiler has very broad support for most function patterns, including
+        functions that take a function as an argument or return a function, and
+        functions with variadic parameters.
+      </p>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  func greet(name: String) -> String {
+    return "Hello \(name)."
   }
+  greet(name: "Bob")
 
-  // Comment
-  function sayHello() {
-    console.log('hello, world');
+  func newIncrementer() -> ((Int) -> Int) {
+    func addOne(number: Int) -> Int {
+      func anon(n: Int) -> Int {
+        return 1 + n
+      }
+      return anon(number)
+    }
+    return addOne
+  }</pre>
+    </div>
+    <div class="col-md-4">
+      <pre class="example">
+  function greet(name) {
+    return 'Hello ' + name + '.';
+  }
+  greet('Bob');
+
+  function newIncrementer() {
+    function addOne(number) {
+      function anon(n) {
+        return 1 + n;
+      }
+      return anon(number);
+    }
+    return addOne;
   }</pre>
     </div>
   </div>
