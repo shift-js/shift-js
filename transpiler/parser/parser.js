@@ -162,7 +162,6 @@ var makeParser = function() {
         bodyNodes.unshift(minimalTupleSource[i]);
       }
     }
-
     var result = {
       type: 'Program',
       sourceType: 'module',
