@@ -3,6 +3,7 @@ var helpers = require('./helperFunctions');
 var expression = require('./expression');
 var originalSymbol = require('./originalSymbol');
 
+//Handles left assosiciative infix operations
 var infix = function(state, id, bp, led) {
   var s = symbol(state, originalSymbol, id, bp);
   s.led = led || function(left) {
@@ -12,11 +13,11 @@ var infix = function(state, id, bp, led) {
       if(this.operator === "||") {
         this.type = "LogicalExpression";
       }
-      if(left.type === "IDENTIFIER") {
+      if (left.type === "IDENTIFIER") {
         left.type = "Identifier";
         left.name = left.value;
         delete left.value;
-      } else if(left.type === "literal" && helpers.isNum(left.value)) {
+      } else if (left.type === "literal" && helpers.isNum(left.value)) {
         left.type = "Literal";
         left.raw = left.value;
         if (left.value.indexOf('.') === -1) {

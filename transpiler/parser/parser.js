@@ -27,7 +27,6 @@ var minimalTupleSource = require('../../tupleDataStructure/minimalTupleSource');
 // Outward facing API for interacting with the parser
 // Returns a parseFunctionStream function that accepts an array of tokens
 var makeParser = function() {
-
   var state = {};
   state.scope;
   state.symbolTable = {};
@@ -43,7 +42,6 @@ var makeParser = function() {
   declarations.constants(state);
 
   var parseTokenStream = function(inputTokens) {
-
     var intermediaryTokenStream = helpers.cleanUpTokenStream(inputTokens);
     var intermediary = rearrangeTokensDynamicDictionaryAssignment(intermediaryTokenStream);
     var intermediary2 = rearrangeTokensPrintToConsoleLog(intermediary);
@@ -55,47 +53,44 @@ var makeParser = function() {
     state.tokens = rearrangeTokensRanges(intermediary6);
     state.scope = newScope(state, originalScope);
 
-    /* Define globally accessible objects */
-    /* console */
+    //Define globally accessible objects
+    //console
     var identifierSymbol = state.symbolTable["(name)"];
     var identifierToken = Object.create(identifierSymbol);
     identifierToken.type = "Identifier";
     identifierToken.value = "console";
     state.scope.define(state, identifierToken);
 
-    /* Array */
+    //Array
     var identifierSymbol = state.symbolTable["(name)"];
     var identifierToken = Object.create(identifierSymbol);
     identifierToken.type = "Identifier";
     identifierToken.value = "Array";
     state.scope.define(state, identifierToken);
 
-    /* arguments */
+    // arguments
     var identifierSymbol = state.symbolTable["(name)"];
     var identifierToken = Object.create(identifierSymbol);
     identifierToken.type = "Identifier";
     identifierToken.value = "arguments";
     state.scope.define(state, identifierToken);
 
-    /* sJs namespace*/
+    //sJs namespace
     var identifierSymbolSJS = state.symbolTable["(name)"];
     var identifierTokenSJS = Object.create(identifierSymbolSJS);
     identifierTokenSJS.type = "Identifier";
     identifierTokenSJS.value = "sJs";
     state.scope.define(state, identifierTokenSJS);
 
-    /* Tuple namespace*/
+    //Tuple namespace
     var identifierSymbolSJS = state.symbolTable["(name)"];
     var identifierTokenSJS = Object.create(identifierSymbolSJS);
     identifierTokenSJS.type = "Identifier";
     identifierTokenSJS.value = "Tuple";
     state.scope.define(state, identifierTokenSJS);
-
-
     state = advance(state);
-
-    /* Remove leading new lines */
-    while(true) {
+    // Remove leading new lines
+    while (true) {
       if(state.token.value === "\\n") {
         state = advance(state);
       }
@@ -114,8 +109,7 @@ var makeParser = function() {
     } else {
       bodyNodes = [];
     }
-
-    if(bodyNodes.length >= 1) {
+    if (bodyNodes.length >= 1) {
       for(var q=0; q<bodyNodes.length; q++) {
         var n = bodyNodes[q];
         if(n.type === "CallExpression"){
@@ -127,9 +121,7 @@ var makeParser = function() {
         }
       }
     }
-
-
-    /* check token stream for closed_range token */
+    //check token stream for closed_range token
     var includesRange = false;
     var includesTuple = false;
     var range = {};
@@ -156,34 +148,27 @@ var makeParser = function() {
           container.push(specificRangeAssignment);
         }
 
-      } else if(preRangeMutatedTokens[h].value === "Tuple") {
+      } else if (preRangeMutatedTokens[h].value === "Tuple") {
         includesTuple = true;
       }
-
     }
-
-    if(includesRange) {
+    if (includesRange) {
       for (var i = container.length - 1; i >= 0; i--) {
         bodyNodes.unshift(container[i]);
       }
       bodyNodes.unshift(rangeFunctionInjector);
     }
-    if(includesTuple) {
-      for(var i=minimalTupleSource.length - 1; i >= 0; i--) {
+    if (includesTuple) {
+      for (var i = minimalTupleSource.length - 1; i >= 0; i--) {
         bodyNodes.unshift(minimalTupleSource[i]);
       }
     }
-
-
     var result = {
       type: 'Program',
       sourceType: 'module',
       body: bodyNodes
     };
-
-    /**
-     * Walk result tree and remove properties that don't conform to Esprima standard.
-     * * */
+     //Walk result tree and remove properties that don't conform to Esprima standard.
     helpers.traverse(result, function(currentNode) {
       helpers.deletePropertyIfExists(currentNode, ['reserved', 'nud', 'led', 'std', 'lbp', 'scope', 'assignment']);
     });

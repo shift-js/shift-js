@@ -59,8 +59,10 @@ npm install
   - ```lexerFunctions.js``` contains helper functions to handle particular lexical parts of Swift.
   - ```lexicalTypes.js``` organizes and lists the valid lexical tokens of Swift, such as keywords, operators, and punctuation.
 
-- Parser
-  - the AST is generated into JavaScript using Escodegen
+- Parser: Generates an Abstract Syntax Tree from the tokens created by the lexer. The parser takes the token objects and builds a tree that represents the relationships of the different parts of the code, that is then turned into JavaScript using Escodegen.
+  - The parser is brokend up into over 20 files, that handle different parts of the parsing process.
+  - ```parser.js``` is where the different modules come together to build the final tree output.
+  - ```rearrange``` are a group of functions that take the original tokens from the lexer and rearrange them in a manner that is conducive to building the AST so that it produces the equivalent JavaScript output of the Swift input.
 
 Note about the CLI
 
