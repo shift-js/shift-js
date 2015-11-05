@@ -1,5 +1,7 @@
 var util = require('util');
 
+// Rewriter utility
+// Accounts for Swift language feature not allowed in javascript (scope lookups inside array & dictionary literal declarations)
 var rearrangeTokensDynamicDictionaryAssignment = function(tokensArray) {
 
   var start = 0;

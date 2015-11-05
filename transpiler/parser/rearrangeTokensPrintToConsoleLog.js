@@ -1,5 +1,7 @@
 var util = require('util');
 
+// Rewriter utility
+// Swaps native print method for console . log
 var rearrangeTokensPrintToConsoleLog = function(tokens) {
 
   var reformat = false;
@@ -21,8 +23,6 @@ var rearrangeTokensPrintToConsoleLog = function(tokens) {
         { type: "IDENTIFIER",         value: "log" });
     }
   }
-
-  //console.log(util.inspect(tokens, {colors:true, depth:null}));
   return tokens;
 };
 

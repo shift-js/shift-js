@@ -1,5 +1,7 @@
 var util = require('util');
 
+// Rewriter utility
+// Adds conditional parentheticals to make things easier for the parser
 var rearrangeTokensDictionaryKeyValueIteration = function(tokens) {
 
   var reformat = false;
@@ -13,7 +15,6 @@ var rearrangeTokensDictionaryKeyValueIteration = function(tokens) {
 
   for(var i=0; i<tokens.length; i++) {
     if(tokens[i].value === "for" && tokens[i].type === "STATEMENT_KEYWORD") {
-      /* keyword:for is followed by #(; #var; #,; #var; #); #in; #var */
       if(tokens[i+1].type !== "PUNCTUATION" && tokens[i+1].value !== "(") continue;
       if(tokens[i+2].type !== "IDENTIFIER") continue;
       if(tokens[i+3].type !== "PUNCTUATION" && tokens[i+3].value !== ",") continue;
@@ -53,7 +54,6 @@ var rearrangeTokensDictionaryKeyValueIteration = function(tokens) {
       { type: "DECLARATION_KEYWORD", value: "var" });
   }
 
-  //console.log(util.inspect(tokens, {colors:true, depth:null}));
   return tokens;
 };
 

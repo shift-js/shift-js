@@ -1,5 +1,7 @@
 var statement = require('./statement');
 
+// Wrapper for statement function, finding consecutive series of statements
+// traverses until it finds one of "}", "(end)", "EOF", or an optional end paren
 var statements = function(state, optionalNumLoops, breakIfEndParen) {
   var a = [], s, count = 0;
   breakIfEndParen = breakIfEndParen || false;
@@ -11,7 +13,7 @@ var statements = function(state, optionalNumLoops, breakIfEndParen) {
     if (state.token.id === ";") {
       a.push( { "type": "EmptyStatement" } );
       break;
-    } else if (state.token.id === "}" || state.token.id === "(end)" || state.token.id === "EOF") {
+    } else if (["}", "(end)", "EOF"].hasItem(state.token.id)) {
       break;
     } else if (breakIfEndParen) {
       if (state.token.id === ')') {

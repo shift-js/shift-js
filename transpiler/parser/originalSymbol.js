@@ -1,4 +1,5 @@
 
+// symbol prototype
 //Function that handles and creates an object for the prototype for all other symbols
 var originalSymbol = {
   nud: function() {

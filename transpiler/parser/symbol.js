@@ -1,5 +1,6 @@
 var originalSymbol = require('./originalSymbol');
 
+// function that returns or creates a symbol with a given identifier and binding power
 var symbol = function(state, originalSymbol, id, bp) {
   var s = state.symbolTable[id];
   bp = bp || 0;

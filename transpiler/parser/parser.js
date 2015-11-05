@@ -24,7 +24,8 @@ var rearrangeTokensRanges = require('./rearrangeTokensRanges');
 var rearrangeTokensTuples = require('./rearrangeTokensTuples');
 var minimalTupleSource = require('../../tupleDataStructure/minimalTupleSource');
 
-
+// Outward facing API for interacting with the parser
+// Returns a parseFunctionStream function that accepts an array of tokens
 var makeParser = function() {
   var state = {};
   state.scope;
