@@ -48,7 +48,7 @@ var rearrangeTokensTuples = function(tokens) {
   }
 
   if(reformat) {
-    for(var j=0; j<tuples.length; j++) {
+    for(var j=tuples.length - 1; j>=0; j--) {
       var currentTuple = tuples[j];
       if(currentTuple.hasKeys) {
         tokens.splice(currentTuple.start, currentTuple.stop - currentTuple.start + 1,
@@ -91,23 +91,32 @@ var rearrangeTokensTuples = function(tokens) {
 
 module.exports = rearrangeTokensTuples;
 
-//var input = [
-//  { type: "DECLARATION_KEYWORD",        value: "let" },
-//  { type: "IDENTIFIER",                 value: "http200Status" },
-//  { type: "OPERATOR",                   value: "=" },
-//  { type: "TUPLE_START",                value: "("},
-//  { type: "TUPLE_ELEMENT_NAME",         value: "statusCode"},
-//  { type: "PUNCTUATION",                value: ":" },
-//  { type: "NUMBER",                     value: "200"},
-//  { type: "PUNCTUATION",                value: "," },
-//  { type: "TUPLE_ELEMENT_NAME",         value: "description"},
-//  { type: "PUNCTUATION",                value: ":" },
-//  { type: "STRING",                     value: "OK"},
-//  { type: "TUPLE_END",                  value: ")"},
-//  { type: "PUNCTUATION",                value: ";" },
-//  { type: "TERMINATOR",                 value: "EOF" }
-//];
-//
+var input = [
+  { type: "DECLARATION_KEYWORD",        value: "var" },
+  { type: "IDENTIFIER",                 value: "error" },
+  { type: "OPERATOR",                   value: "=" },
+  { type: "TUPLE_START",                value: "("},
+  { type: "NUMBER",                     value: "404"},
+  { type: "PUNCTUATION",                value: "," },
+  { type: "STRING",                     value: "not found"},
+  { type: "TUPLE_END",                  value: ")"},
+  { type: "TERMINATOR",                 value: "\\n"},
+  { type: "DECLARATION_KEYWORD",        value: "let" },
+  { type: "IDENTIFIER",                 value: "http200Status" },
+  { type: "OPERATOR",                   value: "=" },
+  { type: "TUPLE_START",                value: "("},
+  { type: "TUPLE_ELEMENT_NAME",         value: "statusCode"},
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "NUMBER",                     value: "200"},
+  { type: "PUNCTUATION",                value: "," },
+  { type: "TUPLE_ELEMENT_NAME",         value: "description"},
+  { type: "PUNCTUATION",                value: ":" },
+  { type: "STRING",                     value: "OK"},
+  { type: "TUPLE_END",                  value: ")"},
+  { type: "PUNCTUATION",                value: ";" },
+  { type: "TERMINATOR",                 value: "EOF" }
+];
+
 //var output = [
 //  { type: "DECLARATION_KEYWORD",        value: "var" },
 //  { type: "IDENTIFIER",                 value: "error" },
@@ -131,21 +140,7 @@ module.exports = rearrangeTokensTuples;
 //  { type: "PARAMS_END",                 value: ")" },
 //  { type: "TERMINATOR",                 value: "EOF" }
 //];
-//
-//console.log(util.inspect(rearrangeTokensTuples(input), {colors: true}));
 
-//var input = [
-//  { type: "DECLARATION_KEYWORD",        value: "var" },
-//  { type: "IDENTIFIER",                 value: "error" },
-//  { type: "OPERATOR",                   value: "=" },
-//  { type: "TUPLE_START",                value: "("},
-//  { type: "NUMBER",                     value: "404"},
-//  { type: "PUNCTUATION",                value: "," },
-//  { type: "STRING",                     value: "not found"},
-//  { type: "TUPLE_END",                  value: ")"},
-//  { type: "TERMINATOR",                 value: "EOF" }
-//];
-//
 //var output = [
 //  { type: "DECLARATION_KEYWORD",        value: "var" },
 //  { type: "IDENTIFIER",                 value: "error" },
@@ -162,4 +157,4 @@ module.exports = rearrangeTokensTuples;
 //  { type: "TERMINATOR",                 value: "EOF" }
 //];
 //
-//console.log(util.inspect(rearrangeTokensTuples(input), {colors: true}));
+console.log(util.inspect(rearrangeTokensTuples(input), {colors: true}));
