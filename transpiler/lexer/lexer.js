@@ -126,8 +126,6 @@ module.exports = function(code) {
 
     // adds the recently declared function to the FUNCTION_NAMES property, this may not work in all cases by adding incorrectly identified functions
     if (STATE.insideFunction.length && STATE.lastFunction.insideParams === true && STATE.chunk === '(') {
-      
-      // lexerFunctions.checkFor(STATE, 'FUNCTION_DECLARATION', STATE.chunk, STATE.tokens);
         var len = STATE.tokens.length - 1;
         while (STATE.tokens[len].type !== 'IDENTIFIER') {
           len--;
