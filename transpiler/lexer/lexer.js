@@ -46,7 +46,7 @@ module.exports = function(code) {
     }
   }
 
-  // main loop that iterated through the input code
+  // main loop that iterates through the input code
   while (code[STATE.i] !== undefined) {
 
     // sets state properties for the iteration
