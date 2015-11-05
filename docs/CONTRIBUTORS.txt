@@ -3,24 +3,24 @@
 * David Churchill 
   * <https://github.com/webdevdave>
   * <dchurchill92@gmail.com>
-  * Project Founder, Engineering Team
+  * Project Founder
 
 * Rex Suter 
   * <https://github.com/rex-en-abyme>
   * <rex.suter@gmail.com>
-  * Project Founder, Engineering Team
+  * Project Founder
 
 * Verlon Smith
   * <https://github.com/kingedward35>
   * <vsmith3113@gmail.com>
-  * Project Founder, Engineering Team
+  * Project Founder
 
 * Don Steinert
   * <https://github.com/Dnld>
   * <steinert.donald@gmail.com>
-  * Project Founder, Project Owner
+  * Project Founder
   
 * Max Yazhbin
   * <https://github.com/myazhbin>
   * <myazhbin@gmail.com>
-  * Project Founder, Scrum Master
+  * Project Founder
