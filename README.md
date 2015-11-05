@@ -112,6 +112,10 @@ Tests should remain marked as pending until they pass, otherwise Travis CI will 
 
 Please refer to CONTRIBUTING.md and STYLEGUIDE.md in ```docs/``` for detailed contributing guidelines.
 
+## Current Version
+
+0.1.0
+
 ## License
 
 MIT
