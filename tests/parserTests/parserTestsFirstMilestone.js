@@ -642,7 +642,7 @@ describe('Parser: First Milestone', function() {
 
     // Swift input: 'var empty = [String:UInt16]();'
     // AST Explorer input: 'var empty = {};'
-    xit('should handle initializer syntax for dictionaries', function () {
+    it('should handle initializer syntax for dictionaries', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "empty" },
@@ -6857,7 +6857,7 @@ describe('Parser: First Milestone', function() {
 
     // input = String.raw`let a = 3; let b = 5; let sum = "the sum of a and b is \(a + b).";`;
     // AST Explorer input: 'var a = 3; var b = 5; var sum = "the sum of a and b is " + a + b + ".";'
-    xit('should handle interpolation containing operations on identifiers', function () {
+    it('should handle interpolation containing operations on identifiers', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "let" },
         { type: "IDENTIFIER",                 value: "a" },
