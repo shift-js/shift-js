@@ -141,13 +141,15 @@ module.exports = {
       STATE.lastToken.value === 'for' ||
       
       // special condition for multiple variables of the same type declared on a single line
-      (STATE.lastToken.value === ',' && STATE.VARIABLE_NAMES[STATE.tokens[STATE.tokens.length -2].value] && !STATE.insideInvocation.length) ||
+      (STATE.lastToken.value === ',' && 
+      STATE.VARIABLE_NAMES[STATE.tokens[STATE.tokens.length -2].value] && 
+      !STATE.insideInvocation.length) ||
 
         // special conditions to handle for-in loops that iterate over dictionaries
       (STATE.lastToken.value === '(' && STATE.tokens[STATE.tokens.length - 2].value === 'for') ||
       (STATE.lastToken.value === ',' && STATE.tokens[STATE.tokens.length - 3].value) === '(' &&
-      STATE.tokens[STATE.tokens.length - 4].value === 'for' || (STATE.insideFunction.length && STATE.lastFunction.insideParams === true 
-        && STATE.lastToken.value !== '='))) {
+      STATE.tokens[STATE.tokens.length - 4].value === 'for' || (STATE.insideFunction.length && 
+      STATE.lastFunction.insideParams === true && STATE.lastToken.value !== '='))) {
       if (STATE.tokens) {
         module.exports.makeToken(undefined, STATE.chunk, STATE.tokens, 'IDENTIFIER', STATE.chunk);
       }
@@ -417,14 +419,16 @@ module.exports = {
 
   // handles start of multi-line and single-line comments
   checkForCommentStart: function(STATE) {
-    if (STATE.currCol === '/' && STATE.nextCol === '*' && !(STATE.insideComment.multi && STATE.insideComment.single)) {
+    if (STATE.currCol === '/' && STATE.nextCol === '*' && 
+      !(STATE.insideComment.multi && STATE.insideComment.single)) {
       STATE.insideComment.multi = true;
       STATE.chunk += STATE.nextCol;
       module.exports.checkFor(STATE, 'COMMENT', STATE.chunk, STATE.tokens);
       STATE.advanceAndClear(2);
       return true;
     }
-    else if (STATE.currCol === '/' && STATE.nextCol === '/' && !(STATE.insideComment.multi && STATE.insideComment.single)) {
+    else if (STATE.currCol === '/' && STATE.nextCol === '/' && 
+      !(STATE.insideComment.multi && STATE.insideComment.single)) {
       STATE.insideComment.single = true;
       STATE.chunk += STATE.nextCol;
       module.exports.checkFor(STATE, 'COMMENT', STATE.chunk, STATE.tokens);
@@ -548,13 +552,15 @@ module.exports = {
   
   // handles classes and structures
   handleClassOrStruct: function(STATE) {
-    if (STATE.insideClass.length && STATE.insideClass[STATE.insideClass.length - 1].curly === 0 && STATE.chunk === '{') {
+    if (STATE.insideClass.length && 
+      STATE.insideClass[STATE.insideClass.length - 1].curly === 0 && STATE.chunk === '{') {
       module.exports.checkFor(STATE, 'CLASS_DEFINITION', STATE.chunk, STATE.tokens);
       STATE.insideClass[STATE.insideClass.length - 1].curly++;
       STATE.advanceAndClear(1);
       return true;
     }
-    if (STATE.insideClass.length && STATE.insideClass[STATE.insideClass.length - 1].curly === 1 && STATE.chunk === '}') {
+    if (STATE.insideClass.length && 
+      STATE.insideClass[STATE.insideClass.length - 1].curly === 1 && STATE.chunk === '}') {
       module.exports.checkFor(STATE, 'CLASS_DEFINITION', STATE.chunk, STATE.tokens);
       STATE.insideClass.pop();
       module.exports.handleEndOfFile(STATE.nextCol, STATE.tokens);
@@ -599,9 +605,10 @@ module.exports = {
   
   checkForTupleStart: function(STATE) {
     if (!STATE.insideTuple.status && STATE.currCol === '(' && ((STATE.lastToken.value === '=' ||
-      STATE.lastToken.value === 'return' || STATE.lastToken.value === '->') || (STATE.insideInvocation.length && 
-      STATE.insideInvocation[STATE.insideInvocation.length - 1].status)) ) {
+      STATE.lastToken.value === 'return' || STATE.lastToken.value === '->') || 
+      (STATE.insideInvocation.length && STATE.insideInvocation[STATE.insideInvocation.length - 1].status)) ) {
       module.exports.makeToken(undefined, undefined, STATE.tokens,'TUPLE_START', STATE.chunk);
+      
       // special handling of empty tuples
       if (STATE.insideInvocation.length && STATE.insideInvocation[STATE.insideInvocation.length - 1].status) {
         STATE.insideInvocation[STATE.insideInvocation.length - 1].parens++;
