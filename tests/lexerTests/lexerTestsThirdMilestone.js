@@ -89,7 +89,6 @@ describe('Lexer: Third Milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-
     it('should handle function declaration and invocation with spaces between each part of the declaration', function() {
       input = String.raw`func someFunction (a: Int) -> Int {
                               let a = a + 1;
@@ -2507,12 +2506,12 @@ describe('Lexer: Third Milestone', function() {
         { type: 'DECLARATION_KEYWORD', value: 'var' },
         { type: 'IDENTIFIER', value: 'mathFunction' },
         { type: 'PUNCTUATION', value: ':' },
-        { type: 'PARAMS_START', value: '(' }, 
+        { type: 'PARAMS_START', value: '(' },
         { type: 'TYPE_NUMBER', value: 'Int' },
         { type: 'PUNCTUATION', value: ',' },
         { type: 'TYPE_NUMBER', value: 'Int' },
-        { type: 'PARAMS_END', value: ')' }, 
-        { type: 'RETURN_ARROW', value: '->' }, 
+        { type: 'PARAMS_END', value: ')' },
+        { type: 'RETURN_ARROW', value: '->' },
         { type: 'TYPE_NUMBER', value: 'Int' },
         { type: 'OPERATOR', value: '=' },
         { type: 'IDENTIFIER', value: 'addTwoInts' }, //Need to go backward frmo here to var keyword and modify accordingly
@@ -2682,179 +2681,179 @@ describe('Lexer: Third Milestone', function() {
     });
 
     it('should handle functions that use inputs, native methods, string interpolation, and ? operator in parameters and nil input to function invocation', function () {
-          input = String.raw`func printFirstName(firstName:String,surname:String?) {
-                                    if let unwrappedSurname = surname {
-                                        print("\(firstName) \(unwrappedSurname)")
-                                    } else {
-                                        print(firstName)
-                                    }
+      input = String.raw`func printFirstName(firstName:String,surname:String?) {
+                                if let unwrappedSurname = surname {
+                                    print("\(firstName) \(unwrappedSurname)")
+                                } else {
+                                    print(firstName)
                                 }
-                                printFirstName("Joe", surname: nil)
-                                printFirstName("Joe", surname: "Blow")`;
-          output = [
-            { type: "DECLARATION_KEYWORD",        value: "func"},
-            { type: "IDENTIFIER",                 value: "printFirstName" },
-            { type: "PARAMS_START",               value: "(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_STRING",                value: "String" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_STRING",                value: "String" },
-            { type: "OPERATOR",                   value: "?"},
-            { type: "PARAMS_END",                 value: ")" },
-            { type: "STATEMENTS_START",           value: "{" },
-            { type: "TERMINATOR",                 value: "\\n"},
+                            }
+                            printFirstName("Joe", surname: nil)
+                            printFirstName("Joe", surname: "Blow")`;
+      output = [
+        { type: "DECLARATION_KEYWORD",        value: "func"},
+        { type: "IDENTIFIER",                 value: "printFirstName" },
+        { type: "PARAMS_START",               value: "(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "TYPE_STRING",                value: "String" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "TYPE_STRING",                value: "String" },
+        { type: "OPERATOR",                   value: "?"},
+        { type: "PARAMS_END",                 value: ")" },
+        { type: "STATEMENTS_START",           value: "{" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: 'STATEMENT_KEYWORD',       value: 'if' },
-            { type: 'DECLARATION_KEYWORD',     value: 'let' },
-            { type: 'IDENTIFIER',              value: 'unwrappedSurname' },
-            { type: 'OPERATOR',                value: '=' },
-            { type: 'IDENTIFIER',              value: 'surname' },
-            { type: 'PUNCTUATION',             value: '{' },
-            { type: 'TERMINATOR',              value: '\\n' },
+        { type: 'STATEMENT_KEYWORD',       value: 'if' },
+        { type: 'DECLARATION_KEYWORD',     value: 'let' },
+        { type: 'IDENTIFIER',              value: 'unwrappedSurname' },
+        { type: 'OPERATOR',                value: '=' },
+        { type: 'IDENTIFIER',              value: 'surname' },
+        { type: 'PUNCTUATION',             value: '{' },
+        { type: 'TERMINATOR',              value: '\\n' },
 
-            { type: "NATIVE_METHOD",              value: "print"},
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "STRING",                     value: "" },
-            { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: " " },
-            { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "unwrappedSurname" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: "" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "" },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: " " },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "unwrappedSurname" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: "" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: 'PUNCTUATION',             value: '}' },
-            { type: 'STATEMENT_KEYWORD',       value: 'else' },
-            { type: 'PUNCTUATION',             value: '{' },
-            { type: 'TERMINATOR',              value: '\\n' },
+        { type: 'PUNCTUATION',             value: '}' },
+        { type: 'STATEMENT_KEYWORD',       value: 'else' },
+        { type: 'PUNCTUATION',             value: '{' },
+        { type: 'TERMINATOR',              value: '\\n' },
 
-            { type: "NATIVE_METHOD",              value: "print"},
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: 'PUNCTUATION',             value: '}' },
-            { type: 'TERMINATOR',              value: '\\n' },
+        { type: 'PUNCTUATION',             value: '}' },
+        { type: 'TERMINATOR',              value: '\\n' },
 
-            { type: "STATEMENTS_END",           value: "}" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "STATEMENTS_END",           value: "}" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "IDENTIFIER",                 value: "printFirstName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "STRING",                     value: "Joe" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "EXPRESSION_OR_TYPE_KEYWORD", value: "nil" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "IDENTIFIER",                 value: "printFirstName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "Joe" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "EXPRESSION_OR_TYPE_KEYWORD", value: "nil" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "IDENTIFIER",                 value: "printFirstName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "STRING",                     value: "Joe" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Blow" },
-            { type: "INVOCATION_END",             value: ")" },
+        { type: "IDENTIFIER",                 value: "printFirstName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "Joe" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "Blow" },
+        { type: "INVOCATION_END",             value: ")" },
 
-            { type: "TERMINATOR",                 value: "EOF"}
-          ];
-          expect(lexer(input)).to.deep.equal(output);
-        });
+        { type: "TERMINATOR",                 value: "EOF"}
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
 
     it('should handle functions that use string parameters with a default of nil, native methods, and if else blocks', function () {
-          input = String.raw`func printFirstName(firstName:String,surname:String?=nil) {
-                                    if let surname = surname {
-                                        print("\(firstName) \(surname)")
-                                    } else {
-                                        print(firstName)
-                                    }
+      input = String.raw`func printFirstName(firstName:String,surname:String?=nil) {
+                                if let surname = surname {
+                                    print("\(firstName) \(surname)")
+                                } else {
+                                    print(firstName)
                                 }
-                                printFirstName("Joe")
-                                printFirstName("Joe", surname: "Blow")`;
-          output = [
-            { type: "DECLARATION_KEYWORD",        value: "func"},
-            { type: "IDENTIFIER",                 value: "printFirstName" },
-            { type: "PARAMS_START",               value: "(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_STRING",                value: "String" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_STRING",                value: "String" },
-            { type: "OPERATOR",                   value: "?"},
-            { type: "OPERATOR",                   value: "="},
-            { type: "EXPRESSION_OR_TYPE_KEYWORD", value: "nil" },
-            { type: "PARAMS_END",                 value: ")" },
-            { type: "STATEMENTS_START",           value: "{" },
-            { type: "TERMINATOR",                 value: "\\n"},
+                            }
+                            printFirstName("Joe")
+                            printFirstName("Joe", surname: "Blow")`;
+      output = [
+        { type: "DECLARATION_KEYWORD",        value: "func"},
+        { type: "IDENTIFIER",                 value: "printFirstName" },
+        { type: "PARAMS_START",               value: "(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "TYPE_STRING",                value: "String" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "TYPE_STRING",                value: "String" },
+        { type: "OPERATOR",                   value: "?"},
+        { type: "OPERATOR",                   value: "="},
+        { type: "EXPRESSION_OR_TYPE_KEYWORD", value: "nil" },
+        { type: "PARAMS_END",                 value: ")" },
+        { type: "STATEMENTS_START",           value: "{" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: 'STATEMENT_KEYWORD',       value: 'if' },
-            { type: 'DECLARATION_KEYWORD',     value: 'let' },
-            { type: 'IDENTIFIER',              value: 'surname' },
-            { type: 'OPERATOR',                value: '=' },
-            { type: 'IDENTIFIER',              value: 'surname' },
-            { type: 'PUNCTUATION',             value: '{' },
-            { type: 'TERMINATOR',              value: '\\n' },
+        { type: 'STATEMENT_KEYWORD',       value: 'if' },
+        { type: 'DECLARATION_KEYWORD',     value: 'let' },
+        { type: 'IDENTIFIER',              value: 'surname' },
+        { type: 'OPERATOR',                value: '=' },
+        { type: 'IDENTIFIER',              value: 'surname' },
+        { type: 'PUNCTUATION',             value: '{' },
+        { type: 'TERMINATOR',              value: '\\n' },
 
-            { type: "NATIVE_METHOD",              value: "print"},
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "STRING",                     value: "" },
-            { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: " " },
-            { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: "" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "" },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: " " },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: "" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: 'PUNCTUATION',             value: '}' },
-            { type: 'STATEMENT_KEYWORD',       value: 'else' },
-            { type: 'PUNCTUATION',             value: '{' },
-            { type: 'TERMINATOR',              value: '\\n' },
+        { type: 'PUNCTUATION',             value: '}' },
+        { type: 'STATEMENT_KEYWORD',       value: 'else' },
+        { type: 'PUNCTUATION',             value: '{' },
+        { type: 'TERMINATOR',              value: '\\n' },
 
-            { type: "NATIVE_METHOD",              value: "print"},
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: 'PUNCTUATION',             value: '}' },
-            { type: 'TERMINATOR',              value: '\\n' },
+        { type: 'PUNCTUATION',             value: '}' },
+        { type: 'TERMINATOR',              value: '\\n' },
 
-            { type: "STATEMENTS_END",           value: "}" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "STATEMENTS_END",           value: "}" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "IDENTIFIER",                 value: "printFirstName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "STRING",                     value: "Joe" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "IDENTIFIER",                 value: "printFirstName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "Joe" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "IDENTIFIER",                 value: "printFirstName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "STRING",                     value: "Joe" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Blow" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "EOF"}
-          ];
-          expect(lexer(input)).to.deep.equal(output);
-        });
+        { type: "IDENTIFIER",                 value: "printFirstName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "Joe" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "Blow" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "EOF"}
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
 
     it('should handle functions with an integer input and no returned output', function () {
       input = String.raw`func printManyTimes(a: Int) {
@@ -2906,212 +2905,212 @@ describe('Lexer: Third Milestone', function() {
     });
 
     it('should handle functions that use default string inputs and string interpolation ', function () {
-          input = String.raw`func printName(firstName firstName:String="Joe",middleName:String="Andrew",surname:String="Blow") {
-                                print("\(firstName) \(middleName) \(surname)")
-                            }
-                            printName(firstName: "John", middleName: "Juan", surname: "Smith")
-                            printName(firstName: "John")
-                            printName()
-                            printName(surname: "Smith", middleName: "Julius", firstName: "John")`;
-          output = [
-            { type: "DECLARATION_KEYWORD",        value: "func"},
-            { type: "IDENTIFIER",                 value: "printName" },
-            { type: "PARAMS_START",               value: "(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_STRING",                value: "String" },
-            { type: 'OPERATOR',                   value: '=' },
-            { type: "STRING",                     value: "Joe" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "middleName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_STRING",                value: "String" },
-            { type: 'OPERATOR',                   value: '=' },
-            { type: "STRING",                     value: "Andrew" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_STRING",                value: "String" },
-            { type: 'OPERATOR',                   value: '=' },
-            { type: "STRING",                     value: "Blow" },
-            { type: "PARAMS_END",                 value: ")" },
-            { type: "STATEMENTS_START",           value: "{" },
-            { type: "TERMINATOR",                 value: "\\n"},
+      input = String.raw`func printName(firstName firstName:String="Joe",middleName:String="Andrew",surname:String="Blow") {
+                            print("\(firstName) \(middleName) \(surname)")
+                        }
+                        printName(firstName: "John", middleName: "Juan", surname: "Smith")
+                        printName(firstName: "John")
+                        printName()
+                        printName(surname: "Smith", middleName: "Julius", firstName: "John")`;
+      output = [
+        { type: "DECLARATION_KEYWORD",        value: "func"},
+        { type: "IDENTIFIER",                 value: "printName" },
+        { type: "PARAMS_START",               value: "(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "TYPE_STRING",                value: "String" },
+        { type: 'OPERATOR',                   value: '=' },
+        { type: "STRING",                     value: "Joe" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "middleName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "TYPE_STRING",                value: "String" },
+        { type: 'OPERATOR',                   value: '=' },
+        { type: "STRING",                     value: "Andrew" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "TYPE_STRING",                value: "String" },
+        { type: 'OPERATOR',                   value: '=' },
+        { type: "STRING",                     value: "Blow" },
+        { type: "PARAMS_END",                 value: ")" },
+        { type: "STATEMENTS_START",           value: "{" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "NATIVE_METHOD",              value: "print"},
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "STRING",                     value: "" },
-            { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: " " },
-            { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "middleName" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: " " },
-            { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: "" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "" },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: " " },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "middleName" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: " " },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: "" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: 'STATEMENTS_END',             value: '}' },
-            { type: 'TERMINATOR',                 value: '\\n' },
+        { type: 'STATEMENTS_END',             value: '}' },
+        { type: 'TERMINATOR',                 value: '\\n' },
 
-            { type: "IDENTIFIER",                 value: "printName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "John" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "middleName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Juan" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Smith" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "IDENTIFIER",                 value: "printName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "John" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "middleName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "Juan" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "Smith" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "IDENTIFIER",                 value: "printName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "John" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "IDENTIFIER",                 value: "printName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "John" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "IDENTIFIER",                 value: "printName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "IDENTIFIER",                 value: "printName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "IDENTIFIER",                 value: "printName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Smith" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "middleName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Julius" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "John" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "EOF"}
-          ];
+        { type: "IDENTIFIER",                 value: "printName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "Smith" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "middleName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "Julius" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "John" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "EOF"}
+      ];
 
-          expect(lexer(input)).to.deep.equal(output);
-        });
+      expect(lexer(input)).to.deep.equal(output);
+    });
 
-      it('should handle functions that use default numeric and string inputs and interpolation ', function () {
-          input = String.raw`func printName(firstName firstName:String="Joe",age:Int=18,surname:String="Blow") {
-                                print("\(firstName) \(age) \(surname)")
-                            }
-                            printName(firstName: "John", age: 27, surname: "Smith")
-                            printName(firstName: "John")
-                            printName()
-                            printName(surname: "Smith", age: 0, firstName: "John")`;
+    it('should handle functions that use default numeric and string inputs and interpolation ', function () {
+      input = String.raw`func printName(firstName firstName:String="Joe",age:Int=18,surname:String="Blow") {
+                            print("\(firstName) \(age) \(surname)")
+                        }
+                        printName(firstName: "John", age: 27, surname: "Smith")
+                        printName(firstName: "John")
+                        printName()
+                        printName(surname: "Smith", age: 0, firstName: "John")`;
 
-          output = [
-            { type: "DECLARATION_KEYWORD",        value: "func"},
-            { type: "IDENTIFIER",                 value: "printName" },
-            { type: "PARAMS_START",               value: "(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_STRING",                value: "String" },
-            { type: 'OPERATOR',                   value: '=' },
-            { type: "STRING",                     value: "Joe" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "age" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_NUMBER",                value: "Int" },
-            { type: 'OPERATOR',                   value: '=' },
-            { type: "NUMBER",                     value: "18" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "TYPE_STRING",                value: "String" },
-            { type: 'OPERATOR',                   value: '=' },
-            { type: "STRING",                     value: "Blow" },
-            { type: "PARAMS_END",                 value: ")" },
-            { type: "STATEMENTS_START",           value: "{" },
-            { type: "TERMINATOR",                 value: "\\n"},
+      output = [
+        { type: "DECLARATION_KEYWORD",        value: "func"},
+        { type: "IDENTIFIER",                 value: "printName" },
+        { type: "PARAMS_START",               value: "(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "TYPE_STRING",                value: "String" },
+        { type: 'OPERATOR',                   value: '=' },
+        { type: "STRING",                     value: "Joe" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "age" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "TYPE_NUMBER",                value: "Int" },
+        { type: 'OPERATOR',                   value: '=' },
+        { type: "NUMBER",                     value: "18" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "TYPE_STRING",                value: "String" },
+        { type: 'OPERATOR',                   value: '=' },
+        { type: "STRING",                     value: "Blow" },
+        { type: "PARAMS_END",                 value: ")" },
+        { type: "STATEMENTS_START",           value: "{" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "NATIVE_METHOD",              value: "print"},
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "STRING",                     value: "" },
-            { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: " " },
-            { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "age" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: " " },
-            { type: "STRING_INTERPOLATION_START", value: "\\(" },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "STRING_INTERPOLATION_END",   value: ")" },
-            { type: "STRING",                     value: "" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "NATIVE_METHOD",              value: "print"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "STRING",                     value: "" },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: " " },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "age" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: " " },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: "" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: 'STATEMENTS_END',             value: '}' },
-            { type: 'TERMINATOR',                 value: '\\n' },
+        { type: 'STATEMENTS_END',             value: '}' },
+        { type: 'TERMINATOR',                 value: '\\n' },
 
-            { type: "IDENTIFIER",                 value: "printName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "John" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "age" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "NUMBER",                     value: "27" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Smith" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "IDENTIFIER",                 value: "printName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "John" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "age" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "NUMBER",                     value: "27" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "Smith" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "IDENTIFIER",                 value: "printName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "John" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "IDENTIFIER",                 value: "printName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "John" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "IDENTIFIER",                 value: "printName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "\\n"},
+        { type: "IDENTIFIER",                 value: "printName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "\\n"},
 
-            { type: "IDENTIFIER",                 value: "printName" },
-            { type: "INVOCATION_START",           value: "(" },
-            { type: "IDENTIFIER",                 value: "surname" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "Smith" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "age" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "NUMBER",                     value: "0" },
-            { type: "PUNCTUATION",                value: "," },
-            { type: "IDENTIFIER",                 value: "firstName" },
-            { type: "PUNCTUATION",                value: ":" },
-            { type: "STRING",                     value: "John" },
-            { type: "INVOCATION_END",             value: ")" },
-            { type: "TERMINATOR",                 value: "EOF"}
-          ];
+        { type: "IDENTIFIER",                 value: "printName" },
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "IDENTIFIER",                 value: "surname" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "Smith" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "age" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "NUMBER",                     value: "0" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "IDENTIFIER",                 value: "firstName" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "STRING",                     value: "John" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "TERMINATOR",                 value: "EOF"}
+      ];
 
-          expect(lexer(input)).to.deep.equal(output);
-        });
+      expect(lexer(input)).to.deep.equal(output);
+    });
   });
 });

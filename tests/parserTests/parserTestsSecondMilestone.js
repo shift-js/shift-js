@@ -10,7 +10,7 @@ describe('Parser: Second Milestone', function() {
     parser = makeParser();
   });
 
-  describe('If statements', function() {
+  describe('Single-Line If statements', function() {
 
     // Swift input: 'var a = 5; if (true) {--a};'
     it('should handle single-line if statements', function() {
@@ -876,7 +876,7 @@ describe('Parser: Second Milestone', function() {
     });
   });
 
-  describe('While/Repeat-While loops', function() {
+  describe('Single-Line While/Repeat-While loops', function() {
 
     // Swift input: 'var i = 10; while (i >= 0) {i--}'
     it('should handle single-line while loops with a parenthetical', function() {
@@ -1208,7 +1208,7 @@ describe('Parser: Second Milestone', function() {
     });
   });
 
-  describe('For loops', function() {
+  describe('Single-Line For loops', function() {
 
     // Swift input: 'var a = 0; for (var i = 10; i > 0; i--) {a++};'
     it('should handle single-line for loops with a parenthetical', function() {
@@ -1450,7 +1450,9 @@ describe('Parser: Second Milestone', function() {
       };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
+  });
 
+  describe('Single-Line For-In loops', function() {
 
     // Swift input: 'var c = 0; var numbers = [1,2,3,4,5]; for (var n) in numbers {c += n};'
     // AST Explorer input: 'var c = 0; var numbers = [1,2,3,4,5]; for (var n in numbers) {c += n};'
@@ -5659,7 +5661,6 @@ describe('Parser: Second Milestone', function() {
         { type: "NUMBER",                     value: "1" },
         { type: "PUNCTUATION",                value: ")" },
         { type: "INVOCATION_END",             value: ")" },
-        { type: "TERMINATOR",                 value: "\\n"},
         { type: "TERMINATOR",                 value: "EOF" }
       ];
 
@@ -5788,12 +5789,13 @@ describe('Parser: Second Milestone', function() {
         { type: "PUNCTUATION",                value: ")" },
         { type: "INVOCATION_END",             value: ")" },
         { type: "TERMINATOR",                 value: "\\n"},
+
         { type: "NATIVE_METHOD",              value: "print"},
         { type: "INVOCATION_START",           value: "(" },
         { type: "IDENTIFIER",                 value: "arr" },
-        { type: "SUBSTRING_LOOKUP_START",     value: "[" },
+        { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
         { type: "NUMBER",                     value: "1" },
-        { type: "SUBSTRING_LOOKUP_END",       value: "]" },
+        { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
         { type: "INVOCATION_END",             value: ")" },
         { type: "TERMINATOR",                 value: "\\n"},
 

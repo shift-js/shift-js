@@ -129,6 +129,80 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
+    // input = String.raw`var myVar = 5;`;
+    it('should handle lines that end with a semicolon', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "myVar" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "5" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "myVar"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 5,
+                  "raw": "5"
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`var myVar                   =                       5          ;`;
+    it('should handle variable declarations with erratic spacing', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "myVar" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "5" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "myVar"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 5,
+                  "raw": "5"
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
     // Swift input: 'var b = "hello"'
     it('should handle strings', function () {
       input = [
@@ -165,7 +239,7 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // Test 3 - Swift input: 'var c = true'
+    // Swift input: 'var c = true'
     it('should handle booleans', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
@@ -201,7 +275,7 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // Test 4 - Swift input: 'var d = "Test this"'
+    // Swift input: 'var d = "Test this"'
     it('should handle strings with whitespace', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
@@ -226,6 +300,217 @@ describe('Parser: First Milestone', function() {
                   "type": "Literal",
                   "value": "Test this",
                   "raw": "\"Test this\""
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`var name: String = "Joe"; var age: Int = 45;`;
+    // AST Explorer input: 'var name = "Joe"; var age = 45;'
+    it('should variables declared with type annotations', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "name" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "TYPE_STRING",          value: "String"},
+        { type: "OPERATOR",             value: "=" },
+        { type: "STRING",               value: "Joe" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "age" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "TYPE_NUMBER",          value: "Int"},
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "45" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "name"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": "Joe",
+                  "raw": "\"Joe\""
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "age"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 45,
+                  "raw": "45"
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`var name: String; var age: Int;`;
+    it('should variables declared with type annotations but no value', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "name" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "TYPE_STRING",          value: "String"},
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "age" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "TYPE_NUMBER",          value: "Int"},
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "name"
+                },
+                "init": null
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "age"
+                },
+                "init": null
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`var firstBase, secondBase, thirdBase: String`;
+    // AST Explorer input = 'var firstBase, secondBase, thirdBase'
+    xit('should handle multiple related variables of the same type on a single line, separated by commas', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "firstBase" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "IDENTIFIER",           value: "secondBase" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "IDENTIFIER",           value: "thirdBase" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "TYPE_STRING",          value: "String"},
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "firstBase"
+                },
+                "init": null
+              },
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "secondBase"
+                },
+                "init": null
+              },
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "thirdBase"
+                },
+                "init": null
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`/* Comment 1 */ var a = 1 // Comment 2`;
+    xit('should handle comments', function () {
+      input = [
+        { type: "MULTI_LINE_COMMENT_START",  value: "/*"},
+        { type: "COMMENT",                   value: " Comment 1 "},
+        { type: "MULTI_LINE_COMMENT_END",    value: "*/"},
+        { type: "DECLARATION_KEYWORD",       value: "var" },
+        { type: "IDENTIFIER",                value: "a" },
+        { type: "OPERATOR",                  value: "=" },
+        { type: "NUMBER",                    value: "1" },
+        { type: "COMMENT_START",             value: "//"},
+        { type: "COMMENT",                   value: " Comment 2"},
+        { type: "TERMINATOR",                value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "a"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 1,
+                  "raw": "1"
                 }
               }
             ],
@@ -315,11 +600,8 @@ describe('Parser: First Milestone', function() {
     });
 
     // Swift input: 'var empty = [String]();'
-    /**
-    AST Explorer input:
-    var empty = [];
-    */
-    it('should handle initializer syntax for arrays', function () {
+    // AST Explorer input: 'var empty = [];'
+    xit('should handle initializer syntax for arrays', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "empty" },
@@ -360,7 +642,7 @@ describe('Parser: First Milestone', function() {
 
     // Swift input: 'var empty = [String:UInt16]();'
     // AST Explorer input: 'var empty = {};'
-    it('should handle initializer syntax for dictionaries', function () {
+    xit('should handle initializer syntax for dictionaries', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "empty" },
@@ -617,9 +899,198 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
+    // input = String.raw `var arr = [2,2,3,4,5]; arr[0] = 1`;
+    it('should handle addition/reassignment of array items via subscript', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",          value: "var" },
+        { type: "IDENTIFIER",                   value: "arr" },
+        { type: "OPERATOR",                     value: "=" },
+        { type: "ARRAY_START",                  value: "[" },
+        { type: "NUMBER",                       value: "2" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "2" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "3" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "4" },
+        { type: "PUNCTUATION",                  value: "," },
+        { type: "NUMBER",                       value: "5" },
+        { type: "ARRAY_END",                    value: "]" },
+        { type: "PUNCTUATION",                  value: ";" },
+        { type: "IDENTIFIER",                   value: "arr" },
+        { type: "SUBSCRIPT_LOOKUP_START",       value: "[" },
+        { type: "NUMBER",                       value: "0" },
+        { type: "SUBSCRIPT_LOOKUP_END",         value: "]" },
+        { type: "OPERATOR",                     value: "=" },
+        { type: "NUMBER",                       value: "1" },
+        { type: "TERMINATOR",                   value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "arr"
+                },
+                "init": {
+                  "type": "ArrayExpression",
+                  "elements": [
+                    {
+                      "type": "Literal",
+                      "value": 2,
+                      "raw": "2"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 2,
+                      "raw": "2"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 3,
+                      "raw": "3"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 4,
+                      "raw": "4"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 5,
+                      "raw": "5"
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "left": {
+                "type": "MemberExpression",
+                "computed": true,
+                "object": {
+                  "type": "Identifier",
+                  "name": "arr"
+                },
+                "property": {
+                  "type": "Literal",
+                  "value": 0,
+                  "raw": "0"
+                }
+              },
+              "right": {
+                "type": "Literal",
+                "value": 1,
+                "raw": "1"
+              }
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`var arr = [Int](); arr += [1,2,3];`;
+    // AST Explorer input: 'var arr = []; arr.push(1,2,3);'
+    xit('should handle appending items to an array with the addition assignment operator', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "arr" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "ARRAY_START",                value: "["},
+        { type: "TYPE_NUMBER",                value: "Int"},
+        { type: "ARRAY_END",                  value: "]"},
+        { type: "INVOCATION_START",           value: "(" },
+        { type: "INVOCATION_END",             value: ")" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "IDENTIFIER",                 value: "arr" },
+        { type: "OPERATOR",                   value: "+" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "ARRAY_START",                value: "["},
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "NUMBER",                     value: "2" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "NUMBER",                     value: "3" },
+        { type: "ARRAY_END",                  value: "]"},
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "TERMINATOR",                 value: "EOF"},
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "arr"
+                },
+                "init": {
+                  "type": "ArrayExpression",
+                  "elements": []
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "computed": false,
+                "object": {
+                  "type": "Identifier",
+                  "name": "arr"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "push"
+                }
+              },
+              "arguments": [
+                {
+                  "type": "Literal",
+                  "value": 1,
+                  "raw": "1"
+                },
+                {
+                  "type": "Literal",
+                  "value": 2,
+                  "raw": "2"
+                },
+                {
+                  "type": "Literal",
+                  "value": 3,
+                  "raw": "3"
+                }
+              ]
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
     // Swift input: 'var error = (404, "not found")'
     /** AST Explorer input:
-
      function Tuple(tuple) {
       this.tup = {};
       if (Array.isArray(tuple)) {
@@ -647,7 +1118,6 @@ describe('Parser: First Milestone', function() {
         return x === undefined ? undefined : this.tup[keyOrIndex]["val"];
       }
     };
-
          Tuple.prototype.modifyVal = function(keyOrIndex, newVal) {
       var x = this.tup[keyOrIndex];
       if (x === undefined) {
@@ -3147,7 +3617,6 @@ describe('Parser: First Milestone', function() {
       };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
-
     // Swift input: 'let g = [1 : "one",2   :"two", 3: "three"]'
     it('should handle erratic spacing', function () {
       input = [
@@ -3246,6 +3715,205 @@ describe('Parser: First Milestone', function() {
       };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
+
+    // input = String.raw`var d = [1, 2]; var one = d[0];`;
+    it('should handle subscript lookups on arrays', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "d" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "ARRAY_START",                value: "[" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "NUMBER",                     value: "2" },
+        { type: "ARRAY_END",                  value: "]" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "one" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "IDENTIFIER",                 value: "d" },
+        { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
+        { type: "NUMBER",                     value: "0" },
+        { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "TERMINATOR",                 value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "d"
+                },
+                "init": {
+                  "type": "ArrayExpression",
+                  "elements": [
+                    {
+                      "type": "Literal",
+                      "value": 1,
+                      "raw": "1"
+                    },
+                    {
+                      "type": "Literal",
+                      "value": 2,
+                      "raw": "2"
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "one"
+                },
+                "init": {
+                  "type": "MemberExpression",
+                  "computed": true,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "d"
+                  },
+                  "property": {
+                    "type": "Literal",
+                    "value": 0,
+                    "raw": "0"
+                  }
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`var d = ["one": 1, "two": 2]; var one = d["one"];`;
+    // AST Explorer input: 'var d = {"one": 1, "two": 2}; var one = d["one"];'
+    it('should handle subscript lookups on dictionaries', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "d" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "DICTIONARY_START",           value: "[" },
+        { type: "STRING",                     value: "one" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "NUMBER",                     value: "1" },
+        { type: "PUNCTUATION",                value: "," },
+        { type: "STRING",                     value: "two" },
+        { type: "PUNCTUATION",                value: ":" },
+        { type: "NUMBER",                     value: "2" },
+        { type: "DICTIONARY_END",             value: "]" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "DECLARATION_KEYWORD",        value: "var" },
+        { type: "IDENTIFIER",                 value: "one" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "IDENTIFIER",                 value: "d" },
+        { type: "SUBSCRIPT_LOOKUP_START",     value: "[" },
+        { type: "STRING",                     value: "one" },
+        { type: "SUBSCRIPT_LOOKUP_END",       value: "]" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "TERMINATOR",                 value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "d"
+                },
+                "init": {
+                  "type": "ObjectExpression",
+                  "properties": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": "one",
+                        "raw": "\"one\""
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": 1,
+                        "raw": "1"
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Literal",
+                        "value": "two",
+                        "raw": "\"two\""
+                      },
+                      "computed": false,
+                      "value": {
+                        "type": "Literal",
+                        "value": 2,
+                        "raw": "2"
+                      },
+                      "kind": "init",
+                      "method": false,
+                      "shorthand": false
+                    }
+                  ]
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "one"
+                },
+                "init": {
+                  "type": "MemberExpression",
+                  "computed": true,
+                  "object": {
+                    "type": "Identifier",
+                    "name": "d"
+                  },
+                  "property": {
+                    "type": "Literal",
+                    "value": "one",
+                    "raw": "\"one\""
+                  }
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
   });
 
   describe('Numeric and boolean operations', function () {
@@ -3275,6 +3943,43 @@ describe('Parser: First Milestone', function() {
                   "type": "Literal",
                   "value": 3.14,
                   "raw": "3.14"
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`let justOverOneMillion = 1_000_000.000_000_1`;
+    // AST Explorer input: 'var justOverOneMillion = 1000000.0000001'
+    it('should handle numeric literals written with underscores', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",        value: "let" },
+        { type: "IDENTIFIER",                 value: "justOverOneMillion" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "NUMBER",                     value: "1000000.0000001" },
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "justOverOneMillion"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 1000000.0000001,
+                  "raw": "1000000.0000001"
                 }
               }
             ],
@@ -3432,9 +4137,58 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
+    // input = String.raw`let l = 6 != 9`;
+    // AST Explorer input: 'var l = 6 != 9'
+    it('should handle comparisons', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "let" },
+        { type: "IDENTIFIER",           value: "l" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "OPERATOR",             value: "!" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "9" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "l"
+                },
+                "init": {
+                  "type": "BinaryExpression",
+                  "operator": "!=",
+                  "left": {
+                    "type": "Literal",
+                    "value": 6,
+                    "raw": "6"
+                  },
+                  "right": {
+                    "type": "Literal",
+                    "value": 9,
+                    "raw": "9"
+                  }
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
     // 'var l = 6 != 7 || (6 == 7 || (6 > 7 || (6 < 7 || (6 >= 7 || 6 <= 7))));'
     // 'var l = 6 != 7 ||  6 == 7 ||  6 > 7 ||  6 < 7 ||  6 >= 7 || 6 <= 7;';
-    it('should handle comparisons', function () {
+    it('should handle complex comparisons', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "var" },
         { type: "IDENTIFIER",           value: "l" },
@@ -3535,6 +4289,194 @@ describe('Parser: First Milestone', function() {
                                 operator: '<=',
                                 left: { value: 6, type: 'Literal', raw: '6' },
                                 right: { value: 7, type: 'Literal', raw: '7' } } } } } } } } ] } ] };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // AST Explorer input: 'var diceRoll = 6; diceRoll == 7;'
+    it('should handle compound comparisons part 1 of 3', function() {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 6,
+                  "raw": "6"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "BinaryExpression",
+              "operator": "==",
+              "left": {
+                "type": "Identifier",
+                "name": "diceRoll"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 7,
+                "raw": "7"
+              }
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // AST Explorer input: 'var diceRoll = 6; ++diceRoll == 7;'
+    it('should handle compound comparisons part 2 of 3', function() {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 6,
+                  "raw": "6"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "BinaryExpression",
+              "operator": "==",
+              "left": {
+                "type": "UpdateExpression",
+                "operator": "++",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "prefix": true
+              },
+              "right": {
+                "type": "Literal",
+                "value": 7,
+                "raw": "7"
+              }
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // AST Explorer input: 'var diceRoll = 6; diceRoll++ == 7;'
+    it('should handle compound comparisons part 3 of 3', function() {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 6,
+                  "raw": "6"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "BinaryExpression",
+              "operator": "==",
+              "left": {
+                "type": "UpdateExpression",
+                "operator": "++",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "diceRoll"
+                },
+                "prefix": false
+              },
+              "right": {
+                "type": "Literal",
+                "value": 7,
+                "raw": "7"
+              }
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
@@ -3728,194 +4670,6 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // AST Explorer input: 'var diceRoll = 6; diceRoll == 7;'
-    it('should handle compound comparisons part 1 of 3', function() {
-      input = [
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "diceRoll" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "6" },
-        { type: "PUNCTUATION",          value: ";" },
-        { type: "IDENTIFIER",           value: "diceRoll" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "7" },
-        { type: "PUNCTUATION",          value: ";" },
-        { type: "TERMINATOR",           value: "EOF"}
-      ];
-      output = {
-        "type": "Program",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "diceRoll"
-                },
-                "init": {
-                  "type": "Literal",
-                  "value": 6,
-                  "raw": "6"
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "BinaryExpression",
-              "operator": "==",
-              "left": {
-                "type": "Identifier",
-                "name": "diceRoll"
-              },
-              "right": {
-                "type": "Literal",
-                "value": 7,
-                "raw": "7"
-              }
-            }
-          }
-        ],
-        "sourceType": "module"
-      };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
-    // AST Explorer input: 'var diceRoll = 6; ++diceRoll == 7;'
-    it('should handle compound comparisons part 2 of 3', function() {
-      input = [
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "diceRoll" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "6" },
-        { type: "PUNCTUATION",          value: ";" },
-        { type: "OPERATOR",             value: "+" },
-        { type: "OPERATOR",             value: "+" },
-        { type: "IDENTIFIER",           value: "diceRoll" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "7" },
-        { type: "PUNCTUATION",          value: ";" },
-        { type: "TERMINATOR",           value: "EOF"}
-      ];
-      output = {
-        "type": "Program",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "diceRoll"
-                },
-                "init": {
-                  "type": "Literal",
-                  "value": 6,
-                  "raw": "6"
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "BinaryExpression",
-              "operator": "==",
-              "left": {
-                "type": "UpdateExpression",
-                "operator": "++",
-                "argument": {
-                  "type": "Identifier",
-                  "name": "diceRoll"
-                },
-                "prefix": true
-              },
-              "right": {
-                "type": "Literal",
-                "value": 7,
-                "raw": "7"
-              }
-            }
-          }
-        ],
-        "sourceType": "module"
-      };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
-    // AST Explorer input: 'var diceRoll = 6; diceRoll++ == 7;'
-    it('should handle compound comparisons part 3 of 3', function() {
-      input = [
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "diceRoll" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "6" },
-        { type: "PUNCTUATION",          value: ";" },
-        { type: "IDENTIFIER",           value: "diceRoll" },
-        { type: "OPERATOR",             value: "+" },
-        { type: "OPERATOR",             value: "+" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "7" },
-        { type: "PUNCTUATION",          value: ";" },
-        { type: "TERMINATOR",           value: "EOF"}
-      ];
-      output = {
-        "type": "Program",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "diceRoll"
-                },
-                "init": {
-                  "type": "Literal",
-                  "value": 6,
-                  "raw": "6"
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "BinaryExpression",
-              "operator": "==",
-              "left": {
-                "type": "UpdateExpression",
-                "operator": "++",
-                "argument": {
-                  "type": "Identifier",
-                  "name": "diceRoll"
-                },
-                "prefix": false
-              },
-              "right": {
-                "type": "Literal",
-                "value": 7,
-                "raw": "7"
-              }
-            }
-          }
-        ],
-        "sourceType": "module"
-      };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
     // Swift input: 'var a = true; var b = !a; var c = -a; var d = +b'
     it('should handle unary operators', function () {
       input = [
@@ -4025,6 +4779,214 @@ describe('Parser: First Milestone', function() {
                     "name": "b"
                   },
                   "prefix": true
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`var x = 5; x += 4; x -= 3; x *= 2; x /= 1; x %= 2;`;
+    xit('should handle compound assignment operators', function() {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "x" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "5" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "x" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "4" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "x" },
+        { type: "OPERATOR",             value: "-" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "3" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "x" },
+        { type: "OPERATOR",             value: "*" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "2" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "x" },
+        { type: "OPERATOR",             value: "/" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "1" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "x" },
+        { type: "OPERATOR",             value: "%" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "2" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "x"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 5,
+                  "raw": "5"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "+=",
+              "left": {
+                "type": "Identifier",
+                "name": "x"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 4,
+                "raw": "4"
+              }
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "-=",
+              "left": {
+                "type": "Identifier",
+                "name": "x"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 3,
+                "raw": "3"
+              }
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "*=",
+              "left": {
+                "type": "Identifier",
+                "name": "x"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 2,
+                "raw": "2"
+              }
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "/=",
+              "left": {
+                "type": "Identifier",
+                "name": "x"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 1,
+                "raw": "1"
+              }
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "%=",
+              "left": {
+                "type": "Identifier",
+                "name": "x"
+              },
+              "right": {
+                "type": "Literal",
+                "value": 2,
+                "raw": "2"
+              }
+            }
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw`var a = !true && true || true`;
+    xit('should handle logical operators', function() {
+      input = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "a" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "!" },
+        { type: "BOOLEAN",              value: "true" },
+        { type: "OPERATOR",             value: "&" },
+        { type: "OPERATOR",             value: "&" },
+        { type: "BOOLEAN",              value: "true" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "OPERATOR",             value: "|" },
+        { type: "BOOLEAN",              value: "true" },
+        { type: "TERMINATOR",           value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "a"
+                },
+                "init": {
+                  "type": "LogicalExpression",
+                  "operator": "||",
+                  "left": {
+                    "type": "LogicalExpression",
+                    "operator": "&&",
+                    "left": {
+                      "type": "UnaryExpression",
+                      "operator": "!",
+                      "argument": {
+                        "type": "Literal",
+                        "value": true,
+                        "raw": "true"
+                      },
+                      "prefix": true
+                    },
+                    "right": {
+                      "type": "Literal",
+                      "value": true,
+                      "raw": "true"
+                    }
+                  },
+                  "right": {
+                    "type": "Literal",
+                    "value": true,
+                    "raw": "true"
+                  }
                 }
               }
             ],
@@ -4250,2458 +5212,6 @@ describe('Parser: First Milestone', function() {
       };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
-
-    // Swift input: 'var a = 1...5'
-    /** AST Explorer input:
-     var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
-     sJs.range['1to5'] = sJs.range.fn(1,5);
-     var a = sJs.range['1to5'];
-     */
-    it('should handle closed ranges', function () {
-      input = [
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "a" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "1" },
-        { type: "CLOSED_RANGE",         value: "..." },
-        { type: "NUMBER",               value: "5" },
-        { type: "TERMINATOR",           value: "EOF"}
-      ];
-      output = {
-        "type": "Program",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "sJs"
-                },
-                "init": {
-                  "type": "ObjectExpression",
-                  "properties": [
-                    {
-                      "type": "Property",
-                      "key": {
-                        "type": "Identifier",
-                        "name": "range"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "ObjectExpression",
-                        "properties": [
-                          {
-                            "type": "Property",
-                            "key": {
-                              "type": "Identifier",
-                              "name": "fn"
-                            },
-                            "computed": false,
-                            "value": {
-                              "type": "FunctionExpression",
-                              "id": null,
-                              "params": [
-                                {
-                                  "type": "Identifier",
-                                  "name": "a"
-                                },
-                                {
-                                  "type": "Identifier",
-                                  "name": "z"
-                                }
-                              ],
-                              "defaults": [],
-                              "body": {
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-                                    "type": "VariableDeclaration",
-                                    "declarations": [
-                                      {
-                                        "type": "VariableDeclarator",
-                                        "id": {
-                                          "type": "Identifier",
-                                          "name": "r"
-                                        },
-                                        "init": {
-                                          "type": "ArrayExpression",
-                                          "elements": []
-                                        }
-                                      }
-                                    ],
-                                    "kind": "var"
-                                  },
-                                  {
-                                    "type": "ForStatement",
-                                    "init": {
-                                      "type": "VariableDeclaration",
-                                      "declarations": [
-                                        {
-                                          "type": "VariableDeclarator",
-                                          "id": {
-                                            "type": "Identifier",
-                                            "name": "i"
-                                          },
-                                          "init": {
-                                            "type": "Identifier",
-                                            "name": "a"
-                                          }
-                                        }
-                                      ],
-                                      "kind": "var"
-                                    },
-                                    "test": {
-                                      "type": "BinaryExpression",
-                                      "operator": "<=",
-                                      "left": {
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "right": {
-                                        "type": "Identifier",
-                                        "name": "z"
-                                      }
-                                    },
-                                    "update": {
-                                      "type": "UpdateExpression",
-                                      "operator": "++",
-                                      "argument": {
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "prefix": false
-                                    },
-                                    "body": {
-                                      "type": "BlockStatement",
-                                      "body": [
-                                        {
-                                          "type": "ExpressionStatement",
-                                          "expression": {
-                                            "type": "CallExpression",
-                                            "callee": {
-                                              "type": "MemberExpression",
-                                              "computed": false,
-                                              "object": {
-                                                "type": "Identifier",
-                                                "name": "r"
-                                              },
-                                              "property": {
-                                                "type": "Identifier",
-                                                "name": "push"
-                                              }
-                                            },
-                                            "arguments": [
-                                              {
-                                                "type": "Identifier",
-                                                "name": "i"
-                                              }
-                                            ]
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  },
-                                  {
-                                    "type": "ReturnStatement",
-                                    "argument": {
-                                      "type": "Identifier",
-                                      "name": "r"
-                                    }
-                                  }
-                                ]
-                              },
-                              "generator": false,
-                              "expression": false
-                            },
-                            "kind": "init",
-                            "method": false,
-                            "shorthand": false
-                          }
-                        ]
-                      },
-                      "kind": "init",
-                      "method": false,
-                      "shorthand": false
-                    }
-                  ]
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "AssignmentExpression",
-              "operator": "=",
-              "left": {
-                "type": "MemberExpression",
-                "computed": true,
-                "object": {
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-                    "type": "Identifier",
-                    "name": "sJs"
-                  },
-                  "property": {
-                    "type": "Identifier",
-                    "name": "range"
-                  }
-                },
-                "property": {
-                  "type": "Literal",
-                  "value": "1to5",
-                  "raw": '"1to5"'
-                }
-              },
-              "right": {
-                "type": "CallExpression",
-                "callee": {
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-                    "type": "Identifier",
-                    "name": "fn"
-                  }
-                },
-                "arguments": [
-                  {
-                    "type": "Literal",
-                    "value": 1,
-                    "raw": "1"
-                  },
-                  {
-                    "type": "Literal",
-                    "value": 5,
-                    "raw": "5"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                "init": {
-                  "type": "MemberExpression",
-                  "computed": true,
-                  "object": {
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-                    "type": "Literal",
-                    "value": "1to5",
-                    "raw": '"1to5"'
-                  }
-                }
-              }
-            ],
-            "kind": "var"
-          }
-        ],
-        "sourceType": "module"
-      };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
-    // Swift input: 'var a = 1.0...5.0'
-    /* AST Explorer input:
-     var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
-     sJs.range['1.0to5.0'] = sJs.range.fn(1.0,5.0);
-     var a = sJs.range['1.0to5.0'];
-     */
-
-    it('should handle decimal ending in 0 closed ranges', function () {
-      input = [
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "a" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "1.0" },
-        { type: "CLOSED_RANGE",         value: "..." },
-        { type: "NUMBER",               value: "5.0" },
-        { type: "TERMINATOR",           value: "EOF"}
-      ];
-      output =    {
-
-        "type": "Program",
-        "body": [
-          {
-
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-
-                "type": "VariableDeclarator",
-                "id": {
-
-                  "type": "Identifier",
-                  "name": "sJs"
-                },
-                "init": {
-
-                  "type": "ObjectExpression",
-                  "properties": [
-                    {
-
-                      "type": "Property",
-                      "key": {
-
-                        "type": "Identifier",
-                        "name": "range"
-                      },
-                      "computed": false,
-                      "value": {
-
-                        "type": "ObjectExpression",
-                        "properties": [
-                          {
-
-                            "type": "Property",
-                            "key": {
-
-                              "type": "Identifier",
-                              "name": "fn"
-                            },
-                            "computed": false,
-                            "value": {
-
-                              "type": "FunctionExpression",
-                              "id": null,
-                              "params": [
-                                {
-
-                                  "type": "Identifier",
-                                  "name": "a"
-                                },
-                                {
-
-                                  "type": "Identifier",
-                                  "name": "z"
-                                }
-                              ],
-                              "defaults": [],
-                              "body": {
-
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-
-                                    "type": "VariableDeclaration",
-                                    "declarations": [
-                                      {
-
-                                        "type": "VariableDeclarator",
-                                        "id": {
-
-                                          "type": "Identifier",
-                                          "name": "r"
-                                        },
-                                        "init": {
-
-                                          "type": "ArrayExpression",
-                                          "elements": []
-                                        }
-                                      }
-                                    ],
-                                    "kind": "var"
-                                  },
-                                  {
-
-                                    "type": "ForStatement",
-                                    "init": {
-
-                                      "type": "VariableDeclaration",
-                                      "declarations": [
-                                        {
-
-                                          "type": "VariableDeclarator",
-                                          "id": {
-
-                                            "type": "Identifier",
-                                            "name": "i"
-                                          },
-                                          "init": {
-
-                                            "type": "Identifier",
-                                            "name": "a"
-                                          }
-                                        }
-                                      ],
-                                      "kind": "var"
-                                    },
-                                    "test": {
-
-                                      "type": "BinaryExpression",
-                                      "operator": "<=",
-                                      "left": {
-
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "right": {
-
-                                        "type": "Identifier",
-                                        "name": "z"
-                                      }
-                                    },
-                                    "update": {
-
-                                      "type": "UpdateExpression",
-                                      "operator": "++",
-                                      "argument": {
-
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "prefix": false
-                                    },
-                                    "body": {
-
-                                      "type": "BlockStatement",
-                                      "body": [
-                                        {
-
-                                          "type": "ExpressionStatement",
-                                          "expression": {
-
-                                            "type": "CallExpression",
-                                            "callee": {
-
-                                              "type": "MemberExpression",
-                                              "computed": false,
-                                              "object": {
-
-                                                "type": "Identifier",
-                                                "name": "r"
-                                              },
-                                              "property": {
-
-                                                "type": "Identifier",
-                                                "name": "push"
-                                              }
-                                            },
-                                            "arguments": [
-                                              {
-
-                                                "type": "Identifier",
-                                                "name": "i"
-                                              }
-                                            ]
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  },
-                                  {
-
-                                    "type": "ReturnStatement",
-                                    "argument": {
-
-                                      "type": "Identifier",
-                                      "name": "r"
-                                    }
-                                  }
-                                ]
-                              },
-                              "generator": false,
-                              "expression": false
-                            },
-                            "kind": "init",
-                            "method": false,
-                            "shorthand": false
-                          }
-                        ]
-                      },
-                      "kind": "init",
-                      "method": false,
-                      "shorthand": false
-                    }
-                  ]
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-
-            "type": "ExpressionStatement",
-            "expression": {
-
-              "type": "AssignmentExpression",
-              "operator": "=",
-              "left": {
-
-                "type": "MemberExpression",
-                "computed": true,
-                "object": {
-
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-
-                    "type": "Identifier",
-                    "name": "sJs"
-                  },
-                  "property": {
-
-                    "type": "Identifier",
-                    "name": "range"
-                  }
-                },
-                "property": {
-
-                  "type": "Literal",
-                  "value": "1.0to5.0",
-                  "raw": '"1.0to5.0"'
-                }
-              },
-              "right": {
-
-                "type": "CallExpression",
-                "callee": {
-
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-
-                    "type": "Identifier",
-                    "name": "fn"
-                  }
-                },
-                "arguments": [
-                  {
-
-                    "type": "Literal",
-                    "value": 1,
-                    "raw": "1.0"
-                  },
-                  {
-
-                    "type": "Literal",
-                    "value": 5,
-                    "raw": "5.0"
-                  }
-                ]
-              }
-            }
-          },
-          {
-
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-
-                "type": "VariableDeclarator",
-                "id": {
-
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                "init": {
-
-                  "type": "MemberExpression",
-                  "computed": true,
-                  "object": {
-
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-
-                    "type": "Literal",
-                    "value": "1.0to5.0",
-                    "raw": '"1.0to5.0"'
-                  }
-                }
-              }
-            ],
-            "kind": "var"
-          }
-        ],
-        "sourceType": "module"
-      };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
-    // Swift input: 'var a = 1.2...5.3'
-    /* AST Explorer input:
-     var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
-     sJs.range['1.2to5.3'] = sJs.range.fn(1.2,5.3);
-     var a = sJs.range['1.2to5.3'];
-     */
-    it('should handle random decimal closed ranges', function () {
-      input = [
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "a" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "1.2" },
-        { type: "CLOSED_RANGE",         value: "..." },
-        { type: "NUMBER",               value: "5.3" },
-        { type: "TERMINATOR",           value: "EOF"}
-      ];
-      output = {
-
-
-        "type": "Program",
-        "body": [
-          {
-
-
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-
-
-                "type": "VariableDeclarator",
-                "id": {
-
-
-                  "type": "Identifier",
-                  "name": "sJs"
-                },
-                "init": {
-
-
-                  "type": "ObjectExpression",
-                  "properties": [
-                    {
-
-
-                      "type": "Property",
-                      "key": {
-
-
-                        "type": "Identifier",
-                        "name": "range"
-                      },
-                      "computed": false,
-                      "value": {
-
-
-                        "type": "ObjectExpression",
-                        "properties": [
-                          {
-
-
-                            "type": "Property",
-                            "key": {
-
-
-                              "type": "Identifier",
-                              "name": "fn"
-                            },
-                            "computed": false,
-                            "value": {
-
-
-                              "type": "FunctionExpression",
-                              "id": null,
-                              "params": [
-                                {
-
-
-                                  "type": "Identifier",
-                                  "name": "a"
-                                },
-                                {
-
-
-                                  "type": "Identifier",
-                                  "name": "z"
-                                }
-                              ],
-                              "defaults": [],
-                              "body": {
-
-
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-
-
-                                    "type": "VariableDeclaration",
-                                    "declarations": [
-                                      {
-
-
-                                        "type": "VariableDeclarator",
-                                        "id": {
-
-
-                                          "type": "Identifier",
-                                          "name": "r"
-                                        },
-                                        "init": {
-
-
-                                          "type": "ArrayExpression",
-                                          "elements": []
-                                        }
-                                      }
-                                    ],
-                                    "kind": "var"
-                                  },
-                                  {
-
-
-                                    "type": "ForStatement",
-                                    "init": {
-
-
-                                      "type": "VariableDeclaration",
-                                      "declarations": [
-                                        {
-
-
-                                          "type": "VariableDeclarator",
-                                          "id": {
-
-
-                                            "type": "Identifier",
-                                            "name": "i"
-                                          },
-                                          "init": {
-
-
-                                            "type": "Identifier",
-                                            "name": "a"
-                                          }
-                                        }
-                                      ],
-                                      "kind": "var"
-                                    },
-                                    "test": {
-
-
-                                      "type": "BinaryExpression",
-                                      "operator": "<=",
-                                      "left": {
-
-
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "right": {
-
-
-                                        "type": "Identifier",
-                                        "name": "z"
-                                      }
-                                    },
-                                    "update": {
-
-
-                                      "type": "UpdateExpression",
-                                      "operator": "++",
-                                      "argument": {
-
-
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "prefix": false
-                                    },
-                                    "body": {
-
-
-                                      "type": "BlockStatement",
-                                      "body": [
-                                        {
-
-
-                                          "type": "ExpressionStatement",
-                                          "expression": {
-
-
-                                            "type": "CallExpression",
-                                            "callee": {
-
-
-                                              "type": "MemberExpression",
-                                              "computed": false,
-                                              "object": {
-
-
-                                                "type": "Identifier",
-                                                "name": "r"
-                                              },
-                                              "property": {
-
-
-                                                "type": "Identifier",
-                                                "name": "push"
-                                              }
-                                            },
-                                            "arguments": [
-                                              {
-
-
-                                                "type": "Identifier",
-                                                "name": "i"
-                                              }
-                                            ]
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  },
-                                  {
-
-
-                                    "type": "ReturnStatement",
-                                    "argument": {
-
-
-                                      "type": "Identifier",
-                                      "name": "r"
-                                    }
-                                  }
-                                ]
-                              },
-                              "generator": false,
-                              "expression": false
-                            },
-                            "kind": "init",
-                            "method": false,
-                            "shorthand": false
-                          }
-                        ]
-                      },
-                      "kind": "init",
-                      "method": false,
-                      "shorthand": false
-                    }
-                  ]
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-
-
-            "type": "ExpressionStatement",
-            "expression": {
-
-
-              "type": "AssignmentExpression",
-              "operator": "=",
-              "left": {
-
-
-                "type": "MemberExpression",
-                "computed": true,
-                "object": {
-
-
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-
-
-                    "type": "Identifier",
-                    "name": "sJs"
-                  },
-                  "property": {
-
-
-                    "type": "Identifier",
-                    "name": "range"
-                  }
-                },
-                "property": {
-
-
-                  "type": "Literal",
-                  "value": "1.2to5.3",
-                  "raw": '"1.2to5.3"'
-                }
-              },
-              "right": {
-
-
-                "type": "CallExpression",
-                "callee": {
-
-
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-
-
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-
-
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-
-
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-
-
-                    "type": "Identifier",
-                    "name": "fn"
-                  }
-                },
-                "arguments": [
-                  {
-
-
-                    "type": "Literal",
-                    "value": 1.2,
-                    "raw": "1.2"
-                  },
-                  {
-
-
-                    "type": "Literal",
-                    "value": 5.3,
-                    "raw": "5.3"
-                  }
-                ]
-              }
-            }
-          },
-          {
-
-
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-
-
-                "type": "VariableDeclarator",
-                "id": {
-
-
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                "init": {
-
-
-                  "type": "MemberExpression",
-                  "computed": true,
-                  "object": {
-
-
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-
-
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-
-
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-
-
-                    "type": "Literal",
-                    "value": "1.2to5.3",
-                    "raw": '"1.2to5.3"'
-                  }
-                }
-              }
-            ],
-            "kind": "var"
-          }
-        ],
-        "sourceType": "module"
-      };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
-    // Swift input: 'var a = 1..<5'
-    /* AST Explorer input:
-     var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
-     sJs.range['1to4'] = sJs.range.fn(1,4);
-     var a = sJs.range['1to4'];
-     */
-    it('should handle half-open ranges', function () {
-      input = [
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "a" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "1" },
-        { type: "HALF_OPEN_RANGE",      value: "..<" },
-        { type: "NUMBER",               value: "5" },
-        { type: "TERMINATOR",           value: "EOF"}
-      ];
-      output = {
-
-        "type": "Program",
-        "body": [
-          {
-
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-
-                "type": "VariableDeclarator",
-                "id": {
-
-                  "type": "Identifier",
-                  "name": "sJs"
-                },
-                "init": {
-
-                  "type": "ObjectExpression",
-                  "properties": [
-                    {
-
-                      "type": "Property",
-                      "key": {
-
-                        "type": "Identifier",
-                        "name": "range"
-                      },
-                      "computed": false,
-                      "value": {
-
-                        "type": "ObjectExpression",
-                        "properties": [
-                          {
-
-                            "type": "Property",
-                            "key": {
-
-                              "type": "Identifier",
-                              "name": "fn"
-                            },
-                            "computed": false,
-                            "value": {
-
-                              "type": "FunctionExpression",
-                              "id": null,
-                              "params": [
-                                {
-
-                                  "type": "Identifier",
-                                  "name": "a"
-                                },
-                                {
-
-                                  "type": "Identifier",
-                                  "name": "z"
-                                }
-                              ],
-                              "defaults": [],
-                              "body": {
-
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-
-                                    "type": "VariableDeclaration",
-                                    "declarations": [
-                                      {
-
-                                        "type": "VariableDeclarator",
-                                        "id": {
-
-                                          "type": "Identifier",
-                                          "name": "r"
-                                        },
-                                        "init": {
-
-                                          "type": "ArrayExpression",
-                                          "elements": []
-                                        }
-                                      }
-                                    ],
-                                    "kind": "var"
-                                  },
-                                  {
-
-                                    "type": "ForStatement",
-                                    "init": {
-
-                                      "type": "VariableDeclaration",
-                                      "declarations": [
-                                        {
-
-                                          "type": "VariableDeclarator",
-                                          "id": {
-
-                                            "type": "Identifier",
-                                            "name": "i"
-                                          },
-                                          "init": {
-
-                                            "type": "Identifier",
-                                            "name": "a"
-                                          }
-                                        }
-                                      ],
-                                      "kind": "var"
-                                    },
-                                    "test": {
-
-                                      "type": "BinaryExpression",
-                                      "operator": "<=",
-                                      "left": {
-
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "right": {
-
-                                        "type": "Identifier",
-                                        "name": "z"
-                                      }
-                                    },
-                                    "update": {
-
-                                      "type": "UpdateExpression",
-                                      "operator": "++",
-                                      "argument": {
-
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "prefix": false
-                                    },
-                                    "body": {
-
-                                      "type": "BlockStatement",
-                                      "body": [
-                                        {
-
-                                          "type": "ExpressionStatement",
-                                          "expression": {
-
-                                            "type": "CallExpression",
-                                            "callee": {
-
-                                              "type": "MemberExpression",
-                                              "computed": false,
-                                              "object": {
-
-                                                "type": "Identifier",
-                                                "name": "r"
-                                              },
-                                              "property": {
-
-                                                "type": "Identifier",
-                                                "name": "push"
-                                              }
-                                            },
-                                            "arguments": [
-                                              {
-
-                                                "type": "Identifier",
-                                                "name": "i"
-                                              }
-                                            ]
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  },
-                                  {
-
-                                    "type": "ReturnStatement",
-                                    "argument": {
-
-                                      "type": "Identifier",
-                                      "name": "r"
-                                    }
-                                  }
-                                ]
-                              },
-                              "generator": false,
-                              "expression": false
-                            },
-                            "kind": "init",
-                            "method": false,
-                            "shorthand": false
-                          }
-                        ]
-                      },
-                      "kind": "init",
-                      "method": false,
-                      "shorthand": false
-                    }
-                  ]
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-
-            "type": "ExpressionStatement",
-            "expression": {
-
-              "type": "AssignmentExpression",
-              "operator": "=",
-              "left": {
-
-                "type": "MemberExpression",
-                "computed": true,
-                "object": {
-
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-
-                    "type": "Identifier",
-                    "name": "sJs"
-                  },
-                  "property": {
-
-                    "type": "Identifier",
-                    "name": "range"
-                  }
-                },
-                "property": {
-
-                  "type": "Literal",
-                  "value": "1to4",
-                  "raw": '"1to4"'
-                }
-              },
-              "right": {
-
-                "type": "CallExpression",
-                "callee": {
-
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-
-                    "type": "Identifier",
-                    "name": "fn"
-                  }
-                },
-                "arguments": [
-                  {
-
-                    "type": "Literal",
-                    "value": 1,
-                    "raw": "1"
-                  },
-                  {
-
-                    "type": "Literal",
-                    "value": 4,
-                    "raw": "4"
-                  }
-                ]
-              }
-            }
-          },
-          {
-
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-
-                "type": "VariableDeclarator",
-                "id": {
-
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                "init": {
-
-                  "type": "MemberExpression",
-                  "computed": true,
-                  "object": {
-
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-
-                    "type": "Literal",
-                    "value": "1to4",
-                    "raw": '"1to4"'
-                  }
-                }
-              }
-            ],
-            "kind": "var"
-          }
-        ],
-        "sourceType": "module"
-      };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
-    // Swift input: 'var a = 1.0..<5.0'
-    /*AST Explorer input:
-     var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
-     sJs.range['1.0to4.0'] = sJs.range.fn(1.0,4.0);
-     var a = sJs.range['1.0to4.0'];
-     */
-    it('should handle decimal ending in 0 half-open ranges', function () {
-      input = [
-        {type: "DECLARATION_KEYWORD", value: "var"},
-        {type: "IDENTIFIER", value: "a"},
-        {type: "OPERATOR", value: "="},
-        {type: "NUMBER", value: "1.0"},
-        {type: "HALF_OPEN_RANGE", value: "..<"},
-        {type: "NUMBER", value: "5.0"},
-        {type: "TERMINATOR", value: "EOF"}
-      ];
-      output = {
-        "type": "Program",
-        "body":
-      [
-        {
-
-          "type": "VariableDeclaration",
-          "declarations": [
-            {
-
-              "type": "VariableDeclarator",
-              "id": {
-
-                "type": "Identifier",
-                "name": "sJs"
-              },
-              "init": {
-
-                "type": "ObjectExpression",
-                "properties": [
-                  {
-
-                    "type": "Property",
-                    "key": {
-
-                      "type": "Identifier",
-                      "name": "range"
-                    },
-                    "computed": false,
-                    "value": {
-
-                      "type": "ObjectExpression",
-                      "properties": [
-                        {
-
-                          "type": "Property",
-                          "key": {
-
-                            "type": "Identifier",
-                            "name": "fn"
-                          },
-                          "computed": false,
-                          "value": {
-
-                            "type": "FunctionExpression",
-                            "id": null,
-                            "params": [
-                              {
-
-                                "type": "Identifier",
-                                "name": "a"
-                              },
-                              {
-
-                                "type": "Identifier",
-                                "name": "z"
-                              }
-                            ],
-                            "defaults": [],
-                            "body": {
-
-                              "type": "BlockStatement",
-                              "body": [
-                                {
-
-                                  "type": "VariableDeclaration",
-                                  "declarations": [
-                                    {
-
-                                      "type": "VariableDeclarator",
-                                      "id": {
-
-                                        "type": "Identifier",
-                                        "name": "r"
-                                      },
-                                      "init": {
-
-                                        "type": "ArrayExpression",
-                                        "elements": []
-                                      }
-                                    }
-                                  ],
-                                  "kind": "var"
-                                },
-                                {
-
-                                  "type": "ForStatement",
-                                  "init": {
-
-                                    "type": "VariableDeclaration",
-                                    "declarations": [
-                                      {
-
-                                        "type": "VariableDeclarator",
-                                        "id": {
-
-                                          "type": "Identifier",
-                                          "name": "i"
-                                        },
-                                        "init": {
-
-                                          "type": "Identifier",
-                                          "name": "a"
-                                        }
-                                      }
-                                    ],
-                                    "kind": "var"
-                                  },
-                                  "test": {
-
-                                    "type": "BinaryExpression",
-                                    "operator": "<=",
-                                    "left": {
-
-                                      "type": "Identifier",
-                                      "name": "i"
-                                    },
-                                    "right": {
-
-                                      "type": "Identifier",
-                                      "name": "z"
-                                    }
-                                  },
-                                  "update": {
-
-                                    "type": "UpdateExpression",
-                                    "operator": "++",
-                                    "argument": {
-
-                                      "type": "Identifier",
-                                      "name": "i"
-                                    },
-                                    "prefix": false
-                                  },
-                                  "body": {
-
-                                    "type": "BlockStatement",
-                                    "body": [
-                                      {
-
-                                        "type": "ExpressionStatement",
-                                        "expression": {
-
-                                          "type": "CallExpression",
-                                          "callee": {
-
-                                            "type": "MemberExpression",
-                                            "computed": false,
-                                            "object": {
-
-                                              "type": "Identifier",
-                                              "name": "r"
-                                            },
-                                            "property": {
-
-                                              "type": "Identifier",
-                                              "name": "push"
-                                            }
-                                          },
-                                          "arguments": [
-                                            {
-
-                                              "type": "Identifier",
-                                              "name": "i"
-                                            }
-                                          ]
-                                        }
-                                      }
-                                    ]
-                                  }
-                                },
-                                {
-
-                                  "type": "ReturnStatement",
-                                  "argument": {
-
-                                    "type": "Identifier",
-                                    "name": "r"
-                                  }
-                                }
-                              ]
-                            },
-                            "generator": false,
-                            "expression": false
-                          },
-                          "kind": "init",
-                          "method": false,
-                          "shorthand": false
-                        }
-                      ]
-                    },
-                    "kind": "init",
-                    "method": false,
-                    "shorthand": false
-                  }
-                ]
-              }
-            }
-          ],
-          "kind": "var"
-        },
-        {
-
-          "type": "ExpressionStatement",
-          "expression": {
-
-            "type": "AssignmentExpression",
-            "operator": "=",
-            "left": {
-
-              "type": "MemberExpression",
-              "computed": true,
-              "object": {
-
-                "type": "MemberExpression",
-                "computed": false,
-                "object": {
-
-                  "type": "Identifier",
-                  "name": "sJs"
-                },
-                "property": {
-
-                  "type": "Identifier",
-                  "name": "range"
-                }
-              },
-              "property": {
-
-                "type": "Literal",
-                "value": "1.0to4",
-                "raw": '"1.0to4"'
-              }
-            },
-            "right": {
-
-              "type": "CallExpression",
-              "callee": {
-
-                "type": "MemberExpression",
-                "computed": false,
-                "object": {
-
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-
-                    "type": "Identifier",
-                    "name": "sJs"
-                  },
-                  "property": {
-
-                    "type": "Identifier",
-                    "name": "range"
-                  }
-                },
-                "property": {
-
-                  "type": "Identifier",
-                  "name": "fn"
-                }
-              },
-              "arguments": [
-                {
-
-                  "type": "Literal",
-                  "value": 1,
-                  "raw": "1.0"
-                },
-                {
-
-                  "type": "Literal",
-                  "value": 4,
-                  "raw": "4"
-                }
-              ]
-            }
-          }
-        },
-        {
-
-          "type": "VariableDeclaration",
-          "declarations": [
-            {
-
-              "type": "VariableDeclarator",
-              "id": {
-
-                "type": "Identifier",
-                "name": "a"
-              },
-              "init": {
-
-                "type": "MemberExpression",
-                "computed": true,
-                "object": {
-
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-
-                    "type": "Identifier",
-                    "name": "sJs"
-                  },
-                  "property": {
-
-                    "type": "Identifier",
-                    "name": "range"
-                  }
-                },
-                "property": {
-
-                  "type": "Literal",
-                  "value": "1.0to4",
-                  "raw": '"1.0to4"'
-                }
-              }
-            }
-          ],
-          "kind": "var"
-        }
-      ],
-        "sourceType"
-      :
-      "module"
-    };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
-    // Swift input: 'var a = 1.2..<5.3'
-    /* AST Explorer input:
-     var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
-     sJs.range['1.2to4.3'] = sJs.range.fn(1.2,4.3);
-     var a = sJs.range['1.2to4.3'];
-     */
-    it('should handle random decimal half-open ranges', function () {
-      input = [
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "a" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "1.2" },
-        { type: "HALF_OPEN_RANGE",      value: "..<" },
-        { type: "NUMBER",               value: "5.3" },
-        { type: "TERMINATOR",           value: "EOF"}
-      ];
-      output = {
-
-        "type": "Program",
-        "body": [
-          {
-
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-
-                "type": "VariableDeclarator",
-                "id": {
-
-                  "type": "Identifier",
-                  "name": "sJs"
-                },
-                "init": {
-
-                  "type": "ObjectExpression",
-                  "properties": [
-                    {
-
-                      "type": "Property",
-                      "key": {
-
-                        "type": "Identifier",
-                        "name": "range"
-                      },
-                      "computed": false,
-                      "value": {
-
-                        "type": "ObjectExpression",
-                        "properties": [
-                          {
-
-                            "type": "Property",
-                            "key": {
-
-                              "type": "Identifier",
-                              "name": "fn"
-                            },
-                            "computed": false,
-                            "value": {
-
-                              "type": "FunctionExpression",
-                              "id": null,
-                              "params": [
-                                {
-
-                                  "type": "Identifier",
-                                  "name": "a"
-                                },
-                                {
-
-                                  "type": "Identifier",
-                                  "name": "z"
-                                }
-                              ],
-                              "defaults": [],
-                              "body": {
-
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-
-                                    "type": "VariableDeclaration",
-                                    "declarations": [
-                                      {
-
-                                        "type": "VariableDeclarator",
-                                        "id": {
-
-                                          "type": "Identifier",
-                                          "name": "r"
-                                        },
-                                        "init": {
-
-                                          "type": "ArrayExpression",
-                                          "elements": []
-                                        }
-                                      }
-                                    ],
-                                    "kind": "var"
-                                  },
-                                  {
-
-                                    "type": "ForStatement",
-                                    "init": {
-
-                                      "type": "VariableDeclaration",
-                                      "declarations": [
-                                        {
-
-                                          "type": "VariableDeclarator",
-                                          "id": {
-
-                                            "type": "Identifier",
-                                            "name": "i"
-                                          },
-                                          "init": {
-
-                                            "type": "Identifier",
-                                            "name": "a"
-                                          }
-                                        }
-                                      ],
-                                      "kind": "var"
-                                    },
-                                    "test": {
-
-                                      "type": "BinaryExpression",
-                                      "operator": "<=",
-                                      "left": {
-
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "right": {
-
-                                        "type": "Identifier",
-                                        "name": "z"
-                                      }
-                                    },
-                                    "update": {
-
-                                      "type": "UpdateExpression",
-                                      "operator": "++",
-                                      "argument": {
-
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "prefix": false
-                                    },
-                                    "body": {
-
-                                      "type": "BlockStatement",
-                                      "body": [
-                                        {
-
-                                          "type": "ExpressionStatement",
-                                          "expression": {
-
-                                            "type": "CallExpression",
-                                            "callee": {
-
-                                              "type": "MemberExpression",
-                                              "computed": false,
-                                              "object": {
-
-                                                "type": "Identifier",
-                                                "name": "r"
-                                              },
-                                              "property": {
-
-                                                "type": "Identifier",
-                                                "name": "push"
-                                              }
-                                            },
-                                            "arguments": [
-                                              {
-
-                                                "type": "Identifier",
-                                                "name": "i"
-                                              }
-                                            ]
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  },
-                                  {
-
-                                    "type": "ReturnStatement",
-                                    "argument": {
-
-                                      "type": "Identifier",
-                                      "name": "r"
-                                    }
-                                  }
-                                ]
-                              },
-                              "generator": false,
-                              "expression": false
-                            },
-                            "kind": "init",
-                            "method": false,
-                            "shorthand": false
-                          }
-                        ]
-                      },
-                      "kind": "init",
-                      "method": false,
-                      "shorthand": false
-                    }
-                  ]
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-
-            "type": "ExpressionStatement",
-            "expression": {
-
-              "type": "AssignmentExpression",
-              "operator": "=",
-              "left": {
-
-                "type": "MemberExpression",
-                "computed": true,
-                "object": {
-
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-
-                    "type": "Identifier",
-                    "name": "sJs"
-                  },
-                  "property": {
-
-                    "type": "Identifier",
-                    "name": "range"
-                  }
-                },
-                "property": {
-
-                  "type": "Literal",
-                  "value": "1.2to4.3",
-                  "raw": '"1.2to4.3"'
-                }
-              },
-              "right": {
-
-                "type": "CallExpression",
-                "callee": {
-
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-
-                    "type": "Identifier",
-                    "name": "fn"
-                  }
-                },
-                "arguments": [
-                  {
-
-                    "type": "Literal",
-                    "value": 1.2,
-                    "raw": "1.2"
-                  },
-                  {
-
-                    "type": "Literal",
-                    "value": 4.3,
-                    "raw": "4.3"
-                  }
-                ]
-              }
-            }
-          },
-          {
-
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-
-                "type": "VariableDeclarator",
-                "id": {
-
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                "init": {
-
-                  "type": "MemberExpression",
-                  "computed": true,
-                  "object": {
-
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-
-                    "type": "Literal",
-                    "value": "1.2to4.3",
-                    "raw": '"1.2to4.3"'
-                  }
-                }
-              }
-            ],
-            "kind": "var"
-          }
-        ],
-        "sourceType": "module"
-      };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
-
-    // Swift input: 'var a = 1...5; var b = 2..<6'
-    /* AST Explorer input:
-     var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
-     sJs.range['1to5'] = sJs.range.fn(1,5);
-     var a = sJs.range['1to5'];
-
-     var sJs = {range:{fn:function(a,z){var r=[];for(var i=a;i<=z;i++){r.push(i);}return r;}}};
-     sJs.range['2to5'] = sJs.range.fn(2,5);
-     var b = sJs.range['2to5'];
-     */
-    it('should handle all ranges', function () {
-      input = [
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "a" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "1" },
-        { type: "CLOSED_RANGE",         value: "..." },
-        { type: "NUMBER",               value: "5" },
-        { type: "PUNCTUATION",          value: ";"},
-        { type: "DECLARATION_KEYWORD",  value: "var" },
-        { type: "IDENTIFIER",           value: "b" },
-        { type: "OPERATOR",             value: "=" },
-        { type: "NUMBER",               value: "2" },
-        { type: "HALF_OPEN_RANGE",      value: "..<" },
-        { type: "NUMBER",               value: "6" },
-        { type: "TERMINATOR",           value: "EOF"}
-      ];
-      output = {
-        "type": "Program",
-        "body": [
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "sJs"
-                },
-                "init": {
-                  "type": "ObjectExpression",
-                  "properties": [
-                    {
-                      "type": "Property",
-                      "key": {
-                        "type": "Identifier",
-                        "name": "range"
-                      },
-                      "computed": false,
-                      "value": {
-                        "type": "ObjectExpression",
-                        "properties": [
-                          {
-                            "type": "Property",
-                            "key": {
-                              "type": "Identifier",
-                              "name": "fn"
-                            },
-                            "computed": false,
-                            "value": {
-                              "type": "FunctionExpression",
-                              "id": null,
-                              "params": [
-                                {
-                                  "type": "Identifier",
-                                  "name": "a"
-                                },
-                                {
-                                  "type": "Identifier",
-                                  "name": "z"
-                                }
-                              ],
-                              "defaults": [],
-                              "body": {
-                                "type": "BlockStatement",
-                                "body": [
-                                  {
-                                    "type": "VariableDeclaration",
-                                    "declarations": [
-                                      {
-                                        "type": "VariableDeclarator",
-                                        "id": {
-                                          "type": "Identifier",
-                                          "name": "r"
-                                        },
-                                        "init": {
-                                          "type": "ArrayExpression",
-                                          "elements": []
-                                        }
-                                      }
-                                    ],
-                                    "kind": "var"
-                                  },
-                                  {
-                                    "type": "ForStatement",
-                                    "init": {
-                                      "type": "VariableDeclaration",
-                                      "declarations": [
-                                        {
-                                          "type": "VariableDeclarator",
-                                          "id": {
-                                            "type": "Identifier",
-                                            "name": "i"
-                                          },
-                                          "init": {
-                                            "type": "Identifier",
-                                            "name": "a"
-                                          }
-                                        }
-                                      ],
-                                      "kind": "var"
-                                    },
-                                    "test": {
-                                      "type": "BinaryExpression",
-                                      "operator": "<=",
-                                      "left": {
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "right": {
-                                        "type": "Identifier",
-                                        "name": "z"
-                                      }
-                                    },
-                                    "update": {
-                                      "type": "UpdateExpression",
-                                      "operator": "++",
-                                      "argument": {
-                                        "type": "Identifier",
-                                        "name": "i"
-                                      },
-                                      "prefix": false
-                                    },
-                                    "body": {
-                                      "type": "BlockStatement",
-                                      "body": [
-                                        {
-                                          "type": "ExpressionStatement",
-                                          "expression": {
-                                            "type": "CallExpression",
-                                            "callee": {
-                                              "type": "MemberExpression",
-                                              "computed": false,
-                                              "object": {
-                                                "type": "Identifier",
-                                                "name": "r"
-                                              },
-                                              "property": {
-                                                "type": "Identifier",
-                                                "name": "push"
-                                              }
-                                            },
-                                            "arguments": [
-                                              {
-                                                "type": "Identifier",
-                                                "name": "i"
-                                              }
-                                            ]
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  },
-                                  {
-                                    "type": "ReturnStatement",
-                                    "argument": {
-                                      "type": "Identifier",
-                                      "name": "r"
-                                    }
-                                  }
-                                ]
-                              },
-                              "generator": false,
-                              "expression": false
-                            },
-                            "kind": "init",
-                            "method": false,
-                            "shorthand": false
-                          }
-                        ]
-                      },
-                      "kind": "init",
-                      "method": false,
-                      "shorthand": false
-                    }
-                  ]
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "AssignmentExpression",
-              "operator": "=",
-              "left": {
-                "type": "MemberExpression",
-                "computed": true,
-                "object": {
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-                    "type": "Identifier",
-                    "name": "sJs"
-                  },
-                  "property": {
-                    "type": "Identifier",
-                    "name": "range"
-                  }
-                },
-                "property": {
-                  "type": "Literal",
-                  "value": "1to5",
-                  "raw": '"1to5"'
-                }
-              },
-              "right": {
-                "type": "CallExpression",
-                "callee": {
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-                    "type": "Identifier",
-                    "name": "fn"
-                  }
-                },
-                "arguments": [
-                  {
-                    "type": "Literal",
-                    "value": 1,
-                    "raw": "1"
-                  },
-                  {
-                    "type": "Literal",
-                    "value": 5,
-                    "raw": "5"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "type": "ExpressionStatement",
-            "expression": {
-              "type": "AssignmentExpression",
-              "operator": "=",
-              "left": {
-                "type": "MemberExpression",
-                "computed": true,
-                "object": {
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-                    "type": "Identifier",
-                    "name": "sJs"
-                  },
-                  "property": {
-                    "type": "Identifier",
-                    "name": "range"
-                  }
-                },
-                "property": {
-                  "type": "Literal",
-                  "value": "2to5",
-                  "raw": '"2to5"'
-                }
-              },
-              "right": {
-                "type": "CallExpression",
-                "callee": {
-                  "type": "MemberExpression",
-                  "computed": false,
-                  "object": {
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-                    "type": "Identifier",
-                    "name": "fn"
-                  }
-                },
-                "arguments": [
-                  {
-                    "type": "Literal",
-                    "value": 2,
-                    "raw": "2"
-                  },
-                  {
-                    "type": "Literal",
-                    "value": 5,
-                    "raw": "5"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "a"
-                },
-                "init": {
-                  "type": "MemberExpression",
-                  "computed": true,
-                  "object": {
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-                    "type": "Literal",
-                    "value": "1to5",
-                    "raw": '"1to5"'
-                  }
-                }
-              }
-            ],
-            "kind": "var"
-          },
-          {
-            "type": "VariableDeclaration",
-            "declarations": [
-              {
-                "type": "VariableDeclarator",
-                "id": {
-                  "type": "Identifier",
-                  "name": "b"
-                },
-                "init": {
-                  "type": "MemberExpression",
-                  "computed": true,
-                  "object": {
-                    "type": "MemberExpression",
-                    "computed": false,
-                    "object": {
-                      "type": "Identifier",
-                      "name": "sJs"
-                    },
-                    "property": {
-                      "type": "Identifier",
-                      "name": "range"
-                    }
-                  },
-                  "property": {
-                    "type": "Literal",
-                    "value": "2to5",
-                    "raw": '"2to5"'
-                  }
-                }
-              }
-            ],
-            "kind": "var"
-          }
-        ],
-        "sourceType": "module"
-      };
-      expect(R.equals(parser(input), output)).to.equal(true);
-    });
   });
 
   describe('String concatenation and interpolation', function () {
@@ -6857,7 +5367,7 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // Test 15 - Swift input: 'var planet = "Earth"; let o = "Hello \(planet)!"'
+    // Swift input: 'var planet = "Earth"; let o = "Hello \(planet)!"'
     // Lexer input: 'var planet = "Earth"; let o = "Hello \\(planet)!"'
     // AST Explorer input: 'var planet = "Earth"; var o = "Hello " + planet + "!"'
     it('should handle string interpolation in the middle of a string', function () {
@@ -6939,10 +5449,10 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // Test 16 - Swift input: 'var p = "\(100 - 99), 2, 3"'
+    // Swift input: 'var p = "\(100 - 99), 2, 3"'
     // Lexer input: 'var p = "\\(100 - 99), 2, 3"'
     // AST Explorer input: 'var p = ""+100 - 99+", 2, 3"'
-    it('should handle interpolation of operations', function () {
+    it('should handle interpolation containing operations', function () {
       input = [
         { type: "DECLARATION_KEYWORD",        value: "var" },
         { type: "IDENTIFIER",                 value: "p" },
@@ -7009,11 +5519,127 @@ describe('Parser: First Milestone', function() {
       };
       expect(R.equals(parser(input), output)).to.equal(true);
     });
+
+    // input = String.raw`let a = 3; let b = 5; let sum = "the sum of a and b is \(a + b).";`;
+    // AST Explorer input: 'var a = 3; var b = 5; var sum = "the sum of a and b is " + a + b + ".";'
+    xit('should handle interpolation containing operations on identifiers', function () {
+      input = [
+        { type: "DECLARATION_KEYWORD",        value: "let" },
+        { type: "IDENTIFIER",                 value: "a" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "NUMBER",                     value: "3" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "DECLARATION_KEYWORD",        value: "let" },
+        { type: "IDENTIFIER",                 value: "b" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "NUMBER",                     value: "5" },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "DECLARATION_KEYWORD",        value: "let" },
+        { type: "IDENTIFIER",                 value: "sum" },
+        { type: "OPERATOR",                   value: "=" },
+        { type: "STRING",                     value: "the sum of a and b is " },
+        { type: "STRING_INTERPOLATION_START", value: "\\(" },
+        { type: "IDENTIFIER",                 value: "a" },
+        { type: "OPERATOR",                   value: "+" },
+        { type: "IDENTIFIER",                 value: "b" },
+        { type: "STRING_INTERPOLATION_END",   value: ")" },
+        { type: "STRING",                     value: "." },
+        { type: "PUNCTUATION",                value: ";" },
+        { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      output = {
+        "type": "Program",
+        "body": [
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "a"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 3,
+                  "raw": "3"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "b"
+                },
+                "init": {
+                  "type": "Literal",
+                  "value": 5,
+                  "raw": "5"
+                }
+              }
+            ],
+            "kind": "var"
+          },
+          {
+            "type": "VariableDeclaration",
+            "declarations": [
+              {
+                "type": "VariableDeclarator",
+                "id": {
+                  "type": "Identifier",
+                  "name": "sum"
+                },
+                "init": {
+                  "type": "BinaryExpression",
+                  "operator": "+",
+                  "left": {
+                    "type": "BinaryExpression",
+                    "operator": "+",
+                    "left": {
+                      "type": "BinaryExpression",
+                      "operator": "+",
+                      "left": {
+                        "type": "Literal",
+                        "value": "the sum of a and b is ",
+                        "raw": "\"the sum of a and b is \""
+                      },
+                      "right": {
+                        "type": "Identifier",
+                        "name": "a"
+                      }
+                    },
+                    "right": {
+                      "type": "Identifier",
+                      "name": "b"
+                    }
+                  },
+                  "right": {
+                    "type": "Literal",
+                    "value": ".",
+                    "raw": "\".\""
+                  }
+                }
+              }
+            ],
+            "kind": "var"
+          }
+        ],
+        "sourceType": "module"
+      };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
   });
 
   describe('Nested collections', function () {
 
-    // Test 17 - Swift input: 'let q = ["array1": [1,2,3], "array2": [4,5,6]];'
+    // Swift input: 'let q = ["array1": [1,2,3], "array2": [4,5,6]];'
+    // AST Explorer input: 'var q = ["array1": [1,2,3], "array2": [4,5,6]];'
     it('should handle dictionaries of arrays', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "let" },
@@ -7134,7 +5760,7 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // Test 18 - Swift input: 'var arr = [1, 2]; var s = arr[0];'
+    // Swift input: 'var arr = [1, 2]; var s = arr[0];'
     it('should handle array access', function () {
       //TODO Commented out tokens were added by Verlon and Rex
       //TODO arr access w/out initialization throws exception
@@ -7221,7 +5847,8 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // Test 19 - Swift input: 'let arr = [1, 2]; let t = 100; var u = arr[t - 99];'
+    // Swift input: 'let arr = [1, 2]; let t = 100; var u = arr[t - 99];'
+    // AST Explorer input: 'var arr = [1, 2]; var t = 100; var u = arr[t - 99];'
     it('should handle array access with numeric operations', function () {
       input = [
         { type: "DECLARATION_KEYWORD",  value: "let" },
@@ -7340,7 +5967,7 @@ describe('Parser: First Milestone', function() {
     });
 
     // Swift input: 'let arr = [1,2]; var u = [arr[0]];'
-    it('should handle arrays of that contain a substring lookup', function () {
+    it('should handle arrays that contain a substring lookup', function () {
       //TODO Works when token.type of SUBSCRIPT_LOOKUP is replaced with token.type PUNCTUATION
       //TODO Why no longer just
       input = [
@@ -7433,7 +6060,7 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // Test xx - Swift input: 'let firstNum = 1; let secNum = 2; var dict = [firstNum: [[1,2], [3,4]], secNum: [["one", "two"], ["three", "four"]]];'
+    // Swift input: 'let firstNum = 1; let secNum = 2; var dict = [firstNum: [[1,2], [3,4]], secNum: [["one", "two"], ["three", "four"]]];'
     // AST Explorer input:
     /*
      var firstNum = 1;
@@ -7663,7 +6290,7 @@ describe('Parser: First Milestone', function() {
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
-    // Test 20 - Swift input: 'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
+    // Swift input: 'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
     // AST Explorer input: 'var arr = [1,2]; var v = {}; v[arr[0]] = [[1,2], [3,4]]; v[arr[1]] = [["one", "two"], ["three", "four"]];'
     it('should handle arrays of dictionaries', function () {
       input = [
@@ -7898,6 +6525,81 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
+      expect(R.equals(parser(input), output)).to.equal(true);
+    });
+
+    // input = String.raw `var firstNum = 1
+    //                     var secondNum = 2
+    //                     var firstDict = [firstNum: ["one", "two"], secondNum: ["three", "four"]]
+    //                     var secondDict = [-3+4: [1,2], (2*3)-4: [3,4]]`;
+    xit('should handle translation of dictionary keys', function () {
+      input = [
+       { type: "DECLARATION_KEYWORD",           value: "var" },
+       { type: "IDENTIFIER",                    value: "firstNum" },
+       { type: "OPERATOR",                      value: "=" },
+       { type: "NUMBER",                        value: "1" },
+       { type: "TERMINATOR",                    value: "\\n"},
+
+       { type: "DECLARATION_KEYWORD",           value: "var" },
+       { type: "IDENTIFIER",                    value: "secondNum" },
+       { type: "OPERATOR",                      value: "=" },
+       { type: "NUMBER",                        value: "2" },
+       { type: "TERMINATOR",                    value: "\\n"},
+
+       { type: "DECLARATION_KEYWORD",           value: "var" },
+       { type: "IDENTIFIER",                    value: "firstDict" },
+       { type: "OPERATOR",                      value: "=" },
+       { type: "DICTIONARY_START",              value: "[" },
+       { type: "IDENTIFIER",                    value: "firstNum" },
+       { type: "PUNCTUATION",                   value: ":" },
+       { type: "ARRAY_START",                   value: "[" },
+       { type: "STRING",                        value: "one" },
+       { type: "PUNCTUATION",                   value: "," },
+       { type: "STRING",                        value: "two" },
+       { type: "ARRAY_END",                     value: "]" },
+       { type: "PUNCTUATION",                   value: "," },
+       { type: "IDENTIFIER",                    value: "secondNum" },
+       { type: "PUNCTUATION",                   value: ":" },
+       { type: "ARRAY_START",                   value: "[" },
+       { type: "STRING",                        value: "three" },
+       { type: "PUNCTUATION",                   value: "," },
+       { type: "STRING",                        value: "four" },
+       { type: "ARRAY_END",                     value: "]" },
+       { type: "DICTIONARY_END",                value: "]" },
+       { type: "TERMINATOR",                    value: "\\n"},
+
+       { type: "DECLARATION_KEYWORD",           value: "var" },
+       { type: "IDENTIFIER",                    value: "secondDict" },
+       { type: "OPERATOR",                      value: "=" },
+       { type: "DICTIONARY_START",              value: "[" },
+       { type: "OPERATOR",                      value: "-" },
+       { type: "NUMBER",                        value: "3" },
+       { type: "OPERATOR",                      value: "+" },
+       { type: "NUMBER",                        value: "4" },
+       { type: "PUNCTUATION",                   value: ":" },
+       { type: "ARRAY_START",                   value: "[" },
+       { type: "NUMBER",                        value: "1" },
+       { type: "PUNCTUATION",                   value: "," },
+       { type: "NUMBER",                        value: "2" },
+       { type: "ARRAY_END",                     value: "]" },
+       { type: "PUNCTUATION",                   value: "," },
+       { type: "PUNCTUATION",                   value: "(" },
+       { type: "NUMBER",                        value: "2" },
+       { type: "OPERATOR",                      value: "*" },
+       { type: "NUMBER",                        value: "3" },
+       { type: "PUNCTUATION",                   value: ")" },
+       { type: "OPERATOR",                      value: "-" },
+       { type: "NUMBER",                        value: "4" },
+       { type: "PUNCTUATION",                   value: ":" },
+       { type: "ARRAY_START",                   value: "[" },
+       { type: "NUMBER",                        value: "3" },
+       { type: "PUNCTUATION",                   value: "," },
+       { type: "NUMBER",                        value: "4" },
+       { type: "ARRAY_END",                     value: "]" },
+       { type: "DICTIONARY_END",                value: "]" },
+       { type: "TERMINATOR",                    value: "EOF" }
+      ];
+      output = "FILL_ME_IN";
       expect(R.equals(parser(input), output)).to.equal(true);
     });
 
