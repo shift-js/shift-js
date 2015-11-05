@@ -1,7 +1,4 @@
-/**
- *
- */
-
+// Helper functions used throughout the modules
 var helpers = {
   deletePropertyIfExists : function (node, propertyArray) {
     if(node !== null) {
@@ -14,9 +11,7 @@ var helpers = {
       }
     }
   },
-  /**
-   * Recursively walk a tree and apply a callback on each node
-   */
+  //Recursively walk a tree and apply a callback on each node
   traverse: function (node, func) {
     var self = this;
     func(node);
@@ -40,13 +35,12 @@ var helpers = {
       }
     }
   },
-  /**
-   * Make initial pass through input token stream removing ambiguity of certain token permutations to the parser.
-   * Example 1: Characters of pre- and post-fix increment & decrement
-   *        operators are lexed independently as separate operators.
-   * Example 2: Swift, but not Javascript, allows for dynamic property
-   *        look-ups within literal declarations of collections.
-   **/
+    //Make initial pass through input token stream removing ambiguity of certain token permutations to the parser.
+    //Example 1: Characters of pre- and post-fix increment & decrement
+          //operators are lexed independently as separate operators.
+    //Example 2: Swift, but not Javascript, allows for dynamic property
+          //look-ups within literal declarations of collections.
+
   cleanUpTokenStream: function(input) {
     for (var i = 0; i < input.length; i++) {
       if (input[i].type === "STRING_INTERPOLATION_START" || input[i].type === "STRING_INTERPOLATION_END") {
@@ -130,7 +124,6 @@ var helpers = {
           input[i].value = "-=";
         }
       }
-
       /* Remove inline comments */
       if (input[i].type === "COMMENT_START") {
         if (input[i + 1].type === "COMMENT") {
@@ -147,12 +140,10 @@ var helpers = {
           }
         }
       }
-
     }
     return input;
   },
   isNum : function(val) {
-    //return /^\d+.*$/.test(val);
     return !isNaN(parseFloat(val)) && isFinite(val);
   },
   isBool : function(val) {

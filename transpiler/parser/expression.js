@@ -1,10 +1,10 @@
 var advance = require('./advance');
 var helpers = require('./helperFunctions');
 
-/**
- * Begin parsing an expression phrase from the current token
- * Calls itself recursively depending on the context.
- **/
+
+  //Begin parsing an expression phrase from the current token
+  //Calls itself recursively depending on the context.
+
 var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
 
   var left;
@@ -12,18 +12,15 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
   state = advance(state);
   left = t.nud();
 
-
-
   if (t.value === "++" || t.value === "--") {
     /*Pre-fix operator*/
     left = t;
-
-    if(state.token.value !== "}" && state.token.value !== "==") {
+    if (state.token.value !== "}" && state.token.value !== "==") {
       state = advance(state);
     }
   } else if (state.token.value === "++" || state.token.value === "--") {
     /*Post-fix operators*/
-    if(state.token.value === "++") {
+    if (state.token.value === "++") {
       left.type = "Identifier";
       left.name = left.value;
       delete left.value;
@@ -62,17 +59,12 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
       delete left.callee.value;
     }
   }
-
-  /**
-   * Logic to handle the recursive case
-   */
+   // Logic to handle the recursive case
   while (rbp < state.token.lbp) {
     t = state.token;
     state = advance(state);
     left = t.led(left);//assignments
   }
-
-
   if (left.type === "IDENTIFIER") {
     left.name = left.value;
     left.type = "Identifier";
@@ -95,7 +87,6 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
   else if (left.operator === "=") {
     var expStmt = {};
     expStmt.type = "ExpressionStatement";
-
     if(left.left.object && left.left.property) {
       left.left.type = "MemberExpression";
       delete left.left.name;
@@ -104,14 +95,13 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
     left = expStmt;
     left.assignment = true;
   } else if (left.operator === "==") {
-
-    if(!dontWrapBinExpNodeInExpStmtBool) {
+    if (!dontWrapBinExpNodeInExpStmtBool) {
       var expressionStmtNode = { type: 'ExpressionStatement' };
       expressionStmtNode.expression = left;
       left = expressionStmtNode;
     }
   } else if (left.operator === "===") {
-    //TODO
+  //TODO
   } else if (t.value === ".") {
     state = advance(state);
   }
@@ -120,7 +110,7 @@ var expression = function(state, rbp, dontWrapBinExpNodeInExpStmtBool) {
     left.type = "CallExpression";
     left.callee = left.object;
     delete left.object;
-    if(left.callee.type === "IDENTIFIER") {
+    if (left.callee.type === "IDENTIFIER") {
       left.callee.type = "Identifier";
       left.callee.name = left.callee.value;
       delete left.callee.value;

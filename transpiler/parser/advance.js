@@ -4,12 +4,12 @@ var tokenTypes = require('./tokenTypes');
 /**
  * Look forward one token in the collection
  */
+
+// The advance function is used to advance through the tokens
+  // without the need of a for loop
 var advance = function(state, id) {
 
   var a, o, t, v;
-
-
-
 
   if (id && state.token.id !== id) {
     state.token.error("Expected '" + id + "'.");
@@ -32,7 +32,7 @@ var advance = function(state, id) {
     o = state.scope.find(v, state.symbolTable);
   } else if (tokenTypes.collectionStart.hasItem(a)) {
 
-    if(a === "ARRAY_START") {
+    if (a === "ARRAY_START") {
       v = '[';
       o = state.symbolTable['['];
     } else {
@@ -52,7 +52,7 @@ var advance = function(state, id) {
     o = state.symbolTable["(literal)"];
     a = "literal";
   } else if(tokenTypes.comment.hasItem(a)) {
-    //
+
   } else {
     console.log(t);
     t.error("Unexpected token.");

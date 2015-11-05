@@ -1,4 +1,5 @@
 
+// Handles the keys, start, and end of the range function
 
 var getNodesForGivenRange = function(key, start, end) {
   return {
