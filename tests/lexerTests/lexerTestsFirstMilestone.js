@@ -6,6 +6,7 @@ var expect          = require('chai').expect;
 describe('Lexer: First milestone', function() {
 
   describe('Basic tests', function () {
+
     it('should handle variable declarations with numbers', function () {
       input = String.raw`var a = 3`;
       output = [
@@ -285,7 +286,7 @@ describe('Lexer: First milestone', function() {
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
-    
+
     it('should handle addition/reassignment of array items via subscript', function () {
       input = String.raw `var arr = [2,2,3,4,5]; arr[0] = 1`;
       output = [
@@ -310,7 +311,7 @@ describe('Lexer: First milestone', function() {
         { type: "SUBSCRIPT_LOOKUP_END",         value: "]" },
         { type: "OPERATOR",                     value: "=" },
         { type: "NUMBER",                       value: "1" },
-        { type: "TERMINATOR",                   value: "EOF" }   
+        { type: "TERMINATOR",                   value: "EOF" }
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -393,7 +394,7 @@ describe('Lexer: First milestone', function() {
         { type: "SUBSCRIPT_LOOKUP_END",         value: "]" },
         { type: "OPERATOR",                     value: "=" },
         { type: "NUMBER",                       value: "4" },
-        { type: "TERMINATOR",                   value: "EOF" }   
+        { type: "TERMINATOR",                   value: "EOF" }
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -413,7 +414,7 @@ describe('Lexer: First milestone', function() {
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
-    
+
     it('should handle the reassignment of tuple items via dot notation', function () {
       input = String.raw `var randNumString = (4, "hello"); randNumString.0 = 5`;
       output = [
@@ -617,10 +618,10 @@ describe('Lexer: First milestone', function() {
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
-
   });
 
   describe('Numbers and operations', function () {
+
     it('should handle floating point numbers', function () {
       input = String.raw`let h = 3.14`;
       output = [
@@ -740,6 +741,64 @@ describe('Lexer: First milestone', function() {
         { type: "NUMBER",               value: "7" },
         { type: "PUNCTUATION",          value: ";" },
         { type: "TERMINATOR",           value: "EOF" }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle compound comparisons part 1 of 3', function() {
+      input = String.raw`var diceRoll = 6; diceRoll == 7;`;
+      output = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle compound comparisons part 2 of 3', function() {
+      input = String.raw`var diceRoll = 6; ++diceRoll == 7;`;
+      output = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle compound comparisons part 3 of 3', function() {
+      input = String.raw`var diceRoll = 6; diceRoll++ == 7;`;
+      output = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "6" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "IDENTIFIER",           value: "diceRoll" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "+" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "7" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF"}
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
@@ -948,7 +1007,6 @@ describe('Lexer: First milestone', function() {
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
-
   });
 
   describe('String concatenation and interpolation', function () {
@@ -1153,7 +1211,7 @@ describe('Lexer: First milestone', function() {
       expect(lexer(input)).to.deep.equal(output);
     });
 
-    it('should handle arrays of that contain a substring lookup', function () {
+    it('should handle arrays that contain a substring lookup', function () {
       input = String.raw`let arr = [1,2]; var u = [arr[0]];`;
       output = [
         { type: "DECLARATION_KEYWORD",        value: "let" },
@@ -1176,6 +1234,61 @@ describe('Lexer: First milestone', function() {
         { type: "ARRAY_END",                  value: "]" },
         { type: "PUNCTUATION",                value: ";" },
         { type: "TERMINATOR",                 value: "EOF" }
+      ];
+      expect(lexer(input)).to.deep.equal(output);
+    });
+
+    it('should handle basic dynamic key assignment in dictionary creation', function() {
+      input = String.raw`var firstNum = 1; var secNum = 2; var dict = [firstNum: [[1,2], [3,4]], secNum: [["one", "two"], ["three", "four"]]];`;
+      output = [
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "firstNum" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "1" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "secNum" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "NUMBER",               value: "2" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "DECLARATION_KEYWORD",  value: "var" },
+        { type: "IDENTIFIER",           value: "dict" },
+        { type: "OPERATOR",             value: "=" },
+        { type: "DICTIONARY_START",     value: "[" },
+        { type: "IDENTIFIER",           value: "firstNum" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "ARRAY_START",          value: "[" },
+        { type: "ARRAY_START",          value: "[" },
+        { type: "NUMBER",               value: "1" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "NUMBER",               value: "2" },
+        { type: "ARRAY_END",            value: "]" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "ARRAY_START",          value: "[" },
+        { type: "NUMBER",               value: "3" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "NUMBER",               value: "4" },
+        { type: "ARRAY_END",            value: "]" },
+        { type: "ARRAY_END",            value: "]" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "IDENTIFIER",           value: "secNum" },
+        { type: "PUNCTUATION",          value: ":" },
+        { type: "ARRAY_START",          value: "[" },
+        { type: "ARRAY_START",          value: "[" },
+        { type: "STRING",               value: "one" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "STRING",               value: "two" },
+        { type: "ARRAY_END",            value: "]" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "ARRAY_START",          value: "[" },
+        { type: "STRING",               value: "three" },
+        { type: "PUNCTUATION",          value: "," },
+        { type: "STRING",               value: "four" },
+        { type: "ARRAY_END",            value: "]" },
+        { type: "ARRAY_END",            value: "]" },
+        { type: "DICTIONARY_END",       value: "]" },
+        { type: "PUNCTUATION",          value: ";" },
+        { type: "TERMINATOR",           value: "EOF" }
       ];
       expect(lexer(input)).to.deep.equal(output);
     });
