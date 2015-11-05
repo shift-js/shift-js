@@ -14,9 +14,6 @@ angular.module('app', [
       .when('/examples', {
         templateUrl: 'app/components/examples/examplesView.html',
       })
-      .when('/about', {
-        templateUrl: 'app/components/about/aboutView.html',
-      })
       .when('/repl', {
         templateUrl: 'app/components/repl/replView.html',
         controller: 'ReplController'
