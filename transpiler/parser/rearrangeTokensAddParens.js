@@ -1,5 +1,7 @@
 var util = require('util');
 
+// Rewriter utility
+// Adds conditional parentheticals to make things easier for the parser
 var rearrangeTokensAddParens = function(tokens) {
 
   var reformat = false;
@@ -31,7 +33,6 @@ var rearrangeTokensAddParens = function(tokens) {
     }
   }
 
-  //console.log(util.inspect(tokens, {colors:true, depth:null}));
   return tokens;
 };
 

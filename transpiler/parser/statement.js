@@ -1,6 +1,8 @@
 var advance = require('./advance');
 var expression = require('./expression');
 
+// returns nodes for a single statement
+// invokes a tokens statement declaration method or goes until terminated
 var statement = function(state) {
 
   while(true) {
@@ -60,40 +62,17 @@ var statement = function(state) {
   if(state.token.value === "}") {
     return v;
   }
-
-  //while (true) {
-  //  if (![';', '\\n', ')'].hasItem(state.token.value)) {
-  //    state = advance(state);
-  //  } else {
-  //    break;
-  //  }
-  //}
   if (state.token.value === ')') {
     state = advance(state);
   }
-
-  //if (state.token.value === '{') {
-  //  state = advance(state, '{');
-  //}
-  //while(true) {
-  //  if(state.token.value === "\\n") {
-  //    state = advance(state);
-  //  } else {
-  //    break;
-  //  }
-  //}
 
   if(state.token.value === "EOF") {
     return v;
   } if(v.type === "FunctionDeclaration") {
     return v;
   } else if (!v.assignment && v.id !== "(" && state.token.value !== "console") {
-    //console.log(state.token);
-    //console.log(v);
     v.error("Bad expression statement.");
   }
-  //state = advance(state, ";");
-  //state = advance(state);
 
   return v;
 };

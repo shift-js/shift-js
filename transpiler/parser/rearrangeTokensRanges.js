@@ -1,8 +1,8 @@
 var util = require('util');
 
+// Rewriter utility
+// Accounts for Swift language feature (ranges) that are not native to javscript
 var rearrangeTokensRanges = function(tokens) {
-
-
 
   var reformat = false;
   var closedRanges = [];
@@ -40,20 +40,8 @@ var rearrangeTokensRanges = function(tokens) {
       );
     }
   }
-
-  //console.log(util.inspect(tokens, {colors:true, depth:null}));
   return tokens;
 
 };
 
 module.exports = rearrangeTokensRanges;
-
-var tokenStream = [
-  { type: "DECLARATION_KEYWORD",  value: "var" },
-  { type: "IDENTIFIER",           value: "a" },
-  { type: "OPERATOR",             value: "=" },
-  { type: "NUMBER",               value: "1" },
-  { type: "CLOSED_RANGE",         value: "..." },
-  { type: "NUMBER",               value: "5" },
-  { type: "TERMINATOR",           value: "EOF"}
-];

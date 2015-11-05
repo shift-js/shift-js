@@ -2,6 +2,7 @@ var symbol = require('./symbol');
 var originalSymbol = require('./originalSymbol');
 var expression = require('./expression');
 
+// Helper for prefix declarations
 var prefix = function(state, id, nud) {
   var s = symbol(state, originalSymbol, id);
   s.nud = nud || function() {

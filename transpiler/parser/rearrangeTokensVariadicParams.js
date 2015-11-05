@@ -1,5 +1,7 @@
 var util = require('util');
 
+// Rewriter utility
+// Accounts for swift language feature (variadic params) that is not present in js until ES6
 var rearrangeTokensVariadicParams = function(tokens) {
 
   var reformat = false;
@@ -62,7 +64,6 @@ var rearrangeTokensVariadicParams = function(tokens) {
         { type: "TERMINATOR",           value: "\\n" });
   }
 
-  //console.log(util.inspect(tokens, {colors:true, depth:null}));
   return tokens;
 };
 

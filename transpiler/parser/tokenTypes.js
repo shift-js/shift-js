@@ -1,7 +1,10 @@
+
+// Helper function used throughout
 Array.prototype.hasItem = function(val) {
   return this.indexOf(val) > -1;
 };
 
+// Token Types generator by the lexer as grouped for use in the Parser
 module.exports = {
   terminator : [
     "ARRAY_END",

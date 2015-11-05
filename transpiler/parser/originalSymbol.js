@@ -1,3 +1,5 @@
+
+// symbol prototype
 var originalSymbol = {
   nud: function() {
     this.error("Undefined.");

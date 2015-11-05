@@ -1,3 +1,5 @@
+
+// Returns AST representation of javascript namespace for ranges
 module.exports = {
   "type": "VariableDeclaration",
   "declarations": [
