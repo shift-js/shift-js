@@ -2,7 +2,7 @@
 
 ## Shift.js
 
-Shift.JS is an open source Swift to JavaScript transpiler written in JavaScript. Full documentation can be found at [shiftjs.com] (https://www.shiftjs.com).
+Shift.JS is an open source Swift to JavaScript transpiler written in JavaScript. Full documentation can be found at [shiftjs.com] (http://www.shiftjs.com).
 
 ## Usage
 
