@@ -129,4 +129,4 @@ See the LICENSE file in ```docs/```
 
 ## Team
 
-Shift.JS was started by [David Churchill] (https://github.com/webdevdave), [Verlon Smith] (https://github.com/kingedward35), [Rex Suter] (https://github.com/rex-en-abyme), [Don Steinert] (https://github.com/Dnld), and [Max Yazhbin] (https://github.com/myazhbin).
+Shift.JS was started by [David Churchill] (https://github.com/webdevdave), [Verlon Smith] (https://github.com/kingedward35), [Rex Souter] (https://github.com/rex-en-abyme), [Don Steinert] (https://github.com/Dnld), and [Max Yazhbin] (https://github.com/myazhbin).
