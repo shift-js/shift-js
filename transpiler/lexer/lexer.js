@@ -1,4 +1,4 @@
-var lexerFunctions = require("./lexerFunctions");
+var lexerHelpers = require("./lexerHelpers");
 
 module.exports = function(code) {
 
@@ -60,23 +60,23 @@ module.exports = function(code) {
     STATE.lastFunction = STATE.insideFunction[STATE.insideFunction.length - 1];
 
     // handles new lines
-    if (lexerFunctions.handleNewLine(STATE)) {
+    if (lexerHelpers.handleNewLine(STATE)) {
       continue
     }
 
     // handles comments
-    if (lexerFunctions.checkForCommentStart(STATE)) {
+    if (lexerHelpers.checkForCommentStart(STATE)) {
       continue;
     }
-    if (lexerFunctions.handleComment(STATE)) {
+    if (lexerHelpers.handleComment(STATE)) {
       continue;
     }
-    if (lexerFunctions.checkIfInsideComment(STATE)) {
+    if (lexerHelpers.checkIfInsideComment(STATE)) {
       continue;
     }
 
     // ignores chunks that are solely whitespace
-    if (lexerFunctions.checkForWhitespace(STATE.chunk)) {
+    if (lexerHelpers.checkForWhitespace(STATE.chunk)) {
       STATE.advanceAndClear(1);
       continue;
     }
@@ -89,36 +89,36 @@ module.exports = function(code) {
     }
 
     // handles numbers
-    if (lexerFunctions.handleNumber(STATE) === true) {
+    if (lexerHelpers.handleNumber(STATE) === true) {
       STATE.advanceAndClear(1);
       continue;
-    } else if (lexerFunctions.handleNumber(STATE) === "skip"){
-      lexerFunctions.handleEndOfFile(STATE.nextCol, STATE.tokens);
+    } else if (lexerHelpers.handleNumber(STATE) === "skip"){
+      lexerHelpers.handleEndOfFile(STATE.nextCol, STATE.tokens);
       STATE.advance(2);
       continue;
     }
 
     // handles ranges
-    if (lexerFunctions.handleRange(STATE)) {
+    if (lexerHelpers.handleRange(STATE)) {
       continue;
     }
 
     // handles string interpolation
-    if (lexerFunctions.checkForStringInterpolationStart(STATE)) {
+    if (lexerHelpers.checkForStringInterpolationStart(STATE)) {
       continue;
     }
-    if(lexerFunctions.checkForStringInterpolationEnd(STATE)) {
+    if(lexerHelpers.checkForStringInterpolationEnd(STATE)) {
       continue;
     }
 
     // tokenizes return arrows
     if (STATE.currCol === "-" && STATE.nextCol === ">") {
-      lexerFunctions.checkFor(STATE, 'FUNCTION_DECLARATION', "->", STATE.tokens);
+      lexerHelpers.checkFor(STATE, 'FUNCTION_DECLARATION', "->", STATE.tokens);
       if (STATE.insideFunction.length) {
         STATE.lastFunction.returnArrows.push(STATE.tokens.length - 1);
       } else {
         STATE.variableArrows.push(STATE.tokens.length - 1);
-        lexerFunctions.rewriteVariableParensHistory(STATE);
+        lexerHelpers.rewriteVariableParensHistory(STATE);
       }
       STATE.advanceAndClear(2);
       continue;
@@ -134,45 +134,45 @@ module.exports = function(code) {
     }
 
     // handles start and end of function invocations
-    if (lexerFunctions.handleFunctionInvocationStart(STATE)) {
+    if (lexerHelpers.handleFunctionInvocationStart(STATE)) {
       continue;
     }
-    if (lexerFunctions.handleFunctionInvocationEnd(STATE)) {
+    if (lexerHelpers.handleFunctionInvocationEnd(STATE)) {
       continue;
     }
 
     // tuple handling
-    if (lexerFunctions.checkForTupleStart(STATE)) {
+    if (lexerHelpers.checkForTupleStart(STATE)) {
       continue;
     }
-    if (STATE.insideTuple.status && lexerFunctions.handleTuple(STATE)) {
+    if (STATE.insideTuple.status && lexerHelpers.handleTuple(STATE)) {
       continue;
     }
-    if (lexerFunctions.checkForTupleEnd(STATE)) {
-      lexerFunctions.handleEndOfFile(STATE.nextCol, STATE.tokens);
+    if (lexerHelpers.checkForTupleEnd(STATE)) {
+      lexerHelpers.handleEndOfFile(STATE.nextCol, STATE.tokens);
       continue;
     }
 
     // handles parentheses inside of the function invocation
-    if (lexerFunctions.handleFunctionInvocationInside(STATE)) {
+    if (lexerHelpers.handleFunctionInvocationInside(STATE)) {
       continue;
     }
 
     //handling functions declarations
-    if (lexerFunctions.handleFunctionDeclarationStart(STATE)) {
+    if (lexerHelpers.handleFunctionDeclarationStart(STATE)) {
       continue;
     }
-    if (lexerFunctions.handleInsideOfFunctionDeclaration(STATE)) {
+    if (lexerHelpers.handleInsideOfFunctionDeclaration(STATE)) {
       continue;
     }
-    if (lexerFunctions.handleFunctionDeclarationEnd(STATE)) {
+    if (lexerHelpers.handleFunctionDeclarationEnd(STATE)) {
       continue;
     }
 
     // collection initializer handling
     if (STATE.tokens.length && STATE.currCol === '(' &&
       (STATE.lastToken.type === 'ARRAY_END' || STATE.lastToken.type === 'DICTIONARY_END')) {
-      lexerFunctions.checkFor(STATE, 'FUNCTION_INVOCATION', STATE.currCol, STATE.tokens);
+      lexerHelpers.checkFor(STATE, 'FUNCTION_INVOCATION', STATE.currCol, STATE.tokens);
       var tmp = {};
       tmp.name = STATE.lastToken.value;
       tmp.status = true;
@@ -189,7 +189,7 @@ module.exports = function(code) {
     }
 
     // handles classes and structs
-    if (lexerFunctions.handleClassOrStruct(STATE)) {
+    if (lexerHelpers.handleClassOrStruct(STATE)) {
       continue;
     }
 
@@ -203,11 +203,11 @@ module.exports = function(code) {
     }
 
     // handles property access and method calls via dot notation
-    if (STATE.currCol === '.' && !lexerFunctions.checkForWhitespace(STATE.prevCol) &&
-      !lexerFunctions.checkForWhitespace(STATE.nextCol) && (
+    if (STATE.currCol === '.' && !lexerHelpers.checkForWhitespace(STATE.prevCol) &&
+      !lexerHelpers.checkForWhitespace(STATE.nextCol) && (
         STATE.lastToken.type === 'IDENTIFIER' || STATE.lastToken.value === 'self' ||
         STATE.lastToken.type === 'TYPE_PROPERTY')) {
-      lexerFunctions.makeToken(undefined, STATE.chunk, STATE.tokens, 'DOT_SYNTAX', '.');
+      lexerHelpers.makeToken(undefined, STATE.chunk, STATE.tokens, 'DOT_SYNTAX', '.');
       STATE.advanceAndClear(1);
       continue;
     }
@@ -215,21 +215,21 @@ module.exports = function(code) {
     // evaluation block that executes if the lexer is not inside a string,
     // not inside a number, and an appropriate evaluation point has been reached
     if (!STATE.insideString && !STATE.insideNumber &&
-      lexerFunctions.checkForEvaluationPoint(STATE)) {
+      lexerHelpers.checkForEvaluationPoint(STATE)) {
       
       // identifies tuple elements names following dot syntax lookups
       if (STATE.lastToken && STATE.lastToken.type === 'DOT_SYNTAX' && STATE.TUPLE_ELEMENT_NAMES[STATE.chunk]) {
-        lexerFunctions.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_ELEMENT_NAME', STATE.chunk);
+        lexerHelpers.makeToken(undefined, undefined, STATE.tokens, 'TUPLE_ELEMENT_NAME', STATE.chunk);
       
       // invokes helper function to determine whether a collection is an array or dictionary 
       // upon identification of certain punctuation
       } else if (STATE.insideCollection.length && STATE.lastCollection.type === undefined &&
-        lexerFunctions.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens)) {
-        lexerFunctions.determineCollectionType(STATE);
+        lexerHelpers.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens)) {
+        lexerHelpers.determineCollectionType(STATE);
         
       // handles the last square bracket arrays and dictionaries appropriately 
       } else if (STATE.insideCollection.length && STATE.currCol === ']' && !STATE.subscriptLookup) {
-        lexerFunctions.checkFor(STATE, 'COLLECTION', STATE.chunk, STATE.tokens, function() {
+        lexerHelpers.checkFor(STATE, 'COLLECTION', STATE.chunk, STATE.tokens, function() {
           STATE.tokens[STATE.tokens.length - 1].type = STATE.lastCollection.type || 'ARRAY_END';
           STATE.insideCollection.pop();
         });
@@ -237,40 +237,40 @@ module.exports = function(code) {
       // handles the opens square bracket of arrays and dictionaries
       } else if (STATE.tokens.length && STATE.lastToken.type !== 'IDENTIFIER' &&
         STATE.lastToken.type !== 'SUBSCRIPT_LOOKUP_END' && STATE.currCol === '[') {
-        lexerFunctions.checkFor(STATE, 'COLLECTION', STATE.chunk, STATE.tokens, function(){
+        lexerHelpers.checkFor(STATE, 'COLLECTION', STATE.chunk, STATE.tokens, function(){
           STATE.insideCollection.push({type: undefined, location: STATE.tokens.length-1});})
       
       // default, fallthrough evaluation of chunk based on lexical precedence
       } else {
-        lexerFunctions.checkFor(STATE, 'KEYWORD', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor(STATE, 'NATIVE_METHOD', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor(STATE, 'METHOD_ARGUMENT_NAME', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor(STATE, 'TYPE_PROPERTY', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor(STATE, 'TYPE', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor(STATE, 'SUBSCRIPT_LOOKUP', STATE.chunk, STATE.tokens, function() {
+        lexerHelpers.checkFor(STATE, 'KEYWORD', STATE.chunk, STATE.tokens) ||
+        lexerHelpers.checkFor(STATE, 'NATIVE_METHOD', STATE.chunk, STATE.tokens) ||
+        lexerHelpers.checkFor(STATE, 'METHOD_ARGUMENT_NAME', STATE.chunk, STATE.tokens) ||
+        lexerHelpers.checkFor(STATE, 'TYPE_PROPERTY', STATE.chunk, STATE.tokens) ||
+        lexerHelpers.checkFor(STATE, 'TYPE', STATE.chunk, STATE.tokens) ||
+        lexerHelpers.checkFor(STATE, 'PUNCTUATION', STATE.chunk, STATE.tokens) ||
+        lexerHelpers.checkFor(STATE, 'SUBSCRIPT_LOOKUP', STATE.chunk, STATE.tokens, function() {
           STATE.subscriptLookup = !STATE.subscriptLookup;
         }) ||
-        lexerFunctions.checkFor(STATE, 'OPERATOR', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkFor(STATE, 'TERMINATOR', STATE.chunk, STATE.tokens) ||
-        lexerFunctions.checkForIdentifier(STATE) ||
-        lexerFunctions.checkForLiteral(STATE.chunk, STATE.tokens);
+        lexerHelpers.checkFor(STATE, 'OPERATOR', STATE.chunk, STATE.tokens) ||
+        lexerHelpers.checkFor(STATE, 'TERMINATOR', STATE.chunk, STATE.tokens) ||
+        lexerHelpers.checkForIdentifier(STATE) ||
+        lexerHelpers.checkForLiteral(STATE.chunk, STATE.tokens);
       }
 
       STATE.clearChunk();
 
       // special evaluation point handling
-      if (lexerFunctions.checkForWhitespace(STATE.nextCol)) {
+      if (lexerHelpers.checkForWhitespace(STATE.nextCol)) {
         STATE.advance(1);
       }
-      lexerFunctions.handleEndOfFile(STATE.nextCol, STATE.tokens);
+      lexerHelpers.handleEndOfFile(STATE.nextCol, STATE.tokens);
 
     }
     STATE.advance(1);
   }
 
   if (STATE.tokens[STATE.tokens.length - 1].value === '\\n') {
-    lexerFunctions.makeToken(undefined, undefined, STATE.tokens, 'TERMINATOR', 'EOF');
+    lexerHelpers.makeToken(undefined, undefined, STATE.tokens, 'TERMINATOR', 'EOF');
   }
   
   return STATE.tokens;

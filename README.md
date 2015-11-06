@@ -56,7 +56,7 @@ npm install
 
 - Lexer: Generates a stream of tokens representing the lexical parts of the Swift input.  The lexer uses a state object to store the token stream and other relevant information related to the Swift input.  It is organized into three main files: 
   - ```lexer.js``` iterates over the Swift code, separating it into individual parts to be evaluated based on their precedence in Swift.
-  - ```lexerFunctions.js``` contains helper functions to handle particular lexical parts of Swift.
+  - ```lexerHelpers.js``` contains helper functions to handle particular lexical parts of Swift.
   - ```lexicalTypes.js``` organizes and lists the valid lexical tokens of Swift, such as keywords, operators, and punctuation.
 
 - Parser: Generates an Abstract Syntax Tree from the tokens created by the lexer. The parser takes the token objects and builds a tree that represents the relationships of the different parts of the code, that is then turned into JavaScript using Escodegen.
