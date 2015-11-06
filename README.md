@@ -34,7 +34,7 @@ shift.js -h
 
 ## Development
 
-The project is in active early development.  It currently provides language support for most Swift data & collection types, mathematical & logical operators, control flow, and functions.  
+The project is in active early development.  Contributions are welcomed and encouraged.  It currently provides language support for most Swift data & collection types, mathematical & logical operators, control flow, and functions.  
 
 ### Getting Started
 
