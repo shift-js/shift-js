@@ -4,6 +4,8 @@
 
 Shift.JS is an open source Swift to JavaScript transpiler written in JavaScript. Full documentation can be found at [shiftjs.com] (http://www.shiftjs.com).
 
+The project is in active early development.  It currently provides language support for most Swift data & collection types, mathematical & logical operators, control flow, and functions.
+
 ## Usage
 
 Requires Node 4.0.0 & up.
@@ -34,7 +36,7 @@ shift.js -h
 
 ## Development
 
-The project is in active early development.  Contributions are welcomed and encouraged.  It currently provides language support for most Swift data & collection types, mathematical & logical operators, control flow, and functions.  
+Contributions are welcomed and encouraged.  
 
 ### Getting Started
 
