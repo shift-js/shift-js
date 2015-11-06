@@ -1,5 +1,5 @@
 var lexicalTypes    = require('../../transpiler/lexer/lexicalTypes');
-var lexerFunctions  = require('../../transpiler/lexer/lexerFunctions');
+var lexerHelpers  = require('../../transpiler/lexer/lexerHelpers');
 var lexer           = require('../../transpiler/lexer/lexer');
 var expect          = require('chai').expect;
 
