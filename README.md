@@ -119,7 +119,7 @@ Please refer to CONTRIBUTING.md and STYLEGUIDE.md in ```docs/``` for detailed co
 
 ## Current Version
 
-0.1.0
+0.1.1
 
 ## License
 
