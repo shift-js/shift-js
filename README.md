@@ -55,7 +55,7 @@ npm install
 
 ### Code Overview
 
-```/transpiler``` contains the two main components of the transpiler and the API:
+```/transpiler``` contains the two main components of the transpiler, and the API:
 
 - Lexer: Generates a stream of tokens representing the lexical parts of the Swift input.  The lexer uses a state object to store the token stream and other relevant information related to the Swift input.  It is organized into three main files: 
   - ```lexer.js``` iterates over the Swift code, separating it into individual parts to be evaluated based on their precedence in Swift.
