@@ -163,6 +163,8 @@ module.exports = {
     'successor': 'NATIVE_METHOD',
     'startsWith': 'NATIVE_METHOD',
     'updateValue': 'NATIVE_METHOD',
+    'reduce': 'NATIVE_METHOD',
+    'combine': 'NATIVE_METHOD',
   },
 
   OPERATOR: {
