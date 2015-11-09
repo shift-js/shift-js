@@ -1,7 +1,7 @@
 var makeParser = require('../../transpiler/parser/parser');
 var expect = require('chai').expect;
 var util = require('util');
-var R = require('ramda');
+var isEqual = require('lodash.isequal');
 var parser;
 
 describe('Parser: First Milestone', function() {
@@ -45,7 +45,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var a = 1; a = 2'
@@ -90,7 +90,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var my_var = 5'
@@ -126,7 +126,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var myVar = 5;`;
@@ -163,7 +163,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var myVar                   =                       5          ;`;
@@ -200,7 +200,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var b = "hello"'
@@ -236,7 +236,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var c = true'
@@ -272,7 +272,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var d = "Test this"'
@@ -308,7 +308,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var name: String = "Joe"; var age: Int = 45;`;
@@ -373,7 +373,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var name: String; var age: Int;`;
@@ -425,7 +425,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var firstBase, secondBase, thirdBase: String`;
@@ -478,7 +478,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`/* Comment 1 */ var a = 1 // Comment 2`;
@@ -519,7 +519,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
   });
 
@@ -558,7 +558,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var empty = [:]'
@@ -596,7 +596,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var empty = [String]();'
@@ -637,7 +637,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var empty = [String:UInt16]();'
@@ -680,7 +680,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var e = ["Eggs", "Milk", "Bacon"]'
@@ -737,7 +737,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var e = [  "Eggs","Milk",           "Bacon"                ] ;'
@@ -795,7 +795,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var f = ["one": 1, "two": 2, "three": 3]'
@@ -896,7 +896,7 @@ describe('Parser: First Milestone', function() {
         ]
         // "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw `var arr = [2,2,3,4,5]; arr[0] = 1`;
@@ -999,7 +999,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var arr = [Int](); arr += [1,2,3];`;
@@ -1086,7 +1086,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var error = (404, "not found")'
@@ -2335,7 +2335,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
 
@@ -3578,7 +3578,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var errorTuple = (404, "not found")
@@ -4913,7 +4913,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var empty = ()';
@@ -4950,7 +4950,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
     // Swift input: 'let g = [1 : "one",2   :"two", 3: "three"]'
     it('should handle erratic spacing', function () {
@@ -5048,7 +5048,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var d = [1, 2]; var one = d[0];`;
@@ -5133,7 +5133,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var d = ["one": 1, "two": 2]; var one = d["one"];`;
@@ -5247,7 +5247,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
   });
 
@@ -5286,7 +5286,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`let justOverOneMillion = 1_000_000.000_000_1`;
@@ -5323,7 +5323,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'let i = 5+6'
@@ -5370,7 +5370,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var j = 5 + 6 / 4 - (-16 % 4.2) * 55'
@@ -5469,7 +5469,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`let l = 6 != 9`;
@@ -5518,7 +5518,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // 'var l = 6 != 7 || (6 == 7 || (6 > 7 || (6 < 7 || (6 >= 7 || 6 <= 7))));'
@@ -5624,7 +5624,7 @@ describe('Parser: First Milestone', function() {
                                 operator: '<=',
                                 left: { value: 6, type: 'Literal', raw: '6' },
                                 right: { value: 7, type: 'Literal', raw: '7' } } } } } } } } ] } ] };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // AST Explorer input: 'var diceRoll = 6; diceRoll == 7;'
@@ -5682,7 +5682,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // AST Explorer input: 'var diceRoll = 6; ++diceRoll == 7;'
@@ -5747,7 +5747,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // AST Explorer input: 'var diceRoll = 6; diceRoll++ == 7;'
@@ -5812,7 +5812,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var a = 1; var m = ++a; var n = --m;'
@@ -5907,7 +5907,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var a = 1; var m = a++; var n = m--;'
@@ -6002,7 +6002,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var a = true; var b = !a; var c = -a; var d = +b'
@@ -6122,7 +6122,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var x = 5; x += 4; x -= 3; x *= 2; x /= 1; x %= 2;`;
@@ -6264,7 +6264,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var a = !true && true || true`;
@@ -6330,7 +6330,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var a = (6 == 7) ? 1 : -1'
@@ -6403,7 +6403,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var g = 6 == 7 ? true : false;'
@@ -6469,7 +6469,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'let h = false; let i = h ? 1 : 2;'
@@ -6545,7 +6545,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
   });
 
@@ -6617,7 +6617,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var planet = "Earth"; let o = "\(planet)"'
@@ -6699,7 +6699,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var planet = "Earth"; let o = "Hello \(planet)!"'
@@ -6781,7 +6781,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var p = "\(100 - 99), 2, 3"'
@@ -6852,7 +6852,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`let a = 3; let b = 5; let sum = "the sum of a and b is \(a + b).";`;
@@ -6967,7 +6967,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
   });
 
@@ -7092,7 +7092,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'var arr = [1, 2]; var s = arr[0];'
@@ -7179,7 +7179,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'let arr = [1, 2]; let t = 100; var u = arr[t - 99];'
@@ -7298,7 +7298,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'let arr = [1,2]; var u = [arr[0]];'
@@ -7392,7 +7392,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'let firstNum = 1; let secNum = 2; var dict = [firstNum: [[1,2], [3,4]], secNum: [["one", "two"], ["three", "four"]]];'
@@ -7622,7 +7622,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Swift input: 'let arr = [1,2]; var v = [arr[0]: [[1,2], [3,4]], arr[1]: [["one", "two"], ["three", "four"]]];'
@@ -7860,7 +7860,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw `var firstNum = 1
@@ -7935,7 +7935,7 @@ describe('Parser: First Milestone', function() {
        { type: "TERMINATOR",                    value: "EOF" }
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // Test 21 - Swift input: 'var w = [1: [[1: "two"], [3: "four"]], 2: [["one": 2], ["three": 4]]];'
@@ -8127,7 +8127,7 @@ describe('Parser: First Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
   });
 });

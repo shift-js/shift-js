@@ -1,7 +1,7 @@
 var makeParser = require('../../transpiler/parser/parser');
 var expect = require('chai').expect;
 var util = require('util');
-var R = require('ramda');
+var isEqual = require('lodash.isequal');
 var parser;
 
 describe('Parser: Fourth Milestone', function() {
@@ -65,7 +65,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`class VideoMode {
@@ -142,7 +142,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`class VideoMode {
@@ -240,7 +240,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`struct Resolution {
@@ -290,7 +290,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`var resolutionHeight = 480
@@ -359,7 +359,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`struct Greeting {
@@ -376,7 +376,7 @@ describe('Parser: Fourth Milestone', function() {
 
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`struct FixedLengthRange {
@@ -425,7 +425,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`class Medley {
@@ -571,7 +571,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`class Counter {
@@ -672,7 +672,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`class Counter {
@@ -789,7 +789,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`class Counter {
@@ -896,7 +896,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`struct Counter {
@@ -982,7 +982,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`struct Counter {
@@ -1033,7 +1033,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`class ParentClass {
@@ -1107,7 +1107,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`class SuperClass {
@@ -1217,7 +1217,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`class SuperClass {
@@ -1339,7 +1339,7 @@ describe('Parser: Fourth Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`       class    SuperClass            {    var a = 0
@@ -1490,7 +1490,7 @@ describe('Parser: Fourth Milestone', function() {
          { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
   });
 
@@ -1815,7 +1815,7 @@ describe('Parser: Fourth Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw `var one = 1
@@ -2081,7 +2081,7 @@ describe('Parser: Fourth Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw `var negOne = -1
@@ -2171,7 +2171,7 @@ describe('Parser: Fourth Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     xdescribe('Range Operations', function () {
@@ -2189,7 +2189,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1.0...5.0'
@@ -2205,7 +2205,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1.2...5.3'
@@ -2221,7 +2221,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var b = 1..<5'
@@ -2238,7 +2238,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1.0..<5.0'
@@ -2255,7 +2255,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1.2..<5.3'
@@ -2272,7 +2272,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1...5; var b = 2..<6'
@@ -2296,7 +2296,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'let start = 0; let end = 10; let range = start..<end; let fullRange = start...end;'
@@ -2331,7 +2331,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",                 value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -2456,7 +2456,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var s = "my string, 123!"
@@ -2532,7 +2532,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var s: String = ""
@@ -2604,7 +2604,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
 
@@ -2722,7 +2722,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`var s = "my string, 123!"
@@ -3126,7 +3126,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`var greeting = "World"
@@ -3222,7 +3222,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",                 value: "EOF"},
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var famousAuthor = "F. Scott Fitzgerald"
@@ -3405,7 +3405,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var s = "String"
@@ -3496,7 +3496,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -3587,7 +3587,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var arr = [1,2]
@@ -3662,7 +3662,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var arr = [Int]()
@@ -3687,7 +3687,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",                 value: "EOF"},
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var arrOfThreeZeros = [Int](count: 3, repeatedValue: 0)`;
@@ -3763,7 +3763,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var arr = [1,2,4,8,5,7]
@@ -4223,7 +4223,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var arr = [1,2,3,4,5,6,7]
@@ -4282,7 +4282,7 @@ describe('Parser: Fourth Milestone', function() {
           { type: "TERMINATOR",                 value: "EOF"},
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var d = ["array1": [1,2,3], "array2": [4,5,6]]
@@ -4444,7 +4444,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var d = ["array1": [1,2,3], "array2": [4,5,6]]
@@ -4612,7 +4612,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw `var d = ["array1": [1,2,3], "array2": [4,5,6]]
@@ -4765,7 +4765,7 @@ describe('Parser: Fourth Milestone', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
   });

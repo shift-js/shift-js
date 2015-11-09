@@ -47,7 +47,7 @@
     "escodegen": "^1.7.0",
     "esprima-ast-utils": "0.0.6",
     "express": "^4.13.3",
-    "ramda": "^0.18.0"
+    "lodash.isequal": "^3.0.4"
   },
   "devDependencies": {
     "bower": "^1.6.5",
