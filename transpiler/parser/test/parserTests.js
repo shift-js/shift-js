@@ -1,7 +1,7 @@
 var make_parser = require('../parser');
 var expect = require('chai').expect;
 var util = require('util');
-var R = require('ramda');
+var isEqual = require('lodash.isequal');
 var parser;
 
 describe('Parser', function() {
@@ -44,7 +44,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1; a = 2'
@@ -100,7 +100,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var my_var = 5'
@@ -136,7 +136,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var b = "hello"'
@@ -172,7 +172,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Test 3 - Swift input: 'var c = true'
@@ -208,7 +208,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Test 4 - Swift input: 'var d = "Test this"'
@@ -244,7 +244,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -283,7 +283,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var empty = [:]'
@@ -321,7 +321,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var empty = [String]();'
@@ -362,7 +362,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var empty = [String:UInt16]();'
@@ -405,7 +405,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var e = ["Eggs", "Milk", "Bacon"]'
@@ -462,7 +462,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var e = [  "Eggs","Milk",           "Bacon"                ] ;'
@@ -520,7 +520,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var f = ["one": 1, "two": 2, "three": 3]'
@@ -621,7 +621,7 @@ describe('Parser', function() {
           ]
           // "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var error = (404, "not found")'
@@ -696,7 +696,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
 
@@ -776,7 +776,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var empty = ()';
@@ -813,7 +813,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'let g = [1 : "one",2   :"two", 3: "three"]'
@@ -912,7 +912,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -951,7 +951,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'let i = 5+6'
@@ -998,7 +998,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var j = 5 + 6 / 4 - (-16 % 4.2) * 55'
@@ -1097,7 +1097,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // 'var l = 6 != 7 || (6 == 7 || (6 > 7 || (6 < 7 || (6 >= 7 || 6 <= 7))));'
@@ -1203,7 +1203,7 @@ describe('Parser', function() {
                               operator: '<=',
                               left: { value: 6, type: 'Literal', raw: '6' },
                               right: { value: 7, type: 'Literal', raw: '7' } } } } } } } } ] } ] };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1; var m = ++a; var n = --m;'
@@ -1298,7 +1298,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1; var m = a++; var n = m--;'
@@ -1393,7 +1393,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = true; var b = !a; var c = -a; var d = +b'
@@ -1513,7 +1513,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = (6 == 7) ? 1 : -1'
@@ -1586,7 +1586,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var g = 6 == 7 ? true : false;'
@@ -1652,7 +1652,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'let h = false; let i = h ? 1 : 2;'
@@ -1728,7 +1728,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1...5'
@@ -1744,7 +1744,7 @@ describe('Parser', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1.0...5.0'
@@ -1760,7 +1760,7 @@ describe('Parser', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
         });
 
       // Swift input: 'var a = 1.2...5.3'
@@ -1776,7 +1776,7 @@ describe('Parser', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var b = 1..<5'
@@ -1792,7 +1792,7 @@ describe('Parser', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1.0..<5.0'
@@ -1808,7 +1808,7 @@ describe('Parser', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1.2..<5.3'
@@ -1824,7 +1824,7 @@ describe('Parser', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1...5; var b = 2..<6'
@@ -1847,7 +1847,7 @@ describe('Parser', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -1919,7 +1919,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var planet = "Earth"; let o = "\(planet)"'
@@ -2001,7 +2001,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Test 15 - Swift input: 'var planet = "Earth"; let o = "Hello \(planet)!"'
@@ -2083,7 +2083,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Test 16 - Swift input: 'var p = "\(100 - 99), 2, 3"'
@@ -2154,7 +2154,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -2278,7 +2278,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Test 18 - Swift input: 'var arr = [1, 2]; var s = arr[0];'
@@ -2365,7 +2365,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Test 19 - Swift input: 'let arr = [1, 2]; let t = 100; var u = arr[t - 99];'
@@ -2483,7 +2483,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'let arr = [1,2]; var u = [arr[0]];'
@@ -2577,7 +2577,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
 
@@ -2815,7 +2815,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Test 21 - Swift input: 'var w = [1: [[1: "two"], [3: "four"]], 2: [["one": 2], ["three": 4]]];'
@@ -3007,7 +3007,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
   });
@@ -3089,7 +3089,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var b = 6; if (5 <= 6) {b++};'
@@ -3177,7 +3177,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var c = 1; if (c == 1) {c *= 5};'
@@ -3269,7 +3269,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var d = 1; if d != 2 {d++};'
@@ -3355,7 +3355,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var e = 1; if (e + 1) == 2 {e = 5};'
@@ -3458,7 +3458,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var f = true; if !f {f = true} else {f = false};'
@@ -3568,7 +3568,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1; if (1 > 2) {++a} else if (1 < 2) {--a} else {a = 42}'
@@ -3723,7 +3723,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var a = 1; if 1 > 2 {++a} else if 1 < 2 {--a} else {a = 42}'
@@ -3875,7 +3875,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -3960,7 +3960,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var i = 10; while i >= 0 {i--}'
@@ -4041,7 +4041,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var i = 10; repeat {i--} while (i >= 0)'
@@ -4125,7 +4125,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var i = 10; repeat {i--} while i >= 0'
@@ -4207,7 +4207,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -4331,7 +4331,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var b = 0; for var j = 0; j < 10; j++ {b++};'
@@ -4451,7 +4451,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
 
@@ -4607,7 +4607,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // Swift input: 'var c = 0; var numbers = [1,2,3,4,5]; for n in numbers {c += n};'
@@ -4759,7 +4759,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -4842,7 +4842,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`var e = ["Eggs", "Milk", "Bacon"]
@@ -5141,7 +5141,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       })
 
       // input = String.raw`var name: String = "Joe"
@@ -5335,7 +5335,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`// function body goes here
@@ -5362,7 +5362,7 @@ describe('Parser', function() {
           "body": [],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`/*
@@ -5389,7 +5389,7 @@ describe('Parser', function() {
           "body": [],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -5494,7 +5494,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`var diceRoll = 6;
@@ -5597,7 +5597,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`var x = true
@@ -5900,7 +5900,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -6029,7 +6029,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`var arrays = [[1,2,3], [4,5,6], [7,8,9]]
@@ -6352,7 +6352,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -6504,7 +6504,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`var sum = 0
@@ -6535,7 +6535,7 @@ describe('Parser', function() {
           { type: "TERMINATOR",                     value: "EOF"},
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`let interestingNumbers = [
@@ -6648,7 +6648,7 @@ describe('Parser', function() {
           { type: "TERMINATOR",                  value: "EOF"},
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -6742,7 +6742,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`var i = 10;
@@ -6830,7 +6830,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`var i = 10;
@@ -6924,7 +6924,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`var i = 10
@@ -7014,7 +7014,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -7428,7 +7428,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
 
@@ -7898,7 +7898,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`
@@ -8409,7 +8409,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
   });
@@ -8532,7 +8532,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`func someFunction(var a: Int) {
@@ -8650,7 +8650,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`func someFunction (var a: Int){
@@ -8691,7 +8691,7 @@ describe('Parser', function() {
           { type: "TERMINATOR",           value: "EOF"}
         ];
         output = "FILL_ME_IN";
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`func someFunction(var a: Int){
@@ -8809,7 +8809,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`func someFunction        (var a: Int)     {
@@ -8927,7 +8927,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`func sayHelloWorld() -> String {
@@ -8993,7 +8993,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`func sayHello(var personName: String) -> String {
@@ -9113,7 +9113,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`func sayHello(var alreadyGreeted: Bool) -> String {
@@ -9215,7 +9215,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`func sayHello(var personName: String, var alreadyGreeted: Bool) -> String {
@@ -9384,7 +9384,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`func sayHello(var firstName: String, var lastName: String) -> String {
@@ -9551,7 +9551,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
 
       // input = String.raw`func greet(name: String, day: String) -> String {
@@ -9708,7 +9708,7 @@ describe('Parser', function() {
           ],
           "sourceType": "module"
         };
-        expect(R.equals(parser(input), output)).to.equal(true);
+        expect(isEqual(parser(input), output)).to.equal(true);
       });
     });
   });

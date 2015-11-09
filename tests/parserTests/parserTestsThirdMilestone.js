@@ -1,7 +1,7 @@
 var makeParser = require('../../transpiler/parser/parser');
 var expect = require('chai').expect;
 var util = require('util');
-var R = require('ramda');
+var isEqual = require('lodash.isequal');
 var parser;
 
 describe('Parser: Third Milestone', function() {
@@ -134,7 +134,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func someFunction(a: Int)->Int{
@@ -256,7 +256,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func someFunction (a: Int) -> Int {
@@ -379,7 +379,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func someFunction(a: Int) -> Int {
@@ -502,7 +502,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func someFunction(a: Int)-> Int {
@@ -625,7 +625,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func  someFunction(a: Int)           ->  Int{
@@ -748,7 +748,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func sayHelloWorld() -> String {
@@ -805,7 +805,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func sayHello(personName: String) -> String {
@@ -930,7 +930,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func sayHello(alreadyGreeted: Bool) -> String {
@@ -1090,7 +1090,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func sayHello(firstName: String, lastName: String) -> String {
@@ -1254,7 +1254,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func greet(name: String, day: String) -> String {
@@ -1403,7 +1403,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func addSevenInts(first: Int, second: Int, third: Int, fourth: Int, fifth: Int, sixth: Int, seventh: Int) -> Int {
@@ -1682,7 +1682,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func printAllTypes(first: Character, second: Double, third: Float, fourth: Bool, fifth: Int, sixth: Int8, seventh: Int16, eigth: Int32, nineth: Int64, tenth: String, eleventh: UInt, twelvth: UInt8, thirteenth: UInt16, fourteenth: UInt32, fifteenth: UInt64) {
@@ -2512,7 +2512,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func addOne(input: Int) -> Int {
@@ -2669,7 +2669,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func returnTuple(num: Int) -> (plusFive: Int, timesFive: Int) {
@@ -2739,7 +2739,7 @@ describe('Parser: Third Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func nameAndAge(name: String, age: Int) -> (name: String, age: Int) {
@@ -2800,7 +2800,7 @@ describe('Parser: Third Milestone', function() {
         { type: "TERMINATOR",                 value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
@@ -2919,7 +2919,7 @@ describe('Parser: Third Milestone', function() {
         { type: "TERMINATOR",                   value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func minMax(array: [Int]) -> (min: Int, max: Int) {
@@ -3038,7 +3038,7 @@ describe('Parser: Third Milestone', function() {
         { type: "TERMINATOR",           value: "EOF"}
       ];
       output = "FILL_ME_IN";
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func sumOf(numbers: Int...) -> Int {
@@ -3306,7 +3306,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func sumOf(start: Int=0, numbers: Int...) -> Int {
@@ -3724,7 +3724,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func makeIncrementer() -> ((Int) -> Int) {
@@ -3916,7 +3916,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func makeIncrementer() -> ((Int) -> Int) {
@@ -4043,7 +4043,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func makeIncrementer() -> (Int) -> Int {
@@ -4169,7 +4169,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func any(list: [Int], condition: ((Int) -> Bool)) -> Bool {
@@ -4344,7 +4344,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func a(l: [Int], c: ((Int,String,Bool) -> Bool)) -> (Bool) {
@@ -4538,7 +4538,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func any(list: [Int], condition: (Int) -> Bool) -> Bool {
@@ -4711,7 +4711,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func any(list: [Int], condition: ((Int) -> Bool)) -> (Bool) {
@@ -4887,7 +4887,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func sayHelloNoOutput(to person: String, from anotherPerson: String) {
@@ -5061,7 +5061,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func sayHello(to person: String, from anotherPerson: String) -> String {
@@ -5235,7 +5235,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func dictionary() -> [String: Int] {
@@ -5402,7 +5402,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func array() -> [Int] {
@@ -5497,7 +5497,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func abc(a: [String: Int]) {
@@ -5653,7 +5653,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func any(list: [Int], condition: ((Int,String,Bool) -> Bool)) -> Bool {
@@ -5844,7 +5844,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func any(list: [Int], condition: (Int) -> Bool) -> (Bool) {
@@ -6018,7 +6018,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw `func addOne(input: Int) -> Int {
@@ -6156,7 +6156,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func returnWorld() -> Int {
@@ -6336,7 +6336,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     // input = String.raw`func returnWorld() -> String {
@@ -6517,7 +6517,7 @@ describe('Parser: Third Milestone', function() {
         ],
         "sourceType": "module"
       };
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
   });
 });

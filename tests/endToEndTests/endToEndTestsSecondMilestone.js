@@ -390,7 +390,7 @@ describe('End to End: Second Milestone', function() {
                         sum += i
                     }`;
       output = ``;
-      expect(R.equals(parser(input), output)).to.equal(true);
+      expect(isEqual(parser(input), output)).to.equal(true);
     });
 
     it('should handle for-in loops that iterate over items in a dictionary', function () {
