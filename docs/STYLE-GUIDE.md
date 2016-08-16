@@ -280,7 +280,7 @@ When writing any block of code that is logically subordinate to the line immedia
 ### Variable declaration
 
 * Use a new var statement for each line you declare a variable on.
-* Do not break variable declarations onto mutiple lines.
+* Do not break variable declarations onto multiple lines.
 * Use a new line for each variable declaration.
 * See http://benalman.com/news/2012/05/multiple-var-statements-javascript/ for more details
 
