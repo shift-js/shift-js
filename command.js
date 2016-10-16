@@ -95,6 +95,7 @@
   // Runs the program.
   var start = function() {
     if (program.run) {
+      var file = program.args.pop();
       if (file.slice(-6) !== '.swift') {
         applyAction(program.args[0]);
       }
