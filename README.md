@@ -12,7 +12,7 @@ Requires Node 4.0.0 & up.
 The command line tool can be installed via npm:
 
 ```
-npm install --g shift.js
+npm install -g shift.js
 ```
 
 To transpile a single Swift file into a JavaScript file:
