@@ -108,7 +108,7 @@ Tests should remain marked as pending until they pass, otherwise Travis CI will 
 
 ### Contributing
 
-1. [Check for open issues] (https://github.com/shift-js/shift-js/issues>) or open a fresh issue to start a discussion around a feature idea or a bug.
+1. [Check for open issues](https://github.com/shift-js/shift-js/issues>) or open a fresh issue to start a discussion around a feature idea or a bug.
 
 2. Fork the shift-js repository on Github to start making your changes. Cut a namespaced feature branch from develop that is named appropriately for the feature you plan to work on.
 
@@ -130,4 +130,4 @@ See the LICENSE file in ```docs/```
 
 ## Team
 
-Shift.JS was started by [David Churchill] (https://github.com/webdevdave), [Verlon Smith] (https://github.com/kingedward35), [Rex Suter] (https://github.com/rex-en-abyme), [Don Steinert] (https://github.com/Dnld), and [Max Yazhbin] (https://github.com/myazhbin).
+Shift.JS was started by [David Churchill](https://github.com/webdevdave), [Verlon Smith](https://github.com/kingedward35), [Rex Suter](https://github.com/rex-en-abyme), [Don Steinert](https://github.com/Dnld), and [Max Yazhbin](https://github.com/myazhbin).
